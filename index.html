@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b3d91" />
+  <meta name="description" content="Mid-Southern California Area 09 of Alcoholics Anonymous (MSCA09) — meetings, events, service, and resources for members, newcomers, and friends of A.A." />
+  <meta name="keywords" content="AA, Alcoholics Anonymous, MSCA09, Area 09, Mid-Southern California, meetings, recovery, service, events" />
+  <meta name="author" content="MSCA09" />
+
+  <!-- Open Graph / social -->
+  <meta property="og:title" content="MSCA09 — Mid-Southern California Area of A.A." />
+  <meta property="og:description" content="Meetings, events, service opportunities, and resources for Area 09." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://msca09aa.org/" />
+
+  <title>MSCA09 — Mid-Southern California Area of A.A.</title>
+
+  <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg" />
+  <link rel="apple-touch-icon" href="assets/img/favicon.svg" />
+
+  <!-- Bootstrap 5 (MIT) -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+    crossorigin="anonymous"
+  />
+  <!-- Bootstrap Icons (MIT) -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+  />
+  <!-- AOS animate-on-scroll (MIT) -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css"
+  />
+  <!-- FullCalendar (MIT) -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css"
+  />
+
+  <!-- Site styles -->
+  <link rel="stylesheet" href="css/theme.css" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+  <!-- Skip link for accessibility -->
+  <a href="#main" class="visually-hidden-focusable position-absolute top-0 start-0 bg-primary text-white p-2 m-2 rounded">Skip to main content</a>
+
+  <!-- Top utility bar -->
+  <div class="top-bar text-white small">
+    <div class="container d-flex flex-wrap justify-content-between align-items-center gap-2 py-1">
+      <div class="d-flex align-items-center gap-3">
+        <span class="d-none d-sm-inline"><i class="bi bi-geo-alt-fill me-1"></i>Mid-Southern California — Area 09</span>
+        <a class="text-white text-decoration-none" href="tel:+18002221234"><i class="bi bi-telephone-fill me-1"></i><span>24-Hour Hotline</span></a>
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        <!-- Google Translate widget mount point -->
+        <div id="google_translate_element" aria-label="Translate this site"></div>
+        <button id="themeToggle" class="btn btn-sm btn-outline-light border-0" type="button" aria-label="Toggle color scheme" title="Toggle dark / light">
+          <i class="bi bi-moon-stars-fill"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Primary navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="#/">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 64 64" width="40" height="40" role="img" aria-label="MSCA09 emblem">
+            <circle cx="32" cy="32" r="30" fill="#0b3d91" />
+            <circle cx="32" cy="32" r="22" fill="none" stroke="#f6c343" stroke-width="3" />
+            <text x="32" y="38" font-family="Georgia,serif" font-size="16" font-weight="700" text-anchor="middle" fill="#f6c343">MSCA</text>
+            <text x="32" y="52" font-family="Georgia,serif" font-size="10" font-weight="700" text-anchor="middle" fill="#ffffff">09</text>
+          </svg>
+        </span>
+        <span class="d-flex flex-column lh-1">
+          <strong class="brand-title">MSCA09</strong>
+          <small class="text-muted brand-sub">Mid-Southern California Area of A.A.</small>
+        </span>
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav ms-auto align-items-lg-center" id="primaryNavList">
+          <li class="nav-item"><a class="nav-link" data-route="/" href="#/">Home</a></li>
+          <li class="nav-item"><a class="nav-link" data-route="/about" href="#/about">About</a></li>
+          <li class="nav-item"><a class="nav-link" data-route="/events" href="#/events">Events</a></li>
+          <li class="nav-item"><a class="nav-link" data-route="/meetings" href="#/meetings">Meetings</a></li>
+          <li class="nav-item"><a class="nav-link" data-route="/districts" href="#/districts">Districts</a></li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Service</a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" data-route="/service" href="#/service">Committees</a></li>
+              <li><a class="dropdown-item" data-route="/officers" href="#/officers">Officers &amp; Chairs</a></li>
+              <li><a class="dropdown-item" data-route="/resources" href="#/resources">Resources &amp; Forms</a></li>
+              <li><a class="dropdown-item" data-route="/contributions" href="#/contributions">Contributions (7th Tradition)</a></li>
+              <li><a class="dropdown-item" data-route="/concepts" href="#/concepts">Twelve Concepts</a></li>
+            </ul>
+          </li>
+          <li class="nav-item"><a class="nav-link" data-route="/newcomers" href="#/newcomers">Newcomers</a></li>
+          <li class="nav-item ms-lg-2">
+            <button type="button" class="btn btn-outline-secondary btn-sm me-2" id="siteSearchTrigger" aria-label="Search the site (Ctrl+K)" title="Search (Ctrl+K)">
+              <i class="bi bi-search"></i>
+            </button>
+            <a class="btn btn-primary btn-sm px-3" data-route="/contact" href="#/contact">Contact</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Announcement bar (populated from data/announcements.csv) -->
+  <div id="announcementBar" class="announcement-bar bg-warning-subtle border-bottom small d-none">
+    <div class="container d-flex align-items-center gap-2 py-2">
+      <i class="bi bi-megaphone-fill text-warning-emphasis"></i>
+      <div id="announcementText" class="flex-grow-1"></div>
+      <button type="button" class="btn btn-sm btn-link p-0" id="announcementDismiss" aria-label="Dismiss announcement">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Main view outlet -->
+  <main id="main" class="flex-grow-1" tabindex="-1">
+    <div id="view" class="view" aria-live="polite"></div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer mt-auto">
+    <div class="container py-5">
+      <div class="row gy-4">
+        <div class="col-lg-4">
+          <h5 class="text-white mb-3">MSCA09</h5>
+          <p class="mb-2 small">
+            Mid-Southern California Area 09 carries the message of Alcoholics Anonymous through the General Service structure to the alcoholic who still suffers.
+          </p>
+          <p class="small mb-0">
+            <em>"Our common welfare should come first; personal recovery depends upon A.A. unity." — Tradition One</em>
+          </p>
+        </div>
+        <div class="col-6 col-lg-2">
+          <h6 class="text-white">Explore</h6>
+          <ul class="list-unstyled small">
+            <li><a href="#/about">About the Area</a></li>
+            <li><a href="#/events">Events</a></li>
+            <li><a href="#/meetings">Find a Meeting</a></li>
+            <li><a href="#/districts">Districts</a></li>
+          </ul>
+        </div>
+        <div class="col-6 col-lg-2">
+          <h6 class="text-white">Service</h6>
+          <ul class="list-unstyled small">
+            <li><a href="#/service">Committees</a></li>
+            <li><a href="#/officers">Officers</a></li>
+            <li><a href="#/resources">Resources</a></li>
+            <li><a href="#/newcomers">Newcomers</a></li>
+            <li><a href="#/contributions">Contributions</a></li>
+            <li><a href="#/concepts">12 Concepts</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-4">
+          <h6 class="text-white">Get involved</h6>
+          <p class="small mb-2">Sign up for the area mailing list to receive minutes, agendas, and announcements.</p>
+          <a class="btn btn-outline-light btn-sm" href="#/contact"><i class="bi bi-envelope me-1"></i>Contact the Area</a>
+          <div class="mt-3 small">
+            <a href="https://www.aa.org" target="_blank" rel="noopener" class="link-light me-3">A.A. World Services</a>
+            <a href="https://www.aagrapevine.org" target="_blank" rel="noopener" class="link-light">A.A. Grapevine</a>
+          </div>
+        </div>
+      </div>
+      <hr class="border-light opacity-25 my-4" />
+      <div class="d-flex flex-wrap justify-content-between align-items-center small text-white-50 gap-2">
+        <div>&copy; <span id="footerYear"></span> MSCA09. Site content is offered as a service to A.A. members and the public.</div>
+        <div>
+          <a href="#/about" class="link-light me-3">12 Traditions</a>
+          <a href="#/concepts" class="link-light me-3">12 Concepts</a>
+          <a href="#/contributions" class="link-light me-3">Contributions</a>
+          <a href="#/contact" class="link-light">Contact</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Back to top -->
+  <button id="toTop" class="btn btn-primary btn-floating rounded-circle shadow" type="button" aria-label="Back to top" title="Back to top">
+    <i class="bi bi-arrow-up"></i>
+  </button>
+
+  <!-- Bootstrap JS bundle -->
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"
+  ></script>
+  <!-- PapaParse (MIT) — CSV parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <!-- FullCalendar (MIT) -->
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+  <!-- AOS (MIT) -->
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+
+  <!-- Site scripts (ES modules) -->
+  <script type="module" src="js/app.js"></script>
+
+  <!-- Google Translate (loaded async) -->
+  <script>
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'en,es,fr,de,it,pt,zh-CN,zh-TW,ja,ko,vi,tl,ru,ar,hi,fa,he,pl,nl,sv,no,da,fi,el,tr,th,id,ms,uk,ro',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+        autoDisplay: false
+      }, 'google_translate_element');
+    }
+  </script>
+  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" defer></script>
+</body>
+</html>
