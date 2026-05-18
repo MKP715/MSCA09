@@ -9,15 +9,15 @@
     // Any unknown URL hits this 404; we convert /some/path?query into
     // #/some/path?query and bounce to the SPA root so the hash router can dispatch.
     //
-    // Set pathSegmentsToKeep = 1 if you deploy under a project page
-    // (e.g. https://user.github.io/REPO/...) and want to preserve "REPO".
+    // Auto-detects base path:
+    //   - On *.github.io project pages: first segment is the repo name, kept as base.
+    //   - On a custom domain (e.g. msca09aa.org): base is /.
     (function () {
-      var pathSegmentsToKeep = 0;
       var l = window.location;
+      var isProjectPage = /\.github\.io$/i.test(l.hostname);
       var segments = l.pathname.split('/').filter(Boolean);
-      var basePath = '/' + segments.slice(0, pathSegmentsToKeep).join('/');
-      if (basePath !== '/' && !basePath.endsWith('/')) basePath += '/';
-      var rest = '/' + segments.slice(pathSegmentsToKeep).join('/');
+      var basePath = '/' + (isProjectPage && segments.length ? segments[0] + '/' : '');
+      var rest = '/' + segments.slice(isProjectPage ? 1 : 0).join('/');
       l.replace(l.origin + basePath + '#' + rest + l.search);
     })();
   </script>

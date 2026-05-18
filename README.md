@@ -118,16 +118,28 @@ Then open `http://localhost:8000/`.
 3. Under **Source**, choose **Deploy from a branch** → `main` / `/ (root)`.
 4. Save. Your site will be live at `https://<user>.github.io/<repo>/` within a minute.
 
-### Custom domain (`msca09aa.org`)
+### Custom domain (`msca09aa.org`) — ONLY when ready to cut over
 
-1. Create a file named **`CNAME`** (no extension) at the repo root with one line:
-   ```
-   msca09aa.org
-   ```
-2. At your DNS provider, add either:
+> ⚠️ **Don't add the CNAME file or set a custom domain until your DNS is actually
+> pointed at GitHub Pages.** If you add `msca09aa.org` as a custom domain while
+> the domain still serves the *old* website, GitHub Pages will 301-redirect every
+> visitor from `<user>.github.io/<repo>/` to `msca09aa.org` — i.e. straight back
+> to the old site.
+
+When you are ready to migrate the domain:
+
+1. At your DNS provider, repoint `msca09aa.org`:
    - **Apex (`@`)** — four A records pointing at `185.199.108.153`, `.109.153`, `.110.153`, `.111.153`
    - **Subdomain (e.g. `www`)** — a CNAME pointing at `<user>.github.io`
-3. Enable **Enforce HTTPS** in repo Settings → Pages once GitHub finishes provisioning the certificate.
+2. Wait for DNS to propagate (5 min – a few hours).
+3. In repo **Settings → Pages → Custom domain**, enter `msca09aa.org` and save.
+   GitHub will create the `CNAME` file in the repo for you.
+4. Once the certificate is provisioned, tick **Enforce HTTPS**.
+
+To reverse / disable the custom domain (e.g. if you accidentally got stuck in a
+redirect loop to the old site): delete the `CNAME` file from the repo AND clear
+the custom-domain field in **Settings → Pages**. Both are required — GitHub
+caches the custom domain in repo settings even if the file is gone.
 
 ## Maintaining the site
 
