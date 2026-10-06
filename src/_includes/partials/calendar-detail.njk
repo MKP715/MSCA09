@@ -1,0 +1,116 @@
+{#- Details panel for a calendar entry: slides in from the right (bottom sheet on phones). Part of /calendar/. -#}
+{%- set L = lang -%}
+<div x-cloak x-show="sel" class="fixed inset-0 z-[70]" role="dialog" aria-modal="true" aria-labelledby="cal-detail-title" x-trap.inert.noscroll="!!sel">
+  <div class="absolute inset-0 bg-ink-950/50 backdrop-blur-[2px]" x-show="sel" x-transition.opacity @click="close()" aria-hidden="true"></div>
+  <div class="cal-detail" x-ref="detail" :style="sel ? sel.vars : ''" x-show="sel"
+       x-transition:enter="transition ease-out duration-300" x-transition:enter-start="cal-detail--from" x-transition:enter-end="cal-detail--to"
+       x-transition:leave="transition ease-in duration-200" x-transition:leave-start="cal-detail--to" x-transition:leave-end="cal-detail--from">
+    <button type="button" x-ref="detailClose" @click="close()" class="cal-detail__close" aria-label="{{ 'nav.close' | t(L) }}">{% icon "x", "size-5" %}</button>
+    <template x-if="sel">
+      <div class="cal-detail__scroll">
+        {#- media: the flyer, or a colourful band -#}
+        <template x-if="ss && ss.flyers && ss.flyers.length">
+          <a :href="sel.url" class="cal-detail__media">
+            <img :src="flyerUrl(ss.flyers[0], 200)" alt="" aria-hidden="true" class="cal-detail__blur">
+            <img :src="flyerUrl(ss.flyers[0], 900)" :alt="{{ 'calendar.flyer_alt' | t(L, { title: '' }) | json }} + sel.title" class="cal-detail__img" @error="flyerFallback($event, ss.flyers[0])">
+          </a>
+        </template>
+        <template x-if="!(ss && ss.flyers && ss.flyers.length)">
+          <div class="cal-detail__band" aria-hidden="true"><span class="cal-detail__band-icon" x-html="sel.icon"></span></div>
+        </template>
+
+        <div class="cal-detail__body">
+          <div class="flex flex-wrap items-center gap-1.5">
+            <span class="ev-type"><span class="contents" x-html="sel.icon"></span><span x-text="sel.typeLabel"></span></span>
+            <span class="rel-badge" :data-tone="selRel().tone" x-text="selRel().text" x-show="selRel().tone !== 'past' && selRel().tone !== 'later'"></span>
+            <span class="chip chip-accent" style="{{ 'red' | accent }}" x-show="sel.st === 'cancelled'">{% icon "ban", "size-3.5" %}{{ "calendar.cancelled" | t(L) }}</span>
+          </div>
+          <h2 id="cal-detail-title" class="mt-3 font-display text-2xl leading-tight font-extrabold text-balance text-ink-950" x-text="sel.title"></h2>
+
+          <dl class="mt-5 space-y-3">
+            <div class="cd-row">
+              <dt class="cd-row__icon">{% icon "calendar-days", "size-4" %}<span class="sr-only">{{ "calendar.info.when" | t(L) }}</span></dt>
+              <dd>
+                <p class="font-semibold text-ink-900 first-letter:uppercase" x-text="selDate()"></p>
+                <p class="text-sm text-ink-600"><span x-text="sel.time"></span><span x-show="!sel.allDay"> · {{ "time.pacific" | t(L) }}</span></p>
+                <p class="mt-1 flex items-center gap-1.5 text-sm text-ink-600" x-show="sel.r && selRule()">{% icon "repeat", "size-3.5 shrink-0" %}<span x-text="selRule()"></span></p>
+                <p class="mt-1 flex items-center gap-1.5 text-sm text-ink-600" x-show="selReg()">{% icon "door-open", "size-3.5 shrink-0" %}<span x-text="selReg()"></span></p>
+              </dd>
+            </div>
+            <template x-if="ss && ss.location && !ss.location.tba">
+              <div class="cd-row">
+                <dt class="cd-row__icon">{% icon "map-pin", "size-4" %}<span class="sr-only">{{ "calendar.info.where" | t(L) }}</span></dt>
+                <dd>
+                  <p class="font-semibold text-ink-900" x-show="ss.location.name" x-text="ss.location.name"></p>
+                  <p class="text-sm text-ink-600" x-text="ss.location.address"></p>
+                  <a :href="ss.location.maps" x-show="ss.location.maps" target="_blank" rel="noopener" class="mi-link">{% icon "navigation", "size-4" %}{{ "calendar.directions" | t(L) }}</a>
+                </dd>
+              </div>
+            </template>
+            <template x-if="ss && ss.location && ss.location.tba">
+              <div class="cd-row">
+                <dt class="cd-row__icon">{% icon "map-pin", "size-4" %}<span class="sr-only">{{ "calendar.info.where" | t(L) }}</span></dt>
+                <dd><p class="font-semibold text-ink-900">{{ "calendar.place_tba" | t(L) }}</p></dd>
+              </div>
+            </template>
+            <div class="cd-row">
+              <dt class="cd-row__icon">{% icon "info", "size-4" %}<span class="sr-only">{{ "calendar.filters.format" | t(L) }}</span></dt>
+              <dd class="flex flex-wrap gap-1.5">
+                <span x-show="sel.f === 'In person'" class="chip chip-accent" style="{{ 'sage' | accent }}">{% icon "map-pin", "size-3.5" %}{{ "format.in_person" | t(L) }}</span>
+                <span x-show="sel.f === 'Hybrid'" class="chip chip-accent" style="{{ 'iris' | accent }}">{% icon "monitor-smartphone", "size-3.5" %}{{ "format.hybrid" | t(L) }}</span>
+                <span x-show="sel.f === 'Virtual'" class="chip chip-accent" style="{{ 'ocean' | accent }}">{% icon "video", "size-3.5" %}{{ "format.virtual" | t(L) }}</span>
+                <span x-show="sel.l === 'English'" class="chip chip-accent" style="{{ 'sea' | accent }}">{% icon "languages", "size-3.5" %}{{ "language.english" | t(L) }}</span>
+                <span x-show="sel.l === 'Spanish'" class="chip chip-accent" style="{{ 'coral' | accent }}">{% icon "languages", "size-3.5" %}{{ "language.spanish" | t(L) }}</span>
+                <span x-show="sel.l === 'Bilingual'" class="chip chip-accent" style="{{ 'sun' | accent }}">{% icon "languages", "size-3.5" %}{{ "language.bilingual" | t(L) }}</span>
+              </dd>
+            </div>
+          </dl>
+
+          {#- Zoom -#}
+          <template x-if="ss && ss.online">
+            <div class="mt-5 rounded-2xl bg-ocean-50 p-4">
+              <p class="mi-label">{{ "calendar.info.online" | t(L) }}</p>
+              <div class="mt-2 space-y-2">
+                <div class="flex items-center justify-between gap-3" x-show="ss.online.id">
+                  <span class="min-w-0"><span class="block text-xs text-ink-500">{{ "calendar.meeting_id" | t(L) }}</span><span class="font-mono font-semibold text-ink-900" x-text="ss.online.id"></span></span>
+                  <button type="button" class="btn btn-white btn-sm" @click="copy(ss.online.id, 'id')" aria-label="{{ 'calendar.copy_id' | t(L) }}">
+                    <span x-show="copied !== 'id'" class="inline-flex items-center gap-1.5">{% icon "copy", "size-3.5" %}{{ "ui.copy" | t(L) }}</span>
+                    <span x-show="copied === 'id'" class="inline-flex items-center gap-1.5 text-sage-700">{% icon "check", "size-3.5" %}{{ "ui.copied" | t(L) }}</span>
+                  </button>
+                </div>
+                <div class="flex items-center justify-between gap-3" x-show="ss.online.pc">
+                  <span class="min-w-0"><span class="block text-xs text-ink-500">{{ "calendar.passcode" | t(L) }}</span><span class="font-mono font-semibold text-ink-900" x-text="ss.online.pc"></span></span>
+                  <button type="button" class="btn btn-white btn-sm" @click="copy(ss.online.pc, 'pc')" aria-label="{{ 'calendar.copy_passcode' | t(L) }}">
+                    <span x-show="copied !== 'pc'" class="inline-flex items-center gap-1.5">{% icon "copy", "size-3.5" %}{{ "ui.copy" | t(L) }}</span>
+                    <span x-show="copied === 'pc'" class="inline-flex items-center gap-1.5 text-sage-700">{% icon "check", "size-3.5" %}{{ "ui.copied" | t(L) }}</span>
+                  </button>
+                </div>
+              </div>
+              <a :href="ss.online.url" x-show="ss.online.url" target="_blank" rel="noopener" class="btn btn-ocean mt-3 w-full">{% icon "video", "size-4" %}{{ "calendar.join_zoom" | t(L) }}</a>
+            </div>
+          </template>
+          {#- one spoken confirmation for both copy buttons -#}
+          <p class="sr-only" role="status" x-text="copied === 'id' ? {{ 'calendar.copied_id' | t(L) | json }} : copied === 'pc' ? {{ 'calendar.copied_passcode' | t(L) | json }} : ''"></p>
+
+          {#- notes, contact -#}
+          <template x-if="selNotes().length">
+            <ul class="mi-notes" role="list">
+              <template x-for="(n, i) in selNotes()" :key="i"><li>{% icon "info", "mt-0.5 size-4 shrink-0" %}<span><span x-text="n.text" :lang="n.lang"></span><span x-show="n.lang !== {{ L.code | json }}" class="mi-notes__tag"> {{ "calendar.note_in_english" | t(L) }}</span></span></li></template>
+            </ul>
+          </template>
+          <div class="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm" x-show="ss && (ss.email || ss.web)">
+            <a x-show="ss && ss.email" :href="ss && ('mailto:' + ss.email)" class="inline-flex items-center gap-1.5 font-semibold text-ocean-700 hover:underline">{% icon "mail", "size-4" %}<span x-text="ss && ss.email"></span></a>
+            <a x-show="ss && ss.web" :href="ss && ss.web" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 font-semibold text-ocean-700 hover:underline">{% icon "globe", "size-4" %}{{ "ui.website" | t(L) }}</a>
+          </div>
+          <p class="mt-4 text-sm text-ink-600" x-show="ss && ss.cost">{% icon "ticket", "mr-1 inline size-4 align-[-3px] text-ink-400" %}<span x-text="ss && ss.cost"></span></p>
+        </div>
+
+        <div class="cal-detail__foot">
+          <a :href="sel.url" class="btn btn-primary col-span-2">{% icon "arrow-up-right", "size-4" %}{{ "calendar.detail.open" | t(L) }}</a>
+          <a :href="googleUrl()" target="_blank" rel="noopener" class="btn btn-white">{% icon "calendar-plus", "size-4 text-ocean-600" %}{{ "calendar.add.google" | t(L) }}</a>
+          <a :href="icsUrl()" download class="btn btn-white">{% icon "download", "size-4 text-iris-600" %}.ics</a>
+        </div>
+      </div>
+    </template>
+  </div>
+</div>

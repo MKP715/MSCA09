@@ -1,0 +1,198 @@
+{#-
+  Committee building blocks (owner: committees). Import with context:
+    {% from "macros/committees.njk" import committeeCard, personCardCm, resRow, aaRow, seriesMini, nextCard, officerChip with context %}
+  Every macro takes one object. `c` is a committee from src/_data/committees.js, `s` a servant from src/_data/servants.js.
+  Anonymity: people are shown with first name + last initial and service e-mail addresses only.
+-#}
+{%- from "macros/ui.njk" import emailLink, formatBadge, langBadge with context -%}
+
+{#- A service e-mail address that wraps (after the @ first) instead of pushing a narrow card off a phone screen.
+    Same look and copy button as emailLink in macros/ui.njk: the link is at least 24px tall, the copy button a 44px
+    tap target below lg (its negative margin keeps the row height), and app.js announces "Copied!". o: { email, lang } -#}
+{% macro cmEmail(o) %}
+{%- if o.email %}
+{%- set e = o.email | string -%}
+{%- set at = e.indexOf("@") -%}
+<span class="inline-flex max-w-full items-center gap-1" x-data="copyText({{ e | json }})">
+  <a href="mailto:{{ e }}" class="inline-flex min-h-6 min-w-0 items-start gap-1.5 py-0.5 font-semibold text-ocean-700 hover:text-iris-700 hover:underline">
+    {% icon "mail", "size-4 shrink-0 mt-0.5" %}<span class="cm-mail-text min-w-0">{% if at > 0 %}{{ e.slice(0, at) }}<wbr>{{ e.slice(at) }}{% else %}{{ e }}{% endif %}</span>
+  </a>
+  <button type="button" @click="copy()" class="-my-2 grid size-11 shrink-0 place-items-center rounded-full text-ink-500 hover:bg-ink-100 hover:text-ink-700 lg:my-0 lg:size-7" aria-label="{{ 'ui.copy_x' | t(o.lang, { what: e }) }}">
+    <span x-show="!copied">{% icon "copy", "size-3.5" %}</span><span x-cloak x-show="copied" class="text-sage-600">{% icon "check", "size-3.5" %}</span>
+  </button>
+</span>
+{%- endif %}
+{% endmacro %}
+
+{#- A servant's name, or what to show instead (open seat, name being confirmed, name not listed). o: { s, lang } -#}
+{% macro personName(o) %}
+{%- set s = o.s -%}
+{%- if s.open %}<span class="text-coral-700">{{ "people.open_position" | t(o.lang) }}</span>
+{%- elif s.name %}{{ s.name }}{% if s.unconfirmed %} <span class="chip chip-soft align-middle text-[11px] font-semibold">{{ "people.to_confirm" | t(o.lang) }}</span>{% endif %}
+{%- else %}<span class="font-medium text-ink-500">{{ ("people.name_tbc" if s.unconfirmed else "committees.unnamed") | t(o.lang) }}</span>{% endif %}
+{%- endmacro %}
+
+{#- Colourful card for the /committees/ index. o: { c, lang, index, calendar, cls, horizontal } -#}
+{% macro committeeCard(o) %}
+{%- set c = o.c -%}
+{%- set L = o.lang -%}
+{%- set nOpen = c.vacancies | length -%}
+{%- set meetings = o.calendar | cmMeetings(c.slug) -%}
+{%- set s0 = meetings[0] -%}
+{%- set href = ("/about/panel/#" + c.slug) if c.category == "officer" else c.url -%}
+{%- if s0 and meetings.length == 1 %}{% set meetsText = (s0 | loc("pattern", L)) + ((" · " + ("committees.plus_breakout" | t(L))) if c.meets_at_area_meeting else "") %}{% else %}{% set meetsText = c | loc("meets", L) %}{% endif -%}
+<a href="{{ href | lurl(L) }}" class="cm-card group {{ 'cm-card-h' if o.horizontal }} {{ o.cls }}" style="{{ c.color | accent(o.index) }}"
+   data-cm-item data-search="{{ c | cmSearch(o.calendar) }}" data-group="{{ c.category }}" data-open="{{ '1' if nOpen else '0' }}">
+  <div class="cm-card-band">
+    <span class="cm-card-icon">{% icon c.icon, "size-7" %}</span>
+    <span class="relative z-[1] flex flex-col items-end gap-2">
+      {%- if nOpen %}<span class="cm-help">{% icon "hand-heart", "size-3.5" %}{{ "committees.help_wanted" | t(L) }}</span>{% endif %}
+      {%- if c.short_en %}<span class="cm-card-acr">{{ c | loc("short", L) }}</span>{% endif %}
+    </span>
+  </div>
+  <div class="flex flex-1 flex-col gap-3 p-5 2xl:p-6">
+    <h3 class="font-display text-lg leading-snug font-bold text-ink-950 group-hover:text-[var(--a-800)] 2xl:text-xl">{{ c | loc("name", L) }}</h3>
+    {%- set sum = c | loc("summary", L) %}
+    {%- if sum %}<p class="line-clamp-3 text-[15px] leading-relaxed text-ink-600">{{ sum }}</p>{% endif %}
+    {%- if c.chairs.length %}
+    <ul class="space-y-1.5" aria-label="{{ 'committees.chairs' | t(L) }}">
+      {%- for s in c.chairs | limit(3) %}
+      <li class="flex min-w-0 items-center gap-2.5 text-sm">
+        {%- if s.open %}
+        <span class="cm-avatar-open" aria-hidden="true">{% icon "plus", "size-4" %}</span>
+        <span class="min-w-0 truncate font-semibold text-coral-700">{{ "committees.open_seat" | t(L) }}{% if s.language %}<span class="font-normal text-ink-500"> · {{ ("language.spanish" if (s.language | cmLangKey) == "es" else "language.english") | t(L) }}</span>{% endif %}</span>
+        {%- else %}
+        <span class="cm-avatar" aria-hidden="true">{% if s.name %}{{ s.name | initials }}{% else %}{% icon "mail", "size-3.5" %}{% endif %}</span>
+        <span class="min-w-0 truncate"><span class="font-semibold {{ 'text-ink-900' if s.name else 'text-ink-500' }}">{{ s.name or (("people.name_tbc" if s.unconfirmed else "committees.unnamed") | t(L)) }}</span>{% if s.language %}<span class="text-ink-500"> · {{ ("language.spanish" if (s.language | cmLangKey) == "es" else "language.english") | t(L) }}</span>{% endif %}</span>
+        {%- endif %}
+      </li>
+      {%- endfor %}
+      {%- if c.chairs.length > 3 %}<li class="pl-10 text-xs font-semibold text-ink-500">{{ "committees.more_n" | t(L, { n: c.chairs.length - 3 }) }}</li>{% endif %}
+    </ul>
+    {%- elif c.liaisons.length %}
+    <p class="flex items-center gap-2.5 text-sm"><span class="cm-avatar" aria-hidden="true">{{ c.liaisons[0].name | initials }}</span><span><span class="font-semibold text-ink-900">{{ c.liaisons[0].name }}</span><span class="text-ink-500"> · {{ c.liaisons[0] | loc("position", L) }}</span></span></p>
+    {%- endif %}
+    {%- if c.category == "officer" %}
+    <p class="mt-auto border-t border-ink-100 pt-3 text-xs font-bold tracking-wide text-[var(--a-700)] uppercase">{{ "committees.cat.officer" | t(L) }}</p>
+    {%- elif meetsText %}
+    <p class="mt-auto flex items-start gap-2 border-t border-ink-100 pt-3 text-sm text-ink-600">
+      <span class="mt-0.5 shrink-0 text-[var(--a-600)]">{% icon "clock", "size-4" %}</span>
+      <span>{{ meetsText }}</span>
+    </p>
+    {%- endif %}
+  </div>
+</a>
+{% endmacro %}
+
+{#- A trusted servant (or an open seat) as a card. o: { s, lang, color, index, role, body, href, cta, ctaEmail, compact, filter } -#}
+{% macro personCardCm(o) %}
+{%- set s = o.s -%}
+{%- set L = o.lang -%}
+{%- set role = o.role or (s | loc("position", L)) -%}
+<div class="cm-person {{ 'cm-person-open' if s.open }} {{ 'p-4' if o.compact }}" style="{{ (o.color or 'ocean') | accent(o.index or 0) }}"
+     {% if o.filter %}data-cm-item data-search="{{ s | cmPersonSearch(o.filter.extra) }}" data-group="{{ o.filter.group }}" data-lang="{{ s.language | cmLangKey }}" data-open="{{ '1' if s.open else '0' }}"{% endif %}>
+  <span class="cm-person-avatar {{ 'size-10 text-base' if o.compact }}" aria-hidden="true">{% if s.open %}{% icon "user-round-plus", "size-5" %}{% elif s.name %}{{ s.name | initials }}{% else %}{% icon "mail", "size-5" %}{% endif %}</span>
+  <div class="min-w-0 flex-1">
+    <p class="text-[11px] font-bold tracking-[0.12em] text-[var(--a-700)] uppercase">{{ role }}</p>
+    {%- if o.body %}<p class="text-xs font-medium text-ink-500">{% if o.href %}<a href="{{ o.href }}" class="hover:text-ink-900 hover:underline">{{ o.body }}</a>{% else %}{{ o.body }}{% endif %}</p>{% endif %}
+    <p class="mt-0.5 font-display {{ 'text-base' if o.compact else 'text-lg' }} font-bold text-ink-950">
+      {{- personName({ s: s, lang: L }) }}
+      {%- if s.completed %} <span class="chip chip-soft align-middle">{{ "people.completed" | t(L) }}</span>{% endif %}
+    </p>
+    {%- if s.language and not o.compact %}<p class="mt-1">{{ langBadge({ language: s.language, lang: L }) }}</p>{% endif %}
+    {%- if s.email %}<div class="mt-2 text-sm">{{ cmEmail({ email: s.email, lang: L }) }}</div>{% endif %}
+    {%- if s.email_alt %}<div class="mt-0.5 text-xs text-ink-500">{{ "people.also" | t(L) }} <a href="mailto:{{ s.email_alt }}" class="cm-mail-text inline-block py-1 font-medium text-ink-600 hover:text-iris-700 hover:underline">{{ s.email_alt }}</a></div>{% endif %}
+    {%- if s.open and o.cta != false %}
+    <a href="{{ (o.ctaEmail or 'chair@msca09aa.org') | cmMailto(('people.serve_subject' | t(L, { role: role }))) }}" class="mt-3 inline-flex min-h-10 items-center gap-1.5 rounded-full bg-coral-600 px-4 text-sm font-semibold text-white shadow-[0_10px_24px_-12px_var(--color-coral-600)] transition hover:-translate-y-0.5 hover:bg-coral-700">
+      {% icon "hand-heart", "size-4" %}{{ "people.could_serve" | t(L) }}
+    </a>
+    {%- endif %}
+  </div>
+</div>
+{% endmacro %}
+
+{#- A guideline / document / link row from committee-resources.csv. o: { r, lang, contact } -#}
+{% macro resRow(o) %}
+{%- set r = o.r -%}
+{%- set L = o.lang -%}
+{%- if r.kind == "guideline" %}{% set ico = "book-marked" %}{% elif r.kind == "pending" %}{% set ico = "file-clock" %}{% elif r.kind == "form" %}{% set ico = "file-pen-line" %}{% elif r.kind == "video" %}{% set ico = "circle-play" %}{% elif r.kind == "link" %}{% set ico = "link-2" %}{% else %}{% set ico = "file-text" %}{% endif -%}
+{%- set title = r | loc("title", L) -%}
+{%- set meta -%}
+  {%- if r.status == "current" %}<span class="chip chip-accent" style="{{ 'sage' | accent }}">{{ "committees.status.current" | t(L) }}</span>{% endif -%}
+  {%- if r.status == "draft" %}<span class="chip chip-accent" style="{{ 'sun' | accent }}">{{ "committees.status.draft" | t(L) }}</span>{% endif -%}
+  {%- if r.status == "reference" %}<span class="chip chip-soft">{{ "committees.status.reference" | t(L) }}</span>{% endif -%}
+  {%- if r.status == "superseded" %}<span class="chip chip-soft">{{ "committees.status.superseded" | t(L) }}</span>{% endif -%}
+  {%- if r.language == "es" %}<span class="chip chip-accent" style="{{ 'coral' | accent }}">ES · {{ "language.spanish" | t(L) }}</span>{% elif r.language == "en" %}<span class="chip chip-accent" style="{{ 'sea' | accent }}">EN · {{ "language.english" | t(L) }}</span>{% endif -%}
+  {%- if r.approved %}<span class="text-xs text-ink-500">{{ "committees.approved" | t(L, { date: r.approved | cmApproved(L) }) if r.kind in ["guideline", "pending"] and r.status != "reference" else (r.approved | cmApproved(L)) }}</span>{% endif -%}
+{%- endset -%}
+{%- if r.url %}
+<a href="{{ r.url }}" target="_blank" rel="noopener" class="cm-res group">
+  <span class="cm-res-ico">{% icon ico, "size-5" %}</span>
+  <span class="min-w-0 flex-1">
+    <span class="block font-semibold text-ink-900 group-hover:text-[var(--a-800)]">{{ title }}</span>
+    <span class="mt-1 flex flex-wrap items-center gap-1.5">{{ meta | safe }}</span>
+  </span>
+  <span class="shrink-0 text-ink-300 group-hover:text-ink-600">{% icon "external-link", "size-4" %}</span>
+</a>
+{%- else %}
+<div class="cm-res">
+  <span class="cm-res-ico opacity-70">{% icon ico, "size-5" %}</span>
+  <span class="min-w-0 flex-1">
+    <span class="block font-semibold text-ink-700">{{ title }}</span>
+    <span class="mt-1 flex flex-wrap items-center gap-1.5">{{ meta | safe }}<span class="chip chip-accent" style="{{ 'lilac' | accent }}">{% icon "hourglass", "size-3" %}{{ "committees.pending" | t(L) }}</span></span>
+    {%- if o.contact %}<span class="mt-1 block text-xs text-ink-500">{{ "committees.pending_ask" | t(L) }} <a class="font-semibold text-ocean-700 hover:underline" href="mailto:{{ o.contact }}">{{ o.contact }}</a></span>{% endif %}
+  </span>
+</div>
+{%- endif %}
+{% endmacro %}
+
+{#- An aa.org literature / service-material item. o: { r, lang } -#}
+{% macro aaRow(o) %}
+{%- set r = o.r -%}
+{%- set L = o.lang -%}
+{%- set isEs = (L | langCode) == "es" -%}
+{%- set cd = (r.code_es if isEs and r.code_es else r.code) -%}
+<li class="rounded-2xl p-3 transition hover:bg-[var(--a-50)]">
+  <div class="min-w-0">
+    <a href="{{ r | cmAaLink(L) }}" target="_blank" rel="noopener" class="group/aa font-semibold text-ink-900 hover:text-[var(--a-800)]">{% if cd %}<span class="cm-code mr-2 align-[1px]">{{ cd }}</span>{% endif %}<span class="group-hover/aa:underline">{{ r | loc("title", L) }}</span></a>
+    <div class="mt-2 flex flex-wrap gap-2">
+      {%- if r.url or r.pdf %}<span class="cm-seg" lang="en"><span class="cm-seg-lab">EN</span>{% if r.url %}<a href="{{ r.url }}" target="_blank" rel="noopener" hreflang="en">{{ "committees.page" | t(L) }}</a>{% endif %}{% if r.pdf %}<a href="{{ r.pdf }}" target="_blank" rel="noopener" hreflang="en">{% icon "file-down", "size-3.5" %}PDF</a>{% endif %}</span>{% endif %}
+      {%- if r.url_es or r.pdf_es %}<span class="cm-seg" lang="es"><span class="cm-seg-lab">ES</span>{% if r.url_es %}<a href="{{ r.url_es }}" target="_blank" rel="noopener" hreflang="es">{{ "committees.page" | t(L) }}</a>{% endif %}{% if r.pdf_es %}<a href="{{ r.pdf_es }}" target="_blank" rel="noopener" hreflang="es">{% icon "file-down", "size-3.5" %}PDF</a>{% endif %}</span>{% endif %}
+    </div>
+  </div>
+</li>
+{% endmacro %}
+
+{#- One of several meetings (e.g. the ten local H&I committees). o: { s (Series), lang, index } -#}
+{% macro seriesMini(o) %}
+{%- set s = o.s -%}
+{%- set L = o.lang -%}
+<a href="{{ s.url | lurl(L) }}" class="group flex h-full flex-col gap-2 rounded-2xl bg-white p-4 shadow-soft ring-1 ring-ink-900/5 transition hover:-translate-y-0.5 hover:shadow-lift">
+  <span class="font-semibold leading-snug text-ink-900 group-hover:text-[var(--a-800)]">{{ s | loc("title", L) or s.title }}</span>
+  <span class="flex items-start gap-1.5 text-sm text-ink-600"><span class="mt-0.5 shrink-0 text-[var(--a-600)]">{% icon "repeat", "size-4" %}</span>{{ s | loc("pattern", L) }}</span>
+  {%- if s.location and (s.location.city or s.location.name) %}<span class="flex items-start gap-1.5 text-sm text-ink-500"><span class="mt-0.5 shrink-0">{% icon "map-pin", "size-4" %}</span>{{ s.location.city or s.location.name }}</span>{% endif %}
+  <span class="mt-auto flex flex-wrap gap-1.5 pt-1">{{ formatBadge({ format: s.format, lang: L }) }}{{ langBadge({ language: s.language, lang: L }) if s.language and s.language != "English" }}</span>
+</a>
+{% endmacro %}
+
+{#- "Next meeting" card for the aside. o: { occ, lang, kind ("own"|"area"|"event") } -#}
+{% macro nextCard(o) %}
+{%- set x = o.occ -%}
+{%- set L = o.lang -%}
+{%- if x %}
+<a href="{{ x.url | lurl(L) }}" class="group flex items-center gap-4 rounded-2xl bg-white/70 p-3 ring-1 ring-ink-900/5 transition hover:bg-white"
+   data-hide-after="{{ x.end }}" data-when="{{ x.start }}" data-until="{{ x.end }}">
+  <span class="flex w-16 shrink-0 flex-col items-center overflow-hidden rounded-2xl bg-white text-center shadow-soft ring-1 ring-ink-900/5">
+    <span class="w-full py-0.5 text-[11px] font-bold tracking-wider text-white uppercase" style="background: var(--a-700)">{{ x.start | dt("mon", L) }}</span>
+    <span class="py-1 font-display text-2xl leading-none font-extrabold text-ink-950">{{ x.start | dt("day", L) }}</span>
+    <span class="pb-1 text-[10px] font-semibold text-ink-500 uppercase">{{ x.start | dt("wkd", L) }}</span>
+  </span>
+  <span class="min-w-0">
+    <span data-rel hidden class="mb-1 inline-block rounded-full bg-sun-100 px-2 py-0.5 text-[11px] font-bold text-sun-800"></span>
+    <span class="block font-semibold leading-snug text-ink-900 group-hover:text-[var(--a-800)]">{{ x | loc("title", L) or x.title }}</span>
+    <span class="mt-0.5 block text-sm text-ink-600">{{ x | loc("timeLabel", L) }}{% if x.city %} · {{ x.city }}{% endif %}</span>
+    {%- if o.kind == "area" %}<span class="mt-1 block text-xs font-medium text-[var(--a-700)]">{{ "committees.breakout_note" | t(L) }}</span>{% endif %}
+  </span>
+</a>
+{%- endif %}
+{% endmacro %}

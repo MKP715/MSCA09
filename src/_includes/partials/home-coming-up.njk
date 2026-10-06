@@ -1,0 +1,104 @@
+{#-
+  "Coming up": Area events as a carousel of flyer cards, the next Area meetings, and the next seven
+  days of service meetings. Everything comes from the Area's Google Calendar (src/_data/calendar.js);
+  past items remove themselves in the browser between builds.
+  Layout (src/assets/css/pages/home.css, .hm-coming-grid):
+    phones / tablets   carousel, Area meetings (a swipe row on phones), this week (3 on phones)
+    1024–1279          carousel full width, then 4 Area meetings in a row, then this week in 2 columns
+    1280 and wider     carousel and Area meetings on the left, this week beside them
+-#}
+{%- set L = lang -%}
+{#- The calendar's own event cards (macros/events.njk) are used when they exist; otherwise simple fallbacks. -#}
+{%- set evPartial = "partials/home-coming-ev.njk" if ("macros/events.njk" | homeIncludeExists) else "partials/home-event-fallback.njk" -%}
+{%- from "macros/ui.njk" import emptyState -%}
+{#- one card per event: a meeting that repeats (e.g. every other Sunday) shows only its next date -#}
+{%- set events = ((calendar.upcomingEvents if calendar else []) or []) | homeOncePerSeries | limit(12) -%}
+{%- set week = ((calendar.upcomingMeetings if calendar else []) or []) | homeWithinDays(7, site.build.iso) | limit(40) -%}
+{%- set areaNext = ((calendar.areaMeetings if calendar else []) or []) | homeFuture(site.build.iso) | limit(8) -%}
+<section class="home-coming relative isolate py-10 sm:py-16 lg:py-24" aria-labelledby="home-coming-title">
+  <div class="home-coming-bg absolute inset-0 -z-10" aria-hidden="true"></div>
+  <div class="wrap hm-coming-grid">
+    {#- stops moving when animations are paused (banner Pause button or the footer switch, MSCA.motionPaused) -#}
+    <div class="hm-coming-car min-w-0" x-data="homeCarousel" x-init="window.MSCA && MSCA.motionPaused && pause()" @msca:motion.window="$event.detail.paused && pause()">
+      <div class="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-end sm:justify-between lg:mb-10" style="{{ 'coral' | accent }}">
+        <div class="max-w-3xl">
+          <p class="eyebrow mb-2">{{ "home.coming.eyebrow" | t(L) }}</p>
+          <h2 id="home-coming-title" class="h-section text-balance">{{ "home.coming.title" | t(L) }}</h2>
+          <p class="lead mt-3 hidden text-pretty sm:block">{{ "home.coming.lead" | t(L) }}</p>
+        </div>
+        <div class="flex shrink-0 flex-wrap items-center gap-2">
+          {%- if events.length > 1 %}
+          <button type="button" class="hm-carousel-btn" x-cloak x-show="auto" @click="toggle()" :aria-pressed="paused.toString()"
+                  aria-label="{{ 'home.carousel.pause' | t(L) }}" :title="paused ? {{ ('home.carousel.play' | t(L)) | json }} : {{ ('home.carousel.pause' | t(L)) | json }}">
+            <span x-show="!paused">{% icon "pause", "size-4" %}</span><span x-show="paused" x-cloak>{% icon "play", "size-4" %}</span>
+          </button>
+          <button type="button" class="hm-carousel-btn" x-ref="prev" aria-label="{{ 'home.coming.prev' | t(L) }}">{% icon "chevron-left", "size-5" %}</button>
+          <button type="button" class="hm-carousel-btn" x-ref="next" aria-label="{{ 'home.coming.next' | t(L) }}">{% icon "chevron-right", "size-5" %}</button>
+          {%- endif %}
+          <a href="{{ '/calendar/' | lurl(L) }}" class="btn btn-ghost">{{ "home.coming.all" | t(L) }}{% icon "arrow-right", "size-4" %}</a>
+        </div>
+      </div>
+      {%- if events.length %}
+      <div class="home-swiper swiper" x-ref="swiper" role="region" aria-roledescription="{{ 'home.carousel.role' | t(L) }}" aria-label="{{ 'home.coming.title' | t(L) }}">
+        <div class="swiper-wrapper" id="home-events" data-empty="#home-events-empty">
+          {%- set part = "slides" %}{% include evPartial %}
+        </div>
+        <div class="home-swiper-pagination" x-ref="pagination"></div>
+      </div>
+      {%- endif %}
+      <div id="home-events-empty" {% if events.length %}hidden{% endif %}>
+        {{ emptyState({ icon: "calendar-clock", title: "home.coming.empty_title" | t(L), body: "home.coming.empty_body" | t(L), color: "coral" }) }}
+      </div>
+    </div>
+
+    {%- if areaNext.length %}
+    <div class="hm-coming-area hm-area-line min-w-0">
+      <div class="mb-5 flex flex-wrap items-end justify-between gap-3">
+        <h3 class="flex items-center gap-2.5 font-display text-xl font-bold text-ink-950 sm:text-2xl" style="{{ 'iris' | accent }}">
+          <span class="icon-tile size-10 rounded-xl">{% icon "calendar-range", "size-5" %}</span>{{ "home.area.title" | t(L) }}
+        </h3>
+        <a href="{{ '/service/area-meetings/' | lurl(L) }}" class="text-sm font-semibold text-iris-700 hover:underline">{{ "home.next.all" | t(L) }} →</a>
+      </div>
+      <ol class="hm-area-list" role="list" data-limit="4">
+        {%- for o in areaNext %}
+        {%- set hosts = o | homeHosts(calendar, districts, L) %}
+        <li data-hide-after="{{ o.end }}" style="{{ (o.color or 'iris') | accent(loop.index0) }}">
+          <div class="hm-area-item group" data-when="{{ o.start }}" data-until="{{ o.end }}">
+            <span class="hm-area-date" aria-hidden="true"><span class="block text-[11px] font-bold tracking-wider uppercase">{{ o.start | dt("mon", L) }}</span><span class="block font-display text-2xl leading-none font-extrabold">{{ o.start | dt("day", L) }}</span></span>
+            <span class="min-w-0">
+              <a href="{{ o.url | lurl(L) }}" class="hm-area-link">
+                <span class="block text-xs font-bold tracking-wide text-(--a-700) uppercase">{{ o | loc("typeLabel", L) }}</span>
+                <span class="mt-0.5 block font-semibold leading-snug text-ink-900 group-hover:text-(--a-700)"><span class="sr-only">{{ o.start | dt("date", L) }} · </span>{{ o.start | dt("wkd", L) }}{% if not o.allDay %} · {{ o.start | dt("time", L) }}{% endif %}</span>
+              </a>
+              <span class="hm-area-hosts">
+                {%- if hosts.length %}
+                {%- for h in hosts %}{% if not loop.first %} {{ "home.area.and" | t(L) }} {% endif %}{% if h.url %}<a href="{{ h.url }}">{{ h.name }}</a>{% else %}{{ h.name }}{% endif %}{% endfor %}
+                {%- else %}{{ "home.area.tba" | t(L) }}{% endif %}
+                {%- if o.city %} · {{ o.city }}{% endif -%}
+              </span>
+              <span data-rel hidden class="hm-area-rel"></span>
+            </span>
+          </div>
+        </li>
+        {%- endfor %}
+      </ol>
+    </div>
+    {%- endif %}
+
+    <aside class="hm-coming-week min-w-0" aria-labelledby="home-week-title">
+      <div class="hm-week-panel">
+        <div class="flex items-start gap-4" style="{{ 'ocean' | accent }}">
+          <span class="icon-tile">{% icon "calendar-clock", "size-6" %}</span>
+          <div class="min-w-0">
+            <h2 id="home-week-title" class="font-display text-2xl leading-tight font-bold text-ink-950">{{ "home.week.title" | t(L) }}</h2>
+            <p class="mt-1 hidden text-sm leading-snug text-ink-500 sm:block">{{ "home.week.lead" | t(L) }}</p>
+          </div>
+        </div>
+        <div class="hm-week-list mt-5">
+          {%- set part = "week" %}{% include evPartial %}
+        </div>
+        <a href="{{ '/calendar/' | lurl(L) }}" class="btn btn-ocean mt-6 w-full">{% icon "calendar-days", "size-4" %}{{ "home.week.all" | t(L) }}</a>
+      </div>
+    </aside>
+  </div>
+</section>

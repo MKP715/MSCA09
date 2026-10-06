@@ -1,0 +1,25 @@
+phrase,reason
+"# Words that look like a person's full name (a first name followed by a capitalised word) but are not a member's name: venues, place names, book titles, authors and public figures, non-alcoholic (Class A) trustees, GSO staff. The site check (scripts/check-site.mjs) lets these through.",
+"# phrase = the exact words as they appear on the page (capital letters matter). reason = why it is not a member's surname. Never add a member's real name here: members appear as first name + last initial (""Maria G.""). Changes to this file need a reviewer's approval.",
+Norma Hertzog,Community center in Costa Mesa (venue)
+Norma Herzog,Misspelling of the Norma Hertzog Community Center (venue)
+Norma Hertz,Norma Hertzog Community Center split across lines in a calendar entry (venue)
+Jim Johnson,Jim Johnson Sports Park (venue)
+Bob Class,Bob Class Gym in Perris (venue)
+Francisco Marriott,San Francisco Marriott Marquis (venue)
+Robert Roa,Robert Road split across lines in a calendar entry (street)
+Joshua Tree,Place name
+Juan Capistrano,San Juan Capistrano (place name)
+Ana Mountains,Santa Ana Mountains (place name)
+Jan News,Newsletter title (January News)
+Manuel Study,"Service Manual study (misspelt ""Manuel"")"
+Bill Sees,"Book title: As Bill Sees It"
+Faith Leaders,"Pamphlet title: Faith Leaders Ask About A.A."
+Concept Five,One of the Twelve Concepts
+James Bible,King James Bible
+Lisa Marie,"Two first names (""Lisa Marie P."")"
+Joel Past,"""Joel, Past Trustee"" in a calendar entry"
+Bernard Smith,"Bernard B. Smith, non-alcoholic (Class A) trustee and Board chair, author of the Conference essay"
+John Muir,Naturalist quoted in a Delegate's Corner post (public figure)
+Thomas Merton,Author quoted in a Delegate's Corner post (public figure)
+Richard Eddy,Photographer credited for a banner photo (Unsplash)

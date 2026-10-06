@@ -1,0 +1,128 @@
+{#- The calendar surface: server-rendered list (no JavaScript / while loading), FullCalendar, agenda, phone month. -#}
+{%- from "macros/events.njk" import eventCard -%}
+{%- set L = lang -%}
+
+{#- one agenda row (Alpine template; `o` comes from areaCalendar.row()) -#}
+{%- macro agendaRow(L) -%}
+<li>
+  <a :href="o.url" class="ag-item group" :style="o.vars" :class="o.st && ('is-' + o.st)" :data-k="o.k"
+     @click="if (!$event.metaKey && !$event.ctrlKey && !$event.shiftKey) { $event.preventDefault(); open(o) }">
+    <span class="ag-item__time" x-text="o.time"></span>
+    <span class="ag-item__main">
+      <span class="ag-item__type"><span class="contents" x-html="o.icon"></span><span x-text="o.typeLabel"></span></span>
+      <span class="ag-item__title" x-text="o.title"></span>
+      <span class="ag-item__meta">
+        <span class="inline-flex min-w-0 items-center gap-1.5">
+          <span x-show="o.fmtIcon === 'video'" class="contents">{% icon "video", "size-3.5 shrink-0" %}</span>
+          <span x-show="o.fmtIcon === 'hybrid'" class="contents">{% icon "monitor-smartphone", "size-3.5 shrink-0" %}</span>
+          <span x-show="o.fmtIcon === 'pin'" class="contents">{% icon "map-pin", "size-3.5 shrink-0" %}</span>
+          <span class="truncate" x-text="o.place || o.fmt"></span>
+        </span>
+        <span x-show="o.lang" class="ag-item__lang">{% icon "languages", "size-3" %}<span x-text="o.lang"></span></span>
+        <span x-show="o.st === 'cancelled'" class="ag-item__flag">{{ "calendar.cancelled" | t(L) }}</span>
+        <span x-show="o.st === 'postponed'" class="ag-item__flag">{{ "calendar.postponed" | t(L) }}</span>
+      </span>
+    </span>
+    <template x-if="o.fl"><img :src="flyerUrl(o.fl, 200)" alt="" class="ag-item__thumb" loading="lazy" decoding="async" @error="$el.remove()"></template>
+    {% icon "chevron-right", "ag-item__chev size-5 shrink-0" %}
+  </a>
+</li>
+{%- endmacro -%}
+
+<div class="cal-surface">
+  {#- ---- before the script runs (and without JavaScript): the next entries, from the build -#}
+  <div x-show="!ready" class="cal-ssr">
+    <p class="cal-ssr__note">{% icon "loader-circle", "size-4 animate-spin" %}<span>{{ "calendar.loading" | t(L) }}</span></p>
+    {%- set ssr = calendar.upcoming | limit(24) %}
+    <ul class="ev-list" role="list" data-limit="16">
+      {%- for occ in ssr %}
+      {{ eventCard({ occ: occ, lang: L, variant: "compact", tag: "li" }) }}
+      {%- endfor %}
+    </ul>
+  </div>
+
+  {#- ---- the feed could not be loaded -#}
+  <div x-cloak x-show="failed" class="cal-error" role="alert">
+    <span class="icon-tile-soft size-12" style="{{ 'coral' | accent }}">{% icon "triangle-alert", "size-6" %}</span>
+    <div>
+      <p class="font-display text-lg font-bold text-ink-950">{{ "calendar.error.title" | t(L) }}</p>
+      <p class="mt-1 text-ink-600">{{ "calendar.error.body" | t(L) }}</p>
+      <div class="mt-4 flex flex-wrap gap-2">
+        <button type="button" class="btn btn-ocean btn-sm" onclick="location.reload()">{% icon "rotate-cw", "size-4" %}{{ "calendar.error.retry" | t(L) }}</button>
+        <a href="{{ calendar.embedUrlEs if L.code == 'es' else calendar.embedUrl }}" target="_blank" rel="noopener" class="btn btn-white btn-sm">{% icon "external-link", "size-4" %}{{ "calendar.browse.google" | t(L) }}</a>
+      </div>
+    </div>
+  </div>
+
+  {#- ---- nothing matches -#}
+  <div x-cloak x-show="ready && counts.total === 0" class="cal-none" role="status">
+    <span class="icon-tile-soft size-12 shrink-0" style="{{ 'iris' | accent }}">{% icon "search-x", "size-6" %}</span>
+    <div class="cal-none__text">
+      <p class="font-display text-lg font-bold text-ink-950">{{ "calendar.none.title" | t(L) }}</p>
+      <p class="mt-1 text-ink-600" x-show="view === 'agenda'">{{ "calendar.none.agenda" | t(L) }}</p>
+      <p class="mt-1 text-ink-600" x-show="view !== 'agenda'">{{ "calendar.none.range" | t(L) }}</p>
+    </div>
+    <div class="cal-none__actions">
+      <button type="button" class="btn btn-white btn-sm" x-show="activeCount() > 0" @click="clearAll()">{% icon "x", "size-4" %}{{ "calendar.filters.clear" | t(L) }}</button>
+      <button type="button" class="btn btn-white btn-sm" x-show="view === 'agenda'" @click="moreAgenda()">{% icon "calendar-plus", "size-4" %}{{ "calendar.agenda.more" | t(L) }}</button>
+    </div>
+  </div>
+
+  {#- ---- FullCalendar (month / week / list) -#}
+  <div x-cloak x-show="ready && usesFc() && !(counts.total === 0 && view === 'list')" class="cal-fc-wrap">
+    <div x-ref="fc" class="cal-fc"></div>
+  </div>
+
+  {#- ---- agenda -#}
+  <div x-cloak x-show="ready && view === 'agenda'" x-ref="agenda" class="cal-agenda">
+    <template x-for="day in agenda" :key="day.date">
+      <section class="ag-day" :class="day.today && 'is-today'" :aria-label="day.weekday + ' ' + day.label" :data-date="day.date">
+        <h3 class="ag-day__head" tabindex="-1">
+          <span class="ag-day__badge" aria-hidden="true"><span class="ag-day__mon" x-text="day.mon"></span><span class="ag-day__num" x-text="day.num"></span></span>
+          <span class="min-w-0 flex-1">
+            <span class="ag-day__wkd" x-text="day.weekday"></span>
+            <span class="ag-day__date" x-text="day.label"></span>
+          </span>
+          <span x-show="day.rel" class="rel-badge" data-tone="today" x-text="day.rel"></span>
+          <span class="ag-day__count" x-text="day.items.length"></span>
+        </h3>
+        <ul class="ag-list" role="list">
+          <template x-for="o in day.items" :key="o.k">
+            {{ agendaRow(L) }}
+          </template>
+        </ul>
+      </section>
+    </template>
+    <div class="ag-foot" x-show="agenda.length || counts.total">
+      <p class="text-sm text-ink-500">{{ "calendar.agenda.showing" | t(L) }} <strong class="text-ink-800" x-text="agendaDays"></strong> {{ "calendar.agenda.days" | t(L) }}</p>
+      <button type="button" class="btn btn-white" @click="moreAgenda()">{% icon "calendar-plus", "size-4" %}{{ "calendar.agenda.more" | t(L) }}</button>
+    </div>
+  </div>
+
+  {#- ---- phone month: dots per day, the chosen day's list below -#}
+  <div x-cloak x-show="ready && view === 'month' && phone" class="cal-mini">
+    <div class="mini-grid">
+      {%- for d in [0, 1, 2, 3, 4, 5, 6] %}
+      <span class="mini-head" aria-hidden="true">{{ ("calendar.dow_short." + d) | t(L) }}</span>
+      {%- endfor %}
+      <template x-for="(w, wi) in mini.weeks" :key="wi">
+        <div class="contents">
+          <template x-for="c in w" :key="c.d">
+            <button type="button" class="mini-day" :class="{ 'is-out': c.out, 'is-today': c.today, 'is-sel': c.d === mini.day, 'has-items': c.count > 0 }"
+                    @click="pickDay(c.d)" :aria-pressed="(c.d === mini.day).toString()" :aria-label="miniLabel(c)">
+              <span class="mini-day__n" x-text="c.n"></span>
+              <span class="mini-dots"><template x-for="(v, i) in c.dots" :key="i"><span class="mini-dot" :style="v"></span></template></span>
+            </button>
+          </template>
+        </div>
+      </template>
+    </div>
+    <h3 class="mini-title" x-text="mini.label"></h3>
+    <ul class="ag-list" role="list" x-show="mini.items.length">
+      <template x-for="o in mini.items" :key="o.k">
+        {{ agendaRow(L) }}
+      </template>
+    </ul>
+    <p class="mini-empty" x-show="!mini.items.length">{{ "calendar.mini.empty" | t(L) }}</p>
+  </div>
+</div>

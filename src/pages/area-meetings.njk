@@ -1,0 +1,301 @@
+---
+pagination: { data: langs, size: 1, alias: lang, addAllPagesToCollections: true }
+permalink: "{{ lang.prefix }}/service/area-meetings/"
+layout: page.njk
+title_key: service.am.title
+description_key: service.am.description
+eyebrow_key: service.am.eyebrow
+lead_key: service.am.lead
+heroIcon: calendar-range
+accent: ocean
+crumbs: [{ label_key: "service.title", url: "/service/" }]
+bare: true
+scripts: ["/assets/js/service.js"]
+---
+{%- from "macros/ui.njk" import sectionHead, formatBadge, copyable with context -%}
+{%- from "macros/service.njk" import kindChip, districtLinks, nextMeeting with context -%}
+{%- set L = lang -%}
+{%- set years = site.panel_years | svcYears -%}
+{%- set areaAll = (calendar.areaMeetings or []) | svcDedupe | svcMatch("type", "^(?!Conference$)") -%}
+{%- set panelItems = areaAll | svcInYears(years) -%}
+{%- set next = calendar.nextAreaMeeting -%}
+{%- set areaSeries = calendar.bySlug["msca09-area-meeting"] if calendar.bySlug else null -%}
+{%- set nextSeries = (next | svcSeries(calendar)) if next else null -%}
+{%- set zoom = (nextSeries.online if (nextSeries and nextSeries.online) else (areaSeries.online if areaSeries else null)) -%}
+{%- set secretary = site.email_secretary or "secretary@msca09aa.org" -%}
+{#- minutes are approved at the next meeting (about a month later): after this many days without them, say so -#}
+{%- set minutesLateDays = 45 -%}
+
+<div class="wrap space-y-20 py-12 lg:space-y-24 lg:py-16 2xl:py-20">
+
+  {#- ============================================================ next + how to attend -#}
+  <section class="grid grid-cols-1 gap-8 xl:grid-cols-12 xl:gap-10" aria-label="{{ 'service.next.eyebrow' | t(L) }}">
+    <div class="xl:col-span-8">
+      {%- if next %}{{ nextMeeting({ occ: next, calendar: calendar, lang: L, hlevel: 2 }) }}{% else %}
+      <div class="card flex flex-col items-start gap-4 p-8" style="{{ 'ocean' | accent }}">
+        <span class="icon-tile">{% icon "calendar-clock", "size-6" %}</span>
+        <h2 class="font-display text-2xl font-bold text-ink-950">{{ "service.next.none_title" | t(L) }}</h2>
+        <p class="text-ink-600">{{ "service.next.none_body" | t(L) }}</p>
+      </div>
+      {%- endif %}
+    </div>
+    <aside class="xl:col-span-4" aria-labelledby="attend-title">
+      <div class="card-accent h-full p-6 2xl:p-8" style="{{ 'sea' | accent }}">
+        <h2 id="attend-title" class="flex items-center gap-3 font-display text-2xl font-bold text-ink-950"><span class="icon-tile">{% icon "door-open", "size-6" %}</span>{{ "service.am.attend_title" | t(L) }}</h2>
+        <ul class="mt-6 space-y-5" role="list">
+          <li class="flex gap-3">{% icon "map-pin", "mt-0.5 size-5 shrink-0 text-sea-600" %}<div><p class="font-semibold text-ink-900">{{ "service.am.attend_person" | t(L) }}</p><p class="text-[15px] text-ink-600">{{ "service.am.attend_person_body" | t(L) }}</p></div></li>
+          <li class="flex gap-3">{% icon "video", "mt-0.5 size-5 shrink-0 text-sea-600" %}<div class="min-w-0 flex-1"><p class="font-semibold text-ink-900">{{ "service.am.attend_zoom" | t(L) }}</p><p class="text-[15px] text-ink-600">{{ "service.am.attend_zoom_body" | t(L) }}</p>
+            {%- if zoom and zoom.zoomId %}
+            <div class="mt-3 space-y-2">
+              {{ copyable({ label: "service.next.zoom_id" | t(L), value: zoom.zoomId, lang: L }) }}
+              {{ copyable({ label: "service.next.passcode" | t(L), value: zoom.passcode, lang: L }) }}
+              {%- if zoom.joinUrl %}<a href="{{ zoom.joinUrl }}" target="_blank" rel="noopener" class="btn btn-ocean mt-1 w-full">{% icon "video", "size-4" %}{{ "service.next.join" | t(L) }}</a>{% endif %}
+            </div>
+            {%- endif %}
+          </div></li>
+          <li class="flex gap-3">{% icon "languages", "mt-0.5 size-5 shrink-0 text-sea-600" %}<div><p class="font-semibold text-ink-900">{{ "service.am.attend_lang" | t(L) }}</p><p class="text-[15px] text-ink-600">{{ "service.am.attend_lang_body" | t(L) }}</p></div></li>
+          <li class="flex gap-3">{% icon "hand-heart", "mt-0.5 size-5 shrink-0 text-sea-600" %}<div><p class="font-semibold text-ink-900">{{ "service.am.attend_who" | t(L) }}</p><p class="text-[15px] text-ink-600">{{ "service.am.attend_who_body" | t(L) }}</p></div></li>
+        </ul>
+      </div>
+    </aside>
+  </section>
+
+  {#- ============================================================ every meeting this panel -#}
+  <section aria-labelledby="list-title" x-data="svcMeetings(window.matchMedia('(max-width: 1023px)').matches ? 'upcoming' : 'all')">
+    {{ sectionHead({ eyebrow: "service.timeline.eyebrow" | t(L, { panel: site.panel }), title: "service.am.list_title" | t(L), lead: "service.am.list_lead" | t(L), id: "list-title", accent: "ocean" }) }}
+    {%- set groups = [["all", "service.am.f_all", "layers", "iris"], ["asa", "service.am.f_asa", "landmark", "coral"], ["asc", "service.am.f_asc", "users", "ocean"], ["special", "service.am.f_special", "sparkles", "copper"]] -%}
+    <div class="no-scrollbar -mx-4 mb-6 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0" role="group" aria-label="{{ 'ui.filters' | t(L) }}">
+      {%- for g in groups %}
+      <button type="button" class="svc-chip" style="{{ g[3] | accent }}" :aria-pressed="(group === '{{ g[0] }}').toString()" @click="group = '{{ g[0] }}'">{% icon g[2], "size-4" %}{{ g[1] | t(L) }}</button>
+      {%- endfor %}
+      <span class="mx-1 hidden w-px self-stretch bg-ink-200 sm:block" aria-hidden="true"></span>
+      {%- for w in [["all", "service.am.w_all"], ["upcoming", "service.am.w_upcoming"], ["past", "service.am.w_past"]] %}
+      <button type="button" class="svc-chip" style="{{ 'sea' | accent }}" :aria-pressed="(when === '{{ w[0] }}').toString()" @click="when = '{{ w[0] }}'">{{ w[1] | t(L) }}</button>
+      {%- endfor %}
+    </div>
+
+    {%- if not panelItems.length %}
+    <p class="card p-8 text-center text-ink-500">{{ "service.am.none" | t(L) }}</p>
+    {%- endif %}
+
+    {%- for y in years | svcYearsWith(panelItems) %}
+    {%- set yItems = panelItems | svcInYears([y]) -%}
+    {%- set placeholders = yItems | svcCount("type", "Area") -%}
+    <h3 class="mt-10 mb-4 flex items-center gap-3 font-display text-2xl font-extrabold text-ink-950 first-of-type:mt-0"><span class="rounded-xl bg-ink-950 px-3 py-1 text-white">{{ y }}</span><span class="h-px flex-1 bg-ink-200"></span></h3>
+    {%- if placeholders == yItems.length %}
+    {#- a year whose meetings are only 2nd-Sunday placeholders: one compact strip -#}
+    <div class="rounded-3xl bg-sea-50 p-5 ring-1 ring-sea-100 sm:p-6" style="{{ 'sea' | accent }}" x-show="group === 'all' && when !== 'past'">
+      <p class="flex items-start gap-2 text-[15px] text-ink-700">{% icon "calendar-clock", "mt-0.5 size-5 shrink-0 text-sea-600" %}<span>{{ "service.timeline.placeholder_note" | t(L, { year: y }) }}</span></p>
+      <ul class="mt-4 flex flex-wrap gap-2" role="list">
+        {%- for occ in yItems %}
+        <li><a href="{{ occ.url | lurl(L) }}" class="inline-flex items-center gap-2 rounded-2xl bg-white px-3 py-2 text-sm font-semibold text-ink-800 shadow-sm ring-1 ring-sea-100 transition hover:-translate-y-0.5 hover:ring-sea-300"><span class="font-display text-base font-extrabold text-sea-700">{{ occ.start | dt("day", L) }}</span><span class="capitalize">{{ occ.start | dt("mon", L) | replace(".", "") }}</span></a></li>
+        {%- endfor %}
+      </ul>
+    </div>
+    {%- else %}
+
+    {#- desktop / laptop: a table -#}
+    <div class="hidden lg:block">
+      <table class="svc-mt">
+        <thead>
+          <tr>
+            <th scope="col">{{ "service.am.col_date" | t(L) }}</th>
+            <th scope="col">{{ "service.am.col_meeting" | t(L) }}</th>
+            <th scope="col">{{ "service.am.col_host" | t(L) }}</th>
+            <th scope="col">{{ "service.am.col_where" | t(L) }}</th>
+            <th scope="col">{{ "service.am.col_papers" | t(L) }}</th>
+            <th scope="col">{{ "service.am.col_minutes" | t(L) }}</th>
+          </tr>
+        </thead>
+        <tbody data-svc-rows="table">
+          {%- for occ in yItems %}
+          {%- set s = occ | svcSeries(calendar) -%}
+          {%- set kind = occ | svcKind(s) -%}
+          {%- set info = kind | svcKindInfo -%}
+          {%- set hosts = occ | svcHosts(s) -%}
+          {%- set past = occ.end | svcIsPast -%}
+          {%- set mins = documents | svcMinutesFor(occ.date, kind) -%}
+          {%- set agenda = s | svcLinks("agenda|orden") -%}
+          {%- set agendaDocs = documents | svcAgendaFor(occ.date, kind) -%}
+          {%- set fl = (s.flyers if s else []) or [] -%}
+          {%- set hasMinutes = kind in ["asa", "election", "shareback", "asc", "budget", "preconf"] -%}
+          {%- set late = hasMinutes and past and ((occ.end | svcDaysFrom) < (0 - minutesLateDays)) -%}
+          {%- set grp = "asa" if kind in ["asa", "election", "shareback"] else ("asc" if kind in ["asc", "budget"] else ("special" if kind in ["preconf", "foro", "servathon", "orientation"] else "other")) -%}
+          <tr class="{{ 'is-past' if past }}{{ ' is-next' if (next and occ.key == next.key) }}" style="{{ info.color | accent }}" data-past-after="{{ occ.end }}"
+              x-show="show('{{ grp }}', '{{ occ.end }}')">
+            <td>
+              <div class="svc-mt__date">
+                <span class="svc-mt__dbadge"><span><small>{{ occ.start | dt("mon", L) | replace(".", "") }}</small><b>{{ occ.start | dt("day", L) }}</b></span></span>
+                <span><span class="block font-semibold capitalize text-ink-900">{{ occ.start | dt("weekday", L) }}</span><span class="block text-sm text-ink-500">{{ occ | loc("timeLabel", L) }}</span>{#- shown by CSS once the row is past (also when it turns past after the build) -#}<span class="svc-mt__held">{% icon "check", "size-3" %}{{ "service.timeline.done" | t(L) }}</span></span>
+              </div>
+            </td>
+            <td>
+              <div class="flex flex-wrap items-center gap-1.5">{{ kindChip({ kind: kind, lang: L }) }}{{ formatBadge({ format: occ.format, lang: L }) }}</div>
+              <a href="{{ occ.url | lurl(L) }}" class="mt-1.5 block font-semibold text-ink-900 hover:text-(--a-700) hover:underline">{{ ("service.kind_title." + kind) | t(L) }}</a>
+              {%- if kind == "area" %}<span class="block text-sm text-ink-500">{{ "service.am.placeholder_row" | t(L) }}</span>{% endif %}
+            </td>
+            <td class="whitespace-nowrap">{% if hosts.length %}{{ districtLinks({ slugs: hosts, lang: L }) }}{% else %}<span class="text-ink-500">—</span>{% endif %}</td>
+            <td class="max-w-[22rem]">
+              {%- if s and s.location and not s.location.tba %}
+              <span class="block font-semibold text-ink-800">{{ s.location.name or s.location.city or s.location.raw }}</span>
+              <span class="block text-sm text-ink-500">{{ s.location.address or "" }}</span>
+              {%- elif occ.venue or occ.city %}<span class="font-semibold text-ink-800">{{ occ.venue or occ.city }}</span>
+              {%- elif "virtual" in (occ.format | lower) %}<span class="text-ink-600">Zoom</span>
+              {%- else %}<span class="text-ink-500">{{ "service.next.place_tba" | t(L) }}</span>{% endif %}
+            </td>
+            <td>
+              <div class="flex items-start gap-3">
+                {#- one thumbnail; every flyer of the meeting (usually English + Spanish) opens in the same lightbox -#}
+                {%- if fl.length %}
+                <div class="shrink-0" data-gallery>
+                  {%- for f in fl %}
+                  <a href="{{ f.img or (f.id | driveImg(1600)) }}" data-pswp data-pswp-width="0" data-pswp-height="0" target="_blank" rel="noopener"
+                     {% if loop.first %}class="svc-thumb relative" title="{{ ('service.am.flyers_n' | t(L, { n: fl.length })) if fl.length > 1 else ('service.next.flyer' | t(L)) }}"{% else %}class="hidden" tabindex="-1" aria-hidden="true"{% endif %}>
+                    {%- if loop.first %}
+                    <img src="{{ f.id | driveImg(160) }}" alt="{{ ('service.am.flyers_n' | t(L, { n: fl.length })) if fl.length > 1 else ('service.next.flyer' | t(L)) }}" width="56" height="72" loading="lazy" decoding="async" onerror="this.onerror=function(){this.closest('a').remove()};this.src='{{ f.fallback }}'">
+                    {%- if fl.length > 1 %}<span class="svc-thumb__n" aria-hidden="true">{% icon "images", "size-3" %}{{ fl.length }}</span>{% endif %}
+                    {%- endif %}
+                  </a>
+                  {%- endfor %}
+                </div>
+                {%- endif %}
+                <div class="flex min-w-0 flex-col items-start gap-1.5">
+                  {%- for d in agendaDocs | limit(2) %}<a href="{{ d.url }}" target="_blank" rel="noopener" class="svc-paper">{% icon "list-ordered", "size-3.5" %}{{ "service.next.agenda" | t(L) }} · {{ ("language.spanish" if d.language == "Spanish" else ("language.bilingual" if "ilingual" in d.language else "language.english")) | t(L) }}</a>{% endfor %}
+                  {%- if not agendaDocs.length %}{% for a in agenda | limit(2) %}<a href="{{ a.url }}" target="_blank" rel="noopener" class="svc-paper">{% icon "list-ordered", "size-3.5" %}{{ (a | loc("label", L)) or ("service.next.agenda" | t(L)) }}</a>{% endfor %}{% endif %}
+                </div>
+                {%- if not fl.length and not agenda.length and not agendaDocs.length %}<span class="text-sm text-ink-500">—</span>{% endif %}
+              </div>
+            </td>
+            <td>
+              {%- if mins.length %}
+              <div class="flex flex-wrap gap-1.5">{% for d in mins | limit(2) %}<a href="{{ d.url }}" target="_blank" rel="noopener" class="btn btn-sm bg-sage-100 text-sage-800 hover:bg-sage-200">{% icon "notebook-pen", "size-3.5" %}{{ ("language.spanish" if d.language == "Spanish" else "language.english") | t(L) }}</a>{% endfor %}</div>
+              {%- elif late %}<a href="mailto:{{ secretary }}?subject={{ 'service.am.minutes_ask_subject' | t(L, { date: (occ.start | dt('date', L)) }) | urlencode }}" class="svc-missing">{% icon "mail-question", "size-3.5 shrink-0" %}<span>{{ "service.am.minutes_missing" | t(L) }}</span></a>
+              {%- elif past and hasMinutes %}<span class="text-sm whitespace-nowrap text-ink-500">{{ "service.am.minutes_pending" | t(L) }}</span>
+              {%- else %}<span class="text-sm text-ink-300">—</span>{% endif %}
+            </td>
+          </tr>
+          {%- endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    {#- phones & tablets: cards -#}
+    <ol class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:hidden" role="list" data-svc-rows="cards">
+      {%- for occ in yItems %}
+      {%- set s = occ | svcSeries(calendar) -%}
+      {%- set kind = occ | svcKind(s) -%}
+      {%- set info = kind | svcKindInfo -%}
+      {%- set hosts = occ | svcHosts(s) -%}
+      {%- set past = occ.end | svcIsPast -%}
+      {%- set mins = documents | svcMinutesFor(occ.date, kind) -%}
+      {%- set agendaDocs = documents | svcAgendaFor(occ.date, kind) -%}
+      {%- set hasMinutes = kind in ["asa", "election", "shareback", "asc", "budget", "preconf"] -%}
+          {%- set late = hasMinutes and past and ((occ.end | svcDaysFrom) < (0 - minutesLateDays)) -%}
+      {%- set grp = "asa" if kind in ["asa", "election", "shareback"] else ("asc" if kind in ["asc", "budget"] else ("special" if kind in ["preconf", "foro", "servathon", "orientation"] else "other")) -%}
+      <li class="svc-mcard {{ 'is-past' if past }}{{ ' is-next' if (next and occ.key == next.key) }}" style="{{ info.color | accent }}" data-past-after="{{ occ.end }}" x-show="show('{{ grp }}', '{{ occ.end }}')">
+        <div class="flex items-start gap-3">
+          <span class="svc-mt__dbadge"><span><small>{{ occ.start | dt("mon", L) | replace(".", "") }}</small><b>{{ occ.start | dt("day", L) }}</b></span></span>
+          <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap items-center gap-1.5">{{ kindChip({ kind: kind, lang: L }) }}{{ formatBadge({ format: occ.format, lang: L }) }}</div>
+            <a href="{{ occ.url | lurl(L) }}" class="mt-1 block font-display text-lg font-bold leading-snug text-ink-950">{{ ("service.kind_title." + kind) | t(L) }}</a>
+            <p class="text-sm text-ink-500"><span class="capitalize">{{ occ.start | dt("weekday", L) }}</span> · {{ occ | loc("timeLabel", L) }}</p>
+            <span class="svc-mt__held">{% icon "check", "size-3" %}{{ "service.timeline.done" | t(L) }}</span>
+          </div>
+        </div>
+        <dl class="space-y-1.5 text-sm">
+          {%- if hosts.length %}<div class="flex gap-2"><dt>{% icon "flag", "size-4 text-ink-400" %}<span class="sr-only">{{ "service.next.host" | t(L) }}</span></dt><dd>{{ districtLinks({ slugs: hosts, lang: L }) }}</dd></div>{% endif %}
+          <div class="flex gap-2"><dt>{% icon "map-pin", "size-4 text-ink-400" %}<span class="sr-only">{{ "service.next.where" | t(L) }}</span></dt><dd class="text-ink-700">{% if s and s.location and not s.location.tba %}{% if s.location.name %}{{ s.location.name }}{% if s.location.city %}, {{ s.location.city }}{% endif %}{% else %}{{ s.location.raw }}{% endif %}{% elif occ.venue or occ.city %}{{ occ.venue or occ.city }}{% elif "virtual" in (occ.format | lower) %}Zoom{% else %}{{ "service.next.place_tba" | t(L) }}{% endif %}</dd></div>
+        </dl>
+        <div class="flex flex-wrap gap-1.5">
+          {%- for f in (s.flyers if s else []) | limit(1) %}<a href="{{ f.view }}" target="_blank" rel="noopener" class="btn btn-ghost btn-sm">{% icon "image", "size-3.5" %}{{ "service.next.flyer" | t(L) }}</a>{% endfor %}
+          {%- for d in agendaDocs | limit(2) %}<a href="{{ d.url }}" target="_blank" rel="noopener" class="btn btn-ghost btn-sm">{% icon "list-ordered", "size-3.5" %}{{ "service.next.agenda" | t(L) }} · {{ ("language.spanish" if d.language == "Spanish" else ("language.bilingual" if "ilingual" in d.language else "language.english")) | t(L) }}</a>{% endfor %}
+          {%- for d in mins | limit(2) %}<a href="{{ d.url }}" target="_blank" rel="noopener" class="btn btn-sm bg-sage-100 text-sage-800">{% icon "notebook-pen", "size-3.5" %}{{ "service.am.col_minutes" | t(L) }} · {{ ("language.spanish" if d.language == "Spanish" else "language.english") | t(L) }}</a>{% endfor %}
+          {%- if not mins.length and late %}<a href="mailto:{{ secretary }}?subject={{ 'service.am.minutes_ask_subject' | t(L, { date: (occ.start | dt('date', L)) }) | urlencode }}" class="svc-missing">{% icon "mail-question", "size-3.5 shrink-0" %}<span>{{ "service.am.col_minutes" | t(L) }}: {{ "service.am.minutes_missing" | t(L) }}</span></a>
+          {%- elif not mins.length and past and hasMinutes %}<span class="inline-flex min-h-8 items-center text-sm text-ink-500">{{ "service.am.col_minutes" | t(L) }}: {{ "service.am.minutes_pending" | t(L) }}</span>{% endif %}
+        </div>
+      </li>
+      {%- endfor %}
+    </ol>
+    {%- endif %}
+    {%- endfor %}
+    <p class="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-ink-500">
+      {% icon "info", "size-4" %}<span>{{ "service.am.list_note" | t(L) }}</span>
+      <a href="{{ '/documents/minutes/' | lurl(L) }}" class="font-semibold text-ocean-700 hover:underline">{{ "service.am.older_minutes" | t(L) }}</a>
+    </p>
+  </section>
+
+  {#- ============================================================ ASC vs Assembly -#}
+  <section id="asc-vs-asa" aria-labelledby="vs-title" class="scroll-mt-28">
+    {{ sectionHead({ eyebrow: "service.am.vs_eyebrow" | t(L), title: "service.am.vs_title" | t(L), lead: "service.am.vs_lead" | t(L), id: "vs-title", accent: "coral" }) }}
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      {%- for b in [["asa", "coral", "landmark"], ["asc", "ocean", "users"]] %}
+      <article class="card-accent p-6 sm:p-8 2xl:p-10" style="{{ b[1] | accent }}">
+        <div class="flex items-center gap-4">
+          <span class="icon-tile size-14">{% icon b[2], "size-7" %}</span>
+          <div>
+            <p class="eyebrow">{{ ("service.am." + b[0] + "_abbr") | t(L) }}</p>
+            <h3 class="font-display text-2xl font-extrabold text-ink-950">{{ ("service.kind_title." + b[0]) | t(L) }}</h3>
+          </div>
+        </div>
+        <p class="mt-5 text-[17px] leading-relaxed text-ink-700">{{ ("service.am." + b[0] + "_what") | t(L) }}</p>
+        <dl class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {%- for f in ["when", "votes", "decides", "gsr"] %}
+          <div class="rounded-2xl bg-(--a-50) p-4">
+            <dt class="text-xs font-bold tracking-wider text-(--a-700) uppercase">{{ ("service.am.f_" + f) | t(L) }}</dt>
+            <dd class="mt-1 text-[15px] leading-relaxed text-ink-700">{{ ("service.am." + b[0] + "_" + f) | t(L) }}</dd>
+          </div>
+          {%- endfor %}
+        </dl>
+      </article>
+      {%- endfor %}
+    </div>
+
+    <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
+      <div class="card p-6 lg:col-span-2 2xl:p-8" style="{{ 'iris' | accent }}">
+        <h3 class="flex items-center gap-2 font-display text-xl font-bold text-ink-950">{% icon "vote", "size-5 text-iris-600" %}{{ "service.am.voters_title" | t(L) }}</h3>
+        <ul class="mt-4 grid grid-cols-1 gap-x-6 gap-y-2.5 sm:grid-cols-2" role="list">
+          {%- for i in [1, 2, 3, 4, 5] %}
+          <li class="flex gap-2.5 text-[15px] text-ink-700">{% icon "check", "mt-1 size-4 shrink-0 text-iris-600" %}<span>{{ ("service.am.voter_" + i) | t(L) }}</span></li>
+          {%- endfor %}
+        </ul>
+        <p class="mt-5 rounded-2xl bg-iris-50 p-4 text-sm leading-relaxed text-ink-700">{{ "service.am.good_standing" | t(L) }}</p>
+      </div>
+      <div class="card p-6 2xl:p-8" style="{{ 'sun' | accent }}">
+        <h3 class="flex items-center gap-2 font-display text-xl font-bold text-ink-950">{% icon "scale", "size-5 text-sun-700" %}{{ "service.am.majority_title" | t(L) }}</h3>
+        <div class="mt-5 space-y-4">
+          <div><div class="flex justify-between text-sm font-semibold"><span>{{ "service.am.simple" | t(L) }}</span><span>50% + 1</span></div><div class="svc-bar mt-1.5"><span style="width: 51%"></span></div></div>
+          <div><div class="flex justify-between text-sm font-semibold"><span>{{ "service.am.substantial" | t(L) }}</span><span>2/3</span></div><div class="svc-bar mt-1.5"><span style="width: 66.7%"></span></div></div>
+        </div>
+        <p class="mt-4 text-[15px] leading-relaxed text-ink-600">{{ "service.am.majority_body" | t(L) }}</p>
+      </div>
+    </div>
+  </section>
+
+  {#- ============================================================ a day at the Assembly -#}
+  <section aria-labelledby="day-title">
+    {{ sectionHead({ eyebrow: "service.am.day_eyebrow" | t(L), title: "service.am.day_title" | t(L), lead: "service.am.day_lead" | t(L), id: "day-title", accent: "sage" }) }}
+    {%- set day = [
+      ["08:00", "clipboard-check", "sage", "registration"],
+      ["09:00", "sun-medium", "sun", "opening"],
+      ["09:20", "megaphone", "ocean", "reports"],
+      ["12:15", "utensils", "copper", "lunch"],
+      ["13:00", "gavel", "coral", "old"],
+      ["14:35", "sparkles", "iris", "new"],
+      ["14:50", "heart-handshake", "blush", "close"],
+      ["", "house", "sea", "home"]
+    ] -%}
+    <ol class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4" role="list">
+      {%- for d in day %}
+      <li class="reveal card relative flex flex-col gap-2 p-5" style="{{ d[2] | accent }}; --reveal-delay: {{ loop.index0 * 60 }}ms">
+        <div class="flex items-center justify-between">
+          <span class="icon-tile size-10 rounded-xl">{% icon d[1], "size-5" %}</span>
+          <span class="rounded-full bg-(--a-100) px-2.5 py-1 text-xs font-bold text-(--a-800)">{{ ("2026-09-13T" + d[0] + ":00-07:00") | dt("time", L) if d[0] else ("service.am.day_after" | t(L)) }}</span>
+        </div>
+        <h3 class="mt-1 font-display text-lg font-bold text-ink-950">{{ ("service.am.day_" + d[3]) | t(L) }}</h3>
+        <p class="text-sm leading-relaxed text-ink-600">{{ ("service.am.day_" + d[3] + "_body") | t(L) }}</p>
+      </li>
+      {%- endfor %}
+    </ol>
+    <p class="mt-4 text-sm text-ink-500">{{ "service.am.day_note" | t(L) }}</p>
+  </section>
+</div>

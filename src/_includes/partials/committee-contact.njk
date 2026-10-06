@@ -1,0 +1,61 @@
+{#- Contact card and next meeting for committee pages (first on phones, top of the aside on desktop).
+    Expects: c, L, nextInfo. -#}
+{%- from "macros/ui.njk" import emailLink with context -%}
+{%- from "macros/committees.njk" import nextCard with context -%}
+<div class="grid items-start gap-5 md:grid-cols-2 xl:grid-cols-1">
+  {#- contact -#}
+  <div class="overflow-hidden rounded-3xl bg-white shadow-soft ring-1 ring-ink-900/5">
+    <div class="flex items-center gap-3 px-5 py-4 text-white" style="background: linear-gradient(120deg, var(--a-800), var(--a-700));">
+      <span class="grid size-10 place-items-center rounded-xl bg-white/15 ring-1 ring-white/25">{% icon "send", "size-5" %}</span>
+      <h2 class="font-display text-lg font-bold">{{ "committees.contact_title" | t(L) }}</h2>
+    </div>
+    <dl class="space-y-4 p-5 text-sm">
+      {%- if c.email %}
+      <div>
+        <dt class="text-xs font-bold tracking-wide text-ink-500 uppercase">{%- if c.category == "coordinate" %}{{ "committees.area_liaison" | t(L) }}{% elif c.category == "service-event" %}{{ "committees.contact_organizer" | t(L) }}{% elif c.category in ["subcommittee", "ad-hoc"] and c.email == "chair@msca09aa.org" %}{{ "committees.contact_via_area_chair" | t(L) }}{% else %}{{ "committees.contact_chair" | t(L) }}{% endif %}</dt>
+        <dd class="mt-1">{{ emailLink({ email: c.email, lang: L }) }}</dd>
+      </div>
+      {%- endif %}
+      {%- if c.email_es %}
+      <div>
+        <dt class="text-xs font-bold tracking-wide text-ink-500 uppercase">{{ ("committees.contact_chair_es_lavina" if c.slug == "grapevine-la-vina" else "committees.contact_chair_es") | t(L) }}</dt>
+        <dd class="mt-1">{{ emailLink({ email: c.email_es, lang: L }) }}</dd>
+      </div>
+      {%- endif %}
+      {%- if c.email_other %}
+      <div>
+        <dt class="text-xs font-bold tracking-wide text-ink-500 uppercase">{{ c | loc("email_other_label", L) }}</dt>
+        <dd class="mt-1">{{ emailLink({ email: c.email_other, lang: L }) }}</dd>
+      </div>
+      {%- endif %}
+      {%- if c.phone %}
+      <div>
+        <dt class="text-xs font-bold tracking-wide text-ink-500 uppercase">{{ c | loc("phone_label", L) }}</dt>
+        <dd class="mt-1"><a href="{{ c.phone | telHref }}" class="inline-flex items-center gap-1.5 font-semibold text-ocean-700 hover:underline">{% icon "phone", "size-4" %}{{ c.phone }}</a></dd>
+      </div>
+      {%- endif %}
+      {%- if c.address %}
+      <div>
+        <dt class="text-xs font-bold tracking-wide text-ink-500 uppercase">{{ "committees.address" | t(L) }}</dt>
+        <dd class="mt-1 text-ink-700"><a href="https://www.google.com/maps/search/?api=1&query={{ c.address | urlencode }}" target="_blank" rel="noopener" class="inline-flex items-start gap-1.5 hover:text-ocean-700 hover:underline">{% icon "map-pin", "size-4 mt-0.5 shrink-0" %}{{ c.address }}</a></dd>
+      </div>
+      {%- endif %}
+      {%- if c.website %}
+      <div>
+        <dt class="text-xs font-bold tracking-wide text-ink-500 uppercase">{{ "ui.website" | t(L) }}</dt>
+        <dd class="mt-1"><a href="{{ c.website }}" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 font-semibold text-ocean-700 hover:underline">{% icon "globe", "size-4" %}{{ c.website | hostname }}</a></dd>
+      </div>
+      {%- endif %}
+      {%- if not c.email and not c.phone %}<p class="text-ink-600">{{ "committees.contact_via_chair" | t(L) }} {{ emailLink({ email: "chair@msca09aa.org", lang: L }) }}</p>{% endif %}
+    </dl>
+  </div>
+
+  {#- next meeting -#}
+  {%- if nextInfo and nextInfo.occ %}
+  <div class="rounded-3xl p-5 ring-1 ring-ink-900/5" style="background: linear-gradient(160deg, var(--a-50), white);" data-hide-after="{{ nextInfo.occ.end }}">
+    <h2 class="mb-3 flex items-center gap-2 font-display text-base font-bold text-ink-950">{% icon "calendar-clock", "size-5 text-[var(--a-600)]" %}{{ ("committees.next_area_meeting" if nextInfo.kind == "area" else ("committees.next_event" if nextInfo.kind == "event" else "committees.next_meeting")) | t(L) }}</h2>
+    {{ nextCard({ occ: nextInfo.occ, lang: L, kind: nextInfo.kind }) }}
+  </div>
+  {%- endif %}
+
+</div>

@@ -1,0 +1,413 @@
+---
+pagination: { data: langs, size: 1, alias: lang, addAllPagesToCollections: true }
+permalink: "{{ lang.prefix }}/newcomers/"
+layout: base.njk
+title_key: newcomers.title
+description_key: newcomers.description
+accent: coral
+scripts: ["/assets/js/content.js"]
+---
+{%- from "macros/content.njk" import officeCard, faqList, resourceCard, quoteCard, pageNav, langTag with context -%}
+{%- set L = lang -%}
+{%- set es = { code: "es" } -%}
+{%- set R = resources.byKey or {} -%}
+{%- set cities = districts | cityIndex(L) -%}
+
+{#- ============================================================ HERO -#}
+<section class="relative isolate overflow-hidden" data-hero style="{{ 'sea' | accent }}">
+  <div class="absolute inset-0 -z-10" style="background:
+      radial-gradient(60rem 30rem at 0% 0%, color-mix(in oklab, var(--color-sea-200) 80%, transparent), transparent 60%),
+      radial-gradient(50rem 30rem at 100% 10%, color-mix(in oklab, var(--color-blush-200) 70%, transparent), transparent 60%),
+      radial-gradient(40rem 24rem at 60% 100%, color-mix(in oklab, var(--color-sun-100) 90%, transparent), transparent 70%),
+      linear-gradient(180deg, var(--color-sea-50), white);"></div>
+  <div class="bg-confetti absolute inset-0 -z-10 opacity-60" aria-hidden="true"></div>
+  <div class="wrap pt-6 pb-10 sm:pt-10 lg:pt-12 lg:pb-16 2xl:pb-20">
+    <nav aria-label="{{ 'nav.breadcrumb' | t(L) }}" class="mb-5 text-sm">
+      <ol class="flex flex-wrap items-center gap-1.5 text-ink-500">
+        <li><a href="{{ '/' | lurl(L) }}" class="inline-flex items-center gap-1 hover:text-ink-900">{% icon "house", "size-4" %}<span class="sr-only">{{ "nav.home" | t(L) }}</span></a></li>
+        <li class="flex items-center gap-1.5">{% icon "chevron-right", "size-3.5 text-ink-300" %}<span class="font-medium text-ink-800" aria-current="page">{{ "newcomers.crumb" | t(L) }}</span></li>
+      </ol>
+    </nav>
+    <div class="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-12 2xl:gap-16">
+      <div class="lg:col-span-7 2xl:col-span-7">
+        <p class="eyebrow mb-3" style="{{ 'coral' | accent }}" data-pagefind-weight="7">{% icon "heart-handshake", "size-4" %}{{ "newcomers.eyebrow" | t(L) }}</p>
+        <h1 class="font-display text-4xl font-extrabold tracking-tight text-balance text-ink-950 sm:text-5xl 2xl:text-6xl" data-pagefind-weight="10">{{ "newcomers.h1" | t(L) }}</h1>
+        <p class="lead mt-5 max-w-2xl text-pretty">{{ "newcomers.lead" | t(L) }}</p>
+        <div class="mt-8 grid gap-3 sm:flex sm:flex-wrap">
+          <a href="#call" class="btn btn-primary btn-lg justify-center">{% icon "phone", "size-5" %}{{ "newcomers.cta_call" | t(L) }}</a>
+          <a href="#find" class="btn btn-white btn-lg justify-center">{% icon "smartphone", "size-5" %}{{ "newcomers.cta_app" | t(L) }}</a>
+          <a href="{{ R.oiaa | loc('url', L) }}" target="_blank" rel="noopener" class="btn btn-ghost btn-lg justify-center bg-white/60">{% icon "video", "size-5" %}{{ "newcomers.cta_online" | t(L) }}{% icon "external-link", "size-3.5 opacity-60" %}</a>
+        </div>
+        <ul class="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm font-semibold text-ink-700">
+          <li class="inline-flex items-center gap-2"><span class="grid size-6 place-items-center rounded-full bg-sage-100 text-sage-700">{% icon "check", "size-3.5" %}</span>{{ "newcomers.promise_free" | t(L) }}</li>
+          <li class="inline-flex items-center gap-2"><span class="grid size-6 place-items-center rounded-full bg-sage-100 text-sage-700">{% icon "check", "size-3.5" %}</span>{{ "newcomers.promise_listen" | t(L) }}</li>
+          <li class="inline-flex items-center gap-2"><span class="grid size-6 place-items-center rounded-full bg-sage-100 text-sage-700">{% icon "check", "size-3.5" %}</span>{{ "newcomers.promise_spanish" | t(L) }}</li>
+        </ul>
+      </div>
+      <div class="hidden lg:col-span-5 lg:block">
+        <div class="relative">
+          <div class="pointer-events-none absolute -inset-4 -z-10 rounded-[2.5rem] bg-gradient-to-br from-sea-200/60 via-white/0 to-coral-200/50 blur-2xl" aria-hidden="true"></div>
+          <figure class="card overflow-hidden" style="{{ 'coral' | accent }}">
+            <div class="ct-ring px-6 py-4 text-white sm:px-8">
+              <p class="flex items-center gap-2 text-xs font-bold tracking-[0.18em] uppercase">{% icon "sparkles", "size-4" %}{{ "newcomers.solution_label" | t(L) }}</p>
+            </div>
+            <blockquote class="px-6 pt-6 text-lg leading-relaxed font-medium text-pretty text-ink-900 sm:px-8 sm:text-xl">“{{ "newcomers.solution_quote" | t(L) }}”</blockquote>
+            <figcaption class="px-6 pt-3 text-sm font-semibold text-coral-700 sm:px-8">— <a class="hover:underline" href="{{ R['new-to-aa'] | loc('url', L) }}" target="_blank" rel="noopener">aa.org</a></figcaption>
+            <div class="mt-6 grid grid-cols-2 border-t border-ink-100">
+              <a href="{{ R['self-assessment'] | loc('url', L) }}" target="_blank" rel="noopener" class="group flex items-center gap-3 p-5 transition hover:bg-sage-50 sm:px-8">
+                <span class="grid size-10 shrink-0 place-items-center rounded-xl bg-sage-100 text-sage-700 transition group-hover:scale-110">{% icon "clipboard-check", "size-5" %}</span>
+                <span class="text-sm font-bold leading-snug text-ink-900">{{ "newcomers.self_assessment" | t(L) }}</span>
+              </a>
+              <a href="#meeting" class="group flex items-center gap-3 border-l border-ink-100 p-5 transition hover:bg-blush-50 sm:px-8">
+                <span class="grid size-10 shrink-0 place-items-center rounded-xl bg-blush-100 text-blush-700 transition group-hover:scale-110">{% icon "armchair", "size-5" %}</span>
+                <span class="text-sm font-bold leading-snug text-ink-900">{{ "newcomers.first_meeting" | t(L) }}</span>
+              </a>
+            </div>
+          </figure>
+        </div>
+      </div>
+    </div>
+    <div class="mt-10">
+      {{ pageNav({ lang: L, label: "content.on_this_page" | t(L), items: [
+        { id: "call", label: "newcomers.nav_call" | t(L), icon: "phone", color: "coral" },
+        { id: "find", label: "newcomers.nav_find" | t(L), icon: "search", color: "ocean" },
+        { id: "for-me", label: "newcomers.nav_for_me" | t(L), icon: "circle-help", color: "sage" },
+        { id: "meeting", label: "newcomers.nav_meeting" | t(L), icon: "armchair", color: "blush" },
+        { id: "espanol", label: "newcomers.nav_spanish" | t(L), icon: "languages", color: "copper" },
+        { id: "family", label: "newcomers.nav_family" | t(L), icon: "heart-handshake", color: "lilac" },
+        { id: "faq", label: "newcomers.nav_faq" | t(L), icon: "message-circle-question", color: "iris" }
+      ] }) }}
+    </div>
+  </div>
+</section>
+
+{#- ============================================================ CALL NOW -#}
+<section id="call" aria-labelledby="call-title" class="scroll-mt-28 bg-gradient-to-b from-white to-coral-50/40 py-14 lg:py-20" x-data="officeFinder">
+  <div class="wrap">
+    <div class="grid grid-cols-1 gap-8 xl:grid-cols-12 xl:gap-12">
+      <div class="xl:col-span-4 2xl:col-span-3">
+        <div class="xl:sticky xl:top-32">
+          <p class="eyebrow mb-2" style="{{ 'coral' | accent }}">{% icon "phone", "size-4" %}{{ "newcomers.call_eyebrow" | t(L) }}</p>
+          <h2 id="call-title" class="h-section text-balance">{{ "newcomers.call_title" | t(L) }}</h2>
+          <p class="lead mt-3 text-pretty">{{ "newcomers.call_lead" | t(L) }}</p>
+
+          <div class="mt-6 space-y-5 rounded-3xl bg-white p-5 shadow-soft ring-1 ring-ink-900/5">
+            {%- if cities.length %}
+            <form @submit.prevent="findCity()" class="space-y-2" role="search">
+              <label for="office-city" class="text-sm font-bold text-ink-800">{{ "newcomers.city_label" | t(L) }}</label>
+              <div class="flex gap-2">
+                <input id="office-city" x-model="city" list="office-city-list" autocomplete="address-level2" class="field min-w-0 flex-1" placeholder="{{ 'newcomers.city_placeholder' | t(L) }}" @change="findCity()">
+                <button type="submit" class="btn btn-accent shrink-0 px-4" style="{{ 'coral' | accent }}" aria-label="{{ 'newcomers.city_go' | t(L) }}">{% icon "search", "size-5" %}</button>
+              </div>
+              <datalist id="office-city-list">{% for c in cities %}<option value="{{ c.city }}"></option>{% for a in c.aliases or [] %}<option value="{{ a }}"></option>{% endfor %}{% endfor %}</datalist>
+              <div x-cloak x-show="cityMatch" class="rounded-2xl bg-coral-50 p-3 text-sm text-ink-700" aria-live="polite">
+                <template x-if="cityMatch && !cityMatch.none">
+                  <p><span x-text="cityMatch.label" class="font-bold"></span> — {{ "newcomers.city_in" | t(L) }}
+                    <template x-for="(d, i) in cityMatch.districts" :key="d.slug"><span><span x-show="i > 0">, </span><a :href="d.url" class="font-semibold text-coral-700 underline" x-text="d.label"></a></span></template>.
+                  </p>
+                </template>
+                <template x-if="cityMatch && cityMatch.none"><p>{{ "newcomers.city_none" | t(L) }}</p></template>
+                <button type="button" @click="clearCity()" class="mt-2 inline-flex items-center gap-1 text-xs font-bold text-ink-500 hover:text-ink-900">{% icon "x", "size-3.5" %}{{ "ui.clear" | t(L) }}</button>
+              </div>
+              <script type="application/json" id="city-districts">{{ cities | json | safe }}</script>
+            </form>
+            {%- endif %}
+            <button type="button" class="flex w-full items-center justify-between gap-3 rounded-2xl bg-ink-50 px-4 py-3 text-sm font-bold text-ink-800 xl:hidden" @click="filtersOpen = !filtersOpen" :aria-expanded="filtersOpen.toString()" aria-controls="office-filters">
+              <span class="inline-flex items-center gap-2">{% icon "sliders-horizontal", "size-4" %}{{ "newcomers.filters_toggle" | t(L) }}</span>
+              <span class="transition" :class="filtersOpen && 'rotate-180'">{% icon "chevron-down", "size-4" %}</span>
+            </button>
+            <div id="office-filters" class="space-y-5" :class="filtersOpen ? 'block' : 'hidden xl:block'">
+            <div>
+              <p class="mb-2 text-sm font-bold text-ink-800" id="lang-filter">{{ "newcomers.filter_lang" | t(L) }}</p>
+              <div class="flex flex-wrap gap-2" role="group" aria-labelledby="lang-filter">
+                <button type="button" class="filter-chip" :aria-pressed="(lang === 'all').toString()" @click="setLang('all')">{{ "ui.all" | t(L) }}</button>
+                <button type="button" class="filter-chip" :aria-pressed="(lang === 'en').toString()" @click="setLang('en')" lang="en">English</button>
+                <button type="button" class="filter-chip" :aria-pressed="(lang === 'es').toString()" @click="setLang('es')" lang="es">Español</button>
+              </div>
+            </div>
+            <div>
+              <p class="mb-2 text-sm font-bold text-ink-800" id="region-filter">{{ "newcomers.filter_region" | t(L) }}</p>
+              <div class="flex flex-wrap gap-2" role="group" aria-labelledby="region-filter">
+                <button type="button" class="filter-chip" :aria-pressed="(region === 'all').toString()" @click="setRegion('all')">{{ "ui.all" | t(L) }}</button>
+                {%- for g in offices.regions or [] %}
+                <button type="button" class="filter-chip" :aria-pressed="(region === '{{ g.key }}').toString()" @click="setRegion('{{ g.key }}')">{{ ("offices.region." + g.key) | t(L) }}</button>
+                {%- endfor %}
+              </div>
+            </div>
+            </div>
+            <p class="text-xs text-ink-500" aria-live="polite"><span x-text="shown">{{ offices.count }}</span> {{ "newcomers.offices_shown" | t(L) }}</p>
+          </div>
+          <p class="mt-5 hidden xl:flex items-start gap-2 text-sm leading-relaxed text-ink-500">{% icon "info", "mt-0.5 size-4 shrink-0" %}{{ "newcomers.call_gap" | t(L) }}</p>
+        </div>
+      </div>
+
+      <div class="xl:col-span-8 2xl:col-span-9">
+        {#- Phones and tablets first show one office for each part of the Area (Spanish-speaking ones on the Spanish page),
+            then "Show N more" — a native <details>, so it opens without JavaScript too. Wide screens show every office.
+            Choosing a language, a region or a city opens the full list so no match stays folded away. -#}
+        {%- set wantEs = L.code == "es" -%}
+        {%- set featured = [] -%}{%- set seenRegions = [] -%}
+        {%- for f in offices.list or [] %}{% if not f.online and f.phone and (f.spanish == wantEs) and not (f.region in seenRegions) and featured.length < 4 %}{% set _ = featured.push(f.key) %}{% set _ = seenRegions.push(f.region) %}{% endif %}{% endfor %}
+        {%- set ordered = [] -%}
+        {%- for k in featured %}{% set _ = ordered.push(offices.byKey[k]) %}{% endfor %}
+        {%- for f in offices.list or [] %}{% if not (f.key in featured) %}{% set _ = ordered.push(f) %}{% endif %}{% endfor %}
+        {%- set nMore = ordered.length - featured.length -%}
+        {%- if featured.length and nMore > 0 %}<p class="mb-4 flex items-start gap-2 text-sm leading-relaxed text-ink-600 xl:hidden">{% icon "map-pin", "mt-0.5 size-4 shrink-0 text-coral-700" %}{{ "newcomers.offices_featured" | t(L) }}</p>{% endif %}
+        <ul class="nc-offices grid grid-cols-1 gap-5 sm:grid-cols-2 2xl:grid-cols-3 3xl:grid-cols-4">
+          {%- for f in ordered %}
+          <li data-office-wrap {% if featured.length and loop.index0 >= featured.length %}class="nc-extra"{% endif %}>{{ officeCard({ office: f, lang: L, showRegion: true }) }}</li>
+          {%- endfor %}
+        </ul>
+        {%- if featured.length and nMore > 0 %}
+        <details class="nc-more mt-5" x-effect="if (lang !== 'all' || region !== 'all' || (cityMatch && !cityMatch.none)) $el.open = true">
+          <summary class="btn btn-ghost min-h-12 w-full cursor-pointer bg-white shadow-soft sm:w-auto">
+            {% icon "phone", "size-4 text-coral-700" %}<span class="nc-more__closed">{{ "newcomers.more_offices" | t(L, { n: nMore }) }}</span><span class="nc-more__open">{{ "ui.show_less" | t(L) }}</span>
+            <span class="nc-more__chev transition">{% icon "chevron-down", "size-4" %}</span>
+          </summary>
+        </details>
+        {%- endif %}
+        <p x-cloak x-show="shown === 0" class="rounded-3xl bg-white p-6 text-center text-ink-600 shadow-soft">{{ "newcomers.no_offices" | t(L) }}</p>
+        <p class="mt-6 flex items-start gap-2 text-sm leading-relaxed text-ink-500 xl:hidden">{% icon "info", "mt-0.5 size-4 shrink-0" %}{{ "newcomers.call_gap" | t(L) }}</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+{#- ============================================================ FOUR WAYS -#}
+<section id="find" aria-labelledby="find-title" class="scroll-mt-28 py-14 lg:py-20">
+  <div class="wrap">
+    <div class="mb-10 max-w-3xl">
+      <p class="eyebrow mb-2" style="{{ 'ocean' | accent }}">{% icon "search", "size-4" %}{{ "newcomers.find_eyebrow" | t(L) }}</p>
+      <h2 id="find-title" class="h-section text-balance">{{ "newcomers.find_title" | t(L) }}</h2>
+      <p class="lead mt-3 text-pretty">{{ "newcomers.find_lead" | t(L) }}</p>
+    </div>
+    <ol class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
+      <li class="reveal card relative flex flex-col gap-4 overflow-hidden p-6 2xl:p-7" style="{{ 'coral' | accent }}">
+        <span class="absolute top-4 right-5 font-display text-6xl font-black text-[var(--a-100)]" aria-hidden="true">1</span>
+        <span class="icon-tile relative">{% icon "phone-call", "size-6" %}</span>
+        <h3 class="relative font-display text-xl font-bold text-ink-950">{{ "newcomers.way1_title" | t(L) }}</h3>
+        <p class="relative flex-1 leading-relaxed text-ink-600">{{ "newcomers.way1_body" | t(L) }}</p>
+        <a href="#call" class="btn btn-accent relative self-start">{% icon "phone", "size-4" %}{{ "newcomers.way1_cta" | t(L) }}</a>
+      </li>
+      <li class="reveal card relative flex flex-col gap-4 overflow-hidden p-6 2xl:p-7" style="{{ 'ocean' | accent }}; --reveal-delay:80ms">
+        <span class="absolute top-4 right-5 font-display text-6xl font-black text-[var(--a-100)]" aria-hidden="true">2</span>
+        <span class="icon-tile relative">{% icon "smartphone", "size-6" %}</span>
+        <h3 class="relative font-display text-xl font-bold text-ink-950">{{ "newcomers.way2_title" | t(L) }}</h3>
+        <p class="relative flex-1 leading-relaxed text-ink-600">“{{ "newcomers.way2_quote" | t(L) }}” <span class="text-sm text-ink-500">— {{ "newcomers.way2_cite" | t(L) }}</span></p>
+        <div class="relative flex flex-wrap gap-2">
+          <a href="{{ R['meeting-guide-ios'].url if R['meeting-guide-ios'] else '#' }}" target="_blank" rel="noopener" class="btn btn-sm bg-ink-900 px-4 py-2.5 text-white hover:bg-ink-800">{% icon "smartphone", "size-4" %}App Store</a>
+          <a href="{{ R['meeting-guide-android'].url if R['meeting-guide-android'] else '#' }}" target="_blank" rel="noopener" class="btn btn-sm bg-ink-900 px-4 py-2.5 text-white hover:bg-ink-800">{% icon "play", "size-4" %}Google Play</a>
+        </div>
+        <a href="{{ R['meeting-guide'] | loc('url', L) }}" target="_blank" rel="noopener" class="relative text-sm font-semibold text-[var(--a-700)] hover:underline">{{ "newcomers.way2_more" | t(L) }} →</a>
+      </li>
+      <li class="reveal card relative flex flex-col gap-4 overflow-hidden p-6 2xl:p-7" style="{{ 'iris' | accent }}; --reveal-delay:160ms">
+        <span class="absolute top-4 right-5 font-display text-6xl font-black text-[var(--a-100)]" aria-hidden="true">3</span>
+        <span class="icon-tile relative">{% icon "map-pin", "size-6" %}</span>
+        <h3 class="relative font-display text-xl font-bold text-ink-950">{{ "newcomers.way3_title" | t(L) }}</h3>
+        <p class="relative flex-1 leading-relaxed text-ink-600">{{ "newcomers.way3_body" | t(L) }}</p>
+        <a href="{{ R['find-aa'] | loc('url', L) }}" target="_blank" rel="noopener" class="btn btn-accent relative self-start">{{ "newcomers.way3_cta" | t(L) }}{% icon "external-link", "size-3.5 opacity-80" %}</a>
+      </li>
+      <li class="reveal card relative flex flex-col gap-4 overflow-hidden p-6 2xl:p-7" style="{{ 'sea' | accent }}; --reveal-delay:240ms">
+        <span class="absolute top-4 right-5 font-display text-6xl font-black text-[var(--a-100)]" aria-hidden="true">4</span>
+        <span class="icon-tile relative">{% icon "globe", "size-6" %}</span>
+        <h3 class="relative font-display text-xl font-bold text-ink-950">{{ "newcomers.way4_title" | t(L) }}</h3>
+        <p class="relative flex-1 leading-relaxed text-ink-600">{{ "newcomers.way4_body" | t(L) }}</p>
+        <a href="{{ R.oiaa | loc('url', L) }}" target="_blank" rel="noopener" class="btn btn-accent relative self-start">{{ "newcomers.way4_cta" | t(L) }}{% icon "external-link", "size-3.5 opacity-80" %}</a>
+      </li>
+    </ol>
+  </div>
+</section>
+
+{#- ============================================================ IS A.A. FOR ME -#}
+<section id="for-me" aria-labelledby="for-me-title" class="scroll-mt-28 bg-ring-soft py-14 lg:py-20">
+  <div class="wrap grid grid-cols-1 items-start gap-8 lg:grid-cols-12 lg:gap-12">
+    <div class="lg:col-span-7">
+      <p class="eyebrow mb-2" style="{{ 'sage' | accent }}">{% icon "circle-help", "size-4" %}{{ "newcomers.forme_eyebrow" | t(L) }}</p>
+      <h2 id="for-me-title" class="h-section text-balance">{{ "newcomers.forme_title" | t(L) }}</h2>
+      <div class="mt-6">
+        {{ quoteCard({ text: "newcomers.whatis_quote" | t(L), cite: "newcomers.whatis_cite" | t(L), url: R['what-is-aa'] | loc('url', L), color: "sage", size: "lg" }) }}
+      </div>
+      <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div class="card p-5" style="{{ 'ocean' | accent }}">
+          <p class="flex items-center gap-2 font-display font-bold text-ink-950">{% icon "users", "size-5 text-[var(--a-600)]" %}{{ "newcomers.whoare_title" | t(L) }}</p>
+          <p class="mt-2 leading-relaxed text-ink-600">“{{ "newcomers.whoare_quote" | t(L) }}” <span class="text-sm text-ink-500">— aa.org</span></p>
+        </div>
+        <div class="card p-5" style="{{ 'iris' | accent }}">
+          <p class="flex items-center gap-2 font-display font-bold text-ink-950">{% icon "milestone", "size-5 text-[var(--a-600)]" %}{{ "newcomers.how_title" | t(L) }}</p>
+          <p class="mt-2 leading-relaxed text-ink-600">“{{ "newcomers.how_quote" | t(L) }}” <span class="text-sm text-ink-500">— aa.org</span></p>
+        </div>
+      </div>
+    </div>
+    <aside class="lg:col-span-5">
+      <div class="card overflow-hidden lg:sticky lg:top-32" style="{{ 'sage' | accent }}">
+        <div class="relative overflow-hidden p-7 text-white sm:p-8" style="background: linear-gradient(140deg, var(--color-sage-700), var(--color-sea-700) 60%, var(--color-sea-800));">
+          <span class="pointer-events-none absolute -right-8 -bottom-10 text-white/15" aria-hidden="true">{% icon "clipboard-check", "size-48" %}</span>
+          <p class="relative text-xs font-bold tracking-[0.18em] uppercase">{{ "newcomers.decide_eyebrow" | t(L) }}</p>
+          <p class="relative mt-2 font-display text-3xl font-extrabold text-balance">{{ "newcomers.decide_title" | t(L) }}</p>
+        </div>
+        <div class="space-y-5 p-7 sm:p-8">
+          <p class="leading-relaxed text-ink-700">{{ "newcomers.decide_body" | t(L) }}</p>
+          <a href="{{ R['self-assessment'] | loc('url', L) }}" target="_blank" rel="noopener" class="btn btn-accent btn-lg w-full">{% icon "clipboard-check", "size-5" %}{{ "newcomers.decide_cta" | t(L) }}{% icon "external-link", "size-3.5 opacity-80" %}</a>
+          <div class="rounded-2xl bg-sage-50 p-4">
+            <p class="text-xs font-bold tracking-wide text-sage-800 uppercase">{{ "newcomers.requirement_label" | t(L) }}</p>
+            <p class="mt-1 font-display text-lg leading-snug font-bold text-ink-900">“{{ "newcomers.requirement" | t(L) }}”</p>
+            <p class="mt-1 text-xs text-ink-500">— {{ "newcomers.requirement_cite" | t(L) }}</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+{#- ============================================================ AT A MEETING -#}
+<section id="meeting" aria-labelledby="meeting-title" class="scroll-mt-28 py-14 lg:py-20">
+  <div class="wrap">
+    <div class="mb-10 max-w-3xl">
+      <p class="eyebrow mb-2" style="{{ 'blush' | accent }}">{% icon "armchair", "size-4" %}{{ "newcomers.meeting_eyebrow" | t(L) }}</p>
+      <h2 id="meeting-title" class="h-section text-balance">{{ "newcomers.meeting_title" | t(L) }}</h2>
+      <p class="lead mt-3 text-pretty">{{ "newcomers.meeting_lead" | t(L) }}</p>
+    </div>
+    {%- set expect = "newcomers.expect" | tlist(L) %}
+    <div class="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-6 3xl:grid-cols-5">
+      {%- for it in expect %}
+      {%- set span = "lg:col-span-2" if loop.index <= 3 else "lg:col-span-3" %}
+      <article class="reveal card flex flex-col gap-3 p-6 {{ span }} 3xl:col-span-1 {{ 'md:col-span-2' if (loop.last and expect.length % 2 == 1) }}" style="{{ it.color | accent(loop.index0) }}; --reveal-delay:{{ loop.index0 * 70 }}ms">
+        <span class="icon-tile-soft">{% icon it.icon or "circle", "size-5" %}</span>
+        <h3 class="font-display text-lg font-bold text-ink-950">{{ it.title }}</h3>
+        <p class="flex-1 leading-relaxed text-ink-600">“{{ it.quote }}”</p>
+        <p class="text-xs font-semibold text-[var(--a-700)]">— {{ it.cite }}</p>
+      </article>
+      {%- endfor %}
+    </div>
+
+    <div class="mt-12 grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-start">
+      <div class="card overflow-hidden lg:col-span-7 2xl:col-span-8" style="{{ 'coral' | accent }}">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-ink-100 bg-coral-50/60 px-6 py-5 sm:px-8">
+          <h3 class="font-display text-xl font-bold text-ink-950">{{ "newcomers.notdo_title" | t(L) }}</h3>
+          <a href="{{ R['info-on-aa'] | loc('url', L) }}" target="_blank" rel="noopener" class="text-sm font-semibold text-coral-700 hover:underline">{{ "newcomers.notdo_cite" | t(L) }} →</a>
+        </div>
+        <ul class="grid grid-cols-1 gap-x-8 gap-y-3 p-6 sm:grid-cols-2 sm:p-8 2xl:grid-cols-3">
+          {%- for it in "newcomers.notdo" | tlist(L) %}
+          <li class="flex items-start gap-3 leading-snug text-ink-700"><span class="mt-0.5 grid size-6 shrink-0 place-items-center rounded-full bg-coral-100 text-coral-700">{% icon "x", "size-3.5" %}</span><span>{{ it.text }}</span></li>
+          {%- endfor %}
+        </ul>
+      </div>
+      <div class="space-y-4 lg:col-span-5 2xl:col-span-4">
+        {{ quoteCard({ text: "newcomers.welcome_quote" | t(L), cite: "aa.org", url: R['new-to-aa'] | loc('url', L), color: "sun" }) }}
+        <a href="{{ R['meetings-info'] | loc('url', L) }}" target="_blank" rel="noopener" class="btn btn-white w-full justify-between">{{ "newcomers.meetings_more" | t(L) }}{% icon "external-link", "size-4 opacity-60" %}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{#- ============================================================ SPANISH -#}
+<section id="espanol" aria-labelledby="espanol-title" class="scroll-mt-28 py-6 lg:py-10" lang="es">
+  <div class="wrap">
+    <div class="relative isolate overflow-hidden rounded-[2rem] px-6 py-10 text-white shadow-lift sm:px-10 lg:px-14 lg:py-14" style="background: linear-gradient(110deg, var(--color-coral-800), var(--color-coral-700) 40%, var(--color-copper-700) 80%, var(--color-sun-800));">
+      <div class="bg-confetti absolute inset-0 -z-10 opacity-30" aria-hidden="true"></div>
+      <img src="/assets/img/logo/logo-es-256.webp" alt="" width="256" height="256" loading="lazy" class="pointer-events-none absolute -right-10 -bottom-16 -z-10 hidden size-72 rotate-12 opacity-20 md:block">
+      <div class="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12">
+        <div class="lg:col-span-5">
+          {%- if L.code != "es" %}<p class="mb-3 inline-flex items-center gap-2 rounded-full bg-white/20 px-3 py-1 text-xs font-bold tracking-wide uppercase ring-1 ring-white/40" lang="en">{% icon "languages", "size-3.5" %}{{ "newcomers.es_badge" | t(L) }}</p>{% endif %}
+          <h2 id="espanol-title" class="font-display text-3xl font-extrabold text-balance sm:text-4xl 2xl:text-5xl">{{ "newcomers.es_title" | t(es) }}</h2>
+          <p class="mt-4 text-lg leading-relaxed text-white text-pretty">{{ "newcomers.es_body" | t(es) }}</p>
+          <div class="mt-6 flex flex-wrap gap-2">
+            <a href="{{ R['aa-es'].url if R['aa-es'] else 'https://www.aa.org/es' }}" target="_blank" rel="noopener" class="btn btn-white">{{ "newcomers.es_aa" | t(es) }}{% icon "external-link", "size-3.5 opacity-60" %}</a>
+            <a href="{{ R['la-vina'].url if R['la-vina'] else 'https://www.aalavina.org/' }}" target="_blank" rel="noopener" class="btn bg-coral-950/30 text-white ring-1 ring-white/50 backdrop-blur-md hover:bg-coral-950/45">La Viña{% icon "external-link", "size-3.5 opacity-80" %}</a>
+            {%- if L.code != "es" %}<a href="{{ '/newcomers/' | lurl(es) }}" class="btn bg-coral-950/30 text-white ring-1 ring-white/50 backdrop-blur-md hover:bg-coral-950/45" hreflang="es">{{ "newcomers.es_page" | t(es) }}{% icon "arrow-right", "size-4" %}</a>{% endif %}
+          </div>
+        </div>
+        <ul class="grid grid-cols-1 gap-3 self-center sm:grid-cols-2 lg:col-span-7">
+          {%- for f in offices.spanish or [] %}
+          <li>
+            <a href="{{ f.phone | telUs }}" class="group flex h-full items-center gap-3 rounded-2xl bg-white/95 p-4 text-ink-900 shadow-soft transition hover:-translate-y-0.5 hover:bg-white">
+              <span class="grid size-11 shrink-0 place-items-center rounded-full bg-coral-600 text-white transition group-hover:scale-110">{% icon "phone", "size-5" %}</span>
+              <span class="min-w-0">
+                <span class="block font-display text-lg leading-tight font-extrabold tabular-nums">{{ f.phone }}</span>
+                <span class="block text-sm leading-snug text-ink-600">{{ f | loc("name", es) }}</span>
+              </span>
+            </a>
+          </li>
+          {%- endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+{#- ============================================================ FAMILY & FRIENDS -#}
+<section id="family" aria-labelledby="family-title" class="scroll-mt-28 py-14 lg:py-20">
+  <div class="wrap grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-12">
+    <div class="lg:col-span-5">
+      <p class="eyebrow mb-2" style="{{ 'lilac' | accent }}">{% icon "heart-handshake", "size-4" %}{{ "newcomers.family_eyebrow" | t(L) }}</p>
+      <h2 id="family-title" class="h-section text-balance">{{ "newcomers.family_title" | t(L) }}</h2>
+      <p class="lead mt-3 text-pretty">{{ "newcomers.family_lead" | t(L) }}</p>
+    </div>
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:col-span-7">
+      <div class="card flex flex-col gap-4 p-6 2xl:p-7" style="{{ 'lilac' | accent }}">
+        <span class="icon-tile">{% icon "users-round", "size-6" %}</span>
+        <p class="flex-1 text-lg leading-relaxed font-medium text-ink-900">“{{ "newcomers.alanon_quote" | t(L) }}”<span class="mt-1 block text-sm font-semibold text-[var(--a-700)]">— aa.org</span></p>
+        <div class="flex flex-wrap gap-2">
+          <a href="{{ R['al-anon'] | loc('url', L) }}" target="_blank" rel="noopener" class="btn btn-accent">{{ "newcomers.alanon_cta" | t(L) }}{% icon "external-link", "size-3.5 opacity-80" %}</a>
+          <a href="{{ R['family-friend'] | loc('url', L) }}" target="_blank" rel="noopener" class="btn btn-ghost">{{ "newcomers.family_aaorg" | t(L) }}</a>
+        </div>
+      </div>
+      <div class="card flex flex-col gap-4 p-6 2xl:p-7" style="{{ 'sea' | accent }}">
+        <span class="icon-tile">{% icon "door-open", "size-6" %}</span>
+        <p class="flex-1 text-lg leading-relaxed font-medium text-ink-900">“{{ "newcomers.observers_quote" | t(L) }}”<span class="mt-1 block text-sm font-semibold text-[var(--a-700)]">— {{ "newcomers.observers_cite" | t(L) }}</span></p>
+        <a href="#call" class="btn btn-ghost self-start">{% icon "phone", "size-4" %}{{ "newcomers.family_call" | t(L) }}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{#- ============================================================ MORE FROM AA.ORG -#}
+<section aria-labelledby="more-title" class="bg-ink-50/70 py-14 lg:py-20">
+  <div class="wrap">
+    <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div class="max-w-3xl">
+        <p class="eyebrow mb-2" style="{{ 'ocean' | accent }}">{% icon "book-open", "size-4" %}{{ "newcomers.more_eyebrow" | t(L) }}</p>
+        <h2 id="more-title" class="h-section text-balance">{{ "newcomers.more_title" | t(L) }}</h2>
+      </div>
+      <a href="{{ '/resources/' | lurl(L) }}" class="btn btn-ghost shrink-0 bg-white">{{ "newcomers.more_all" | t(L) }}{% icon "arrow-right", "size-4" %}</a>
+    </div>
+    <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 3xl:grid-cols-5">
+      {%- for r in (resources.byPage.newcomers or []) %}{% if r.group != "family" %}
+      <li>{{ resourceCard({ r: r, lang: L, index: loop.index0, compact: true }) }}</li>
+      {%- endif %}{% endfor %}
+    </ul>
+  </div>
+</section>
+
+{#- ============================================================ FAQ -#}
+<section id="faq" aria-labelledby="faq-title" class="scroll-mt-28 py-14 lg:py-20">
+  <div class="wrap grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12">
+    <div class="lg:col-span-4">
+      <div class="lg:sticky lg:top-32">
+        <p class="eyebrow mb-2" style="{{ 'iris' | accent }}">{% icon "message-circle-question", "size-4" %}{{ "newcomers.faq_eyebrow" | t(L) }}</p>
+        <h2 id="faq-title" class="h-section text-balance">{{ "newcomers.faq_title" | t(L) }}</h2>
+        <p class="lead mt-3 text-pretty">{{ "newcomers.faq_lead" | t(L) }}</p>
+        <a href="{{ R['faq-44'] | loc('url', L) }}" target="_blank" rel="noopener" class="btn btn-ghost mt-6">{{ "newcomers.faq_more" | t(L) }}{% icon "external-link", "size-3.5 opacity-60" %}</a>
+      </div>
+    </div>
+    <div class="lg:col-span-8">
+      {{ faqList({ items: faq.byPage.newcomers or [], lang: L, id: "newcomer-faq" }) }}
+    </div>
+  </div>
+</section>
+
+{#- ============================================================ ABOUT THE AREA -#}
+<section aria-labelledby="area-note-title" class="pb-6">
+  <div class="wrap">
+    <div class="flex flex-col items-start gap-6 rounded-[2rem] bg-ink-950 p-8 text-ink-200 sm:p-10 lg:flex-row lg:items-center lg:gap-10 lg:p-12">
+      <img src="/assets/img/logo/logo-{{ L.code }}-160.webp" alt="" width="96" height="96" loading="lazy" class="size-20 shrink-0 rounded-full bg-white p-1 lg:size-24">
+      <div class="flex-1">
+        <h2 id="area-note-title" class="font-display text-2xl font-bold text-white">{{ "newcomers.area_title" | t(L) }}</h2>
+        <p class="mt-2 max-w-4xl leading-relaxed">{{ "newcomers.area_body" | t(L) }}</p>
+      </div>
+      <a href="{{ '/about/' | lurl(L) }}" class="btn btn-white shrink-0">{{ "newcomers.area_cta" | t(L) }}{% icon "arrow-right", "size-4" %}</a>
+    </div>
+  </div>
+</section>
+
+<a href="#call" x-data="callFab('call')" :class="off && 'is-hidden'" class="call-fab" aria-label="{{ 'newcomers.fab' | t(L) }}">{% icon "phone", "size-5" %}{{ "newcomers.fab" | t(L) }}</a>

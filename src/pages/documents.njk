@@ -1,0 +1,549 @@
+---
+pagination: { data: langs, size: 1, alias: lang, addAllPagesToCollections: true }
+permalink: "{{ lang.prefix }}/documents/"
+layout: page.njk
+title_key: documents.title
+description_key: documents.description
+eyebrow_key: documents.eyebrow
+heroIcon: library
+accent: sea
+crumbs: [{ label_key: "documents.crumb_service", url: "/service/" }]
+bare: true
+source: data/documents/
+scripts: ["/assets/js/documents.js"]
+eleventyComputed:
+  lead: "{{ 'documents.lead' | t(lang, { first: documents.stats.firstYear }) | safe }}"
+---
+{#- The document library: quick search, latest strip, shelves, then the full searchable library (assets/js/documents.js). -#}
+{%- from "macros/ui.njk" import sectionHead, emptyState -%}
+{%- from "macros/documents.njk" import docList, docRow -%}
+{%- set L = lang -%}
+{%- set D = documents or {} -%}
+{%- set S = D.stats or {} -%}
+{%- set libUrl = '/documents/' | lurl(L) -%}
+
+<div x-data="docLibrary" x-init="boot()" @keydown.escape.window="panel = false" class="doc-page">
+
+{#- ============================================================ quick search + figures -#}
+<section class="relative z-10 -mt-6 lg:-mt-10" aria-labelledby="doc-quick-h">
+  <div class="wrap">
+    <div class="card doc-quick overflow-hidden p-4 sm:p-6 lg:p-8 2xl:p-10">
+      <h2 id="doc-quick-h" class="sr-only">{{ "documents.quick_title" | t(L) }}</h2>
+      <div class="grid items-center gap-6 xl:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] 2xl:gap-10">
+        <div>
+          <form action="{{ libUrl }}#library" method="get" role="search" class="relative" @submit.prevent="jump()">
+            <label for="doc-q-top" class="mb-2 block font-display text-lg font-bold text-ink-900 sm:text-xl">{{ "documents.quick_label" | t(L, { n: (S.total or 0) | docNum(L) }) }}</label>
+            <div class="relative">
+              <span class="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-ink-400">{% icon "search", "size-5" %}</span>
+              <input id="doc-q-top" name="q" type="search" autocomplete="off" enterkeyhint="search"
+                     class="field h-14 rounded-full pr-32 pl-12 text-base shadow-soft sm:text-lg"
+                     placeholder="{{ 'documents.search_placeholder' | t(L) }}"
+                     x-model="q" @input.debounce.200ms="onQuery()">
+              <button type="submit" class="btn btn-ocean absolute top-1.5 right-1.5 h-11 px-4 sm:px-5">{{ "nav.search" | t(L) }}</button>
+            </div>
+          </form>
+          <p class="mt-4 flex flex-wrap items-center gap-2 text-sm text-ink-500">
+            <span class="font-semibold text-ink-600">{{ "documents.try" | t(L) }}</span>
+            {%- set tries = [
+              { qs: "q=" + ("documents.try_1_q" | t(L) | urlencode), label: "documents.try_1" | t(L), color: "ocean", icon: "notebook-pen" },
+              { qs: "cat=guidelines", label: "documents.try_2" | t(L), color: "lilac", icon: "book-marked" },
+              { qs: "cat=conference", label: "documents.try_3" | t(L), color: "coral", icon: "mic" },
+              { qs: "cat=finances", label: "documents.try_4" | t(L), color: "sage", icon: "piggy-bank" },
+              { qs: "lang=es", label: "documents.try_spanish" | t(L), color: "copper", icon: "languages" }
+            ] %}
+            {%- for x in tries %}
+            <a href="{{ libUrl }}?{{ x.qs }}#library" @click.prevent="applyHref($el.href)" class="chip chip-accent min-h-9 px-3 py-1.5 transition hover:brightness-95" style="{{ x.color | accent }}">{% icon x.icon, "size-3.5" %}{{ x.label }}</a>
+            {%- endfor %}
+          </p>
+        </div>
+        <dl class="grid grid-cols-2 gap-3 sm:grid-cols-4 xl:grid-cols-2 2xl:grid-cols-4">
+          {%- set figs = [
+            { v: (S.total or 0) | docNum(L), l: "documents.fig_total" | t(L), icon: "files", color: "sea" },
+            { v: (S.firstYear ~ "–" ~ S.lastYear) if S.firstYear else "—", l: "documents.fig_years" | t(L), icon: "history", color: "iris" },
+            { v: ((S.spanish or 0) + (S.bilingual or 0)) | docNum(L), l: "documents.fig_spanish" | t(L), icon: "languages", color: "coral" },
+            { v: S.shelves or 0, l: "documents.fig_shelves" | t(L), icon: "library", color: "sun" }
+          ] %}
+          {%- for f in figs %}
+          <div class="doc-fig" style="{{ f.color | accent }}">
+            <dt class="flex items-center gap-2 text-xs font-semibold text-ink-500"><span class="icon-tile-soft size-7 rounded-lg">{% icon f.icon, "size-4" %}</span>{{ f.l }}</dt>
+            <dd class="mt-2 font-display text-2xl font-extrabold tracking-tight text-ink-950 tabular-nums sm:text-[1.7rem]">{{ f.v }}</dd>
+          </div>
+          {%- endfor %}
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+{#- ============================================================ latest -#}
+{%- set lat = D.latest or {} -%}
+{%- set latestCards = [
+  { key: "minutes", docs: lat.minutes, title: "documents.latest_minutes" | t(L), icon: "notebook-pen", color: "ocean", url: libUrl + "?cat=minutes#library" },
+  { key: "motions", docs: lat.motions, title: "documents.latest_motions" | t(L), icon: "gavel", color: "sun", url: libUrl + "?cat=motions#library" },
+  { key: "reports", docs: lat.reports, title: "documents.latest_reports" | t(L), icon: "clipboard-list", color: "iris", url: libUrl + "?cat=reports,conference,finances#library" }
+] -%}
+<section class="wrap pt-14 pb-6 lg:pt-20" aria-labelledby="doc-latest-h">
+  {{ sectionHead({ eyebrow: "documents.latest_eyebrow" | t(L), title: "documents.latest_title" | t(L), lead: "documents.latest_lead" | t(L), id: "doc-latest-h" }) }}
+  <div class="rail lg:mx-0 lg:grid lg:grid-cols-3 lg:gap-6 lg:overflow-visible lg:px-0 2xl:gap-8">
+    {%- for c in latestCards %}
+    <article class="doc-latest reveal w-[86%] shrink-0 sm:w-[60%] md:w-[46%] lg:w-auto" style="{{ c.color | accent }}; --reveal-delay: {{ loop.index0 * 90 }}ms">
+      <header class="flex items-center gap-3 border-b border-ink-100 px-5 pt-5 pb-4">
+        <span class="icon-tile size-11 rounded-2xl">{% icon c.icon, "size-5" %}</span>
+        <h3 class="min-w-0 flex-1 font-display text-lg font-bold text-ink-950">{{ c.title }}</h3>
+        <a href="{{ c.url }}" @click.prevent="applyHref($el.href)" class="btn btn-ghost btn-sm shrink-0">{{ "ui.see_all" | t(L) }}{% icon "arrow-right", "size-3.5" %}</a>
+      </header>
+      <div class="p-2.5">
+        {{ docList({ docs: c.docs or [], max: 5, lang: L, compact: true, pairs: true, emptyText: "documents.empty_list" | t(L) }) }}
+      </div>
+    </article>
+    {%- endfor %}
+  </div>
+</section>
+
+{#- ============================================================ shelves -#}
+<section class="relative isolate py-14 lg:py-20" aria-labelledby="doc-shelves-h">
+  <div class="absolute inset-0 -z-10 bg-ring-soft opacity-80" aria-hidden="true"></div>
+  <div class="wrap">
+    {{ sectionHead({ eyebrow: "documents.shelves_eyebrow" | t(L), title: "documents.shelves_title" | t(L), lead: "documents.shelves_lead" | t(L), id: "doc-shelves-h", action: { label: "documents.archive_link" | t(L), url: "/documents/archive/" | lurl(L), icon: "archive" } }) }}
+    <ul class="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5 2xl:gap-5" role="list">
+      {%- for c in D.categories or [] %}
+      <li class="reveal" style="--reveal-delay: {{ (loop.index0 % 5) * 60 }}ms">
+        <a href="{{ c.url | lurl(L) }}" class="doc-shelf group" style="{{ c.color | accent(loop.index0) }}">
+          <span class="flex flex-col items-start gap-3 sm:flex-row sm:gap-4">
+            <span class="icon-tile size-10 rounded-xl transition duration-300 group-hover:scale-110 group-hover:rotate-[-5deg] sm:size-12 sm:rounded-2xl">{% icon c.icon, "size-5 sm:size-6" %}</span>
+            <span class="min-w-0 flex-1">
+              <span class="block font-display text-base leading-tight font-bold text-ink-950 sm:text-lg">{{ c | loc("label", L) }}</span>
+              <span class="mt-1 block text-[13px] font-semibold text-(--a-700) sm:text-sm">{{ ("documents.count_one" if c.count == 1 else "documents.count_many") | t(L, { n: c.count | docNum(L) }) }}{% if c.firstYear %} · <span class="whitespace-nowrap">{{ c.firstYear }}{% if c.lastYear != c.firstYear %}–{{ c.lastYear }}{% endif %}</span>{% endif %}</span>
+            </span>
+            <span class="hidden size-8 shrink-0 place-items-center rounded-full bg-white/70 text-ink-400 transition group-hover:bg-(--a-600) group-hover:text-white sm:grid">{% icon "arrow-up-right", "size-4" %}</span>
+          </span>
+          <span class="mt-3 line-clamp-2 hidden text-sm leading-relaxed text-ink-600 sm:block">{{ c | loc("description", L) }}</span>
+          {#- Sparkline: documents per year on this shelf (single series, so no legend; the label says what it is). -#}
+          {%- if c.spark and c.spark.length > 1 %}
+          <span class="mt-auto hidden pt-4 sm:block" aria-hidden="true">
+            <span class="doc-spark">
+              {%- for y in c.spark %}<span class="doc-spark-bar{{ ' is-zero' if not y.n }}" style="--h:{{ y.h }}%" title="{{ y.year }}: {{ y.n }}"></span>{% endfor -%}
+            </span>
+            <span class="mt-1 flex justify-between text-[11px] font-medium text-ink-500"><span>{{ c.spark[0].year }}</span><span>{{ c.spark[c.spark.length - 1].year }}</span></span>
+          </span>
+          {%- endif %}
+        </a>
+      </li>
+      {%- endfor %}
+    </ul>
+  </div>
+</section>
+
+{#- ============================================================ the library -#}
+<section id="library" class="wrap py-14 lg:py-20" aria-labelledby="doc-lib-h">
+  <div class="mb-8 flex flex-col gap-4 lg:mb-10 lg:flex-row lg:items-end lg:justify-between">
+    <div class="max-w-3xl">
+      <p class="eyebrow mb-2" style="{{ 'sea' | accent }}">{{ "documents.lib_eyebrow" | t(L) }}</p>
+      <h2 id="doc-lib-h" class="h-section">{{ "documents.lib_title" | t(L) }}</h2>
+      <p class="lead mt-3">{{ "documents.lib_lead" | t(L) }}</p>
+    </div>
+  </div>
+
+  <div class="doc-lib-grid">
+    {#- ---------------------------------------------------- filters (drawer on phones, panel on tablets, sidebar on desktop) -#}
+    <div x-cloak x-show="panel" x-transition.opacity class="fixed inset-0 z-[65] bg-ink-950/50 backdrop-blur-sm md:hidden" @click="panel = false" aria-hidden="true"></div>
+    <aside id="doc-filters" x-cloak class="doc-facets" :class="panel && 'is-open'" aria-labelledby="doc-filters-h"
+           :role="phone ? 'dialog' : null" :aria-modal="phone && panel ? 'true' : null"
+           x-trap.noscroll="panel && phone" @keydown.escape="panel = false">
+      <div class="doc-facets-inner">
+        <div class="flex items-center justify-between gap-3 border-b border-ink-100 pb-4">
+          <h3 id="doc-filters-h" class="flex items-center gap-2 font-display text-lg font-bold text-ink-950">{% icon "sliders-horizontal", "size-5 text-sea-600" %}{{ "ui.filters" | t(L) }}</h3>
+          <div class="flex items-center gap-1">
+            <button type="button" class="btn btn-ghost btn-sm" x-show="active.length" @click="clearAll()">{{ "documents.clear_all" | t(L) }}</button>
+            <button type="button" class="grid size-10 place-items-center rounded-full text-ink-500 hover:bg-ink-100 lg:hidden" @click="panel = false" aria-label="{{ 'nav.close' | t(L) }}">{% icon "x", "size-5" %}</button>
+          </div>
+        </div>
+
+        <div class="doc-facet-groups">
+          {#- Sort (phones: the sort menu lives in the drawer, so the search bar stays one line) -#}
+          <fieldset class="doc-facet sm:hidden">
+            <legend class="doc-facet-title">{{ "documents.sort" | t(L) }}</legend>
+            <select class="field doc-select" x-model="sort" @change="changed()" aria-label="{{ 'documents.sort' | t(L) }}">
+              <option value="new">{{ "documents.sort_new" | t(L) }}</option>
+              <option value="old">{{ "documents.sort_old" | t(L) }}</option>
+              <option value="title">{{ "documents.sort_title" | t(L) }}</option>
+            </select>
+          </fieldset>
+
+          {#- Collection -#}
+          <fieldset class="doc-facet">
+            <legend class="doc-facet-title">{{ "documents.f_collection" | t(L) }}</legend>
+            <div class="doc-seg" role="group" aria-label="{{ 'documents.f_collection' | t(L) }}">
+              <template x-for="o in collOptions" :key="o.key">
+                <button type="button" :aria-pressed="(col === o.key).toString()" @click="col = o.key; changed()" :class="col === o.key && 'is-on'">
+                  <span x-text="o.label"></span><span class="doc-n" x-text="o.n"></span>
+                </button>
+              </template>
+            </div>
+          </fieldset>
+
+          {#- Category -#}
+          <details class="doc-facet doc-fold" open>
+            <summary class="doc-fold-sum"><span class="doc-facet-title">{{ "documents.f_category" | t(L) }}</span>{% icon "chevron-down", "doc-fold-ico size-4" %}</summary>
+            <fieldset>
+            <legend class="sr-only">{{ "documents.f_category" | t(L) }}</legend>
+            <ul class="space-y-0.5" role="list">
+              <template x-for="c in catOptions" :key="c.key">
+                <li>
+                  <label class="doc-check" :style="c.style" :class="!c.n && !cats.includes(c.key) && 'is-empty'">
+                    <input type="checkbox" class="sr-only" :value="c.key" :checked="cats.includes(c.key)" @change="toggle('cats', c.key)">
+                    <span class="doc-box" aria-hidden="true">{% icon "check", "size-3.5" %}</span>
+                    <span class="doc-check-ico" x-html="c.icon" aria-hidden="true"></span>
+                    <span class="min-w-0 flex-1 leading-snug" x-text="c.label"></span>
+                    <span class="doc-n" x-text="c.n"></span>
+                  </label>
+                </li>
+              </template>
+            </ul>
+            </fieldset>
+          </details>
+
+          {#- Years: histogram (a mouse shortcut; the From/To menus and decade buttons are the accessible controls) + range -#}
+          <details class="doc-facet doc-fold" open>
+            <summary class="doc-fold-sum"><span class="doc-facet-title">{{ "documents.f_years" | t(L) }}</span>{% icon "chevron-down", "doc-fold-ico size-4" %}</summary>
+            <fieldset>
+            <legend class="sr-only">{{ "documents.f_years" | t(L) }}</legend>
+            <div class="doc-hist" aria-hidden="true">
+              <template x-for="y in yearOptions" :key="y.year">
+                <span class="doc-hist-bar" :class="{ 'is-in': y.inRange, 'is-zero': !y.n, 'is-on': from == y.year && to == y.year }" :style="'--h:' + y.h + '%'"
+                      @click="pickYear(y.year)" :title="y.aria"></span>
+              </template>
+            </div>
+            <div class="mt-1 flex justify-between text-[11px] font-medium text-ink-500" aria-hidden="true"><span x-text="yearMin"></span><span x-text="yearMax"></span></div>
+            <div class="mt-3 grid grid-cols-2 gap-2">
+              <label class="block min-w-0">
+                <span class="mb-1 block text-xs font-semibold text-ink-500">{{ "documents.from" | t(L) }}</span>
+                <select class="field doc-select" x-model="from" @change="changed()">
+                  <option value="">{{ "documents.any_year" | t(L) }}</option>
+                  <template x-for="y in yearList" :key="'f' + y"><option :value="y" x-text="y" :selected="from == y"></option></template>
+                </select>
+              </label>
+              <label class="block min-w-0">
+                <span class="mb-1 block text-xs font-semibold text-ink-500">{{ "documents.to" | t(L) }}</span>
+                <select class="field doc-select" x-model="to" @change="changed()">
+                  <option value="">{{ "documents.any_year" | t(L) }}</option>
+                  <template x-for="y in yearList" :key="'t' + y"><option :value="y" x-text="y" :selected="to == y"></option></template>
+                </select>
+              </label>
+            </div>
+            <div class="mt-3 flex flex-wrap gap-1.5">
+              <template x-for="d in decades" :key="d.from">
+                <button type="button" class="doc-pill" :class="d.on && 'is-on'" @click="pickDecade(d)" :aria-pressed="d.on.toString()" x-text="d.label"></button>
+              </template>
+            </div>
+            </fieldset>
+          </details>
+
+          {#- Language -#}
+          <fieldset class="doc-facet">
+            <legend class="doc-facet-title">{{ "documents.f_language" | t(L) }}</legend>
+            <div class="flex flex-wrap gap-1.5">
+              <template x-for="o in langOptions" :key="o.key">
+                <button type="button" class="doc-pill" :class="langs.includes(o.key) && 'is-on'" @click="toggle('langs', o.key)" :aria-pressed="langs.includes(o.key).toString()">
+                  <span class="doc-badge" :class="'doc-badge-' + o.key" x-text="o.short"></span><span x-text="o.label"></span><span class="doc-n" x-text="o.n"></span>
+                </button>
+              </template>
+            </div>
+          </fieldset>
+
+          {#- District -#}
+          <details class="doc-facet doc-fold" x-show="districtOptions.length" :open="dists.length > 0 || null">
+            <summary class="doc-fold-sum"><span class="doc-facet-title">{{ "documents.f_district" | t(L) }}<span class="doc-fold-n" x-show="dists.length" x-text="dists.length"></span></span>{% icon "chevron-down", "doc-fold-ico size-4" %}</summary>
+            <fieldset>
+            <legend class="sr-only">{{ "documents.f_district" | t(L) }}</legend>
+            <div class="flex flex-wrap gap-1.5">
+              <template x-for="o in districtOptions" :key="o.key">
+                <button type="button" class="doc-pill" :class="dists.includes(o.key) && 'is-on'" @click="toggle('dists', o.key)" :aria-pressed="dists.includes(o.key).toString()" :aria-label="o.aria">
+                  <span x-text="o.label"></span><span class="doc-n" x-text="o.n"></span>
+                </button>
+              </template>
+            </div>
+            </fieldset>
+          </details>
+
+          {#- Committee -#}
+          <details class="doc-facet doc-fold" x-show="committeeOptions.length" :open="comms.length > 0 || null">
+            <summary class="doc-fold-sum"><span class="doc-facet-title">{{ "documents.f_committee" | t(L) }}<span class="doc-fold-n" x-show="comms.length" x-text="comms.length"></span></span>{% icon "chevron-down", "doc-fold-ico size-4" %}</summary>
+            <fieldset>
+            <legend class="sr-only">{{ "documents.f_committee" | t(L) }}</legend>
+            <ul class="space-y-0.5" role="list">
+              <template x-for="o in committeeOptions" :key="o.key">
+                <li>
+                  <label class="doc-check" :class="!o.n && !comms.includes(o.key) && 'is-empty'">
+                    <input type="checkbox" class="sr-only" :checked="comms.includes(o.key)" @change="toggle('comms', o.key)">
+                    <span class="doc-box" aria-hidden="true">{% icon "check", "size-3.5" %}</span>
+                    <span class="min-w-0 flex-1 truncate" x-text="o.label"></span>
+                    <span class="doc-n" x-text="o.n"></span>
+                  </label>
+                </li>
+              </template>
+            </ul>
+            </fieldset>
+          </details>
+
+          {#- Format -#}
+          <details class="doc-facet doc-fold" :open="fmts.length > 0 || null">
+            <summary class="doc-fold-sum"><span class="doc-facet-title">{{ "documents.f_format" | t(L) }}<span class="doc-fold-n" x-show="fmts.length" x-text="fmts.length"></span></span>{% icon "chevron-down", "doc-fold-ico size-4" %}</summary>
+            <fieldset>
+            <legend class="sr-only">{{ "documents.f_format" | t(L) }}</legend>
+            <div class="flex flex-wrap gap-1.5">
+              <template x-for="o in formatOptions" :key="o.key">
+                <button type="button" class="doc-pill" :class="fmts.includes(o.key) && 'is-on'" @click="toggle('fmts', o.key)" :aria-pressed="fmts.includes(o.key).toString()">
+                  <span x-text="o.label"></span><span class="doc-n" x-text="o.n"></span>
+                </button>
+              </template>
+            </div>
+            </fieldset>
+          </details>
+        </div>
+
+        <div class="sticky bottom-0 -mx-5 mt-2 border-t border-ink-100 bg-white/95 px-5 py-4 backdrop-blur md:hidden">
+          <button type="button" class="btn btn-ocean w-full" @click="panel = false; jump()" x-text="tr('show_results', { n: fmtNum(total) })"></button>
+        </div>
+      </div>
+    </aside>
+
+    {#- ---------------------------------------------------- results -#}
+    <div class="min-w-0">
+      {#- Toolbar -#}
+      <div class="doc-toolbar">
+        <div class="relative min-w-0 flex-1">
+          <label for="doc-q" class="sr-only">{{ "documents.search_label" | t(L) }}</label>
+          <span class="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-ink-400">{% icon "search", "size-5" %}</span>
+          <input id="doc-q" type="search" autocomplete="off" enterkeyhint="search" class="field h-12 rounded-full pr-11 pl-12"
+                 placeholder="{{ 'documents.search_placeholder_short' | t(L) }}" x-model="q" @input.debounce.200ms="onQuery()">
+          <button type="button" x-cloak x-show="q" @click="q = ''; onQuery(); $nextTick(() => $el.previousElementSibling.focus())" class="absolute top-1/2 right-2 grid size-8 -translate-y-1/2 place-items-center rounded-full text-ink-400 hover:bg-ink-100 hover:text-ink-700" aria-label="{{ 'ui.clear' | t(L) }}">{% icon "x", "size-4" %}</button>
+        </div>
+        <button type="button" class="btn btn-white h-12 shrink-0 max-sm:px-3.5 lg:hidden" @click="togglePanel()" :aria-expanded="panel.toString()" aria-controls="doc-filters">
+          {% icon "sliders-horizontal", "size-4" %}<span class="max-[23rem]:sr-only">{{ "ui.filters" | t(L) }}</span>
+          <span x-cloak x-show="active.length" class="grid size-5 place-items-center rounded-full bg-coral-600 text-[11px] font-bold text-white" x-text="active.length"></span>
+        </button>
+        <label class="flex h-12 shrink-0 items-center gap-2 rounded-full bg-white px-4 ring-1 ring-ink-200 focus-within:ring-2 focus-within:ring-ocean-500 max-sm:hidden">
+          <span class="text-ink-400">{% icon "arrow-up-down", "size-4" %}</span>
+          <span class="sr-only">{{ "documents.sort" | t(L) }}</span>
+          <select class="doc-sort" x-model="sort" @change="changed()">
+            <option value="new">{{ "documents.sort_new" | t(L) }}</option>
+            <option value="old">{{ "documents.sort_old" | t(L) }}</option>
+            <option value="title">{{ "documents.sort_title" | t(L) }}</option>
+          </select>
+        </label>
+        <div class="doc-views max-sm:hidden" role="group" aria-label="{{ 'documents.view' | t(L) }}">
+          <button type="button" @click="setView('cards')" :aria-pressed="(view === 'cards').toString()" :class="view === 'cards' && 'is-on'" title="{{ 'documents.view_cards' | t(L) }}">{% icon "layout-grid", "size-4" %}<span class="sr-only">{{ "documents.view_cards" | t(L) }}</span></button>
+          <button type="button" @click="setView('list')" :aria-pressed="(view === 'list').toString()" :class="view === 'list' && 'is-on'" title="{{ 'documents.view_list' | t(L) }}">{% icon "list", "size-4" %}<span class="sr-only">{{ "documents.view_list" | t(L) }}</span></button>
+        </div>
+      </div>
+
+      {#- Summary + active filter chips -#}
+      <div class="mt-4 flex min-h-8 flex-wrap items-center gap-2" aria-live="polite">
+        <p class="mr-1 text-sm text-ink-600" x-cloak x-show="ready"><strong class="font-display text-base font-bold text-ink-950 tabular-nums" x-text="fmtNum(total)"></strong> <span x-text="total === 1 ? tr('result_one') : tr('result_many')"></span><span x-show="fuzzy" class="ml-1 text-ink-500" x-text="tr('close_matches')"></span></p>
+        <template x-for="a in active" :key="a.id">
+          <button type="button" class="chip chip-accent group/chip gap-1 py-1.5 pr-1.5 pl-3" :style="a.style || ''" @click="removeFilter(a)" :aria-label="tr('remove_filter', { name: a.label })">
+            <span x-text="a.label"></span><span class="grid size-4 place-items-center rounded-full bg-white/60 group-hover/chip:bg-white">{% icon "x", "size-3" %}</span>
+          </button>
+        </template>
+        <button type="button" x-cloak x-show="active.length > 1" class="text-sm font-semibold text-ocean-700 hover:underline" @click="clearAll()">{{ "documents.clear_all" | t(L) }}</button>
+      </div>
+
+      {#- Loading skeleton -#}
+      <div x-show="loading" x-cloak class="mt-6 grid gap-3" aria-hidden="true">
+        <template x-for="i in 6" :key="i"><div class="h-16 animate-pulse rounded-2xl bg-ink-100/70"></div></template>
+      </div>
+
+      {#- Without JavaScript (or before the index loads): the newest documents + links to every shelf -#}
+      <div x-show="!ready" class="doc-fallback mt-6">
+        <p class="mb-4 text-sm text-ink-500" x-show="failed" x-cloak>{{ "documents.load_failed" | t(L) }}</p>
+        {{ docList({ docs: (D.all or []) | limit(24), lang: L, groupByYear: true, showCategory: true, columns: 2 }) }}
+        <noscript><p class="mt-6 text-ink-600">{{ "documents.noscript" | t(L) }}</p></noscript>
+      </div>
+
+      {#- Results -#}
+      <div x-cloak x-show="ready" class="mt-4">
+        <template x-if="ready && !total">
+          <div class="card flex flex-col items-center gap-3 p-10 text-center" style="{{ 'sea' | accent }}">
+            <span class="icon-tile-soft size-14">{% icon "folder-search", "size-7" %}</span>
+            <p class="font-display text-lg font-bold text-ink-900">{{ "documents.none_title" | t(L) }}</p>
+            <p class="max-w-md text-ink-500">{{ "documents.none_body" | t(L) }}</p>
+            <button type="button" class="btn btn-ocean mt-2" @click="clearAll()">{{ "documents.clear_all" | t(L) }}</button>
+          </div>
+        </template>
+
+        {#- Cards, by year -#}
+        <template x-if="view === 'cards'">
+          <div>
+            <template x-for="g in groups" :key="g.key">
+              <section class="doc-group">
+                <h3 class="doc-group-h"><span x-text="g.label"></span><span class="doc-group-n" x-text="g.countLabel"></span></h3>
+                <ul class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 2xl:gap-5" role="list">
+                  <template x-for="r in g.items" :key="r.i">
+                    <li>
+                      <div class="doc-card group" :style="r.style">
+                        <span class="flex items-start justify-between gap-3">
+                          <span class="doc-ico size-11 rounded-2xl" x-html="r.icon"></span>
+                          <span class="doc-badges">
+                            <template x-if="r.versions.length < 2">
+                              <span x-show="r.l" class="doc-badge" :class="'doc-badge-' + r.l" :title="r.langName"><span aria-hidden="true" x-text="r.langShort"></span><span class="sr-only" x-text="r.langName"></span></span>
+                            </template>
+                            <span x-show="r.fmt && r.versions.length < 2" class="doc-badge doc-badge-fmt" x-text="r.fmt"></span>
+                          </span>
+                        </span>
+                        <span class="doc-card-cat" x-text="r.catLine"></span>
+                        <a :href="r.url" target="_blank" rel="noopener" class="doc-card-title doc-pair-link"><span x-text="r.title"></span><span class="sr-only" x-text="' — ' + r.langName + ' {{ 'documents.new_tab' | t(L) }}'"></span></a>
+                        <span class="mt-auto flex flex-wrap items-center gap-x-3 gap-y-1 pt-2 text-[13px] text-ink-500">
+                          <span x-show="r.when" class="inline-flex items-center gap-1">{% icon "calendar", "size-3.5 opacity-70" %}<span x-text="r.when"></span></span>
+                          <span x-show="r.size && r.versions.length < 2" x-text="r.size"></span>
+                          <span x-show="r.dist" class="chip chip-soft">{% icon "map-pin", "size-3" %}<span x-text="r.dist"></span></span>
+                          <span x-show="r.comm" class="chip chip-soft">{% icon "users", "size-3" %}<span x-text="r.comm"></span></span>
+                          <span x-show="r.versions.length < 2" class="ml-auto text-ink-300 transition group-hover:text-(--a-600)" aria-hidden="true">{% icon "arrow-up-right", "size-4" %}</span>
+                        </span>
+                        <span x-show="r.versions.length > 1" class="doc-versions !justify-start pt-1">
+                          <template x-for="v in r.versions" :key="v.i">
+                            <a :href="v.url" target="_blank" rel="noopener" class="doc-ver" :title="v.langName">
+                              <span class="doc-badge" :class="'doc-badge-' + v.l" aria-hidden="true" x-text="v.langShort"></span>
+                              <span class="doc-ver-fmt" aria-hidden="true" x-text="v.fmt || '↗'"></span>
+                              <span class="sr-only" x-text="v.langName + (v.fmt ? ', ' + v.fmt : '') + ' {{ 'documents.new_tab' | t(L) }}'"></span>
+                            </a>
+                          </template>
+                        </span>
+                      </div>
+                    </li>
+                  </template>
+                </ul>
+              </section>
+            </template>
+          </div>
+        </template>
+
+        {#- List: a table on wide screens, compact rows on phones and tablets -#}
+        <template x-if="view === 'list' && wide">
+          <div class="card mt-2 overflow-clip">
+            <table class="table-msca doc-table">
+              <caption class="sr-only">{{ "documents.table_caption" | t(L) }}</caption>
+              <thead>
+                <tr>
+                  <th scope="col" class="w-[46%]">{{ "documents.col_document" | t(L) }}</th>
+                  <th scope="col">{{ "documents.col_date" | t(L) }}</th>
+                  <th scope="col">{{ "documents.col_language" | t(L) }}</th>
+                  <th scope="col">{{ "documents.col_format" | t(L) }}</th>
+                  <th scope="col" class="text-right">{{ "documents.col_size" | t(L) }}</th>
+                  <th scope="col">{{ "documents.col_where" | t(L) }}</th>
+                </tr>
+              </thead>
+              <template x-for="g in groups" :key="g.key">
+                <tbody>
+                  <tr class="doc-tr-year"><th colspan="6" scope="colgroup"><span x-text="g.label"></span><span class="doc-group-n" x-text="g.countLabel"></span></th></tr>
+                  <template x-for="r in g.items" :key="r.i">
+                    <tr class="doc-tr" :style="r.style">
+                      <td>
+                        <a :href="r.url" target="_blank" rel="noopener" class="group flex items-center gap-3">
+                          <span class="doc-ico size-9 rounded-xl" x-html="r.icon"></span>
+                          <span class="min-w-0">
+                            <span class="block font-semibold text-ink-900 group-hover:text-iris-700 group-hover:underline" x-text="r.title"></span>
+                            <span class="block text-xs font-semibold text-(--a-700)" x-text="r.catLine"></span>
+                          </span>
+                          <span class="sr-only">{{ "documents.new_tab" | t(L) }}</span>
+                        </a>
+                      </td>
+                      <td class="whitespace-nowrap text-ink-600" x-text="r.when || '—'"></td>
+                      <td>
+                        <span class="flex flex-wrap gap-1">
+                          <template x-for="v in r.versions" :key="v.i">
+                            <a :href="v.url" target="_blank" rel="noopener" class="doc-badge hover:ring-2 hover:ring-(--a-300)" :class="'doc-badge-' + (v.l || 'fmt')" :title="v.langName"><span aria-hidden="true" x-text="v.langShort || '↗'"></span><span class="sr-only" x-text="(v.langName || '') + ' {{ 'documents.new_tab' | t(L) }}'"></span></a>
+                          </template>
+                        </span>
+                      </td>
+                      <td class="text-ink-600" x-text="r.fmt"></td>
+                      <td class="text-right whitespace-nowrap text-ink-600 tabular-nums" x-text="r.size"></td>
+                      <td class="text-ink-600" x-text="r.where"></td>
+                    </tr>
+                  </template>
+                </tbody>
+              </template>
+            </table>
+          </div>
+        </template>
+        <template x-if="view === 'list' && !wide">
+          <div>
+            <template x-for="g in groups" :key="g.key">
+              <section class="doc-group">
+                <h3 class="doc-group-h"><span x-text="g.label"></span><span class="doc-group-n" x-text="g.countLabel"></span></h3>
+                <ul class="grid gap-x-4 md:grid-cols-2" role="list">
+                  <template x-for="r in g.items" :key="r.i">
+                    <li>
+                      <div class="doc-row doc-row-pair group" :style="r.style">
+                        <span class="doc-ico" x-html="r.icon"></span>
+                        <span class="min-w-0 flex-1">
+                          <a :href="r.url" target="_blank" rel="noopener" class="doc-title doc-pair-link"><span x-text="r.title"></span><span class="sr-only" x-text="' — ' + r.langName + ' {{ 'documents.new_tab' | t(L) }}'"></span></a>
+                          <span class="doc-meta">
+                            <span class="font-semibold text-(--a-700)" x-text="r.catShort"></span>
+                            <span x-show="r.when" x-text="r.when"></span>
+                            <span x-show="r.size && r.versions.length < 2" x-text="r.size"></span>
+                            <span class="doc-badges" x-show="r.versions.length < 2">
+                              <span x-show="r.l" class="doc-badge" :class="'doc-badge-' + r.l" :title="r.langName"><span aria-hidden="true" x-text="r.langShort"></span><span class="sr-only" x-text="r.langName"></span></span>
+                              <span x-show="r.fmt" class="doc-badge doc-badge-fmt" x-text="r.fmt"></span>
+                            </span>
+                          </span>
+                        </span>
+                        <span class="doc-versions" x-show="r.versions.length > 1">
+                          <template x-for="v in r.versions" :key="v.i">
+                            <a :href="v.url" target="_blank" rel="noopener" class="doc-ver" :title="v.langName">
+                              <span class="doc-badge" :class="'doc-badge-' + v.l" aria-hidden="true" x-text="v.langShort"></span>
+                              <span class="doc-ver-fmt" aria-hidden="true" x-text="v.fmt || '↗'"></span>
+                              <span class="sr-only" x-text="v.langName + (v.fmt ? ', ' + v.fmt : '') + ' {{ 'documents.new_tab' | t(L) }}'"></span>
+                            </a>
+                          </template>
+                        </span>
+                        <span x-show="r.versions.length < 2" aria-hidden="true">{% icon "external-link", "doc-go size-4 shrink-0" %}</span>
+                      </div>
+                    </li>
+                  </template>
+                </ul>
+              </section>
+            </template>
+          </div>
+        </template>
+
+        {#- Show more -#}
+        <div class="mt-10 flex flex-col items-center gap-3" x-show="shown < total">
+          <p class="text-sm text-ink-500" x-text="tr('showing', { shown: fmtNum(shown), n: fmtNum(total) })"></p>
+          <button type="button" class="btn btn-white btn-lg" @click="more()">{% icon "chevrons-down", "size-4" %}{{ "documents.show_more" | t(L) }}</button>
+        </div>
+        <div class="mt-10 flex justify-center" x-show="ready && total > 12 && shown >= total">
+          <a href="#library" class="btn btn-ghost btn-sm">{% icon "arrow-up", "size-4" %}{{ "documents.back_to_top" | t(L) }}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{#- ============================================================ about the archive + help -#}
+<section class="wrap pb-16 lg:pb-24" aria-labelledby="doc-help-h">
+  <h2 id="doc-help-h" class="sr-only">{{ "documents.help_title" | t(L) }}</h2>
+  <div class="grid gap-5 lg:grid-cols-3 2xl:gap-6">
+    <a href="{{ '/documents/archive/' | lurl(L) }}" class="doc-archive-card group lg:col-span-2" style="{{ 'iris' | accent }}">
+      <span class="relative z-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">
+        <span class="grid size-16 shrink-0 place-items-center rounded-3xl bg-white/15 ring-1 ring-white/30">{% icon "archive", "size-8" %}</span>
+        <span class="min-w-0 flex-1">
+          <span class="block text-xs font-bold tracking-[0.18em] text-white/80 uppercase">{{ "documents.archive_eyebrow" | t(L) }}</span>
+          <span class="mt-1 block font-display text-2xl font-bold text-white sm:text-3xl">{{ "documents.archive_card_title" | t(L, { n: (S.archive or 0) | docNum(L), first: S.archiveFirstYear or S.firstYear }) }}</span>
+          <span class="mt-2 block max-w-2xl text-white/85">{{ "documents.archive_card_body" | t(L, { from: S.currentFrom }) }}</span>
+        </span>
+        <span class="btn btn-white shrink-0 self-start sm:self-center">{{ "documents.archive_link" | t(L) }}{% icon "arrow-right", "size-4" %}</span>
+      </span>
+    </a>
+    <div class="card p-6 2xl:p-7" style="{{ 'sage' | accent }}">
+      <span class="icon-tile-soft">{% icon "shield-check", "size-5" %}</span>
+      <h3 class="mt-4 font-display text-lg font-bold text-ink-950">{{ "documents.anon_title" | t(L) }}</h3>
+      <p class="mt-2 text-sm leading-relaxed text-ink-600">{{ "documents.anon_body" | t(L) }}</p>
+      <p class="mt-3 text-sm leading-relaxed text-ink-600">{{ "documents.request_body" | t(L) }} <a href="mailto:{{ site.email_webmaster }}" class="font-semibold text-ocean-700 hover:underline">{{ site.email_webmaster }}</a></p>
+    </div>
+  </div>
+</section>
+
+{#- Everything the browser script needs, in this page's language. -#}
+<script type="application/json" id="doc-config">{{ documents | docClientConfig(L) | safe }}</script>
+</div>

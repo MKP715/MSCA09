@@ -1,0 +1,3 @@
+{#- In <head> on the home page: start downloading the first banner photo straight away. -#}
+{%- set _slides = hero.slides if (hero and hero.slides) else [] -%}
+{%- if _slides.length %}{% homeHeroPreload _slides[0].src %}{% endif %}

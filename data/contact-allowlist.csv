@@ -1,0 +1,107 @@
+value,kind,reason
+# Contact details that the site check (scripts/check-site.mjs) allows. Only role mailboxes and public phone lines — never a person's own address or number.,,
+"# kind = email or phone. A gmail/outlook/yahoo address is accepted only when its name says which role it serves (district…, dcmc, chair, secretary, registrar, treasurer, delegate, gsr, cpc, pi, literature, archives …). Changes to this file need a reviewer's approval (.github/CODEOWNERS).",,
+p76delegatemsca09@gmail.com,email,Panel 76 Delegate role mailbox
+msca09chair@gmail.com,email,Area Chair role mailbox (panel)
+msca09.altdelegate@gmail.com,email,Alternate Delegate role mailbox
+msca09secretary@gmail.com,email,Area Secretary role mailbox (panel)
+mscaa09p76registrar@gmail.com,email,Panel 76 Registrar role mailbox
+p76treasurerap@outlook.com,email,Panel 76 Treasurer A/P role mailbox
+msca09cecchair@gmail.com,email,CEC chair role mailbox
+msca09.delegatep74@gmail.com,email,Panel 74 Delegate role mailbox (past events)
+msca09delegate70@yahoo.com,email,Panel 70 Delegate role mailbox (past events)
+socalhandi@gmail.com,email,Southern California H&I committee mailbox
+d09-registrar@outlook.com,email,District 9 Registrar role mailbox
+dist1.3panel76registrar@gmail.com,email,District 1 & 3 Registrar role mailbox
+mscadistrict1.cpc@gmail.com,email,District 1 & 3 CPC role mailbox
+district1area09.website@gmail.com,email,District 1 & 3 website role mailbox
+district1area09.literature@gmail.com,email,District 1 & 3 Literature role mailbox
+district1and3.grapevine@gmail.com,email,District 1 & 3 Grapevine role mailbox
+district1area09.pi@gmail.com,email,District 1 & 3 PI role mailbox
+district1area09.accessibilities@gmail.com,email,District 1 & 3 Accessibilities role mailbox
+district1area09.newcomer@gmail.com,email,District 1 & 3 Newcomer role mailbox
+district06.dcmc@gmail.com,email,District 6 DCMC role mailbox
+district06.alt.dcmc@gmail.com,email,District 6 Alt. DCMC role mailbox
+district06.sec@gmail.com,email,District 6 Secretary role mailbox
+district06.treas@gmail.com,email,District 6 Treasurer role mailbox
+district06.registrar@gmail.com,email,District 6 Registrar role mailbox
+district06.gsr.prof@gmail.com,email,District 6 GSR professional role mailbox
+district18dcmc@gmail.com,email,District 18 DCMC role mailbox
+district18altdcmc@gmail.com,email,District 18 Alt. DCMC role mailbox
+district18gsr@gmail.com,email,District 18 GSR / Secretary role mailbox
+district18treasurerarea09@gmail.com,email,District 18 Treasurer role mailbox
+district18registrar@gmail.com,email,District 18 Registrar role mailbox
+(951) 785-0845,phone,Area 09 Archives repository (public line)
+(949) 334-7994,phone,Bridging the Gap voicemail (public line)
+(760) 342-2142,phone,"Oficina Central Hispana Valle de Coachella - Hispanic central office line, as listed in the Area workbooks (2010-2020)"
+(714) 956-7243,phone,"Oficina Intergrupal de Habla Hispana Norte de Orange, 330 N. State College Blvd., Anaheim - Hispanic intergroup office line (Area workbooks; 2023 minutes give it as a district meeting place)"
+(402) 938-3614,phone,PayPal debit card customer service - company line printed on the bank statements in District 8 finance reports
+(303) 395-2855,phone,PayPal debit card department fax - company line printed on the bank statements in District 8 finance reports
+msca09delegate@gmail.com,email,"Area 09 Delegate role mailbox (Panels 70-72, in minutes and reports)"
+msca09altdelegate@gmail.com,email,"Alternate Delegate role mailbox (spelling without the dot, in flyers)"
+msca09.cec.chair@gmail.com,email,CEC (Cooperation with the Elder Community) chair role mailbox (spelling with dots)
+area09registrar@gmail.com,email,Area Registrar role mailbox (older panels)
+soberservicemsca09@earthlink.net,email,Area 09 event committee mailbox (2003 newsletter)
+mscadistrict12@gmail.com,email,District 12 role mailbox
+dcmc.district12@gmail.com,email,District 12 DCMC role mailbox
+d12treasurer@gmail.com,email,District 12 Treasurer role mailbox
+d12registrar@gmail.com,email,District 12 Registrar role mailbox
+district1msca09@gmail.com,email,District 1 & 3 role mailbox
+dcmc_d5@yahoo.com,email,District 5 DCMC role mailbox
+dist07msca09aa@yahoo.com,email,District 7 role mailbox
+msca09d8tech@gmail.com,email,District 8 Technology role mailbox
+dcmc9email@gmail.com,email,District 9 DCMC role mailbox
+districtaa14@gmail.com,email,District 14 role mailbox
+inlandempirehandi@gmail.com,email,Inland Empire Hospitals & Institutions committee mailbox
+district5@district5msca09.com,email,District 5 role mailbox (district domain)
+district5dcmc@district5msca09.com,email,District 5 DCMC role mailbox
+district5alt-dcmc@district5msca09.com,email,District 5 Alternate DCMC role mailbox
+district5secretary@district5msca09.com,email,District 5 Secretary role mailbox
+district5treasurer@district5msca09.com,email,District 5 Treasurer role mailbox
+district5registrar@district5msca09.com,email,District 5 Registrar role mailbox
+treatment@msca09.org,email,Area Treatment committee role mailbox (old Area domain)
+delegate@msca09.org,email,Area Delegate role mailbox (old Area domain)
+literaturechair@msca09.org,email,Area Literature chair role mailbox (old Area domain)
+chair@msca.org,email,Area Chair role mailbox (old Area domain)
+archives@msca.org,email,Area Archives role mailbox (old Area domain)
+archives@mscaarchives.org,email,Area 09 Archives repository mailbox
+treasureap@area09aa.org,email,Area Treasurer A/P role mailbox (as printed in old treasurer reports)
+chair@praasa.org,email,PRAASA chair role mailbox
+hospitality@praasa.org,email,PRAASA hospitality role mailbox
+registration@praasa.org,email,PRAASA registration role mailbox
+treasurer@praasa.org,email,PRAASA treasurer role mailbox
+translation@praasa.org,email,PRAASA translation role mailbox
+praasa2013@box-e459.org,email,PRAASA 2013 host committee mailbox
+praasa2017@cnia.org,email,PRAASA 2017 host committee mailbox (Area 07)
+chair@oc-aa.org,email,Orange County Central Office - chair
+vicechair@oc-aa.org,email,Orange County Central Office - vice chair
+treasurer@oc-aa.org,email,Orange County Central Office - treasurer
+secretary@oc-aa.org,email,Orange County Central Office - secretary
+manager@oc-aa.org,email,Orange County Central Office - office manager
+assistantmanager@oc-aa.org,email,Orange County Central Office - assistant manager
+satellitemanager@oc-aa.org,email,Orange County Central Office - satellite office manager
+centralofficecommittee@oc-aa.org,email,Orange County Central Office - committee mailbox
+grouprelationscommittee@oc-aa.org,email,Orange County Central Office - group relations committee
+icommittee@oc-aa.org,email,Orange County Central Office - committee mailbox
+publicinformationcommittee@oc-aa.org,email,Orange County Central Office - public information committee
+specialeventscommittee@oc-aa.org,email,Orange County Central Office - special events committee
+info@hacoaa.org,email,Harbor Area Central Office (HACO) - information
+officemanager@aanoc.com,email,North Orange County central office - office manager
+officemanager@aasepia.org,email,Central office - office manager
+contact@ochandi.org,email,Orange County Hospitals & Institutions - contact
+altcoordinator@btgww.org,email,Bridging the Gap Workshop - alternate coordinator
+logo@area05aa.org,email,Area 05 - logo contest mailbox
+panel67@area05aa.org,email,Area 05 - Panel 67 mailbox
+areachair@area8aa.org,email,Area 08 - Area Chair
+mynabird@area17aa.org,email,Area 17 (Hawaii) - Mynah Bird newsletter
+delegate@idahoarea18aa.org,email,Area 18 (Idaho) - Delegate
+dcm10@aaarea93.org,email,Area 93 - DCM District 10
+dcm52@aaarea93.org,email,Area 93 - DCM District 52
+dcmc@longbeachaa.org,email,Long Beach - DCMC role mailbox
+conventions@arkansasaa.org,email,Arkansas Area - conventions
+registration@2008sisconference.org,email,2008 conference - registration
+2025ic@showcare.com,email,2025 A.A. International Convention - registration and housing
+rockinsoberfest@trudgers.net,email,Rockin Sober Fest (North Orange County event) - event mailbox
+(212) 870-3400,phone,"General Service Office (G.S.O.) main public line, printed in G.S.O. service material"
+(757) 563-1600,phone,"Al-Anon Family Groups World Service Office public line, printed in G.S.O. guidelines"
+pichaird10a7@area999.com,email,Made-up sample address used in G.S.O. technology guidance (not a real mailbox)

@@ -1,0 +1,7 @@
+{#-
+  Upcoming events list for the district pages, drawn with the calendar's own macro.
+  Included only when src/_includes/macros/events.njk exists (see districts.njk / district.njk).
+  Expects: L (language), upItems (Occ[]), upLimit, upEmpty (text), upId, upVariant
+-#}
+{%- from "macros/events.njk" import upcomingList with context -%}
+{{ upcomingList({ items: upItems, lang: L, limit: upLimit or 5, emptyText: upEmpty, variant: upVariant or "compact", id: upId }) }}

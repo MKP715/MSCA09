@@ -1,0 +1,312 @@
+key,en,es,notes
+"# Wording of the calendar pages, the event pages and the event cards. key = the name the pages use (do not change it); en / es = the text in English and Spanish; notes = where it appears. {name} placeholders are filled in by the site.",,,
+"# A calendar entry without a Título: line gets its Spanish title from a row calendar.title_es.<page slug> (the slug is the last part of the event's address, e.g. 74th-scaa-convention-2026-10-16).",,,
+"# Rows calendar.note_es.<page slug> translate an entry's Note: lines (several lines separated by | ) until Google Calendar has Nota: lines. They are used only while the en column still matches the calendar word for word; scripts/check-calendar.mjs reports the ones that went out of date.",,,
+calendar.title,Area calendar,Calendario del Área,Page title of /calendar/
+calendar.eyebrow,Meetings & events,Reuniones y eventos,
+calendar.lead,"Every Area, district and committee meeting, workshop and event — in Pacific time.","Todas las reuniones del Área, de distrito y de comité, talleres y eventos — en hora del Pacífico.",One line under the page title
+calendar.skip,Skip to the calendar,Ir al calendario,Keyboard link at the top of /calendar/
+calendar.sticky.label,Calendar tools,Herramientas del calendario,Bar that stays at the top of the screen on phones
+calendar.sticky.top,Back to search and views,Volver a la búsqueda y las vistas,
+calendar.ics_description,"Meetings and events of Mid-Southern California Area 09 (MSCA09) of Alcoholics Anonymous, from the Area calendar. All times are Pacific time.","Reuniones y eventos del Área 09 del Centro-Sur de California (MSCA09) de Alcohólicos Anónimos, tomados del calendario del Área. Todas las horas están en hora del Pacífico.",Description inside the downloadable .ics file
+calendar.registration,Registration from {time},Inscripción desde las {time},"From a Registration: line in the calendar"
+calendar.note_in_english,(in English),(en inglés),Next to a note that has no Spanish version yet
+calendar.copy_id,Copy the meeting ID,Copiar el ID de reunión,Button for screen readers
+calendar.copy_passcode,Copy the passcode,Copiar el código de acceso,Button for screen readers
+calendar.copied_id,Meeting ID copied,ID de reunión copiado,Announced to screen readers
+calendar.copied_passcode,Passcode copied,Código de acceso copiado,Announced to screen readers
+calendar.filters.only_hint,Press Enter to show only this category. Space turns it on or off.,Pulsa Intro para mostrar solo esta categoría. La barra espaciadora la activa o la desactiva.,For screen readers on each category checkbox
+calendar.link.program,Program,Programa,Name for a link to a program or agenda file
+calendar.description,"The MSCA09 Area calendar: Area meetings and assemblies, district and committee meetings, workshops and A.A. service events across Area 09, in English and Spanish.","El calendario del Área 09 (MSCA09): reuniones y asambleas del Área, reuniones de distrito y de comité, talleres y eventos de servicio de A.A., en inglés y en español.",For search engines
+calendar.stats.label,The calendar at a glance,El calendario en cifras,
+calendar.stats.next30,in the next 30 days,en los próximos 30 días,after a number
+calendar.stats.regular,regular meetings,reuniones periódicas,after a number
+calendar.stats.events,upcoming events,próximos eventos,after a number
+calendar.quick.label,Quick views,Vistas rápidas,
+calendar.quick.all,Everything,Todo,
+calendar.quick.week,This week,Esta semana,
+calendar.quick.area,Area meetings,Reuniones del Área,
+calendar.quick.districts,District meetings,Reuniones de distrito,
+calendar.quick.workshops,Workshops,Talleres,
+calendar.quick.spanish,In Spanish,En español,
+calendar.quick.online,Online only,Solo en línea,
+calendar.view.label,Calendar view,Vista del calendario,
+calendar.view.agenda,Agenda,Agenda,
+calendar.view.month,Month,Mes,
+calendar.view.week,Week,Semana,
+calendar.view.list,List,Lista,
+calendar.nav.prev,Previous,Anterior,
+calendar.nav.next,Next,Siguiente,
+calendar.nav.today,Today,Hoy,
+calendar.search.label,Search the calendar,Buscar en el calendario,
+calendar.search.placeholder,"Search by name, place or city…","Buscar por nombre, lugar o ciudad…",
+calendar.count.agenda,coming up,por venir,after a number
+calendar.count.view,in this view,en esta vista,after a number
+calendar.share_view,Copy a link to this view,Copiar el enlace de esta vista,
+calendar.filters.active,Filters,Filtros,
+calendar.filters.remove,Remove filter,Quitar el filtro,
+calendar.filters.clear,Clear all,Quitar todo,
+calendar.filters.categories,Categories,Categorías,
+calendar.filters.only,Only,Solo,Button: show only this category
+calendar.filters.only_label,Show only {name},Mostrar solo {name},
+calendar.filters.format,Format,Formato,
+calendar.filters.language,Language,Idioma,
+calendar.filters.district,District,Distrito,
+calendar.filters.all_districts,All districts,Todos los distritos,
+calendar.filters.committee,Committee or topic,Comité o tema,
+calendar.filters.all_committees,All committees and topics,Todos los comités y temas,
+calendar.filters.committees,Committees,Comités,
+calendar.filters.topics,Topics,Temas,
+calendar.filters.day,Day of the week,Día de la semana,
+calendar.filters.time,Time of day,Hora del día,
+calendar.filters.show,Show results,Ver resultados,
+calendar.js.online,Online,En línea,
+calendar.js.all_day,All day,Todo el día,
+calendar.js.upcoming,Coming up,Próximamente,
+calendar.js.today,Today,Hoy,
+calendar.js.tomorrow,Tomorrow,Mañana,
+calendar.js.no_results,Nothing matches these filters.,Nada coincide con estos filtros.,
+calendar.js.cancelled,Cancelled,Cancelada,
+calendar.js.postponed,Postponed,Pospuesta,
+calendar.js.meeting_id,Meeting ID,ID de reunión,
+calendar.js.passcode,Passcode,Código de acceso,
+calendar.js.format_in_person,In person,En persona,
+calendar.js.format_hybrid,Hybrid,Híbrida,
+calendar.js.format_online,Online,En línea,
+calendar.js.lang_en,English,Inglés,
+calendar.js.lang_es,Spanish,Español,
+calendar.js.lang_bi,Bilingual,Bilingüe,
+calendar.js.tod_morning,Morning,Por la mañana,Before noon
+calendar.js.tod_afternoon,Afternoon,Por la tarde,Noon to 5 PM
+calendar.js.tod_evening,Evening,Por la noche,From 5 PM
+calendar.js.tod_allday,All day,Todo el día,
+calendar.js.has_flyer,Has a flyer,Con volante,
+calendar.js.has_zoom,Has Zoom,Con Zoom,
+calendar.js.n_categories,{n} categories,{n} categorías,
+calendar.js.no_categories,No categories,Ninguna categoría,
+calendar.js.n_events,{n} events,{n} eventos,Phone month view: day buttons for screen readers
+calendar.js.one_event,1 event,1 evento,
+calendar.js.no_events,no events,ningún evento,
+calendar.js.nav_hint,Go to $0,Ir a $0,Tooltip on a day number ($0 = the date)
+calendar.js.go_agenda,Show {date} in the agenda,Ver el {date} en la agenda,Day numbers in the month view (screen readers)
+calendar.js.close,Close,Cerrar,
+calendar.dow.0,Sunday,domingo,
+calendar.dow.1,Monday,lunes,
+calendar.dow.2,Tuesday,martes,
+calendar.dow.3,Wednesday,miércoles,
+calendar.dow.4,Thursday,jueves,
+calendar.dow.5,Friday,viernes,
+calendar.dow.6,Saturday,sábado,
+calendar.dow_short.0,Su,Do,
+calendar.dow_short.1,Mo,Lu,
+calendar.dow_short.2,Tu,Ma,
+calendar.dow_short.3,We,Mi,
+calendar.dow_short.4,Th,Ju,
+calendar.dow_short.5,Fr,Vi,
+calendar.dow_short.6,Sa,Sá,
+calendar.topic.steps,Steps,Pasos,Calendar Topic: values
+calendar.topic.traditions,Traditions,Tradiciones,
+calendar.topic.concepts,Concepts,Conceptos,
+calendar.topic.sponsorship,Sponsorship,Apadrinamiento,
+calendar.topic.group-service,Group service,Servicio de grupo,
+calendar.topic.literature,Literature,Literatura,
+calendar.topic.grapevine-and-la-vina,Grapevine & La Viña,Grapevine y La Viña,
+calendar.topic.h-and-i-and-corrections,H&I & corrections,H&I e Instituciones Correccionales,
+calendar.topic.public-information,Public information,Información Pública,
+calendar.topic.accessibility,Accessibility,Accesibilidad,
+calendar.topic.women,Women,Mujeres,
+calendar.topic.technology,Technology,Tecnología,
+calendar.topic.archives-and-history,Archives & history,Archivos Históricos e historia,
+calendar.all_day,All day,Todo el día,
+calendar.starts_at,Starts {time},Comienza: {time},Multi-day events
+calendar.district_n,District {n},Distrito {n},
+calendar.link.flyer,Flyer,Volante,Name for a link the calendar only calls 'flyer'
+calendar.link.document,Document,Documento,"Name for a link the calendar calls 'Click here', 'English'…"
+calendar.cancelled,Cancelled,Cancelada,
+calendar.postponed,Postponed,Pospuesta,
+calendar.repeats,Repeats,Se repite,
+calendar.place_tba,Place to be announced,Lugar por anunciar,
+calendar.flyer_alt,Flyer: {title},Volante: {title},Image description for screen readers
+calendar.flyer_open,Open flyer {n} full size,Ver el volante {n} en tamaño completo,
+calendar.flyers,Flyers,Volantes,
+calendar.upcoming_empty,Nothing is scheduled right now — the calendar shows what's coming.,Por ahora no hay nada programado — el calendario muestra lo que viene.,
+calendar.open_calendar,Open the calendar,Abrir el calendario,
+calendar.add.title,Add to your calendar,Agregar a tu calendario,
+calendar.add.short,Add to calendar,Agregar al calendario,
+calendar.add.google,Google Calendar,Google Calendar,
+calendar.add.ics,Apple / Outlook (.ics),Apple / Outlook (.ics),
+calendar.add.outlook,Outlook.com,Outlook.com,
+calendar.add.series_hint,Google Calendar and the .ics file add every date of this meeting; Outlook.com adds the next date.,Google Calendar y el archivo .ics agregan todas las fechas de esta reunión; Outlook.com agrega la próxima fecha.,
+calendar.info.label,When and where: {title},Cuándo y dónde: {title},
+calendar.info.when,When,Cuándo,
+calendar.info.where,Where,Dónde,
+calendar.info.online,Join online,Únete en línea,
+calendar.info.contact,Contact,Contacto,
+calendar.info.cost,Cost,Costo,
+calendar.info.next,Next,Próxima,Next: <date>
+calendar.info.ended_series,These meetings ended on {date}.,Estas reuniones terminaron el {date}.,
+calendar.info.see_website,See the website for the place.,Consulta el sitio web para saber el lugar.,
+calendar.directions,Directions,Cómo llegar,
+calendar.join_zoom,Join on Zoom,Unirse por Zoom,
+calendar.meeting_id,Meeting ID,ID de reunión,
+calendar.passcode,Passcode,Código de acceso,
+calendar.loading,Loading the live calendar…,Cargando el calendario…,
+calendar.error.title,The calendar didn't load,El calendario no se cargó,
+calendar.error.body,Check your connection and try again — the list below shows what's coming up.,Revisa tu conexión e inténtalo de nuevo — la lista de abajo muestra lo que viene.,
+calendar.error.retry,Try again,Intentar de nuevo,
+calendar.none.title,Nothing matches these filters,Nada coincide con estos filtros,
+calendar.none.agenda,"Try fewer filters, or look further ahead.",Prueba con menos filtros o busca más adelante.,
+calendar.none.range,"Try fewer filters, or move to another month.",Prueba con menos filtros o pasa a otro mes.,
+calendar.agenda.showing,Showing the next,Mostrando los próximos,Showing the next <30> days
+calendar.agenda.days,days,días,
+calendar.agenda.more,Show more days,Ver más días,
+calendar.mini.empty,Nothing scheduled on this day.,No hay nada programado este día.,
+calendar.detail.open,Open the full page,Ver la página completa,
+calendar.rail.next_area,Next Area meeting,Próxima reunión del Área,
+calendar.rail.hosted_by,Hosted by {name},Anfitrión: {name},
+calendar.rail.details,Details,Detalles,
+calendar.rail.next_area_none,The next Area meeting will appear here as soon as it is announced.,La próxima reunión del Área aparecerá aquí en cuanto se anuncie.,
+calendar.rail.all_area,Every Area meeting this panel,Todas las reuniones del Área de este panel,
+calendar.rail.this_week,This week,Esta semana,
+calendar.rail.this_week_empty,Nothing else is scheduled this week.,No hay nada más programado esta semana.,
+calendar.subscribe.title,Subscribe to the calendar,Suscríbete al calendario,
+calendar.subscribe.body,Add the Area calendar to your phone or computer once. Changes then appear on their own — no need to add meetings one by one.,"Agrega el calendario del Área a tu teléfono o computadora una sola vez. Después, los cambios aparecen solos — no hace falta agregar las reuniones una por una.",
+calendar.subscribe.google,Add to Google Calendar,Agregar a Google Calendar,
+calendar.subscribe.apple,"Apple Calendar (iPhone, Mac)","Calendario de Apple (iPhone, Mac)",
+calendar.subscribe.outlook,Outlook.com,Outlook.com,
+calendar.subscribe.download,Download the calendar (.ics),Descargar el calendario (.ics),
+calendar.subscribe.copy,Copy,Copiar,Copies the calendar's address
+calendar.subscribe.address,the calendar's web address (.ics),la dirección web del calendario (.ics),"Spoken name of the Copy button: ""Copy the calendar's web address (.ics)"" (ui.copy_x)"
+calendar.subscribe.short,Subscribe to the whole Area calendar,Suscríbete a todo el calendario del Área,
+calendar.help.title,Looking for an A.A. meeting?,¿Buscas una reunión de A.A.?,
+calendar.help.body,"This calendar lists service meetings and events. To find a recovery meeting near you today, use Meeting Guide or call a local central office.","Este calendario muestra reuniones y eventos de servicio. Para encontrar hoy mismo una reunión de recuperación cerca de ti, usa Meeting Guide o llama a una oficina central local.",
+calendar.help.newcomers,New to A.A.?,¿Eres nuevo en A.A.?,
+calendar.featured.eyebrow,Save the date,Reserva la fecha,
+calendar.featured.title,Coming up: Area events & gatherings,Próximamente: eventos y encuentros,
+calendar.featured.lead,"Assemblies, workshops, conventions and fellowship — open a flyer for the details.","Asambleas, talleres, convenciones y compañerismo — abre un volante para ver los detalles.",
+calendar.featured.all,All meetings & events,Todas las reuniones y eventos,
+calendar.browse.title,More ways to browse,Más formas de explorar,
+calendar.browse.meetings,Every regular meeting,Todas las reuniones periódicas,
+calendar.browse.meetings_body,"{n} district, committee, H&I and intergroup meetings, with times, places and Zoom links.","{n} reuniones de distritos, comités, H&I e intergrupos, con horarios, lugares y enlaces de Zoom.",
+calendar.browse.archive,Past events,Eventos pasados,
+calendar.browse.archive_body,"{n} past assemblies, workshops and events, with their flyers and documents.","{n} asambleas, talleres y eventos pasados, con sus volantes y documentos.",
+calendar.browse.google,Open in Google Calendar,Abrir en Google Calendar,
+calendar.browse.google_body,"The same calendar, in Google's own view.","El mismo calendario, en la vista de Google.",
+calendar.browse.area,Assemblies & Area meetings,Asambleas y reuniones del Área,
+calendar.browse.area_body,"Agendas, flyers and minutes for every Area meeting.","Agendas, volantes y actas de cada reunión del Área.",
+calendar.footnote,"All times are Pacific time. This page was built from the Area's Google Calendar on {date}, {time}, and refreshes every few hours. To add or correct an entry, write to the webmaster.","Todas las horas están en hora del Pacífico. Esta página se generó a partir del Google Calendar del Área el {date} ({time}) y se actualiza cada pocas horas. Para agregar o corregir una entrada, escribe al webmaster.",
+calendar.events.crumb,All meetings & events,Todas las reuniones y eventos,Breadcrumb
+calendar.events.title,All meetings & events,Todas las reuniones y eventos,Page title of /events/
+calendar.events.description,"Every regular service meeting in Area 09 — districts, committees, H&I and intergroups — plus upcoming events and an archive of past events with their flyers.","Todas las reuniones periódicas de servicio del Área 09 — distritos, comités, H&I e intergrupos — además de los próximos eventos y un archivo de eventos pasados con sus volantes.",
+calendar.events.eyebrow,Area calendar,Calendario del Área,
+calendar.events.lead,"The regular meetings, what's coming up, and everything that has already happened — in one directory.","Las reuniones periódicas, lo que viene y todo lo que ya pasó — en un solo directorio.",
+calendar.events.jump,Jump to,Ir a,
+calendar.events.meetings,Regular meetings,Reuniones periódicas,
+calendar.events.meetings_eyebrow,Every month,Cada mes,
+calendar.events.meetings_lead,"{n} meetings on a regular schedule. Open one for its place, Zoom details and next dates.","{n} reuniones con horario fijo. Abre una para ver el lugar, los datos de Zoom y las próximas fechas.",
+calendar.events.upcoming,Upcoming events,Próximos eventos,
+calendar.events.archive,Past events,Eventos pasados,
+calendar.events.archive_eyebrow,Archive,Archivo,
+calendar.events.archive_lead,"{n} assemblies, workshops, conventions and gatherings, with their flyers and documents.","{n} asambleas, talleres, convenciones y encuentros, con sus volantes y documentos.",
+calendar.events.n_events,{n} events,{n} eventos,
+calendar.event.ended,This event has ended. It took place on {date}.,Este evento ya terminó. Se llevó a cabo el {date}.,
+calendar.event.ended_series,These meetings are no longer on the calendar. The last one was on {date}.,Estas reuniones ya no están en el calendario. La última fue el {date}.,
+calendar.event.details,Details,Detalles,
+calendar.event.details_meeting,"When, where and how to join","Cuándo, dónde y cómo participar",
+calendar.event.covers,Area served,Zona que atiende,
+calendar.event.about,About this event,Acerca de este evento,
+calendar.event.what_happened,From the announcement,Del anuncio,Past events
+calendar.event.as_written,Shown as written in the Area calendar.,Se muestra tal como aparece en el calendario del Área.,Under English-only text on Spanish pages
+calendar.event.documents,Documents & links,Documentos y enlaces,
+calendar.event.pdf,PDF document,Documento PDF,
+calendar.event.drive,Google Drive,Google Drive,
+calendar.event.next_dates,Next dates,Próximas fechas,
+calendar.event.no_dates,No dates in the coming months.,No hay fechas en los próximos meses.,
+calendar.event.no_dates_ended,This series has ended.,Esta serie ya terminó.,
+calendar.event.skipped,Cancelled:,Cancelada:,Before a list of dates
+calendar.event.exdates,No meeting on:,No habrá reunión el:,Before a list of dates
+calendar.event.countdown,Starts in,Comienza en,
+calendar.event.who,Hosts & committees,Anfitriones y comités,
+calendar.event.role_own,District,Distrito,
+calendar.event.role_host,Hosted by,Anfitrión,
+calendar.event.role_committee,Committee,Comité,
+calendar.event.role_related,Related,Relacionado,
+calendar.event.serves_districts,Also serves groups in:,También atiende a los grupos de:,
+calendar.event.subscribe_hint,Want every meeting and event?,¿Quieres todas las reuniones y eventos?,
+calendar.event.back,Back to the calendar,Volver al calendario,
+calendar.event.related_eyebrow,Keep exploring,Sigue explorando,
+calendar.event.related,Coming up next,Lo que viene,
+calendar.place_varies,place varies,el lugar cambia,Area meeting: a different district hosts each month
+calendar.title_es.msca09-area-meeting,MSCA09 Area Meeting,Reunión del Área MSCA09,Spanish title for a calendar entry without Title-ES (key = calendar.title_es.<page slug>)
+calendar.title_es.service-study,Service Study,Estudio de servicio,Spanish title for a calendar entry without Title-ES (key = calendar.title_es.<page slug>)
+calendar.title_es.sharing-session,Sharing Session,Sesión de compartimiento de comités,Spanish title for a calendar entry without Title-ES (key = calendar.title_es.<page slug>)
+calendar.title_es.gsr-school,GSR School,Escuela de RSG,Spanish title for a calendar entry without Title-ES (key = calendar.title_es.<page slug>)
+calendar.title_es.acypaa-business-meeting,ACYPAA Business Meeting,Reunión de trabajo de ACYPAA,Spanish title for a calendar entry without Title-ES (key = calendar.title_es.<page slug>)
+calendar.title_es.central-office-desert-intergroup,Central Office Desert Intergroup,Intergrupo del Desierto (Oficina Central),Spanish title for a calendar entry without Title-ES (key = calendar.title_es.<page slug>)
+calendar.title_es.inland-empire-intergroup,Inland Empire Intergroup,Intergrupo del Inland Empire,Spanish title for a calendar entry without Title-ES (key = calendar.title_es.<page slug>)
+calendar.title_es.orange-county-intergroup,Orange County Intergroup,Intergrupo del Condado de Orange,Spanish title for a calendar entry without Title-ES (key = calendar.title_es.<page slug>)
+calendar.title_es.harbor-area-central-service,Harbor Area Central Service,Servicio Central del Área del Puerto (Harbor),Spanish title for a calendar entry without Title-ES (key = calendar.title_es.<page slug>)
+calendar.title_es.victor-valley-intergroup,Victor Valley Intergroup,Intergrupo de Victor Valley,Spanish title for a calendar entry without Title-ES (key = calendar.title_es.<page slug>)
+calendar.title_es.temecula-intergroup,Temecula Intergroup,Intergrupo de Temecula,Spanish title for a calendar entry without Title-ES (key = calendar.title_es.<page slug>)
+calendar.title_es.south-bay-intergroup,South Bay Intergroup,Intergrupo de South Bay,Spanish title for a calendar entry without Title-ES (key = calendar.title_es.<page slug>)
+calendar.title_es.temecula-valley-h-and-i,Temecula Valley H&I,H&I del Valle de Temecula,Spanish title for a calendar entry without Title-ES (key = calendar.title_es.<page slug>)
+calendar.title_es.orange-county-h-and-i-corrections,Orange County H&I – Corrections,H&I del Condado de Orange – Instituciones Correccionales,Spanish title for a calendar entry without Title-ES (key = calendar.title_es.<page slug>)
+calendar.title_es.orange-county-h-and-i-hospitals,Orange County H&I – Hospitals,H&I del Condado de Orange – Hospitales,Spanish title for a calendar entry without Title-ES (key = calendar.title_es.<page slug>)
+calendar.title_es.south-bay-h-and-i,South Bay H&I,H&I de South Bay,Spanish title for a calendar entry without Title-ES (key = calendar.title_es.<page slug>)
+calendar.title_es.coachella-valley-h-and-i,Coachella Valley H&I,H&I del Valle de Coachella,Spanish title for a calendar entry without Title-ES (key = calendar.title_es.<page slug>)
+calendar.title_es.inland-empire-h-and-i,Inland Empire H&I,H&I del Inland Empire,Spanish title for a calendar entry without Title-ES (key = calendar.title_es.<page slug>)
+calendar.title_es.high-desert-h-and-i,High Desert H&I,H&I del Alto Desierto,Spanish title for a calendar entry without Title-ES (key = calendar.title_es.<page slug>)
+calendar.title_es.south-orange-county-h-and-i,South Orange County H&I,H&I del Sur del Condado de Orange,Spanish title for a calendar entry without Title-ES (key = calendar.title_es.<page slug>)
+calendar.title_es.harbor-area-h-and-i,Harbor Area H&I,H&I del Área del Puerto (Harbor),Spanish title for a calendar entry without Title-ES (key = calendar.title_es.<page slug>)
+calendar.title_es.so-cal-h-and-i-intergroup,So-Cal H&I Intergroup,Intergrupo de H&I del Sur de California,Spanish title for a calendar entry without Title-ES (key = calendar.title_es.<page slug>)
+calendar.title_es.heritage-day-archives-2026-10-10,Heritage Day @ Archives!,¡Día del Patrimonio en los Archivos Históricos!,Spanish title for a calendar entry without Título: (key = calendar.title_es.<page slug>)
+calendar.title_es.74th-scaa-convention-2026-10-16,74th SCAA Convention,74.ª Convención de SCAA,Spanish title for a calendar entry without Título: (key = calendar.title_es.<page slug>)
+calendar.title_es.annual-socal-h-and-i-intergroup-dinner-2026-10-25,Annual SoCal H&I Intergroup Dinner,Cena anual del Intergrupo de H&I del Sur de California,Spanish title for a calendar entry without Título: (key = calendar.title_es.<page slug>)
+calendar.title_es.district-8-heritage-day-2026-11-21,District 8 Heritage Day,Día del Patrimonio del Distrito 8,Spanish title for a calendar entry without Título: (key = calendar.title_es.<page slug>)
+calendar.title_es.2026-pacific-regional-forum-2026-12-04,2026 Pacific Regional Forum,Foro Regional del Pacífico 2026,Spanish title for a calendar entry without Título: (key = calendar.title_es.<page slug>)
+calendar.title_es.11th-hispanic-woman-s-workshop-2026-12-12,11th Hispanic Woman’s Workshop,11.º Taller de la Mujer Hispana,Spanish title for a calendar entry without Título: (key = calendar.title_es.<page slug>)
+calendar.title_es.acypaa-liv-acypaa54-2027-04-15,ACYPAA LIV @acypaa54,Conferencia ACYPAA LIV (@acypaa54),Spanish title for a calendar entry without Título: (key = calendar.title_es.<page slug>)
+calendar.title_es.october-12th-area-elections-d20-2025-10-12,October 12th Area Elections (D20),Elecciones del Área del 12 de octubre (D20),Spanish title for a calendar entry without Título: (key = calendar.title_es.<page slug>); shown on Spanish district / committee pages
+calendar.title_es.october-11th-servathon-4pm-7pm-in-person-live-stream-el-dora-2025-10-11,"October 11th Servathon 4pm -7pm (In Person/ Live Stream) El Dorado Park-2760 N Studebaker Rd, Long Beach, CA. (D18 & D4)","Servathon del 11 de octubre, 4:00–7:00 p. m. (en persona y transmisión en vivo), El Dorado Park, 2760 N Studebaker Rd, Long Beach, CA (D18 y D4)",Spanish title for a calendar entry without Título: (key = calendar.title_es.<page slug>); shown on Spanish district / committee pages
+calendar.title_es.d09-gsr-school,D09 GSR School,Escuela de RSG del Distrito 9,Spanish title for a calendar entry without Título: (key = calendar.title_es.<page slug>); shown on Spanish district / committee pages
+calendar.title_es.gsr-school-with-district-9-2026-02-22,GSR School with District 9,Escuela de RSG con el Distrito 9,Spanish title for a calendar entry without Título: (key = calendar.title_es.<page slug>); shown on Spanish district / committee pages
+calendar.title_es.district-6-12-18-pre-conference-agenda-item-bootcamp-in-pers-2026-03-22,"District 6,12,18 Pre Conference Agenda Item Bootcamp (in person)","Taller intensivo sobre los puntos de agenda de la Pre-Conferencia, Distritos 6, 12 y 18 (en persona)",Spanish title for a calendar entry without Título: (key = calendar.title_es.<page slug>); shown on Spanish district / committee pages
+calendar.title_es.district-6-one-love-reggae-summer-event-2026-08-22,District 6 – One Love Reggae Summer Event,Distrito 6 – Evento de verano One Love Reggae,Spanish title for a calendar entry without Título: (key = calendar.title_es.<page slug>); shown on Spanish district / committee pages
+calendar.title_es.grapevine-writer-s-workshop-2026-09-19,Grapevine Writer’s Workshop,Taller de escritura del Grapevine,Spanish title for a calendar entry without Título: (key = calendar.title_es.<page slug>); shown on Spanish district / committee pages
+calendar.title_es.spanish-interdistrict-meeting-2026-06-28,Spanish Interdistrict Meeting,Reunión interdistrital hispana,Spanish title for a calendar entry without Título: (key = calendar.title_es.<page slug>); shown on Spanish district / committee pages
+calendar.title_es.4-areas-dcm-sharing-session-2026-07-11,4 Areas DCM Sharing Session,Sesión de Compartimiento de MCD de las 4 Áreas,Spanish title for a calendar entry without Título: (key = calendar.title_es.<page slug>); shown on Spanish district / committee pages
+calendar.title_es.rocypaa-business-meeting,ROCYPAA Business Meeting,Reunión de trabajo de ROCYPAA,Spanish title for a calendar entry without Título: (key = calendar.title_es.<page slug>); shown on the Spanish calendar
+calendar.title_es.virtual-writing-workshop-orange-county-2026-10-01,Virtual Writing Workshop Orange County,Taller virtual de escritura – Condado de Orange,Spanish title for a calendar entry without Título: (key = calendar.title_es.<page slug>); shown on the Spanish calendar
+calendar.title_es.traditions-workshop-2026-09-19,Traditions Workshop,Taller sobre las Tradiciones,Spanish title for a calendar entry without Título: (key = calendar.title_es.<page slug>); shown on the Spanish calendar
+calendar.title_es.aa-guidelines-workshop,AA Guidelines Workshop,Taller sobre las Guías de A.A.,Spanish title for a calendar entry without Título: (key = calendar.title_es.<page slug>); shown on the Spanish calendar
+calendar.title_es.sponsorship-workshop-2026-08-07,Sponsorship Workshop,Taller sobre el apadrinamiento,Spanish title for a calendar entry without Título: (key = calendar.title_es.<page slug>); shown on the Spanish calendar
+calendar.title_es.secretary-and-treasurer-workshop-2026-08-16,Secretary & Treasurer Workshop,Taller para secretarios y tesoreros,Spanish title for a calendar entry without Título: (key = calendar.title_es.<page slug>); shown on the Spanish calendar
+calendar.note_es.central-office-desert-intergroup,The meeting place and Zoom details are on the intergroup’s website.,El lugar de la reunión y los datos de Zoom están en el sitio web del intergrupo.,Spanish Note lines for this calendar entry until it has its own Nota: lines (used only while the English column matches the calendar)
+calendar.note_es.district-12,GSR School at 6:45 PM. No longer meets on Zoom.,Escuela de RSG a las 6:45 p. m. Ya no se reúne por Zoom.,Spanish Note lines for this calendar entry until it has its own Nota: lines (used only while the English column matches the calendar)
+calendar.note_es.district-6,GSR School at 6:30 PM.,Escuela de RSG a las 6:30 p. m.,Spanish Note lines for this calendar entry until it has its own Nota: lines (used only while the English column matches the calendar)
+calendar.note_es.inland-empire-intergroup,The meeting place and Zoom details are on the intergroup’s website.,El lugar de la reunión y los datos de Zoom están en el sitio web del intergrupo.,Spanish Note lines for this calendar entry until it has its own Nota: lines (used only while the English column matches the calendar)
+calendar.note_es.orange-county-intergroup,The meeting place and Zoom details are on the intergroup’s website.,El lugar de la reunión y los datos de Zoom están en el sitio web del intergrupo.,Spanish Note lines for this calendar entry until it has its own Nota: lines (used only while the English column matches the calendar)
+calendar.note_es.orange-county-h-and-i-corrections,Orientations at 3:15 PM and 5:15 PM. The Hospitals meeting follows at 6:00 PM.,Orientaciones a las 3:15 p. m. y a las 5:15 p. m. La reunión de Hospitales sigue a las 6:00 p. m.,Spanish Note lines for this calendar entry until it has its own Nota: lines (used only while the English column matches the calendar)
+calendar.note_es.orange-county-h-and-i-hospitals,Orientations at 3:15 PM and 5:15 PM. The Corrections meeting is at 4:00 PM.,Orientaciones a las 3:15 p. m. y a las 5:15 p. m. La reunión de Instituciones Correccionales es a las 4:00 p. m.,Spanish Note lines for this calendar entry until it has its own Nota: lines (used only while the English column matches the calendar)
+calendar.note_es.district-7,GSR orientation at 6:00 PM.,Orientación para RSG a las 6:00 p. m.,Spanish Note lines for this calendar entry until it has its own Nota: lines (used only while the English column matches the calendar)
+calendar.note_es.district-5,GSR orientation at 6:45 PM (in person only).,Orientación para RSG a las 6:45 p. m. (solo en persona).,Spanish Note lines for this calendar entry until it has its own Nota: lines (used only while the English column matches the calendar)
+calendar.note_es.district-17,Enter at the rear. New GSR orientation and standing committees at 6:00 PM.,Entra por la parte de atrás. Orientación para nuevos RSG y comités permanentes a las 6:00 p. m.,Spanish Note lines for this calendar entry until it has its own Nota: lines (used only while the English column matches the calendar)
+calendar.note_es.district-18,GSR School at 6:30 PM.,Escuela de RSG a las 6:30 p. m.,Spanish Note lines for this calendar entry until it has its own Nota: lines (used only while the English column matches the calendar)
+calendar.note_es.south-bay-h-and-i,Orientation at 6:30 PM.,Orientación a las 6:30 p. m.,Spanish Note lines for this calendar entry until it has its own Nota: lines (used only while the English column matches the calendar)
+calendar.note_es.harbor-area-central-service,The meeting place and Zoom details are on the intergroup’s website.,El lugar de la reunión y los datos de Zoom están en el sitio web de la oficina.,Spanish Note lines for this calendar entry until it has its own Nota: lines (used only while the English column matches the calendar)
+calendar.note_es.service-study,Followed by the Sharing Session at 6:30 PM in the same Zoom room.,Le sigue la Sesión de compartimiento a las 6:30 p. m. en la misma sala de Zoom.,Spanish Note lines for this calendar entry until it has its own Nota: lines (used only while the English column matches the calendar)
+calendar.note_es.sharing-session,Follows the Service Study (6:00 PM) in the same Zoom room.,Sigue al Estudio de servicio (6:00 p. m.) en la misma sala de Zoom.,Spanish Note lines for this calendar entry until it has its own Nota: lines (used only while the English column matches the calendar)
+calendar.note_es.victor-valley-intergroup,The meeting place and Zoom details are on the intergroup’s website.,El lugar de la reunión y los datos de Zoom están en el sitio web del intergrupo.,Spanish Note lines for this calendar entry until it has its own Nota: lines (used only while the English column matches the calendar)
+calendar.note_es.archives-committee,"The Archives repository is open Saturdays, 10 AM to 1 PM.",El repositorio de los Archivos Históricos abre los sábados de 10:00 a. m. a 1:00 p. m.,Spanish Note lines for this calendar entry until it has its own Nota: lines (used only while the English column matches the calendar)
+calendar.note_es.district-9,Monthly GSR meeting. The Zoom room opens at 3:30 PM. | The District 9 GSR School meets at 3:00 PM in the same room.,Reunión mensual de RSG. La sala de Zoom abre a las 3:30 p. m. | La Escuela de RSG del Distrito 9 se reúne a las 3:00 p. m. en la misma sala.,Spanish Note lines for this calendar entry until it has its own Nota: lines (used only while the English column matches the calendar)
+calendar.note_es.temecula-intergroup,Ask the intergroup for the meeting place and Zoom details.,Pide al intergrupo el lugar de la reunión y los datos de Zoom.,Spanish Note lines for this calendar entry until it has its own Nota: lines (used only while the English column matches the calendar)
+calendar.note_es.district-8,The Zoom room has no passcode.,La sala de Zoom no tiene código de acceso.,Spanish Note lines for this calendar entry until it has its own Nota: lines (used only while the English column matches the calendar)
+calendar.note_es.south-orange-county-h-and-i,Orientation at 6:00 PM.,Orientación a las 6:00 p. m.,Spanish Note lines for this calendar entry until it has its own Nota: lines (used only while the English column matches the calendar)
+calendar.note_es.so-cal-h-and-i-intergroup,"Meets in person at a different place in Southern California each month, and on Zoom.","Se reúne en persona cada mes en un lugar distinto del sur de California, y también por Zoom.",Spanish Note lines for this calendar entry until it has its own Nota: lines (used only while the English column matches the calendar)
+calendar.note_es.district-19,No meeting in June: the district is at the Sunshine of the Spirit High Desert Convention.,No hay reunión en junio: el distrito participa en la convención Sunshine of the Spirit del Alto Desierto.,Spanish Note lines for this calendar entry until it has its own Nota: lines (used only while the English column matches the calendar)
+calendar.note_es.south-bay-intergroup,The meeting place and Zoom details are on the intergroup’s website.,El lugar de la reunión y los datos de Zoom están en el sitio web del intergrupo.,Spanish Note lines for this calendar entry until it has its own Nota: lines (used only while the English column matches the calendar)
+calendar.note_es.district-2,GSR orientation at 6:30 PM (in person only).,Orientación para RSG a las 6:30 p. m. (solo en persona).,Spanish Note lines for this calendar entry until it has its own Nota: lines (used only while the English column matches the calendar)
+calendar.note_es.corrections-committee,"Also meets in person on the 2nd Sunday, during the Area meeting.","También se reúne en persona el 2.º domingo, durante la reunión del Área.",Spanish Note lines for this calendar entry until it has its own Nota: lines (used only while the English column matches the calendar)
+calendar.note_es.gsr-school,"Service Manual study, presented with Districts 1 & 3.","Estudio del Manual de Servicio, presentado junto con los Distritos 1 y 3.",Spanish Note lines for this calendar entry until it has its own Nota: lines (used only while the English column matches the calendar)
+calendar.note_es.treatment-committee,E-mail the Treatment chair for the Zoom invitation. | The committee also meets during the Area meeting.,Escribe a quien coordina el comité de Centros de Tratamiento para recibir la invitación de Zoom. | El comité también se reúne durante la reunión del Área.,Spanish Note lines for this calendar entry until it has its own Nota: lines (used only while the English column matches the calendar)
+calendar.note_es.msca09-area-meeting,"Meets at a different district each month. Once the Area announces a meeting, it gets its own entry (Area Service Committee or Assembly) with the place, host district, agenda and flyer. | Registration opens at 8:00 AM. | DCM School (10:15-11:30 AM), Guidelines & Policies, Corrections and Treatment also meet during the committee break-out.","Se reúne cada mes en un distrito distinto. Cuando el Área anuncia una reunión, esta tiene su propia entrada (Comité de Servicio de Área o Asamblea) con el lugar, el distrito anfitrión, la agenda y el volante. | La inscripción abre a las 8:00 a. m. | La Escuela de MCD (10:15–11:30 a. m.), Guías y Políticas, Instituciones Correccionales y Centros de Tratamiento también se reúnen durante las sesiones de los comités.",Spanish Note lines for this calendar entry until it has its own Nota: lines (used only while the English column matches the calendar)

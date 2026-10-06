@@ -1,0 +1,46 @@
+{#- Committee page header band in the committee's colour. Expects: c (committee), L (lang), nextInfo, catLabel. -#}
+<section class="cm-hero" style="{{ c.color | accent }}">
+  <div class="bg-confetti absolute inset-0 -z-10 opacity-25 mix-blend-screen" aria-hidden="true"></div>
+  <span class="pointer-events-none absolute -top-24 -right-24 -z-10 hidden size-[30rem] rounded-full bg-white/5 ring-1 ring-white/10 lg:block" aria-hidden="true"></span>
+  <span class="pointer-events-none absolute top-1/2 right-[8%] -z-10 hidden -translate-y-1/2 text-white/10 xl:block" aria-hidden="true">{% icon c.icon, "size-[22rem] 2xl:size-[26rem] rotate-[-8deg]" %}</span>
+  <div class="wrap pt-6 pb-20 sm:pt-8 lg:pt-10 lg:pb-24 2xl:pb-28">
+    <nav aria-label="{{ 'nav.breadcrumb' | t(L) }}" class="mb-6 text-sm">
+      {#- below lg every crumb is a 44px tap target (same pattern as pageHero in macros/ui.njk) -#}
+      <ol class="-my-3 flex flex-wrap items-center gap-x-1.5 text-white/75 lg:my-0 lg:gap-y-1.5">
+        <li><a href="{{ '/' | lurl(L) }}" class="-ml-3.5 inline-flex size-11 items-center justify-center hover:text-white lg:ml-0 lg:size-auto">{% icon "house", "size-4" %}<span class="sr-only">{{ "nav.home" | t(L) }}</span></a></li>
+        <li class="flex items-center gap-1.5">{% icon "chevron-right", "size-3.5 text-white/50" %}<a href="{{ '/committees/' | lurl(L) }}" class="inline-flex min-h-11 min-w-11 items-center justify-center hover:text-white lg:min-h-0 lg:min-w-0">{{ "nav.committees" | t(L) }}</a></li>
+        <li class="flex min-h-11 min-w-0 items-center gap-1.5 lg:min-h-0">{% icon "chevron-right", "size-3.5 text-white/50" %}<span class="truncate font-medium text-white" aria-current="page">{{ c | loc("name", L) }}</span></li>
+      </ol>
+    </nav>
+    <div class="flex flex-col gap-6 sm:flex-row sm:items-center lg:gap-10">
+      <span class="cm-hero-icon">{% icon c.icon, "size-10 sm:size-12 lg:size-14 2xl:size-16" %}</span>
+      <div class="min-w-0 max-w-4xl">
+        <p class="flex flex-wrap items-center gap-2 text-xs font-bold tracking-[0.18em] text-white/85 uppercase">
+          <span>{{ catLabel }}</span>
+          {%- if c.short_en %}<span class="rounded-full bg-white/20 px-2 py-0.5 tracking-normal">{{ c | loc("short", L) }}</span>{% endif %}
+        </p>
+        <h1 class="mt-2 font-display text-4xl font-extrabold tracking-tight text-balance text-white drop-shadow-sm sm:text-5xl 2xl:text-6xl">{{ c | loc("name", L) }}</h1>
+        {%- set sum = c | loc("summary", L) %}
+        {%- if sum %}<p class="mt-4 max-w-3xl text-lg leading-relaxed text-pretty text-white/90 2xl:text-xl">{{ sum }}</p>{% endif %}
+        <div class="mt-6 flex flex-wrap gap-2">
+          {%- if c.status == "completed" %}<span class="cm-hero-chip">{% icon "circle-check", "size-3.5" %}{{ "committees.completed" | t(L) }}</span>{% endif %}
+          {%- if c.bilingual %}<span class="cm-hero-chip">{% icon "languages", "size-3.5" %}{{ "committees.bilingual" | t(L) }}</span>{% endif %}
+          {%- if c.meets_at_area_meeting %}<span class="cm-hero-chip">{% icon "calendar-range", "size-3.5" %}{{ "committees.chip_breakout" | t(L) }}</span>{% endif %}
+          {%- if meetings.length == 1 %}<span class="cm-hero-chip">{% icon "repeat", "size-3.5" %}{{ meetings[0] | loc("pattern", L) }}</span>{% endif %}
+          {%- if c.vacancies.length %}<a href="#people" class="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-bold text-coral-700 shadow-soft transition hover:-translate-y-0.5">{% icon "hand-heart", "size-3.5" %}{{ ("committees.help_wanted_one" if c.vacancies.length == 1 else "committees.help_wanted_n") | t(L, { n: c.vacancies.length }) }}</a>{% endif %}
+        </div>
+        <div class="mt-7 flex flex-wrap gap-3">
+          {%- if c.email %}<a href="mailto:{{ c.email }}" class="btn btn-white">{% icon "mail", "size-4" %}{{ ("committees.email_organizers" if c.category == "service-event" else "committees.email_committee") | t(L) }}</a>{% endif %}
+          <a href="#meetings" class="btn btn-glass">{% icon "calendar-days", "size-4" %}{{ "committees.when_we_meet" | t(L) }}</a>
+          <span x-data="shareLink({{ (c | loc('name', L)) | json }})">
+            <button type="button" class="btn btn-glass" @click="share()">
+              <span x-show="!done" class="inline-flex items-center gap-2">{% icon "share-2", "size-4" %}{{ "ui.share" | t(L) }}</span>
+              <span x-cloak x-show="done" class="inline-flex items-center gap-2">{% icon "check", "size-4" %}{{ "ui.link_copied" | t(L) }}</span>
+            </button>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <svg class="cm-hero-wave" viewBox="0 0 1440 56" preserveAspectRatio="none" aria-hidden="true"><path fill="currentColor" d="M0 56h1440V18c-120 20-240 30-360 30S840 18 720 18 480 48 360 48 120 30 0 18z"/></svg>
+</section>

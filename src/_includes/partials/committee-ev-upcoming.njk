@@ -1,0 +1,3 @@
+{#- Upcoming events list from the calendar (needs macros/events.njk). Expects: events, L, c. -#}
+{%- from "macros/events.njk" import upcomingList with context -%}
+{{ upcomingList({ items: events, lang: L, limit: 6, emptyText: "committees.no_events" | t(L), variant: "default", id: "cm-events-" + c.slug }) }}

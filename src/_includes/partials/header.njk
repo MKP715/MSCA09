@@ -1,0 +1,167 @@
+{#- Site header: top strip, logo, desktop menu with dropdowns, search, language switch, mobile drawer. Menu comes from data/nav.csv. -#}
+{%- set L = lang -%}
+{%- set lc = L.code -%}
+{%- set enPath = page.url if lc == "en" else (page.url | altUrl(L)) -%}
+{%- set altHref = ("/es/" if L.code == "en" else "/") if page.url == "/404.html" else (page.url | altUrl(L)) -%}
+<header role="banner" class="sticky top-0 z-50" x-data="siteHeader" @keydown.escape.window="closeAll()">
+  {#- Top strip -#}
+  {#- bg-ring-strong: the darker ring gradient, so white text passes AA contrast. Taller on touch screens (44px tap target). -#}
+  <div class="bg-ring-strong text-white">
+    <div class="wrap flex h-11 items-center justify-between gap-4 text-xs font-medium sm:text-[13px] lg:h-9">
+      <a href="{{ '/newcomers/' | lurl(L) }}" class="group inline-flex min-h-11 min-w-0 items-center gap-2 hover:underline lg:min-h-0">
+        {#- the "ping" pulses three times, then rests (no endless motion) -#}
+        <span class="relative flex size-2 shrink-0" aria-hidden="true"><span class="absolute inline-flex size-full animate-ping rounded-full bg-sun-300 opacity-75 [animation-iteration-count:3]"></span><span class="relative inline-flex size-2 rounded-full bg-sun-300"></span></span>
+        {#- one line from 360px; on narrower screens it wraps to a second line instead of losing the call to action -#}
+        <span class="line-clamp-2 leading-tight text-balance">{{ "header.need_help" | t(L) }}</span>
+        {% icon "arrow-right", "size-3.5 shrink-0 transition group-hover:translate-x-0.5" %}
+      </a>
+      <div class="hidden items-center gap-4 sm:flex">
+        <span class="opacity-90">{{ "header.panel" | t(L, { panel: site.panel, years: site.panel_years }) }}</span>
+        <span class="h-3 w-px bg-white/40"></span>
+        <a href="{{ altHref }}" hreflang="{{ L.other }}" lang="{{ L.other }}" class="inline-flex min-h-11 items-center gap-1.5 font-semibold hover:underline lg:min-h-0">
+          {% icon "languages", "size-3.5" %}{{ "header.other_language" | t(L) }}
+        </a>
+      </div>
+    </div>
+  </div>
+
+  {#- Main bar -#}
+  <div class="border-b border-ink-900/5 transition-all duration-300"
+       :class="scrolled ? 'bg-white/90 shadow-soft backdrop-blur-xl' : 'bg-white/80 backdrop-blur-md'">
+    <div class="wrap flex items-center gap-3 transition-all duration-300 lg:gap-6" :class="scrolled ? 'h-14 lg:h-16' : 'h-[4.5rem] lg:h-20'">
+      {#- Spoken name: the visible "MSCA 09" (+ the full name where shown), then "Home" (WCAG 2.5.3 label in name). -#}
+      <a href="{{ '/' | lurl(L) }}" class="group flex min-w-0 shrink-0 items-center gap-3">
+        <picture>
+          <source type="image/webp" srcset="/assets/img/logo/logo-{{ lc }}-96.webp 96w, /assets/img/logo/logo-{{ lc }}-160.webp 160w" sizes="56px">
+          <img src="/assets/img/logo/logo-{{ lc }}-160.png" alt="" width="56" height="56"
+               class="size-11 drop-shadow-md transition-all duration-300 group-hover:rotate-[-6deg] group-hover:scale-105 lg:size-14" :class="scrolled && '!size-10 lg:!size-11'">
+        </picture>
+        <span class="flex min-w-0 flex-col leading-tight">
+          <span class="font-display text-lg font-extrabold tracking-tight text-ink-950 sm:text-xl">MSCA <span class="text-gradient">09</span></span>
+          <span class="hidden truncate text-[11px] font-medium text-ink-500 sm:block lg:hidden 2xl:block 2xl:text-xs">{{ "site.name" | t(L) }}</span>
+          <span class="sr-only">— {{ "nav.home" | t(L) }}</span>
+        </span>
+      </a>
+
+      {#- Desktop menu (from 1024px; tighter spacing until 1280px). Dropdowns open on mouse hover, on click/tap and with Enter;
+          Escape closes them and returns focus to the button. Behaviour: navDrop in assets/js/app.js. -#}
+      <nav aria-label="{{ 'nav.main' | t(L) }}" class="ml-auto hidden lg:block">
+        <ul class="flex items-center xl:gap-0.5 2xl:gap-2">
+          {%- for item in nav.top %}
+          {%- set active = item | navActive(enPath) %}
+          {%- if item.cta %}
+          {%- elif item.children.length %}
+          {%- set menuId = "menu-" + (item.key or loop.index) %}
+          <li class="relative" x-data="navDrop" @pointerenter="enter($event)" @pointerleave="leave($event)" @keydown.escape.stop="esc()"
+              @close-menus.window="open = false" @click.outside="open = false" @focusout="if (!$el.contains($event.relatedTarget)) open = false">
+            <button type="button" x-ref="btn" class="group inline-flex items-center gap-1 rounded-full px-2.5 py-2 text-sm font-semibold whitespace-nowrap transition xl:px-3 xl:text-[15px] 2xl:gap-1.5 2xl:px-3.5 {{ 'text-ink-950 bg-ink-50' if active else 'text-ink-700 hover:bg-ink-50 hover:text-ink-950' }}"
+                    aria-expanded="false" :aria-expanded="open.toString()" aria-controls="{{ menuId }}" @click="toggle()">
+              {{ item | loc("label", L) }}
+              <span class="transition duration-200" :class="open && 'rotate-180'">{% icon "chevron-down", "size-4" %}</span>
+            </button>
+            <div x-cloak x-show="open" x-ref="panel" id="{{ menuId }}" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-120" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+                 class="absolute left-1/2 top-full z-50 {{ 'w-[min(44rem,90vw)]' if item.children.length > 3 else 'w-[min(24rem,90vw)]' }} -translate-x-1/2 pt-3">
+              <div class="card overflow-hidden p-3 shadow-lift">
+                <ul class="grid gap-1 {{ 'sm:grid-cols-2' if item.children.length > 3 }}">
+                  {%- for child in item.children %}
+                  <li style="{{ child.color | accent(loop.index) }}">
+                    <a href="{{ child.url | lurl(L) }}" class="group/item flex items-start gap-3 rounded-2xl p-3 transition hover:bg-[var(--a-50)]">
+                      <span class="icon-tile-soft size-10 transition group-hover/item:scale-110">{% icon child.icon or "circle", "size-5" %}</span>
+                      <span class="min-w-0">
+                        <span class="block font-semibold text-ink-900">{{ child | loc("label", L) }}</span>
+                        {%- set d = child | loc("desc", L) %}{% if d %}<span class="mt-0.5 block text-sm leading-snug text-ink-500">{{ d }}</span>{% endif %}
+                      </span>
+                    </a>
+                  </li>
+                  {%- endfor %}
+                </ul>
+              </div>
+            </div>
+          </li>
+          {%- else %}
+          <li>
+            <a href="{{ item.url | lurl(L) }}" {% if active %}aria-current="page"{% endif %}
+               class="relative inline-flex items-center rounded-full px-2.5 py-2 text-sm font-semibold whitespace-nowrap transition xl:px-3 xl:text-[15px] 2xl:px-3.5 {{ 'text-ink-950 bg-ink-50' if active else 'text-ink-700 hover:bg-ink-50 hover:text-ink-950' }}">
+              {{ item | loc("label", L) }}
+            </a>
+          </li>
+          {%- endif %}
+          {%- endfor %}
+        </ul>
+      </nav>
+
+      <div class="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-2 lg:ml-0">
+        <button type="button" @click="$dispatch('open-search')" class="grid size-11 place-items-center lg:size-10 rounded-full text-ink-700 ring-1 ring-ink-200 transition hover:bg-ink-50 hover:text-ink-950 2xl:flex 2xl:w-auto 2xl:gap-2 2xl:px-4" aria-label="{{ 'nav.search' | t(L) }}">
+          {% icon "search", "size-[18px]" %}<span class="hidden text-sm font-medium text-ink-500 2xl:inline">{{ "nav.search" | t(L) }}</span>
+          <kbd class="hidden rounded-md bg-ink-100 px-1.5 py-0.5 font-sans text-[11px] text-ink-500 3xl:inline">/</kbd>
+        </button>
+        {#- EN | ES pill. Hidden from 1024 to 1279px, where the top strip's language link sits right above it. Its spoken name
+            starts with the visible letters (WCAG 2.5.3), then says where the link goes. -#}
+        <a href="{{ altHref }}" hreflang="{{ L.other }}"
+           class="hidden h-11 items-center gap-1 rounded-full px-1 text-xs font-bold ring-1 ring-ink-200 sm:flex lg:hidden xl:flex xl:h-10">
+          <span class="grid h-8 place-items-center rounded-full px-2.5 {{ 'bg-ink-900 text-white' if lc == 'en' else 'text-ink-500' }}">EN</span>
+          <span class="grid h-8 place-items-center rounded-full px-2.5 {{ 'bg-ink-900 text-white' if lc == 'es' else 'text-ink-500' }}">ES</span>
+          <span class="sr-only" lang="{{ L.other }}">— {{ "header.other_language" | t(L) }}</span>
+        </a>
+        {%- for item in nav.top %}{% if item.cta %}
+        <a href="{{ item.url | lurl(L) }}" class="btn btn-primary hidden md:inline-flex">{% icon item.icon or "heart", "size-4" %}{{ item | loc("label", L) }}</a>
+        {%- endif %}{% endfor %}
+        <button type="button" class="grid size-11 place-items-center rounded-full bg-ink-900 text-white lg:hidden" @click="menu = true" aria-label="{{ 'nav.menu' | t(L) }}" :aria-expanded="menu.toString()" aria-controls="mobile-menu">
+          {% icon "menu", "size-5" %}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  {#- Mobile / tablet drawer -#}
+  <div x-cloak x-show="menu" class="fixed inset-0 z-[60] lg:hidden" role="dialog" aria-modal="true" aria-label="{{ 'nav.menu' | t(L) }}" id="mobile-menu">
+    <div x-show="menu" x-transition.opacity class="absolute inset-0 bg-ink-950/50 backdrop-blur-sm" @click="menu = false"></div>
+    <div x-show="menu" x-trap.noscroll.inert="menu"
+         x-transition:enter="transition ease-out duration-300" x-transition:enter-start="translate-x-full" x-transition:enter-end="translate-x-0"
+         x-transition:leave="transition ease-in duration-200" x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full"
+         class="absolute inset-y-0 right-0 flex w-full max-w-md flex-col bg-white shadow-2xl">
+      <div class="bg-ring-strong flex items-center justify-between gap-3 px-5 py-4 text-white">
+        <a href="{{ '/' | lurl(L) }}" class="flex items-center gap-3">
+          <img src="/assets/img/logo/logo-{{ lc }}-96.webp" alt="" width="44" height="44" class="size-11 rounded-full bg-white p-0.5">
+          <span class="font-display text-lg font-bold">MSCA 09</span>
+        </a>
+        <button type="button" class="grid size-11 place-items-center rounded-full bg-white/15 ring-1 ring-white/30" @click="menu = false" aria-label="{{ 'nav.close' | t(L) }}">{% icon "x", "size-5" %}</button>
+      </div>
+      <div class="flex-1 overflow-y-auto overscroll-contain px-3 py-4">
+        <button type="button" @click="menu = false; $dispatch('open-search')" class="field mb-4 flex items-center gap-3 text-left text-ink-500">
+          {% icon "search", "size-5" %}{{ "search.placeholder" | t(L) }}
+        </button>
+        <ul class="space-y-1">
+          <li><a href="{{ '/' | lurl(L) }}" class="flex items-center gap-3 rounded-2xl px-3 py-3 text-base font-semibold text-ink-800 hover:bg-ink-50" style="{{ 'ocean' | accent }}"><span class="icon-tile-soft size-10">{% icon "house", "size-5" %}</span>{{ "nav.home" | t(L) }}</a></li>
+          {%- for item in nav.top %}
+          {%- if item.children.length %}
+          <li x-data="{ open: {{ 'true' if (item | navActive(enPath)) else 'false' }} }" style="{{ item.color | accent(loop.index) }}">
+            <button type="button" @click="open = !open" :aria-expanded="open.toString()" class="flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-left text-base font-semibold text-ink-800 hover:bg-ink-50">
+              <span class="icon-tile-soft size-10">{% icon item.icon or "circle", "size-5" %}</span>
+              <span class="flex-1">{{ item | loc("label", L) }}</span>
+              <span class="transition" :class="open && 'rotate-180'">{% icon "chevron-down", "size-5 text-ink-400" %}</span>
+            </button>
+            <ul x-show="open" x-collapse class="ml-8 space-y-0.5 border-l-2 border-[var(--a-200)] py-1 pl-4">
+              {%- for child in item.children %}
+              <li><a href="{{ child.url | lurl(L) }}" class="block rounded-xl px-3 py-2.5 text-[15px] font-medium text-ink-700 hover:bg-[var(--a-50)] hover:text-ink-950">{{ child | loc("label", L) }}</a></li>
+              {%- endfor %}
+            </ul>
+          </li>
+          {%- else %}
+          <li style="{{ item.color | accent(loop.index) }}">
+            <a href="{{ item.url | lurl(L) }}" class="flex items-center gap-3 rounded-2xl px-3 py-3 text-base font-semibold text-ink-800 hover:bg-ink-50">
+              <span class="icon-tile-soft size-10">{% icon item.icon or "circle", "size-5" %}</span>{{ item | loc("label", L) }}
+            </a>
+          </li>
+          {%- endif %}
+          {%- endfor %}
+        </ul>
+      </div>
+      <div class="grid grid-cols-2 gap-3 border-t border-ink-100 p-4">
+        <a href="{{ altHref }}" hreflang="{{ L.other }}" lang="{{ L.other }}" class="btn btn-ghost">{% icon "languages", "size-4" %}{{ "header.other_language" | t(L) }}</a>
+        <a href="{{ '/newcomers/' | lurl(L) }}" class="btn btn-primary">{% icon "heart-handshake", "size-4" %}{{ "header.find_meeting" | t(L) }}</a>
+      </div>
+    </div>
+  </div>
+</header>

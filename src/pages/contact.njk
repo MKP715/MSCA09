@@ -1,0 +1,207 @@
+---
+pagination: { data: langs, size: 1, alias: lang, addAllPagesToCollections: true }
+permalink: "{{ lang.prefix }}/contact/"
+layout: page.njk
+title_key: contact.title
+description_key: contact.description
+eyebrow_key: contact.eyebrow
+lead_key: contact.lead
+heroIcon: send
+accent: sage
+crumbs: [{ label_key: "people.crumb_about", url: "/about/" }]
+bare: true
+scripts: ["/assets/js/committees.js"]
+---
+{%- from "macros/ui.njk" import emailLink with context -%}
+{%- set L = lang -%}
+{%- set P = servants or {} -%}
+{%- set officersC = committees.officers or [] -%}
+{%- set dBodies = (P.bodies or []) | where("level", "district") -%}
+
+{#- ---------------------------------------------------------------- first: help, mail, website -#}
+<section class="wrap relative z-10 -mt-6 lg:-mt-10" aria-label="{{ 'contact.quick' | t(L) }}">
+  <div class="grid gap-5 lg:grid-cols-12 2xl:gap-6">
+    {#- red to burnt orange: the text side stays on coral 800/700 and the orange end on sun 700, so every white label keeps 4.5:1 -#}
+    <div id="help-panel" class="relative overflow-hidden rounded-[2rem] p-7 text-white shadow-lift sm:p-8 lg:col-span-6 2xl:col-span-5" style="background: radial-gradient(22rem 14rem at 100% 100%, color-mix(in oklab, var(--color-sun-600) 45%, transparent), transparent 70%), linear-gradient(125deg, var(--color-coral-800), var(--color-coral-700) 45%, var(--color-sun-700));">
+      <span class="pointer-events-none absolute -right-10 -bottom-16 text-white/10" aria-hidden="true">{% icon "heart-handshake", "size-64" %}</span>
+      <p class="relative text-xs font-bold tracking-[0.18em] text-white uppercase">{{ "contact.help_eyebrow" | t(L) }}</p>
+      <h2 class="relative mt-2 font-display text-3xl font-extrabold tracking-tight text-balance sm:text-4xl">{{ "contact.help_title" | t(L) }}</h2>
+      <p class="relative mt-3 max-w-xl text-lg text-white">{{ "contact.help_body" | t(L) }}</p>
+      <p class="relative mt-4 flex max-w-xl items-start gap-2 rounded-2xl bg-coral-950/30 px-4 py-3 text-sm text-white ring-1 ring-white/30">{% icon "phone-call", "size-4 mt-0.5 shrink-0" %}{{ "contact.help_note" | t(L) }}</p>
+      <div class="relative mt-6 flex flex-wrap gap-3">
+        <a href="{{ '/newcomers/' | lurl(L) }}" class="btn btn-white btn-lg">{% icon "heart-handshake", "size-5" %}{{ "contact.help_btn" | t(L) }}</a>
+        <a href="{{ '/resources/#offices' | lurl(L) }}" class="btn btn-lg bg-coral-950/35 text-white ring-1 ring-white/50 backdrop-blur-md hover:bg-coral-950/50">{% icon "phone", "size-5" %}{{ "contact.help_offices" | t(L) }}</a>
+        {%- if site.aa_find_meeting %}<a href="{{ site.aa_find_meeting }}" target="_blank" rel="noopener" class="btn btn-lg bg-coral-950/35 text-white ring-1 ring-white/50 backdrop-blur-md hover:bg-coral-950/50">{% icon "map-pin", "size-5" %}aa.org{% icon "external-link", "size-3.5 opacity-70" %}</a>{% endif %}
+      </div>
+    </div>
+    <div class="grid gap-5 sm:grid-cols-2 lg:col-span-6 2xl:col-span-7 2xl:grid-cols-3">
+      <div class="card flex flex-col gap-3 p-6" style="{{ 'ocean' | accent }}">
+        <span class="icon-tile">{% icon "mailbox", "size-6" %}</span>
+        <h2 class="font-display text-lg font-bold text-ink-950">{{ "contact.mail_title" | t(L) }}</h2>
+        <address class="text-[15px] leading-relaxed not-italic text-ink-700">{{ site.mailing_name }}<br>{{ site.mailing_po_box }}<br>{{ site.mailing_city }}</address>
+        <p class="mt-auto text-sm text-ink-500">{{ "contact.mail_note" | t(L) }}</p>
+      </div>
+      <div class="card flex flex-col gap-3 p-6" style="{{ 'iris' | accent }}">
+        <span class="icon-tile">{% icon "globe", "size-6" %}</span>
+        <h2 class="font-display text-lg font-bold text-ink-950">{{ "contact.web_title" | t(L) }}</h2>
+        <p class="text-sm text-ink-600">{{ "contact.web_body" | t(L) }}</p>
+        <div class="mt-auto text-sm">{{ emailLink({ email: site.email_webmaster, lang: L }) }}</div>
+      </div>
+      <div class="card flex flex-col gap-3 p-6 sm:col-span-2 sm:flex-row sm:items-center sm:gap-5 2xl:col-span-1 2xl:flex-col 2xl:items-start 2xl:gap-3" style="{{ 'sage' | accent }}">
+        <span class="icon-tile">{% icon "heart", "size-6" %}</span>
+        <div class="flex-1">
+          <h2 class="font-display text-lg font-bold text-ink-950">{{ "contact.give_title" | t(L) }}</h2>
+          <p class="mt-1 text-sm text-ink-600">{{ "contact.give_body" | t(L) }}</p>
+        </div>
+        <a href="{{ '/contribute/' | lurl(L) }}" class="inline-flex shrink-0 items-center gap-1.5 text-sm font-semibold text-sage-700 hover:underline 2xl:mt-auto">{{ "contact.give_link" | t(L) }}{% icon "arrow-right", "size-4" %}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{#- ---------------------------------------------------------------- what to send where -#}
+<section class="wrap py-14 lg:py-20" aria-labelledby="send-title">
+  <div class="mb-8 max-w-3xl lg:mb-10" style="{{ 'coral' | accent }}">
+    <p class="eyebrow mb-2">{{ "contact.send_eyebrow" | t(L) }}</p>
+    <h2 id="send-title" class="h-section text-balance">{{ "contact.send_title" | t(L) }}</h2>
+    <p class="lead mt-3">{{ "contact.send_lead" | t(L) }}</p>
+  </div>
+  {%- set routes = [
+    { key: "events", icon: "calendar-plus", color: "ocean", email: site.email_webmaster },
+    { key: "minutes", icon: "notebook-pen", color: "sky", email: "secretary@msca09aa.org" },
+    { key: "motions", icon: "gavel", color: "violet", email: "chair@msca09aa.org", email2: "gapchair@msca09aa.org" },
+    { key: "groups", icon: "id-card", color: "sea", email: "registrar@msca09aa.org" },
+    { key: "newsletter", icon: "newspaper", color: "copper", email: "editor@msca09aa.org", email2: "communicationschair-es@msca09aa.org" },
+    { key: "website", icon: "laptop", color: "purple", email: site.email_webmaster, email2: "technologychair@msca09aa.org" }
+  ] -%}
+  <div class="grid gap-5 sm:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-6">
+    {%- for r in routes %}
+    <div class="card-accent card-hover flex flex-col gap-3 p-6 reveal" style="{{ r.color | accent }};--reveal-delay:{{ loop.index0 * 70 }}ms">
+      <span class="icon-tile">{% icon r.icon, "size-6" %}</span>
+      <h3 class="font-display text-lg font-bold text-ink-950">{{ ("contact.route." + r.key + ".title") | t(L) }}</h3>
+      <p class="text-sm leading-relaxed text-ink-600">{{ ("contact.route." + r.key + ".body") | t(L) }}</p>
+      <div class="mt-auto space-y-1 border-t border-ink-100 pt-3 text-sm">
+        <p class="text-xs font-bold tracking-wide text-[var(--a-700)] uppercase">{{ ("contact.route." + r.key + ".who") | t(L) }}</p>
+        {{ emailLink({ email: r.email, lang: L }) }}
+        {%- if r.email2 %}<div>{{ emailLink({ email: r.email2, lang: L }) }}</div>{% endif %}
+      </div>
+    </div>
+    {%- endfor %}
+  </div>
+
+  <div class="mt-8 grid gap-6 rounded-3xl bg-sun-50 p-6 ring-1 ring-sun-200 sm:p-8 lg:grid-cols-[auto_1fr]">
+    <span class="grid size-14 place-items-center rounded-2xl bg-sun-500 text-white shadow-soft">{% icon "clipboard-check", "size-7" %}</span>
+    <div>
+      <h3 class="font-display text-xl font-bold text-ink-950">{{ "contact.rules_title" | t(L) }}</h3>
+      <ol class="mt-4 grid gap-3 md:grid-cols-2 2xl:grid-cols-5">
+        {%- for i in [1, 2, 3, 4, 5] %}
+        <li class="flex gap-3 rounded-2xl bg-white p-4 text-sm leading-relaxed text-ink-700 shadow-soft"><span class="grid size-7 shrink-0 place-items-center rounded-full bg-sun-100 font-display text-sm font-bold text-sun-800">{{ i }}</span><span>{{ ("contact.rule" + i) | t(L) }}</span></li>
+        {%- endfor %}
+      </ol>
+    </div>
+  </div>
+</section>
+
+{#- ---------------------------------------------------------------- directory -#}
+<section class="bg-ring-soft py-14 lg:py-20" aria-labelledby="dir-title" x-data="cmFilter({ group: 'all' })" data-results="{{ 'contact.results' | t(L) }}">
+  <div class="wrap">
+    <div class="mb-8 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+      <div class="max-w-3xl" style="{{ 'sage' | accent }}">
+        <p class="eyebrow mb-2">{{ "contact.dir_eyebrow" | t(L) }}</p>
+        <h2 id="dir-title" class="h-section text-balance">{{ "contact.dir_title" | t(L) }}</h2>
+        <p class="lead mt-3">{{ "contact.dir_lead" | t(L) }}</p>
+      </div>
+      <label class="relative block w-full lg:w-96">
+        <span class="sr-only">{{ "contact.search_label" | t(L) }}</span>
+        <span class="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-ink-400">{% icon "search", "size-5" %}</span>
+        <input type="search" x-model.debounce.150ms="q" class="field min-h-12 pl-12 shadow-soft" placeholder="{{ 'contact.search_placeholder' | t(L) }}" autocomplete="off">
+      </label>
+    </div>
+    <p class="sr-only" aria-live="polite" x-text="announce"></p>
+
+    {#- wide screens: officers and districts stacked on the left, the long committee list in two columns on the right,
+        so the three cards end at about the same height -#}
+    <div class="grid gap-6 xl:grid-cols-3 xl:grid-rows-[auto_1fr] xl:items-start">
+      {#- officers -#}
+      <div class="overflow-hidden rounded-3xl bg-white shadow-soft ring-1 ring-ink-900/5 xl:col-start-1 xl:row-start-1" data-cm-section style="{{ 'ocean' | accent }}">
+        <h3 class="flex items-center gap-3 px-5 py-4 font-display text-lg font-bold text-white" style="background: linear-gradient(120deg, var(--a-800), var(--a-700));">{% icon "landmark", "size-5" %}{{ "people.officers_title" | t(L) }}</h3>
+        <ul>
+          {%- for o in officersC %}
+          {%- set s = o.chairs[0] %}
+          <li class="cm-dir-row" data-cm-item data-search="{{ (s | cmPersonSearch(o.name_en + ' ' + o.name_es)) if s else '' }}">
+            <span class="min-w-0"><a href="{{ ('/about/panel/#' + o.slug) | lurl(L) }}" class="font-semibold text-ink-900 hover:underline">{{ o | loc("name", L) }}</a>{% if s and s.name %}<span class="block text-xs text-ink-500">{{ s.name }}{% if s.unconfirmed %} · {{ "people.to_confirm" | t(L) }}{% endif %}</span>{% endif %}</span>
+            {%- if s and s.email %}<span class="text-sm">{{ emailLink({ email: s.email, lang: L }) }}</span>{% endif %}
+          </li>
+          {%- endfor %}
+          <li class="cm-dir-row" data-cm-item data-search="contributions zelle contribuciones seventh tradition septima tradicion">
+            <span class="min-w-0"><a href="{{ '/contribute/' | lurl(L) }}" class="font-semibold text-ink-900 hover:underline">{{ "contact.contributions" | t(L) }}</a><span class="block text-xs text-ink-500">Zelle</span></span>
+            <span class="text-sm">{{ emailLink({ email: site.email_contributions or "contributions@msca09aa.org", lang: L }) }}</span>
+          </li>
+        </ul>
+      </div>
+
+      {#- committees -#}
+      <details open class="group/dir overflow-hidden rounded-3xl bg-white shadow-soft ring-1 ring-ink-900/5 xl:col-span-2 xl:col-start-2 xl:row-span-2 xl:row-start-1" data-cm-section data-cm-autoopen style="{{ 'sage' | accent }}" x-data x-init="if (!matchMedia('(min-width: 1280px)').matches) $el.open = false">
+        <summary class="flex cursor-pointer list-none items-center gap-3 px-5 py-4 text-white [&::-webkit-details-marker]:hidden" style="background: linear-gradient(120deg, var(--a-800), var(--a-700));">
+          {% icon "users-round", "size-5" %}<h3 class="font-display text-lg font-bold">{{ "contact.committees_title" | t(L) }}</h3>
+          <span class="ml-auto grid size-8 place-items-center rounded-full bg-white/15 transition group-open/dir:rotate-180 xl:hidden">{% icon "chevron-down", "size-4" %}</span>
+        </summary>
+        <ul class="xl:columns-2 xl:gap-0 xl:[column-rule:1px_solid_var(--color-ink-100)]">
+          {%- for c in committees.list or [] %}{% if c.email and c.category != "service-event" %}
+          <li class="cm-dir-row break-inside-avoid flex-col !items-start" data-cm-item data-search="{{ c | cmSearch }}">
+            <a href="{{ c.url | lurl(L) }}" class="min-w-0 font-semibold text-ink-900 hover:underline">{{ c | loc("name", L) }}</a>
+            <span class="flex flex-col items-start gap-0.5 text-sm">
+              {{ emailLink({ email: c.email, lang: L }) }}
+              {%- if c.email_es %}{{ emailLink({ email: c.email_es, lang: L }) }}{% endif %}
+              {%- if c.email_other %}{{ emailLink({ email: c.email_other, lang: L }) }}{% endif %}
+            </span>
+          </li>
+          {%- endif %}{% endfor %}
+        </ul>
+      </details>
+
+      {#- districts -#}
+      <details open class="group/dir overflow-hidden rounded-3xl bg-white shadow-soft ring-1 ring-ink-900/5 xl:col-start-1 xl:row-start-2" data-cm-section data-cm-autoopen style="{{ 'coral' | accent }}" x-data x-init="if (!matchMedia('(min-width: 1280px)').matches) $el.open = false">
+        <summary class="flex cursor-pointer list-none items-center gap-3 px-5 py-4 text-white [&::-webkit-details-marker]:hidden" style="background: linear-gradient(120deg, var(--a-800), var(--a-700));">
+          {% icon "map", "size-5" %}<h3 class="font-display text-lg font-bold">{{ "contact.districts_title" | t(L) }}</h3>
+          <span class="ml-auto grid size-8 place-items-center rounded-full bg-white/15 transition group-open/dir:rotate-180 xl:hidden">{% icon "chevron-down", "size-4" %}</span>
+        </summary>
+        <ul>
+          {%- for b in dBodies %}
+          {%- set dc = b.items[0] %}
+          <li class="cm-dir-row" data-cm-item data-search="{{ dc | cmPersonSearch(b.label_en + ' ' + b.label_es + ' dcmc cmcd mcd') }}">
+            <span class="min-w-0"><a href="{{ ('/districts/' + b.district + '/') | lurl(L) }}" class="font-semibold text-ink-900 hover:underline">{{ b | loc("label", L) }}</a><span class="block text-xs text-ink-500">{{ dc | loc("position", L) }}{% if dc.name %} · {{ dc.name }}{% endif %}</span></span>
+            {%- if dc.email %}<span class="text-sm">{{ emailLink({ email: dc.email, lang: L }) }}</span>{% endif %}
+          </li>
+          {%- endfor %}
+        </ul>
+      </details>
+    </div>
+    <div x-cloak x-show="shown === 0" class="mt-6 card flex flex-col items-center gap-3 p-8 text-center" style="{{ 'sage' | accent }}">
+      <p class="font-display text-lg font-bold text-ink-900">{{ "ui.no_results" | t(L) }}</p>
+      <button type="button" class="btn btn-ghost" @click="reset()">{{ "ui.clear" | t(L) }}</button>
+    </div>
+    <p class="mt-8 flex items-start gap-2 text-sm text-ink-600">{% icon "shield-check", "size-4 mt-0.5 shrink-0 text-sage-600" %}<span>{{ "contact.anon_note" | t(L) }} <a href="{{ '/about/panel/' | lurl(L) }}" class="font-semibold text-ocean-700 hover:underline">{{ "contact.see_panel" | t(L) }}</a></span></p>
+  </div>
+</section>
+
+{#- ---------------------------------------------------------------- beyond the Area -#}
+<section class="wrap py-14 lg:py-16" aria-labelledby="beyond-title">
+  <h2 id="beyond-title" class="h-section text-balance">{{ "contact.beyond_title" | t(L) }}</h2>
+  <div class="mt-8 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+    {%- set beyond = [
+      { key: "offices", icon: "phone-call", color: "sea", url: ("/resources/#offices" | lurl(L)), ext: false },
+      { key: "gso", icon: "building-2", color: "ocean", url: ("https://www.aa.org/es/aa-gso" if (L | langCode) == "es" else "https://www.aa.org/aa-gso"), ext: true },
+      { key: "pacific", icon: "globe", color: "iris", url: "https://www.aa.org/contact-pacific-region", ext: true },
+      { key: "online", icon: "monitor-smartphone", color: "lilac", url: ("https://aa-intergroup.org/es/" if (L | langCode) == "es" else "https://aa-intergroup.org/"), ext: true }
+    ] -%}
+    {%- for b in beyond %}
+    <a href="{{ b.url }}" {% if b.ext %}target="_blank" rel="noopener"{% endif %} class="card card-hover group flex h-full flex-col gap-3 p-6" style="{{ b.color | accent }}">
+      <span class="icon-tile transition group-hover:scale-110">{% icon b.icon, "size-6" %}</span>
+      <span class="font-display text-lg font-bold text-ink-950">{{ ("contact.beyond." + b.key + ".title") | t(L) }}</span>
+      <span class="text-sm text-ink-600">{{ ("contact.beyond." + b.key + ".body") | t(L) }}</span>
+      <span class="mt-auto inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--a-700)]">{{ "ui.open" | t(L) }}{% set bIcon = "external-link" if b.ext else "arrow-right" %}{% icon bIcon, "size-4" %}</span>
+    </a>
+    {%- endfor %}
+  </div>
+</section>

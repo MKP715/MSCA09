@@ -1,0 +1,320 @@
+---
+pagination:
+  data: calendar.pages
+  size: 1
+  alias: entry
+  addAllPagesToCollections: true
+permalink: "{{ entry.lang.prefix }}/events/{{ entry.item.slug }}/"
+layout: base.njk
+scripts: ["/assets/js/calendar.js"]
+headInclude: partials/calendar-event-head.njk
+eleventyComputed:
+  # one-time events carry their date in the title (58 "Area Service Committee (ASC)" pages must be told apart);
+  # repeating entries that share a title get their pattern and years
+  title: "{{ entry.item | calTitle(entry.lang) | safe }}{% if not entry.item.recurring %} – {{ entry.item.start | dt('date', entry.lang) | safe }}{% elif entry.item['titleSuffix_' + entry.lang.code] %} – {{ entry.item['titleSuffix_' + entry.lang.code] | safe }}{% endif %}"
+  description: "{{ entry.item | calMetaDescription(entry.lang) | safe }}"
+  accent: "{{ entry.item.color }}"
+  # flyers on hold (data/flyer-holds.csv) are never in entry.item.flyers
+  ogImage: "{% if entry.item.flyers and entry.item.flyers.length %}https://lh3.googleusercontent.com/d/{{ entry.item.flyers[0].id }}=w1200{% endif %}"
+  # one-time events that ended more than two years ago stay in the archive but out of search engines
+  noindex: "{{ 'yes' if entry.item.noindex else '' }}"
+  # past one-time events: kept out of the site search results' first places (honoured by base.njk when supported)
+  searchExclude: "{{ 'yes' if (not entry.item.recurring and entry.item.ended) else '' }}"
+---
+{%- from "macros/events.njk" import eventCard, upcomingList, meetingInfo, flyerGallery, addToCalendar, dateBadge -%}
+{%- from "macros/ui.njk" import formatBadge, langBadge, sectionHead -%}
+{%- set s = entry.item -%}
+{%- set L = lang -%}
+{%- set ttl = s | calTitle(L) -%}
+{%- set flyer = s.flyers[0] if (s.flyers and s.flyers.length) else null -%}
+{%- set isPastOneOff = (not s.recurring) and s.ended -%}
+
+{#- ======================================================== hero -#}
+<section class="ev-hero relative isolate overflow-hidden" style="{{ s.color | accent }}">
+  <div class="ev-hero__bg absolute inset-0 -z-10" aria-hidden="true"></div>
+  <div class="bg-confetti absolute inset-0 -z-10 opacity-60" aria-hidden="true"></div>
+  <div class="wrap pt-6 pb-12 sm:pt-8 lg:pt-10 lg:pb-16 2xl:pb-20">
+    <nav aria-label="{{ 'nav.breadcrumb' | t(L) }}" class="mb-6 text-sm">
+      {#- 44px tap targets below lg (same pattern as pageHero in macros/ui.njk) -#}
+      <ol class="-my-3 flex flex-wrap items-center gap-x-1.5 text-ink-500 lg:my-0 lg:gap-y-1.5">
+        <li><a href="{{ '/' | lurl(L) }}" class="-ml-3.5 inline-flex size-11 items-center justify-center hover:text-ink-900 lg:ml-0 lg:size-auto">{% icon "house", "size-4" %}<span class="sr-only">{{ "nav.home" | t(L) }}</span></a></li>
+        <li class="flex items-center gap-1.5">{% icon "chevron-right", "size-3.5 text-ink-300" %}<a href="{{ '/calendar/' | lurl(L) }}" class="inline-flex min-h-11 min-w-11 items-center justify-center hover:text-ink-900 lg:min-h-0 lg:min-w-0">{{ "nav.calendar" | t(L) }}</a></li>
+        <li class="flex items-center gap-1.5">{% icon "chevron-right", "size-3.5 text-ink-300" %}<a href="{{ '/events/' | lurl(L) }}" class="inline-flex min-h-11 min-w-11 items-center justify-center hover:text-ink-900 lg:min-h-0 lg:min-w-0">{{ "calendar.events.crumb" | t(L) }}</a></li>
+        <li class="flex min-h-11 min-w-0 items-center gap-1.5 lg:min-h-0">{% icon "chevron-right", "size-3.5 text-ink-300" %}<span class="max-w-[16rem] truncate font-medium text-ink-800 sm:max-w-md" aria-current="page">{{ ttl }}</span></li>
+      </ol>
+    </nav>
+
+    <div class="grid items-center gap-8 lg:grid-cols-[minmax(0,1fr)_auto] xl:gap-14">
+      <div class="min-w-0">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="ev-type ev-type--hero">{% icon s.icon or "calendar", "size-4" %}{{ s | calTypeLabel(L) }}</span>
+          {{ formatBadge({ format: s.format, lang: L }) }}
+          {{ langBadge({ language: s.language, lang: L }) }}
+          {%- if s.recurring %}<span class="chip chip-white">{% icon "repeat", "size-3.5" %}{{ "calendar.repeats" | t(L) }}</span>{% endif %}
+          {%- if s.status == "cancelled" %}<span class="chip chip-accent" style="{{ 'red' | accent }}">{% icon "ban", "size-3.5" %}{{ "calendar.cancelled" | t(L) }}</span>{% endif %}
+          {%- if s.status == "postponed" %}<span class="chip chip-accent" style="{{ 'amber' | accent }}">{% icon "hourglass", "size-3.5" %}{{ "calendar.postponed" | t(L) }}</span>{% endif %}
+        </div>
+        <h1 class="mt-5 font-display text-4xl font-extrabold tracking-tight text-balance break-words text-ink-950 sm:text-5xl 2xl:text-6xl" data-pagefind-weight="10">{{ ttl }}</h1>
+        <span hidden data-pagefind-filter="type:event"></span>
+        {%- if L.code == "es" and s.title_es and s.title_es != s.title %}
+        <p class="mt-2 text-sm text-ink-500" lang="en">{{ s.title }}</p>
+        {%- endif %}
+
+        <div class="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3 text-lg text-ink-700 2xl:text-xl">
+          <p class="flex items-center gap-2.5 font-semibold text-ink-900">
+            <span class="grid size-10 place-items-center rounded-2xl bg-white/80 shadow-soft" style="color: var(--a-600)">{% icon "calendar-days", "size-5" %}</span>
+            {%- if s.recurring %}{{ s | calLoc("rule", L) }}{% elif s.multiDay %}<span class="inline-block first-letter:uppercase">{{ s | calLoc("dateLabel", L) }}</span>{% else %}<span class="inline-block first-letter:uppercase">{{ s.start | dt("long", L) }}</span>{% endif %}
+          </p>
+          <p class="flex items-center gap-2.5">
+            <span class="grid size-10 place-items-center rounded-2xl bg-white/80 shadow-soft" style="color: var(--a-600)">{% icon "clock", "size-5" %}</span>
+            <span>{{ s | calLoc("timeLabel", L) }}{% if not s.allDay %} <span class="text-base text-ink-500">· {{ "time.pacific" | t(L) }}</span>{% endif %}{% if s | calLoc("registration", L) %}<span class="block text-base text-ink-600">{{ s | calLoc("registration", L) }}</span>{% endif %}</span>
+          </p>
+          {%- if s.location and s.location.city %}
+          <p class="flex items-center gap-2.5">
+            <span class="grid size-10 place-items-center rounded-2xl bg-white/80 shadow-soft" style="color: var(--a-600)">{% icon "map-pin", "size-5" %}</span>
+            <span>{{ s.location.city }}</span>
+          </p>
+          {%- elif s.format == "Virtual" %}
+          <p class="flex items-center gap-2.5">
+            <span class="grid size-10 place-items-center rounded-2xl bg-white/80 shadow-soft" style="color: var(--a-600)">{% icon "video", "size-5" %}</span>
+            <span>{{ "format.virtual" | t(L) }} · Zoom</span>
+          </p>
+          {%- endif %}
+        </div>
+
+        {#- next date / live status -#}
+        {%- set nexts = (s.upcomingDates or []) | where("status", "confirmed") | limit(4) %}
+        {%- if nexts.length %}
+        <ul class="mt-5" data-limit="1" role="list">
+          {%- for n in nexts %}
+          <li class="flex flex-wrap items-center gap-2 text-ink-700" data-hide-after="{{ n.end }}" data-when="{{ n.start }}" data-until="{{ n.end }}">
+            {%- if s.recurring %}<span class="inline-flex items-center gap-1.5 whitespace-nowrap">{% icon "arrow-right", "size-4 text-ink-500" %}{{ "calendar.info.next" | t(L) }}:</span> <strong class="text-ink-900">{{ n.start | dt("date", L) }}</strong>{% endif %}
+            <span data-rel hidden class="rel-badge rel-badge--lg"></span>
+          </li>
+          {%- endfor %}
+        </ul>
+        {%- endif %}
+
+        {#- ended banner: shown at build for past events, and revealed in the browser once an upcoming one-off is over -#}
+        {%- if isPastOneOff or (s.recurring and s.ended) %}
+        <p class="ended-banner mt-6">{% icon "history", "size-5 shrink-0" %}<span>{{ ("calendar.event.ended" if not s.recurring else "calendar.event.ended_series") | t(L, { date: s.lastDate | dt("full", L) }) }}</span></p>
+        {%- elif not s.recurring %}
+        <p class="ended-banner mt-6" data-reveal-after="{{ s.end }}" hidden>{% icon "history", "size-5 shrink-0" %}<span>{{ "calendar.event.ended" | t(L, { date: s.lastDate | dt("full", L) }) }}</span></p>
+        {%- endif %}
+
+        <div class="mt-8 flex flex-wrap gap-3">
+          {%- if s.online and s.online.joinUrl and not s.ended %}
+          <a href="{{ s.online.joinUrl }}" target="_blank" rel="noopener" class="btn btn-ocean btn-lg ev-hero-btn" {% if not s.recurring %}data-hide-after="{{ s.end }}"{% endif %}>{% icon "video", "size-5" %}{{ "calendar.join_zoom" | t(L) }}</a>
+          {%- endif %}
+          {%- if s.location and s.location.mapsUrl %}
+          <a href="{{ s.location.mapsUrl }}" target="_blank" rel="noopener" class="btn btn-white btn-lg ev-hero-btn">{% icon "navigation", "size-5" %}{{ "calendar.directions" | t(L) }}</a>
+          {%- endif %}
+          {%- if not s.ended %}
+          <a href="#add" class="btn btn-white btn-lg ev-hero-btn" {% if not s.recurring %}data-hide-after="{{ s.end }}"{% endif %}>{% icon "calendar-plus", "size-5" %}{{ "calendar.add.short" | t(L) }}</a>
+          {%- endif %}
+          <span x-data="shareLink({{ ttl | json }})">
+            <button type="button" @click="share()" class="btn btn-ghost btn-lg ev-hero-btn bg-white/60">
+              <span x-show="!done" class="inline-flex items-center gap-2">{% icon "share-2", "size-5" %}{{ "ui.share" | t(L) }}</span>
+              <span x-cloak x-show="done" class="inline-flex items-center gap-2 text-sage-700">{% icon "check", "size-5" %}{{ "ui.link_copied" | t(L) }}</span>
+            </button>
+          </span>
+        </div>
+      </div>
+
+      {#- flyer (or a colourful tile) -#}
+      <div class="mx-auto w-full max-w-sm lg:mx-0 lg:w-[22rem] xl:w-[25rem] 2xl:w-[28rem]{{ ' max-lg:hidden' if not flyer }}">
+        {%- if flyer %}
+        <div data-gallery class="ev-hero__flyer group">
+          <a href="{{ flyer.id | driveImg(1600) }}" data-pswp data-pswp-width="0" data-pswp-height="0" class="block" aria-label="{{ 'calendar.flyer_open' | t(L, { n: 1 }) }}">
+            <img src="{{ flyer.id | driveImg(800) }}" srcset="{{ flyer.id | driveImg(480) }} 480w, {{ flyer.id | driveImg(800) }} 800w, {{ flyer.id | driveImg(1200) }} 1200w"
+                 sizes="(min-width: 1536px) 28rem, (min-width: 1280px) 25rem, (min-width: 1024px) 22rem, 90vw"
+                 alt="{{ 'calendar.flyer_alt' | t(L, { title: ttl }) }}" class="w-full" fetchpriority="high" decoding="async"
+                 onerror="this.onerror=null;this.removeAttribute('srcset');this.src='https://drive.google.com/thumbnail?id={{ flyer.id }}&amp;sz=w800'">
+            <span class="flyer-gallery__zoom">{% icon "zoom-in", "size-5" %}</span>
+          </a>
+        </div>
+        {%- else %}
+        <div class="ev-hero__art" aria-hidden="true">
+          <span class="ev-hero__art-icon">{% icon s.icon or "calendar", "size-20 xl:size-24" %}</span>
+          {%- set heroIso = s.next.start if s.next else s.start %}
+          <div class="absolute bottom-5 left-5">{{ dateBadge({ iso: heroIso, lang: L, color: s.color, size: "lg" }) }}</div>
+          <p class="absolute right-5 bottom-6 max-w-[60%] text-right font-display text-lg font-bold text-white/95 drop-shadow">{{ s | calTypeLabel(L) }}</p>
+        </div>
+        {%- endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{#- ======================================================== body -#}
+<div class="wrap py-10 lg:py-14 2xl:py-16">
+  <div class="grid gap-8 xl:grid-cols-[minmax(0,1fr)_24rem] xl:gap-10 2xl:grid-cols-[minmax(0,1fr)_28rem] 2xl:gap-14">
+    <div class="min-w-0 space-y-10 lg:space-y-12">
+      <div class="reveal">
+        <h2 class="mb-4 font-display text-2xl font-bold text-ink-950">{{ ("calendar.event.details_meeting" if s.isMeeting else "calendar.event.details") | t(L) }}</h2>
+        {{ meetingInfo({ series: s, lang: L, addId: "add" }) }}
+      </div>
+
+      {%- if s.covers and s.covers.cities and s.covers.cities.length %}
+      <section class="reveal">
+        <h2 class="mb-4 font-display text-2xl font-bold text-ink-950">{{ "calendar.event.covers" | t(L) }}</h2>
+        <ul class="flex flex-wrap gap-2" role="list">
+          {%- for c in s.covers.cities %}<li class="chip chip-accent px-3 py-1.5 text-sm" style="{{ s.color | accent }}">{% icon "map-pin", "size-3.5" %}{{ c }}</li>{% endfor %}
+        </ul>
+      </section>
+      {%- elif s.coversDistricts and s.coversDistricts.length %}
+      <section class="reveal">
+        <h2 class="mb-2 font-display text-2xl font-bold text-ink-950">{{ "calendar.event.covers" | t(L) }}</h2>
+        <p class="mb-4 text-ink-600">{{ "calendar.event.serves_districts" | t(L) }}</p>
+        <ul class="flex flex-wrap gap-2" role="list">
+          {%- for d in s.coversDistricts %}
+          {%- set dd = calendar.districts | find("slug", d) %}
+          <li><a href="{{ ('/districts/' + d + '/') | lurl(L) }}" class="chip chip-accent px-3 py-1.5 text-sm hover:brightness-95" style="{{ s.color | accent }}">{% icon "map-pinned", "size-3.5" %}{{ (dd | calLoc("label", L)) if dd else d }}</a></li>
+          {%- endfor %}
+        </ul>
+      </section>
+      {%- elif s.covers and s.covers.text %}
+      <section class="reveal">
+        <h2 class="mb-4 font-display text-2xl font-bold text-ink-950">{{ "calendar.event.covers" | t(L) }}</h2>
+        <p class="text-lg text-ink-700" {% if L.code == "es" %}lang="en"{% endif %}>{{ s.covers.text }}</p>
+      </section>
+      {%- endif %}
+
+      {%- if s.about_html %}
+      <section class="reveal">
+        <h2 class="mb-4 font-display text-2xl font-bold text-ink-950">{{ ("calendar.event.what_happened" if isPastOneOff else "calendar.event.about") | t(L) }}</h2>
+        <div class="about-text card p-6 sm:p-8" {% if L.code == "es" %}lang="{{ 'es' if s.language == 'Spanish' else 'en' }}"{% endif %}>{{ s.about_html | safe }}</div>
+        {%- if L.code == "es" and s.language != "Spanish" %}<p class="mt-2 text-sm text-ink-500">{{ "calendar.event.as_written" | t(L) }}</p>{% endif %}
+      </section>
+      {%- endif %}
+
+      {%- if s.links and s.links.length %}
+      <section class="reveal">
+        <h2 class="mb-4 font-display text-2xl font-bold text-ink-950">{{ "calendar.event.documents" | t(L) }}</h2>
+        <ul class="grid gap-3 sm:grid-cols-2 2xl:grid-cols-3" role="list">
+          {%- for k in s.links %}
+          <li>
+            <a href="{{ k.url }}" target="_blank" rel="noopener" class="doc-tile group">
+              {%- if k.thumb %}
+              <img src="{{ k.thumb }}" alt="" aria-hidden="true" class="doc-tile__thumb" loading="lazy" decoding="async" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'doc-tile__icon'}))">
+              {%- else %}
+              <span class="doc-tile__icon">{% icon "file-text", "size-6" %}</span>
+              {%- endif %}
+              <span class="min-w-0 flex-1">
+                <span class="block font-semibold text-ink-900 group-hover:text-iris-700">{{ k | calLoc("label", L) }}</span>
+                <span class="mt-0.5 block text-sm text-ink-500">{% if k.isPdf %}{{ "calendar.event.pdf" | t(L) }}{% elif k.driveId %}{{ "calendar.event.drive" | t(L) }}{% else %}{{ k.url | calHost }}{% endif %}</span>
+              </span>
+              {% icon "external-link", "size-4 shrink-0 text-ink-300 group-hover:text-ink-600" %}
+            </a>
+          </li>
+          {%- endfor %}
+        </ul>
+      </section>
+      {%- endif %}
+
+      {%- if s.flyers and s.flyers.length > 1 %}
+      <section class="reveal">
+        <h2 class="mb-4 font-display text-2xl font-bold text-ink-950">{{ "calendar.flyers" | t(L) }}</h2>
+        {{ flyerGallery({ flyers: s.flyers, lang: L, alt: "calendar.flyer_alt" | t(L, { title: ttl }) }) }}
+      </section>
+      {%- endif %}
+    </div>
+
+    {#- ======================================================== aside -#}
+    <aside class="min-w-0 space-y-6 xl:sticky xl:top-28 xl:self-start">
+      {%- if s.recurring %}
+      <section class="card p-5 sm:p-6" style="{{ s.color | accent }}">
+        <h2 class="flex items-center gap-2.5 font-display text-lg font-bold text-ink-950"><span class="icon-tile-soft size-9">{% icon "calendar-range", "size-5" %}</span>{{ "calendar.event.next_dates" | t(L) }}</h2>
+        {%- set dl = "dates" | calUid %}
+        {%- if s.upcomingDates.length %}
+        <ol id="{{ dl }}" class="mt-4 space-y-1" role="list" data-empty="#{{ dl }}-empty">
+          {%- for n in s.upcomingDates %}
+          <li class="date-row{{ ' is-cancelled' if n.status == 'cancelled' }}" data-hide-after="{{ n.end }}" data-when="{{ n.start }}" data-until="{{ n.end }}">
+            {{ dateBadge({ iso: n.start, lang: L, color: s.color, size: "sm" }) }}
+            <span class="min-w-0 flex-1">
+              <span class="date-row__date first-letter:uppercase">{{ n.start | dt("long", L) }}</span>
+              <span class="date-row__time">{{ n | calLoc("timeLabel", L) }}{% if n.status == "cancelled" %} · <strong class="text-red-700">{{ "calendar.cancelled" | t(L) }}</strong>{% endif %}</span>
+            </span>
+            <span data-rel hidden class="rel-badge"></span>
+          </li>
+          {%- endfor %}
+        </ol>
+        {%- endif %}
+        <p id="{{ dl }}-empty" class="mt-4 text-sm text-ink-500" {% if s.upcomingDates.length %}hidden{% endif %}>{{ ("calendar.event.no_dates_ended" if s.ended else "calendar.event.no_dates") | t(L) }}</p>
+        {%- if s.cancelledDates.length %}
+        <p class="mt-4 rounded-2xl bg-red-50 p-3 text-sm text-red-800">{% icon "ban", "mr-1 inline size-4 align-[-2px]" %}{{ "calendar.event.skipped" | t(L) }}
+          {% for d in s.cancelledDates %}<s>{{ d | dt("date", L) }}</s>{% if not loop.last %}, {% endif %}{% endfor %}</p>
+        {%- endif %}
+        {%- if s.exdates and s.exdates.length %}
+        <p class="mt-3 text-xs text-ink-500">{{ "calendar.event.exdates" | t(L) }} {% for d in s.exdates %}{{ d | dt("date", L) }}{% if not loop.last %}, {% endif %}{% endfor %}</p>
+        {%- endif %}
+      </section>
+      {%- elif not s.ended %}
+      <section class="countdown-card" style="{{ s.color | accent }}" data-hide-after="{{ s.end }}" x-data="countdown({{ s.start | json }})">
+        <p class="text-xs font-bold tracking-[0.18em] text-white uppercase">{{ "calendar.event.countdown" | t(L) }}</p>
+        <div class="mt-3 grid grid-cols-4 gap-2 text-center" x-show="!past">
+          <div class="cd-box"><span class="cd-num" x-text="d">–</span><span class="cd-lbl">{{ "time.days" | t(L) }}</span></div>
+          <div class="cd-box"><span class="cd-num" x-text="h">–</span><span class="cd-lbl">{{ "time.hours" | t(L) }}</span></div>
+          <div class="cd-box"><span class="cd-num" x-text="m">–</span><span class="cd-lbl">{{ "time.minutes" | t(L) }}</span></div>
+          <div class="cd-box"><span class="cd-num" x-text="s">–</span><span class="cd-lbl">{{ "time.seconds" | t(L) }}</span></div>
+        </div>
+        <p x-cloak x-show="past" class="mt-3 font-display text-2xl font-bold">{{ "time.in_progress" | t(L) }}</p>
+        <p class="mt-4 text-sm text-white"><span class="inline-block first-letter:uppercase">{{ s.start | dt("long", L) }}</span> · {{ s | calLoc("timeLabel", L) }}</p>
+      </section>
+      {%- endif %}
+
+      {%- set dlinks = [] %}
+      {%- for d in s.ownDistricts %}{% set dlinks = dlinks.concat([{ slug: d, role: "own" }]) %}{% endfor %}
+      {%- for d in s.hosts %}{% if d not in s.ownDistricts %}{% set dlinks = dlinks.concat([{ slug: d, role: "host" }]) %}{% endif %}{% endfor %}
+      {%- set clinks = s.committeeRefs or [] %}
+      {%- if dlinks.length or clinks.length %}
+      <section class="card p-5 sm:p-6">
+        <h2 class="flex items-center gap-2.5 font-display text-lg font-bold text-ink-950"><span class="icon-tile-soft size-9" style="{{ 'coral' | accent }}">{% icon "users", "size-5" %}</span>{{ "calendar.event.who" | t(L) }}</h2>
+        <ul class="mt-4 space-y-2" role="list">
+          {%- for d in dlinks %}
+          {%- set dd = calendar.districts | find("slug", d.slug) %}
+          {%- set dpage = (districts and districts.bySlug and districts.bySlug[d.slug]) or not (districts and districts.bySlug) %}
+          <li>
+            <a {% if dpage %}href="{{ ('/districts/' + d.slug + '/') | lurl(L) }}"{% endif %} class="who-link group" style="{{ ((districts.bySlug[d.slug].color if (districts and districts.bySlug and districts.bySlug[d.slug]) else 'coral')) | accent }}">
+              <span class="who-link__icon">{% icon "map-pinned", "size-4" %}</span>
+              <span class="min-w-0 flex-1"><span class="who-link__role">{{ ("calendar.event.role_own" if d.role == "own" else "calendar.event.role_host") | t(L) }}</span><span class="who-link__name">{{ (dd | calLoc("label", L)) if dd else d.slug }}</span></span>
+              {% if dpage %}{% icon "arrow-up-right", "size-4 shrink-0 text-ink-300 group-hover:text-ink-700" %}{% endif %}
+            </a>
+          </li>
+          {%- endfor %}
+          {%- for c in clinks %}
+          {%- set cc = calendar.committees | find("slug", c.slug) %}
+          {%- set cdata = committees.bySlug[c.slug] if (committees and committees.bySlug) else null %}
+          {%- set curl = ('/about/panel/' if (cdata and cdata.category == 'officer') else ('/committees/' + c.slug + '/')) %}
+          {%- set cpage = cdata or not (committees and committees.bySlug) %}
+          <li>
+            <a {% if cpage %}href="{{ curl | lurl(L) }}"{% endif %} class="who-link group" style="{{ ((cdata.color if cdata else 'sage')) | accent }}">
+              {%- set cicon = cdata.icon if (cdata and cdata.icon) else "users-round" %}
+              <span class="who-link__icon">{% icon cicon, "size-4" %}</span>
+              <span class="min-w-0 flex-1"><span class="who-link__role">{{ ("calendar.event.role_committee" if c.role == "own" else "calendar.event.role_related") | t(L) }}</span><span class="who-link__name">{{ (cc | calLoc("name", L)) if cc else ((cdata | loc("name", L)) if cdata else c.slug) }}</span></span>
+              {% if cpage %}{% icon "arrow-up-right", "size-4 shrink-0 text-ink-300 group-hover:text-ink-700" %}{% endif %}
+            </a>
+          </li>
+          {%- endfor %}
+        </ul>
+
+      </section>
+      {%- endif %}
+
+      <section class="sub-card" style="{{ 'iris' | accent }}">
+        <span class="icon-tile size-10">{% icon "bell", "size-5" %}</span>
+        <p class="min-w-0 text-sm text-ink-700"><span class="block font-semibold text-ink-900">{{ "calendar.event.subscribe_hint" | t(L) }}</span><a href="{{ '/calendar/' | lurl(L) }}#subscribe" class="font-semibold text-ocean-700 hover:underline">{{ "calendar.subscribe.short" | t(L) }}</a></p>
+      </section>
+
+      <a href="{{ '/calendar/' | lurl(L) }}" class="btn btn-ghost w-full justify-center">{% icon "arrow-left", "size-4" %}{{ "calendar.event.back" | t(L) }}</a>
+    </aside>
+  </div>
+
+  {%- if s.related and s.related.length %}
+  <section class="mt-16 lg:mt-20">
+    {{ sectionHead({ eyebrow: "calendar.event.related_eyebrow" | t(L), title: "calendar.event.related" | t(L), action: { label: "calendar.open_calendar" | t(L), url: "/calendar/" | lurl(L), icon: "calendar-days" } }) }}
+    {%- set withFlyers = s.related | where("flyer") %}
+    {{ upcomingList({ items: s.related, lang: L, limit: 4, variant: ("flyer" if withFlyers.length >= 2 else "default"), class: ("ev-grid ev-grid--rel" if withFlyers.length >= 2 else "ev-grid ev-grid--4") }) }}
+  </section>
+  {%- endif %}
+</div>

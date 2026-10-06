@@ -1,0 +1,356 @@
+---
+pagination: { data: langs, size: 1, alias: lang, addAllPagesToCollections: true }
+permalink: "{{ lang.prefix }}/about/panel/"
+layout: page.njk
+eleventyComputed:
+  title: "{{ 'people.title' | t(lang, { n: site.panel }) }}"
+description_key: people.description
+eyebrow_key: people.eyebrow
+lead_key: people.lead
+heroIcon: contact
+accent: lilac
+crumbs: [{ label_key: "people.crumb_about", url: "/about/" }]
+bare: true
+scripts: ["/assets/js/committees.js"]
+---
+{%- from "macros/ui.njk" import emailLink, langBadge with context -%}
+{%- from "macros/committees.njk" import personCardCm, personName, cmEmail with context -%}
+{%- set L = lang -%}
+{%- set P = servants or {} -%}
+{%- set st = P.stats or {} -%}
+{%- set officersC = committees.officers or [] -%}
+{%- set bodies = P.bodies or [] -%}
+{%- set bySlug = committees.bySlug or {} -%}
+
+{#- ---------------------------------------------------------------- the Second Tradition + stats -#}
+<section class="wrap relative z-10 -mt-6 lg:-mt-10" x-data aria-label="{{ 'people.glance' | t(L) }}">
+  <div class="grid gap-4 lg:grid-cols-12 2xl:gap-6">
+    <figure class="card relative overflow-hidden p-6 sm:p-7 lg:col-span-5" style="{{ 'iris' | accent }}">
+      <span class="pointer-events-none absolute -top-6 -right-2 font-display text-[9rem] leading-none text-iris-100" aria-hidden="true">“</span>
+      <blockquote class="relative font-display text-xl leading-snug font-semibold text-ink-900 sm:text-2xl">{{ "people.tradition2" | t(L) }}</blockquote>
+      <figcaption class="relative mt-3 text-sm font-semibold text-iris-700">{{ "people.tradition2_cite" | t(L) }}</figcaption>
+    </figure>
+    <div class="grid grid-cols-2 gap-4 lg:col-span-7 2xl:gap-6">
+      <a href="#officers" class="card card-hover flex items-center gap-4 p-4 sm:p-5" style="{{ 'ocean' | accent }}"><span class="icon-tile hidden sm:grid">{% icon "landmark", "size-6" %}</span><span><span class="block font-display text-3xl font-extrabold text-ink-950"><span x-data="countUp({{ st.officers or 0 }})" x-intersect.once="start()" x-text="display">{{ st.officers or 0 }}</span></span><span class="block text-sm font-medium text-ink-500">{{ "people.stat_officers" | t(L) }}</span></span></a>
+      <a href="#committees" class="card card-hover flex items-center gap-4 p-4 sm:p-5" style="{{ 'sage' | accent }}"><span class="icon-tile hidden sm:grid">{% icon "users-round", "size-6" %}</span><span><span class="block font-display text-3xl font-extrabold text-ink-950"><span x-data="countUp({{ committees.stats.serving or 0 }})" x-intersect.once="start()" x-text="display">{{ committees.stats.serving or 0 }}</span></span><span class="block text-sm font-medium text-ink-500">{{ "people.stat_chairs" | t(L) }}</span></span></a>
+      <a href="#districts" class="card card-hover flex items-center gap-4 p-4 sm:p-5" style="{{ 'coral' | accent }}"><span class="icon-tile hidden sm:grid">{% icon "map", "size-6" %}</span><span><span class="block font-display text-3xl font-extrabold text-ink-950"><span x-data="countUp({{ st.districts or 0 }})" x-intersect.once="start()" x-text="display">{{ st.districts or 0 }}</span></span><span class="block text-sm font-medium text-ink-500">{{ "people.stat_districts" | t(L) }}</span></span></a>
+      <button type="button" @click="$dispatch('cm-open-only')" class="card card-hover flex items-center gap-4 p-4 text-left sm:p-5" style="{{ 'blush' | accent }}"><span class="icon-tile hidden sm:grid">{% icon "hand-heart", "size-6" %}</span><span><span class="block font-display text-3xl font-extrabold text-coral-700"><span x-data="countUp({{ st.open or 0 }})" x-intersect.once="start()" x-text="display">{{ st.open or 0 }}</span></span><span class="block text-sm font-medium text-ink-500">{{ "people.stat_open" | t(L) }}</span></span></button>
+    </div>
+  </div>
+</section>
+
+<div x-data="cmFilter({ group: 'all' })" class="cm-filter-root mt-10 lg:mt-14" data-results="{{ 'people.results' | t(L) }}" @cm-open-only.window="openOnly = true; group = 'all'; $nextTick(() => document.getElementById('directory').scrollIntoView({ behavior: MSCA.reducedMotion ? 'auto' : 'smooth' }))" @keydown.escape.window="drawer = false">
+
+  {#- ---------------------------------------------------------------- filters -#}
+  <div class="cm-toolbar" style="{{ 'lilac' | accent }}">
+    <div class="wrap flex items-center gap-3 py-3 lg:gap-6">
+      <label class="relative block flex-1 lg:max-w-md">
+        <span class="sr-only">{{ "people.search_label" | t(L) }}</span>
+        <span class="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-ink-400">{% icon "search", "size-5" %}</span>
+        <input type="search" x-model.debounce.150ms="q" class="field min-h-11 pl-12" placeholder="{{ 'people.search_placeholder' | t(L) }}" autocomplete="off">
+      </label>
+      {#- desktop / tablet: inline chips -#}
+      <div class="hidden flex-1 flex-wrap items-center gap-2 md:flex" role="group" aria-label="{{ 'people.filter_group' | t(L) }}">
+        {%- for g in [["all", "ui.all", "list"], ["area", "people.f_officers", "landmark"], ["committee", "people.f_committees", "users-round"], ["district", "people.f_districts", "map"]] %}
+        <button type="button" class="cm-pill" :aria-pressed="(group === '{{ g[0] }}').toString()" @click="group = '{{ g[0] }}'">{% icon g[2], "size-4" %}{{ g[1] | t(L) }}</button>
+        {%- endfor %}
+        <span class="mx-1 hidden h-6 w-px bg-ink-200 xl:block" aria-hidden="true"></span>
+        <select x-model="lang" class="field min-h-11 w-auto py-2 pr-9 text-sm lg:min-h-10" aria-label="{{ 'people.filter_lang' | t(L) }}">
+          <option value="all">{{ "people.lang_all" | t(L) }}</option>
+          <option value="en">{{ "language.english" | t(L) }}</option>
+          <option value="es">{{ "language.spanish" | t(L) }}</option>
+        </select>
+        <button type="button" class="cm-pill" style="{{ 'coral' | accent }}" :aria-pressed="openOnly.toString()" @click="openOnly = !openOnly">{% icon "hand-heart", "size-4" %}{{ "people.f_open" | t(L) }}</button>
+      </div>
+      {#- phones: drawer -#}
+      <button type="button" class="btn btn-ghost min-h-11 shrink-0 md:hidden" @click="drawer = true" :aria-expanded="drawer.toString()" aria-controls="panel-filters">
+        {% icon "sliders-horizontal", "size-4" %}{{ "ui.filters" | t(L) }}
+        <span x-cloak x-show="group !== 'all' || lang !== 'all' || openOnly" class="size-2 rounded-full bg-coral-600"></span>
+      </button>
+    </div>
+  </div>
+
+  <div x-cloak x-show="drawer" class="fixed inset-0 z-[60] md:hidden" role="dialog" aria-modal="true" aria-label="{{ 'ui.filters' | t(L) }}" id="panel-filters">
+    <div x-show="drawer" x-transition.opacity class="absolute inset-0 bg-ink-950/50 backdrop-blur-sm" @click="drawer = false"></div>
+    <div x-show="drawer" x-trap.noscroll.inert="drawer" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="translate-y-full" x-transition:enter-end="translate-y-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="translate-y-0" x-transition:leave-end="translate-y-full"
+         class="absolute inset-x-0 bottom-0 max-h-[85dvh] overflow-y-auto rounded-t-[2rem] bg-white p-5 pb-[calc(env(safe-area-inset-bottom)+1.25rem)] shadow-2xl">
+      <div class="mb-4 flex items-center justify-between">
+        <h2 class="font-display text-xl font-bold text-ink-950">{{ "ui.filters" | t(L) }}</h2>
+        <button type="button" class="grid size-11 place-items-center rounded-full bg-ink-100" @click="drawer = false" aria-label="{{ 'nav.close' | t(L) }}">{% icon "x", "size-5" %}</button>
+      </div>
+      <p class="mb-2 text-xs font-bold tracking-wide text-ink-500 uppercase">{{ "people.filter_group" | t(L) }}</p>
+      <div class="grid grid-cols-2 gap-2" style="{{ 'lilac' | accent }}">
+        {%- for g in [["all", "ui.all", "list"], ["area", "people.f_officers", "landmark"], ["committee", "people.f_committees", "users-round"], ["district", "people.f_districts", "map"]] %}
+        <button type="button" class="cm-pill justify-center" :aria-pressed="(group === '{{ g[0] }}').toString()" @click="group = '{{ g[0] }}'">{% icon g[2], "size-4" %}{{ g[1] | t(L) }}</button>
+        {%- endfor %}
+      </div>
+      <p class="mt-5 mb-2 text-xs font-bold tracking-wide text-ink-500 uppercase">{{ "people.filter_lang" | t(L) }}</p>
+      <div class="grid grid-cols-3 gap-2" style="{{ 'lilac' | accent }}">
+        <button type="button" class="cm-pill justify-center" :aria-pressed="(lang === 'all').toString()" @click="lang = 'all'">{{ "ui.all" | t(L) }}</button>
+        <button type="button" class="cm-pill justify-center" :aria-pressed="(lang === 'en').toString()" @click="lang = 'en'">{{ "language.english" | t(L) }}</button>
+        <button type="button" class="cm-pill justify-center" :aria-pressed="(lang === 'es').toString()" @click="lang = 'es'">{{ "language.spanish" | t(L) }}</button>
+      </div>
+      <button type="button" class="cm-pill mt-5 w-full justify-center" style="{{ 'coral' | accent }}" :aria-pressed="openOnly.toString()" @click="openOnly = !openOnly">{% icon "hand-heart", "size-4" %}{{ "people.f_open" | t(L) }}</button>
+      <div class="mt-6 grid grid-cols-2 gap-3">
+        <button type="button" class="btn btn-ghost min-h-12" @click="reset()">{{ "ui.clear" | t(L) }}</button>
+        <button type="button" class="btn btn-ocean min-h-12" @click="drawer = false"><span x-text="shown">{{ st.total }}</span>&nbsp;{{ "people.show_results" | t(L) }}</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="directory" class="wrap scroll-mt-20 py-10 lg:py-14">
+    <p class="sr-only" aria-live="polite" x-text="announce"></p>
+
+    {#- ================================================= Area officers -#}
+    <section id="officers" class="cm-section mb-16 lg:mb-20" data-cm-section aria-labelledby="officers-title" style="{{ 'ocean' | accent }}">
+      <div class="cm-group-head">
+        <div class="flex max-w-3xl items-start gap-4">
+          <span class="icon-tile size-14 rounded-2xl">{% icon "landmark", "size-7" %}</span>
+          <div>
+            <h2 id="officers-title" class="font-display text-2xl font-bold tracking-tight text-ink-950 sm:text-3xl 2xl:text-4xl">{{ "people.officers_title" | t(L) }}</h2>
+            <p class="mt-1.5 text-ink-600 lg:text-lg">{{ "people.officers_lead" | t(L) }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+        {%- for o in officersC %}
+        {%- set s = o.chairs[0] %}
+        <article id="{{ o.slug }}" class="card relative flex scroll-mt-20 flex-col overflow-hidden" style="{{ o.color | accent(loop.index0) }}"
+                 data-cm-item data-search="{{ s | cmPersonSearch(o.name_en + ' ' + o.name_es) if s else '' }}" data-group="area" data-lang="en" data-open="{{ '1' if s and s.open else '0' }}" x-data="{ open: false }">
+          <div class="p-5 sm:p-6">
+            <div class="flex items-center gap-4">
+              <span class="grid size-14 shrink-0 place-items-center rounded-2xl text-white shadow-soft" style="background: linear-gradient(135deg, var(--a-400), var(--a-700));">{% icon o.icon, "size-7" %}</span>
+              <div class="min-w-0">
+                <h3 class="text-xs font-bold tracking-[0.14em] text-[var(--a-700)] uppercase">{{ o | loc("name", L) }}</h3>
+                <p class="mt-0.5 font-display text-2xl font-bold text-ink-950">{% if s %}{{ personName({ s: s, lang: L }) }}{% else %}{{ "people.open_position" | t(L) }}{% endif %}</p>
+              </div>
+            </div>
+            <p class="mt-3 text-sm text-ink-600">{{ o | loc("summary", L) }}</p>
+            {%- if s and s.email %}<div class="mt-3 text-sm">{{ emailLink({ email: s.email, lang: L }) }}</div>{% endif %}
+            {%- if s and s.email_alt %}<p class="cm-mail-text mt-0.5 text-xs text-ink-500">{{ "people.also" | t(L) }} <a href="mailto:{{ s.email_alt }}" class="inline-block py-1 font-medium text-ink-600 hover:text-iris-700 hover:underline">{{ s.email_alt }}</a></p>{% endif %}
+          </div>
+          <div class="mt-auto border-t border-ink-100">
+            <button type="button" @click="open = !open" :aria-expanded="open.toString()" aria-controls="duties-{{ o.slug }}" class="flex min-h-12 w-full items-center justify-between gap-3 px-5 text-left text-sm font-semibold text-[var(--a-700)] hover:bg-[var(--a-50)] sm:px-6">
+              <span class="inline-flex items-center gap-2">{% icon "list-checks", "size-4" %}{{ "people.duties" | t(L) }}</span>
+              <span class="transition" :class="open && 'rotate-180'">{% icon "chevron-down", "size-4" %}</span>
+            </button>
+            <div id="duties-{{ o.slug }}" x-show="open" x-collapse x-cloak class="px-5 pb-5 sm:px-6">
+              <div class="prose-msca prose-sm text-ink-700">{{ o | loc("purpose", L) | md | safe }}{{ o | loc("activities", L) | md | safe }}</div>
+              {%- set term = o | loc("structure", L) %}
+              {%- if term %}<div class="mt-3 rounded-2xl bg-[var(--a-50)] p-4 text-sm text-ink-700">{{ term | md | safe }}</div>{% endif %}
+              {%- if o.faqs.length %}
+              <div class="mt-3 space-y-2">
+                {%- for f in o.faqs %}
+                <details class="rounded-2xl bg-ink-50 px-4 py-3 text-sm"><summary class="cursor-pointer font-semibold text-ink-900">{{ f | loc("q", L) }}</summary><div class="mt-2 text-ink-700">{{ f | loc("a", L) | md | safe }}</div></details>
+                {%- endfor %}
+              </div>
+              {%- endif %}
+            </div>
+          </div>
+        </article>
+        {%- endfor %}
+        <div class="cm-ring-deep relative flex flex-col justify-between gap-4 overflow-hidden rounded-3xl p-6 text-white shadow-glow">
+          <span class="pointer-events-none absolute -right-8 -bottom-10 text-white/10" aria-hidden="true">{% icon "landmark", "size-48" %}</span>
+          <div class="relative">
+            <h3 class="font-display text-xl font-bold">{{ "people.exec_title" | t(L) }}</h3>
+            <p class="mt-2 text-sm leading-relaxed text-white/95">{{ "people.exec_body" | t(L) }}</p>
+          </div>
+          <a href="{{ '/about/structure/' | lurl(L) }}" class="relative inline-flex items-center gap-1.5 text-sm font-semibold text-white hover:underline">{{ "people.exec_link" | t(L) }}{% icon "arrow-right", "size-4" %}</a>
+        </div>
+      </div>
+    </section>
+
+    {#- ================================================= Committee chairs -#}
+    <section id="committees" class="cm-section mb-16 lg:mb-20" data-cm-section aria-labelledby="committees-title" style="{{ 'sage' | accent }}">
+      <div class="cm-group-head">
+        <div class="flex max-w-3xl items-start gap-4">
+          <span class="icon-tile size-14 rounded-2xl">{% icon "users-round", "size-7" %}</span>
+          <div>
+            <h2 id="committees-title" class="font-display text-2xl font-bold tracking-tight text-ink-950 sm:text-3xl 2xl:text-4xl">{{ "people.committees_title" | t(L) }}</h2>
+            <p class="mt-1.5 text-ink-600 lg:text-lg">{{ "people.committees_lead" | t(L) }}</p>
+          </div>
+        </div>
+        <a href="{{ '/committees/' | lurl(L) }}" class="btn btn-ghost">{{ "committees.all_committees" | t(L) }}{% icon "arrow-right", "size-4" %}</a>
+      </div>
+      {%- for g in committees.groups or [] %}
+      {%- set withPeople = g.items | cmWithPeople %}
+      {%- if withPeople.length %}
+      <div class="mb-10 last:mb-0" data-cm-section>
+        <h3 class="mb-4 flex items-center gap-2 font-display text-lg font-bold text-ink-900" style="{{ g.color | accent }}">{% icon g.icon, "size-5 text-[var(--a-600)]" %}{{ g | loc("label", L) }}</h3>
+        {#- phones: a swipeable rail of cards that share one height; each shows its first 3 people and "Show all" opens the rest in place -#}
+        <div class="rail scroll-px-4 items-stretch sm:mx-0 sm:grid sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0 sm:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4">
+          {%- for c in withPeople %}
+          {%- set nOpen = c.vacancies.length %}
+          {%- set seats = c.chairs.concat(c.positions) %}
+          {%- set liaisonRows = c.liaisons if not c.servants.length else [] %}
+          {%- set nRows = seats.length + (1 if c.members.length else 0) + liaisonRows.length %}
+          {%- set nPeople = seats.length + c.members.length + liaisonRows.length %}
+          <article class="cm-district cm-fold-xs w-[84vw] max-w-[22rem] shrink-0 sm:w-auto sm:max-w-none" style="{{ c.color | accent(loop.index0) }}" data-cm-section x-data="{ more: false }" :class="more && 'is-more'">
+            <a href="{{ c.url | lurl(L) }}" class="cm-district-head group">
+              <span class="grid size-10 shrink-0 place-items-center rounded-xl bg-white/15 ring-1 ring-white/25">{% icon c.icon, "size-5" %}</span>
+              {#- the name wraps (and hyphenates long single words); on a narrow card the "help wanted" pill sits under it -#}
+              <span class="cm-head-text">
+                <span class="cm-head-name font-display text-base leading-snug font-bold group-hover:underline">{{ c | loc("name", L) }}</span>
+                {%- if nOpen %}<span class="cm-help">{{ "committees.help_wanted" | t(L) }}</span>{% endif %}
+              </span>
+            </a>
+            <ul class="divide-y divide-ink-100">
+              {%- for s in seats %}
+              <li class="flex items-start gap-3 px-5 py-3 {{ 'bg-coral-50/50' if s.open }} {{ 'cm-xs-extra' if loop.index > 3 }}" data-cm-item data-search="{{ s | cmPersonSearch(c.name_en + ' ' + c.name_es) }}" data-group="committee" data-lang="{{ s.language | cmLangKey }}" data-open="{{ '1' if s.open else '0' }}">
+                {%- if s.open %}<span class="cm-avatar-open" aria-hidden="true">{% icon "plus", "size-4" %}</span>{% elif s.name %}<span class="cm-avatar" aria-hidden="true">{{ s.name | initials }}</span>{% else %}<span class="cm-avatar" aria-hidden="true">{% icon "mail", "size-3.5" %}</span>{% endif %}
+                <div class="min-w-0 flex-1">
+                  <p class="text-xs font-semibold text-ink-500">{{ s | loc("position", L) }}</p>
+                  <p class="font-semibold {{ 'text-coral-700' if s.open else 'text-ink-900' }}">{{ personName({ s: s, lang: L }) }}{% if s.completed %} <span class="chip chip-soft">{{ "people.completed" | t(L) }}</span>{% endif %}</p>
+                  {%- if s.email %}<div class="text-sm">{{ cmEmail({ email: s.email, lang: L }) }}</div>{% endif %}
+                  {%- if s.open %}<a class="mt-1 inline-flex min-h-6 items-center gap-1 text-xs font-bold text-coral-700 hover:underline" href="{{ 'chair@msca09aa.org' | cmMailto(('people.serve_subject' | t(L, { role: s | loc('position', L) }))) }}">{% icon "hand-heart", "size-3.5" %}{{ "people.could_serve" | t(L) }}</a>{% endif %}
+                </div>
+              </li>
+              {%- endfor %}
+              {%- if c.members.length %}
+              <li class="px-5 py-3 {{ 'cm-xs-extra' if seats.length >= 3 }}" data-cm-item data-search="{{ (c.members | pluck('name') | join(' ')) | lower }} {{ c.name_en | lower }} {{ c.name_es | lower }}" data-group="committee" data-lang="" data-open="0">
+                <p class="text-xs font-semibold text-ink-500">{{ "committees.members_title" | t(L) }}</p>
+                <ul class="mt-1.5 flex flex-wrap gap-1.5">{% for m in c.members %}<li class="rounded-full bg-[var(--a-50)] px-2.5 py-1 text-sm font-semibold text-ink-800">{{ m.name }}</li>{% endfor %}</ul>
+              </li>
+              {%- endif %}
+              {%- for s in liaisonRows %}
+              <li class="flex items-start gap-3 px-5 py-3 {{ 'cm-xs-extra' if (seats.length + loop.index) > 3 }}" data-cm-item data-search="{{ s | cmPersonSearch(c.name_en + ' ' + c.name_es) }}" data-group="committee" data-lang="" data-open="0">
+                <span class="cm-avatar" aria-hidden="true">{{ s.name | initials }}</span>
+                <div class="min-w-0 flex-1">
+                  <p class="text-xs font-semibold text-ink-500">{{ "committees.area_liaison" | t(L) }} · {{ s | loc("position", L) }}</p>
+                  <p class="font-semibold text-ink-900">{{ personName({ s: s, lang: L }) }}</p>
+                  {%- if s.email %}<div class="text-sm">{{ cmEmail({ email: s.email, lang: L }) }}</div>{% endif %}
+                </div>
+              </li>
+              {%- endfor %}
+            </ul>
+            {%- if nRows > 3 %}
+            <button type="button" class="mt-auto flex min-h-12 w-full items-center justify-center gap-2 border-t border-ink-100 text-sm font-semibold text-[var(--a-700)] hover:bg-[var(--a-50)] sm:hidden" @click="more = !more" :aria-expanded="more.toString()">
+              <span x-show="!more">{{ "people.show_all_n" | t(L, { n: nPeople }) }}</span><span x-cloak x-show="more">{{ "ui.show_less" | t(L) }}</span>
+              <span class="transition" :class="more && 'rotate-180'">{% icon "chevron-down", "size-4" %}</span>
+            </button>
+            {%- else %}
+            <a href="{{ c.url | lurl(L) }}" class="mt-auto flex min-h-12 w-full items-center justify-center gap-2 border-t border-ink-100 text-sm font-semibold text-[var(--a-700)] hover:bg-[var(--a-50)] sm:hidden">{{ "people.committee_page" | t(L) }}{% icon "arrow-right", "size-4" %}</a>
+            {%- endif %}
+          </article>
+          {%- endfor %}
+        </div>
+      </div>
+      {%- endif %}
+      {%- endfor %}
+    </section>
+
+    {#- ================================================= Districts -#}
+    {%- set dBodies = bodies | where("level", "district") %}
+    {%- if dBodies.length %}
+    <section id="districts" class="cm-section mb-16 lg:mb-20" data-cm-section aria-labelledby="districts-title" style="{{ 'coral' | accent }}">
+      <div class="cm-group-head">
+        <div class="flex max-w-3xl items-start gap-4">
+          <span class="icon-tile size-14 rounded-2xl">{% icon "map", "size-7" %}</span>
+          <div>
+            <h2 id="districts-title" class="font-display text-2xl font-bold tracking-tight text-ink-950 sm:text-3xl 2xl:text-4xl">{{ "people.districts_title" | t(L) }}</h2>
+            <p class="mt-1.5 text-ink-600 lg:text-lg">{{ "people.districts_lead" | t(L) }}</p>
+          </div>
+        </div>
+        <a href="{{ '/districts/' | lurl(L) }}" class="btn btn-ghost">{{ "people.all_districts" | t(L) }}{% icon "arrow-right", "size-4" %}</a>
+      </div>
+      {%- for dg in dBodies | cmDistrictGroups %}
+      <div class="mb-10 last:mb-0" data-cm-section>
+        <h3 class="mb-4 flex items-center gap-2 font-display text-lg font-bold text-ink-900">{% icon "languages", "size-5 text-[var(--a-600)]" %}{{ ("people.districts_es" if dg.key == "es" else "people.districts_en") | t(L) }}<span class="chip chip-soft">{{ dg.items.length }}</span></h3>
+        <div class="rail scroll-px-4 items-stretch sm:mx-0 sm:grid sm:gap-4 sm:overflow-visible sm:px-0 sm:pb-0 sm:grid-cols-2 {{ 'xl:grid-cols-3 3xl:grid-cols-6' if dg.key == 'es' else 'xl:grid-cols-4' }}">
+        {%- for b in dg.items %}
+          {%- set isSp = (b.items[0].language | cmLangKey) == "es" %}
+          {%- set nOpen = b.items | where("open", true) | length %}
+          <article id="{{ b.district }}" class="cm-district cm-fold-xs scroll-mt-20 w-[84vw] max-w-[22rem] shrink-0 sm:w-auto sm:max-w-none" style="{{ ('coral' if isSp else 'ocean') | accent }}" data-cm-section x-data="{ more: false }" :class="more && 'is-more'">
+            <a href="{{ ('/districts/' + b.district + '/') | lurl(L) }}" class="cm-district-head group">
+              <span class="grid size-10 shrink-0 place-items-center rounded-xl bg-white/15 font-display text-sm font-extrabold ring-1 ring-white/25">{{ b.label_en | replace("District ", "") | replace(" & ", "·") }}</span>
+              <span class="min-w-0 flex-1">
+                <span class="cm-head-name block font-display text-base leading-snug font-bold group-hover:underline">{{ b | loc("label", L) }}</span>
+                <span class="block text-xs text-white/95">{{ ("people.spanish_speaking" if isSp else "people.english_speaking") | t(L) }} · {{ "people.n_servants" | t(L, { n: b.items.length }) }}</span>
+              </span>
+              {%- if nOpen %}<span class="cm-help shrink-0" title="{{ 'people.stat_open' | t(L) }}">{% icon "hand-heart", "size-3.5" %}{{ nOpen }}<span class="sr-only"> {{ "people.stat_open" | t(L) }}</span></span>{% endif %}
+            </a>
+            <ul class="divide-y divide-ink-100">
+              {%- for s in b.items %}
+              <li class="flex items-start gap-3 px-5 py-3 {{ 'bg-coral-50/50' if s.open }} {{ 'cm-xs-extra' if loop.index > 3 and loop.index <= 6 }}" {% if loop.index > 6 %}x-show="more" data-cm-extra{% endif %}
+                  data-cm-item data-search="{{ s | cmPersonSearch(b.label_en + ' ' + b.label_es) }}" data-group="district" data-lang="{{ s.language | cmLangKey }}" data-open="{{ '1' if s.open else '0' }}">
+                {%- if s.open %}<span class="cm-avatar-open" aria-hidden="true">{% icon "plus", "size-4" %}</span>{% elif s.name %}<span class="cm-avatar" aria-hidden="true">{{ s.name | initials }}</span>{% else %}<span class="cm-avatar" aria-hidden="true">{% icon "mail", "size-3.5" %}</span>{% endif %}
+                <div class="min-w-0 flex-1">
+                  <p class="text-xs font-semibold text-ink-500">{{ s | loc("position", L) }}</p>
+                  <p class="font-semibold {{ 'text-coral-700' if s.open else 'text-ink-900' }}">{{ personName({ s: s, lang: L }) }}</p>
+                  {%- if s.email %}<div class="text-sm">{{ cmEmail({ email: s.email, lang: L }) }}</div>{% endif %}
+                  {%- if s.email_alt %}<p class="cm-mail-text text-xs text-ink-500">{{ "people.also" | t(L) }} <a href="mailto:{{ s.email_alt }}" class="inline-block py-1 font-medium text-ink-600 hover:text-iris-700 hover:underline">{{ s.email_alt }}</a></p>{% endif %}
+                </div>
+              </li>
+              {%- endfor %}
+            </ul>
+            {%- if b.items.length > 3 %}
+            {#- more than 6: the button works at every width; 4 to 6: only phones fold the list -#}
+            <button type="button" class="mt-auto flex min-h-12 w-full items-center justify-center gap-2 border-t border-ink-100 text-sm font-semibold text-[var(--a-700)] hover:bg-[var(--a-50)] {{ '' if b.items.length > 6 else 'sm:hidden' }}" @click="more = !more" :aria-expanded="more.toString()">
+              <span x-show="!more">{{ "people.show_all_n" | t(L, { n: b.items.length }) }}</span><span x-cloak x-show="more">{{ "ui.show_less" | t(L) }}</span>
+              <span class="transition" :class="more && 'rotate-180'">{% icon "chevron-down", "size-4" %}</span>
+            </button>
+            {%- else %}
+            <a href="{{ ('/districts/' + b.district + '/') | lurl(L) }}" class="mt-auto flex min-h-12 w-full items-center justify-center gap-2 border-t border-ink-100 text-sm font-semibold text-[var(--a-700)] hover:bg-[var(--a-50)] sm:hidden">{{ "people.district_page" | t(L) }}{% icon "arrow-right", "size-4" %}</a>
+            {%- endif %}
+          </article>
+          {%- endfor %}
+        </div>
+      </div>
+      {%- endfor %}
+    </section>
+    {%- endif %}
+
+    <div x-cloak x-show="shown === 0" class="card flex flex-col items-center gap-3 p-10 text-center" style="{{ 'lilac' | accent }}">
+      <span class="icon-tile-soft size-14">{% icon "search-x", "size-7" %}</span>
+      <p class="font-display text-lg font-bold text-ink-900">{{ "ui.no_results" | t(L) }}</p>
+      <button type="button" class="btn btn-ghost" @click="reset()">{{ "ui.clear" | t(L) }}</button>
+    </div>
+  </div>
+</div>
+
+{#- ---------------------------------------------------------------- anonymity + how to update -#}
+<section class="wrap pb-6" aria-label="{{ 'people.about_list' | t(L) }}">
+  <div class="grid gap-5 lg:grid-cols-3">
+    <div class="card flex items-start gap-4 p-6" style="{{ 'sage' | accent }}">
+      <span class="icon-tile">{% icon "shield-check", "size-6" %}</span>
+      <div class="min-w-0"><h2 class="font-display text-lg font-bold text-ink-950">{{ "people.anon_title" | t(L) }}</h2><p class="mt-1 text-sm leading-relaxed text-ink-600">{{ "people.anon_body" | t(L) }}</p></div>
+    </div>
+    <div class="card flex items-start gap-4 p-6" style="{{ 'ocean' | accent }}">
+      <span class="icon-tile">{% icon "refresh-cw", "size-6" %}</span>
+      <div class="min-w-0"><h2 class="font-display text-lg font-bold text-ink-950">{{ "people.update_title" | t(L) }}</h2><p class="mt-1 text-sm leading-relaxed text-ink-600">{{ "people.update_body" | t(L) }}</p><div class="mt-2 flex flex-col items-start gap-1 text-sm">{{ cmEmail({ email: "registrar@msca09aa.org", lang: L }) }}{{ cmEmail({ email: site.email_webmaster, lang: L }) }}</div></div>
+    </div>
+    <div class="card flex items-start gap-4 p-6" style="{{ 'coral' | accent }}">
+      <span class="icon-tile">{% icon "hand-heart", "size-6" %}</span>
+      <div class="min-w-0"><h2 class="font-display text-lg font-bold text-ink-950">{{ "people.serve_title" | t(L) }}</h2><p class="mt-1 text-sm leading-relaxed text-ink-600">{{ "people.serve_body" | t(L) }}</p><a href="{{ '/committees/?open=1' | lurl(L) }}" class="mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-coral-700 hover:underline">{{ "committees.see_open" | t(L) }}{% icon "arrow-right", "size-4" %}</a></div>
+    </div>
+  </div>
+</section>
+
+{#- ---------------------------------------------------------------- previous panel -#}
+{%- set prevBodies = P.previousBodies or [] %}
+{%- if prevBodies.length %}
+<section class="wrap py-10 lg:py-14" aria-labelledby="previous-title">
+  <details class="group rounded-[2rem] bg-ink-50 p-6 ring-1 ring-ink-900/5 sm:p-8" id="previous">
+    <summary class="flex cursor-pointer list-none items-center justify-between gap-4 [&::-webkit-details-marker]:hidden">
+      <span class="flex items-center gap-4">
+        <span class="grid size-12 place-items-center rounded-2xl bg-white text-ink-500 shadow-soft">{% icon "history", "size-6" %}</span>
+        <span>
+          <h2 id="previous-title" class="font-display text-xl font-bold text-balance text-ink-950 sm:text-2xl">{{ "people.previous_title" | t(L, { n: P.previousPanel }) }}</h2>
+          <span class="block text-sm text-ink-500">{{ "people.previous_lead" | t(L, { n: P.previous.length }) }}</span>
+        </span>
+      </span>
+      <span class="grid size-10 shrink-0 place-items-center rounded-full bg-white shadow-soft transition group-open:rotate-180">{% icon "chevron-down", "size-5" %}</span>
+    </summary>
+    <div class="mt-8 columns-1 gap-6 sm:columns-2 xl:columns-3 3xl:columns-4">
+      {%- for b in prevBodies %}
+      <div class="mb-6 break-inside-avoid rounded-2xl bg-white p-4 shadow-soft ring-1 ring-ink-900/5">
+        <h3 class="mb-2 font-display text-sm font-bold tracking-wide text-ink-700 uppercase">{{ b | loc("label", L) }}</h3>
+        <ul class="space-y-1 text-sm">
+          {%- for s in b.items %}<li class="flex justify-between gap-3"><span class="text-ink-500">{{ s | loc("position", L) }}</span><span class="shrink-0 font-semibold text-ink-900">{{ s.name or ("people.open_position" | t(L)) }}</span></li>{% endfor %}
+        </ul>
+      </div>
+      {%- endfor %}
+    </div>
+  </details>
+</section>
+{%- endif %}

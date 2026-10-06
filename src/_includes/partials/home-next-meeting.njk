@@ -1,0 +1,88 @@
+{#-
+  "Next Area meeting" card with a live countdown.
+  {% from "partials/home-next-meeting.njk" import nextMeetingCard with context %}
+  o: { occ (calendar Occ), lang, variant: "glass" (over the hero photo) | "light" (on white) }
+-#}
+{% macro nextMeetingCard(o) %}
+{%- from "macros/ui.njk" import formatBadge, langBadge -%}
+{%- set L = o.lang -%}
+{%- set occ = o.occ -%}
+{%- set glass = (o.variant == "glass") -%}
+{%- set series = calendar.bySlug[occ.slug] if (calendar and calendar.bySlug and occ.slug) else null -%}
+{%- set loc_ = series.location if series else null -%}
+{%- set place = ((loc_.name + ", ") if (loc_ and loc_.name and occ.city and loc_.name != occ.city) else (loc_.name if (loc_ and loc_.name) else "")) + (occ.city or "") -%}
+{%- set hosts = occ | homeHosts(calendar, districts, L) -%}
+<div class="hm-next-card {{ 'hm-next-card--glass' if glass else 'hm-next-card--light' }}" x-data="countdown({{ occ.start | json }})">
+  <div class="hm-next-main">
+  <p class="hm-next-eyebrow">
+    <span class="relative flex size-2.5" aria-hidden="true"><span class="absolute inline-flex size-full animate-ping rounded-full bg-current opacity-60 [animation-iteration-count:3]"></span><span class="relative inline-flex size-2.5 rounded-full bg-current"></span></span>
+    {{ "home.next.eyebrow" | t(L) }}
+  </p>
+  <h2 class="mt-3 font-display text-2xl leading-tight font-bold text-balance 2xl:text-[1.7rem]">
+    <a href="{{ occ.url | lurl(L) }}" class="hm-next-title-link">{{ occ | loc("title", L) }}</a>
+  </h2>
+  <dl class="hm-next-facts mt-4 space-y-2 text-[15px]">
+    <div class="flex items-start gap-2.5">
+      <dt class="sr-only">{{ "home.next.when" | t(L) }}</dt>
+      {% icon "calendar-days", "hm-next-ico" %}
+      <dd><span class="font-semibold">{{ occ.start | dt("long", L) }}</span>{% if not occ.allDay %}<br><span class="hm-next-muted">{{ occ.start | dt("time", L) }}–{{ occ.end | dt("time", L) }} · {{ "time.pacific" | t(L) }}</span>{% endif %}</dd>
+    </div>
+    {%- if place %}
+    <div class="flex items-start gap-2.5">
+      <dt class="sr-only">{{ "home.next.where" | t(L) }}</dt>
+      {% icon "map-pin", "hm-next-ico" %}
+      <dd>{{ place }}</dd>
+    </div>
+    {%- endif %}
+    {%- if hosts.length %}
+    {%- set hb = (("home.next.hosted_by_many" if hosts.length > 1 else "home.next.hosted_by") | t(L)).split("{name}") %}
+    <div class="flex items-start gap-2.5">
+      <dt class="sr-only">{{ "home.next.host" | t(L) }}</dt>
+      {% icon "users-round", "hm-next-ico" %}
+      <dd>{{ hb[0] }}{% for h in hosts %}{% if not loop.first %} {{ "home.area.and" | t(L) }} {% endif %}{% if h.url %}<a href="{{ h.url }}" class="hm-next-host">{{ h.name }}</a>{% else %}{{ h.name }}{% endif %}{% endfor %}{{ hb[1] if hb.length > 1 }}</dd>
+    </div>
+    {%- endif %}
+  </dl>
+  {%- if occ.format or occ.language %}
+  <div class="mt-4 flex flex-wrap gap-2">{{ formatBadge({ format: occ.format, lang: L }) }}{{ langBadge({ language: occ.language, lang: L }) }}</div>
+  {%- endif %}
+  </div>
+
+  <div class="hm-next-side">
+  <div class="mt-5" x-show="!past">
+    <p class="hm-next-muted mb-2 text-xs font-semibold tracking-wide uppercase">{{ "home.next.starts_in" | t(L) }}</p>
+    <div class="grid grid-cols-4 gap-2" aria-hidden="true">
+      {%- for u in [["d", "time.days"], ["h", "time.hours"], ["m", "time.minutes"], ["s", "time.seconds"]] %}
+      <div class="hm-cd-box">
+        <span class="hm-cd-num" x-text="String({{ u[0] }}).padStart(2, '0')">--</span>
+        <span class="hm-cd-label">{{ u[1] | t(L) }}</span>
+      </div>
+      {%- endfor %}
+    </div>
+  </div>
+  <p x-cloak x-show="past" class="hm-cd-live mt-5">
+    <span x-show="past && Date.now() < {{ occ.end | homeMs }}" class="inline-flex items-center gap-2">{% icon "radio", "size-4" %}{{ "time.in_progress" | t(L) }}</span>
+    <span x-show="past && Date.now() >= {{ occ.end | homeMs }}" class="inline-flex items-center gap-2">{% icon "calendar-clock", "size-4" %}{{ "home.next.ended" | t(L) }}</span>
+  </p>
+
+  <div class="mt-5 flex flex-wrap gap-2">
+    <a href="{{ occ.url | lurl(L) }}" class="btn {{ 'btn-white' if glass else 'btn-ocean' }}">{{ "home.next.details" | t(L) }}{% icon "arrow-right", "size-4" %}</a>
+    <a href="{{ '/service/area-meetings/' | lurl(L) }}" class="btn {{ 'btn-glass' if glass else 'btn-ghost' }}">{{ "home.next.all" | t(L) }}</a>
+  </div>
+  </div>
+</div>
+{% endmacro %}
+
+{#- Shown when the calendar has no upcoming Area meeting (or is not available). o: { lang, variant } -#}
+{% macro nextMeetingFallback(o) %}
+{%- set L = o.lang -%}
+{%- set glass = (o.variant == "glass") -%}
+<div class="hm-next-card {{ 'hm-next-card--glass' if glass else 'hm-next-card--light' }}">
+  <p class="hm-next-eyebrow">{% icon "calendar-clock", "size-4" %}{{ "home.next.eyebrow_generic" | t(L) }}</p>
+  <h2 class="mt-3 font-display text-2xl leading-tight font-bold text-balance">{{ "home.next.generic_title" | t(L) }}</h2>
+  <p class="hm-next-muted mt-3 text-[15px] leading-relaxed">{{ "home.next.generic_body" | t(L) }}</p>
+  <div class="mt-5 flex flex-wrap gap-2">
+    <a href="{{ '/service/area-meetings/' | lurl(L) }}" class="btn {{ 'btn-white' if glass else 'btn-ocean' }}">{{ "home.next.all" | t(L) }}{% icon "arrow-right", "size-4" %}</a>
+  </div>
+</div>
+{% endmacro %}

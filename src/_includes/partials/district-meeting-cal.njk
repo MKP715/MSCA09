@@ -1,0 +1,10 @@
+{#-
+  The district's business meeting, drawn with the calendar's meetingInfo macro (pattern, next date,
+  place, Zoom, add-to-calendar). Included only when macros/events.njk exists and the calendar has
+  a series for this district. Expects: L (language), series (calendar Series), d (district)
+  Spanish pages: when the calendar has English Note lines but no Spanish ones, the district's own
+  Spanish notes (data/districts.csv meeting_note_es, gsr_note_es) take their place (dxNoteOverride);
+  district.njk then leaves out its "Good to know" / GSR boxes when they would repeat a note shown here.
+-#}
+{%- from "macros/events.njk" import meetingInfo with context -%}
+<div class="dx-meeting-cal">{{ meetingInfo({ series: series, lang: L, noteOverride: d | dxNoteOverride(series, L) }) }}</div>

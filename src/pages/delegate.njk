@@ -1,0 +1,258 @@
+---
+pagination: { data: langs, size: 1, alias: lang, addAllPagesToCollections: true }
+permalink: "{{ lang.prefix }}/service/delegate/"
+layout: page.njk
+title_key: service.delegate.title
+description_key: service.delegate.description
+eyebrow_key: service.delegate.eyebrow
+lead_key: service.delegate.lead
+heroIcon: mic
+accent: coral
+crumbs: [{ label_key: "service.title", url: "/service/" }]
+bare: true
+scripts: ["/assets/js/service.js"]
+---
+{%- from "macros/ui.njk" import sectionHead, personCard, emailLink with context -%}
+{%- from "macros/service.njk" import gscCard, docRows, postCard with context -%}
+{%- set L = lang -%}
+{%- set es = L.code == "es" -%}
+{%- set conf = gsc.last -%}
+{%- set nextConf = gsc.next -%}
+{%- set officers = servants.officers or [] -%}
+{%- set delegate = officers | svcFirstMatch("position_en", "^delegate$") -%}
+{%- set alternate = officers | svcFirstMatch("position_en", "^alternate delegate") -%}
+{%- set delegateDocs = documents | svcDelegateDocs -%}
+
+<div class="wrap space-y-20 py-12 lg:space-y-24 lg:py-16 2xl:py-20">
+
+  {#- ============================================================ the Conference just held + your Delegate -#}
+  <section class="grid grid-cols-1 gap-8 xl:grid-cols-12 xl:gap-10" aria-labelledby="gsc-title">
+    <div class="xl:col-span-8">
+      {%- if conf %}
+      <article class="relative isolate overflow-hidden rounded-[2rem] bg-ink-950 text-white shadow-lift">
+        <div class="absolute inset-0 -z-10" aria-hidden="true" style="background: radial-gradient(40rem 22rem at 100% 0%, color-mix(in oklab, var(--color-coral-500) 70%, transparent), transparent 62%), radial-gradient(34rem 22rem at 0% 100%, color-mix(in oklab, var(--color-iris-500) 70%, transparent), transparent 60%), linear-gradient(140deg, var(--color-ink-950), var(--color-iris-950));"></div>
+        <img src="/assets/img/logo/logo-{{ L.code }}-384.webp" alt="" aria-hidden="true" width="384" height="384" loading="lazy" class="pointer-events-none absolute -right-20 -bottom-24 -z-10 size-96 rotate-12 opacity-[0.12]">
+        <div class="p-6 sm:p-8 lg:p-10 2xl:p-12">
+          <p class="flex flex-wrap items-center gap-2 text-sm font-bold tracking-[0.16em] text-coral-200 uppercase">{% icon "landmark", "size-4" %}{{ "service.delegate.just_held" | t(L) }}</p>
+          <h2 id="gsc-title" class="mt-3 font-display text-3xl font-extrabold text-balance sm:text-4xl 2xl:text-5xl">{{ conf | loc("title", L) }}</h2>
+          <p class="mt-2 text-lg text-white/85">{{ conf.date_start | svcRange(conf.date_end, L) }} · {{ conf.place }}</p>
+          {%- if conf | loc("theme", L) %}
+          <p class="mt-6 text-xs font-bold tracking-[0.18em] text-white/60 uppercase">{{ "service.delegate.theme" | t(L) }}</p>
+          <blockquote class="mt-1 font-display text-4xl font-extrabold leading-tight text-gradient-animated sm:text-5xl 2xl:text-6xl">“{{ conf | loc("theme", L) }}”</blockquote>
+          {%- endif %}
+          <p class="mt-5 max-w-3xl text-[17px] leading-relaxed text-white/85">{{ conf | loc("summary", L) }}</p>
+          {%- if conf.members or conf.agenda_items %}
+          <dl class="mt-8 grid grid-cols-3 gap-3 sm:max-w-xl">
+            {%- for st in [[conf.members, "service.delegate.stat_members"], [conf.agenda_items, "service.delegate.stat_items"], ["93", "service.delegate.stat_areas"]] %}{% if st[0] %}
+            <div class="flex flex-col-reverse rounded-2xl bg-white/10 p-3 text-center ring-1 ring-white/15 sm:p-4"><dt class="text-[11px] font-semibold tracking-wide text-white/70 uppercase sm:text-xs">{{ st[1] | t(L) }}</dt><dd class="font-display text-3xl font-extrabold sm:text-4xl">{{ st[0] }}</dd></div>
+            {%- endif %}{% endfor %}
+          </dl>
+          {%- endif %}
+          <div class="mt-8 flex flex-wrap gap-2.5">
+            {%- if conf.url %}<a href="{{ conf.url }}" target="_blank" rel="noopener" class="btn max-w-full whitespace-normal bg-white text-left leading-snug text-ink-950 shadow-soft hover:-translate-y-0.5">{% icon "book-open-text", "size-4 shrink-0 text-coral-600" %}{{ conf | loc("url_label", L) }}</a>{% endif %}
+            <a href="#highlights" class="btn btn-glass max-w-full whitespace-normal text-left leading-snug">{% icon "sparkles", "size-4" %}{{ "service.delegate.see_highlights" | t(L) }}</a>
+          </div>
+        </div>
+      </article>
+      {%- endif %}
+
+      {%- if gsc.lastHighlights.length %}
+      <div id="highlights" class="mt-6 scroll-mt-28">
+        <h3 class="mb-4 flex items-center gap-2 font-display text-2xl font-bold text-ink-950">{% icon "sparkles", "size-6 text-sun-600" %}{{ "service.delegate.highlights_title" | t(L) }}</h3>
+        <ul class="grid grid-cols-1 gap-3 md:grid-cols-2" role="list" x-data="{ all: false }">
+          {%- set hc = ["coral", "iris", "ocean", "sage", "sun", "sea", "blush", "copper", "lilac", "teal"] -%}
+          {%- for h in gsc.lastHighlights %}
+          <li class="reveal flex gap-3 rounded-2xl bg-white p-4 shadow-soft ring-1 ring-ink-900/5{{ ' max-md:hidden' if loop.index > 4 }}" {% if loop.index > 4 %}:class="all && '!flex'"{% endif %} style="{{ hc[loop.index0 % hc.length] | accent }}; --reveal-delay: {{ (loop.index0 % 4) * 60 }}ms">
+            <span class="mt-0.5 grid size-8 shrink-0 place-items-center rounded-full bg-(--a-100) font-display text-sm font-extrabold text-(--a-800)">{{ loop.index }}</span>
+            <span class="text-[15px] leading-relaxed text-ink-700">{{ h | loc("title", L) }}{% if h.url %} <a href="{{ h.url }}" target="_blank" rel="noopener" class="font-semibold text-(--a-700) hover:underline">{% icon "external-link", "size-3.5 inline-block align-[-2px]" %}<span class="sr-only">{{ "ui.read_more" | t(L) }}</span></a>{% endif %}</span>
+          </li>
+          {%- endfor %}
+          {%- if gsc.lastHighlights.length > 4 %}
+          <li class="md:hidden" x-show="!all"><button type="button" class="btn btn-ghost w-full" @click="all = true">{% icon "chevrons-down", "size-4" %}{{ "service.delegate.highlights_more" | t(L, { n: gsc.lastHighlights.length - 4 }) }}</button></li>
+          {%- endif %}
+        </ul>
+        <p class="mt-3 text-sm text-ink-500">{{ "service.delegate.highlights_source" | t(L) }}</p>
+      </div>
+      {%- endif %}
+    </div>
+
+    <aside class="space-y-6 xl:col-span-4" aria-labelledby="your-delegate">
+      <div class="card-accent p-6 2xl:p-7" style="{{ 'coral' | accent }}">
+        <h2 id="your-delegate" class="font-display text-xl font-bold text-ink-950">{{ "service.delegate.yours_title" | t(L, { panel: site.panel }) }}</h2>
+        <p class="mt-2 text-[15px] leading-relaxed text-ink-600">{{ "service.delegate.yours_body" | t(L) }}</p>
+        <div class="mt-5 space-y-3">
+          {#- a name the Area still has to confirm (status Unconfirmed in trusted-servants.csv) is marked as on the committee and panel pages -#}
+          {{ personCard({ name: delegate.name if delegate else "", role: (delegate | loc("position", L)) if delegate else ("service.delegate.role" | t(L)), note: ("people.to_confirm" | t(L)) if (delegate and delegate.unconfirmed) else "", email: "delegate@msca09aa.org", color: "coral", lang: L }) }}
+          {{ personCard({ name: alternate.name if alternate else "", role: (alternate | loc("position", L)) if alternate else ("service.delegate.alt_role" | t(L)), note: ("people.to_confirm" | t(L)) if (alternate and alternate.unconfirmed) else "", email: "delegatealt@msca09aa.org", color: "iris", lang: L }) }}
+        </div>
+        <a href="mailto:delegate@msca09aa.org?subject={{ 'service.delegate.invite_subject' | t(L) | urlencode }}" class="btn btn-primary mt-5 w-full">{% icon "calendar-heart", "size-4" %}{{ "service.delegate.invite" | t(L) }}</a>
+        <p class="mt-2 text-center text-xs text-ink-600">{{ "service.delegate.invite_note" | t(L) }}</p>
+      </div>
+      <div class="card p-6 2xl:p-7" style="{{ 'sea' | accent }}">
+        <h2 class="flex items-center gap-2 font-display text-lg font-bold text-ink-950">{% icon "file-text", "size-5 text-sea-600" %}{{ "service.delegate.reports_title" | t(L) }}</h2>
+        {{ docRows({ docs: delegateDocs, lang: L, limit: 6, empty: "service.delegate.reports_empty" | t(L) }) }}
+        <a href="{{ '/documents/conference/' | lurl(L) }}" class="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-sea-700 hover:underline">{{ "service.delegate.reports_all" | t(L) }}{% icon "arrow-right", "size-4" %}</a>
+      </div>
+    </aside>
+  </section>
+
+  {#- ============================================================ the Conference year -#}
+  <section id="conference-year" aria-labelledby="cycle-title" class="scroll-mt-28">
+    {{ sectionHead({ eyebrow: ("service.delegate.cycle_eyebrow" | t(L, { n: nextConf.conference })) if nextConf else ("service.delegate.cycle_eyebrow_generic" | t(L)), title: "service.delegate.cycle_title" | t(L), lead: "service.delegate.cycle_lead" | t(L), id: "cycle-title", accent: "iris" }) }}
+    {%- set cycle = [
+      ["pai", "7,8,9", "lightbulb", "sun"],
+      ["prelim", "10,11,12", "list", "copper"],
+      ["final", "1,2", "files", "ocean"],
+      ["praasa", "2,3", "users", "lilac"],
+      ["preconf", "3", "messages-square", "sage"],
+      ["mock", "4", "vote", "iris"],
+      ["gsc", "5", "landmark", "coral"],
+      ["share", "6,7,8", "megaphone", "blush"]
+    ] -%}
+    <ol class="svc-cycle" role="list">
+      {%- for c in cycle %}
+      <li class="svc-cycle__step reveal" data-months="{{ c[1] }}" style="{{ c[3] | accent }}; --reveal-delay: {{ loop.index0 * 60 }}ms">
+        <div class="flex items-center justify-between gap-2">
+          <span class="icon-tile size-10 rounded-xl">{% icon c[2], "size-5" %}</span>
+          <span class="svc-cycle__now">{% icon "map-pin", "size-3" %}{{ "service.delegate.cycle_now" | t(L) }}</span>
+        </div>
+        <p class="svc-cycle__when mt-2">{{ ("service.delegate.cycle_" + c[0] + "_when") | t(L) }}</p>
+        <h3 class="font-display text-lg font-bold leading-snug text-ink-950">{{ ("service.delegate.cycle_" + c[0]) | t(L) }}</h3>
+        <p class="text-sm leading-relaxed text-ink-600">{{ ("service.delegate.cycle_" + c[0] + "_body") | t(L) }}</p>
+      </li>
+      {%- endfor %}
+    </ol>
+  </section>
+
+  {#- ============================================================ PAI + Pre-Conference -#}
+  <section class="grid grid-cols-1 gap-8 lg:grid-cols-12" aria-label="{{ 'service.delegate.pai_title' | t(L) }}">
+    <div class="lg:col-span-5 2xl:col-span-4">
+      <div class="card-accent h-full p-6 sm:p-8" style="{{ 'sun' | accent }}">
+        <span class="icon-tile size-14">{% icon "lightbulb", "size-7" %}</span>
+        <h2 class="mt-5 font-display text-2xl font-extrabold text-ink-950">{{ "service.delegate.pai_title" | t(L) }}</h2>
+        <p class="mt-3 leading-relaxed text-ink-600">{{ "service.delegate.pai_body" | t(L) }}</p>
+        <h3 class="mt-6 text-xs font-bold tracking-wider text-sun-800 uppercase">{{ "service.delegate.pai_who" | t(L) }}</h3>
+        <ul class="mt-3 flex flex-wrap gap-2" role="list">
+          {%- for w in [1, 2, 3, 4, 5, 6] %}<li class="chip chip-accent">{{ ("service.delegate.pai_who_" + w) | t(L) }}</li>{% endfor %}
+        </ul>
+        <h3 class="mt-6 text-xs font-bold tracking-wider text-sun-800 uppercase">{{ "service.delegate.pai_how" | t(L) }}</h3>
+        <ol class="mt-3 space-y-2 text-[15px] text-ink-700">
+          {%- for i in [1, 2, 3] %}<li class="flex gap-3"><span class="grid size-6 shrink-0 place-items-center rounded-full bg-sun-200 text-xs font-extrabold text-sun-900">{{ i }}</span><span>{{ ("service.delegate.pai_how_" + i) | t(L) }}</span></li>{% endfor %}
+        </ol>
+        {%- for d in gsc.deadlines %}
+        <p class="mt-5 flex items-center gap-2 rounded-2xl bg-sun-100 p-3 text-sm font-semibold text-sun-900" data-hide-after="{{ d.hideAfter }}">{% icon "alarm-clock", "size-4 shrink-0" %}{{ d | loc("title", L) }}: {{ d.date_start | dt("full", L) }}</p>
+        {%- endfor %}
+        <p class="mt-4 text-sm text-ink-500">{{ "service.delegate.pai_deadline" | t(L) }}</p>
+        <a href="{{ 'https://www.aa.org/es/proposed-agenda-item-information' if es else 'https://www.aa.org/proposed-agenda-item-information' }}" target="_blank" rel="noopener" class="btn btn-accent mt-5" style="{{ 'copper' | accent }}">{{ "service.delegate.pai_link" | t(L) }}{% icon "external-link", "size-3.5" %}</a>
+      </div>
+    </div>
+    <div id="pre-conference" class="scroll-mt-28 lg:col-span-7 2xl:col-span-8">
+      <p class="eyebrow" style="{{ 'iris' | accent }}">{% icon "list-checks", "size-4" %}{{ "service.delegate.pre_eyebrow" | t(L) }}</p>
+      <h2 class="h-section mt-2">{{ "service.delegate.pre_title" | t(L) }}</h2>
+      <p class="lead mt-3 max-w-3xl">{{ "service.delegate.pre_lead" | t(L) }}</p>
+      <ol class="mt-8 grid grid-cols-1 gap-3 xl:grid-cols-2" role="list">
+        {%- set pcol = ["ocean", "copper", "sage", "lilac", "iris", "coral"] -%}
+        {%- for i in [1, 2, 3, 4, 5, 6] %}
+        <li class="svc-ballot reveal" style="{{ pcol[loop.index0] | accent }}; --reveal-delay: {{ loop.index0 * 60 }}ms">
+          <span class="svc-ballot__n">{{ i }}</span>
+          <div>
+            <h3 class="font-display text-lg font-bold text-ink-950">{{ ("service.delegate.pre_" + i) | t(L) }}</h3>
+            <p class="mt-1 text-[15px] leading-relaxed text-ink-600">{{ ("service.delegate.pre_" + i + "_body") | t(L) }}</p>
+          </div>
+        </li>
+        {%- endfor %}
+      </ol>
+      <p class="mt-5 flex items-start gap-2 rounded-2xl bg-ink-50 p-4 text-sm leading-relaxed text-ink-600">{% icon "lock", "mt-0.5 size-4 shrink-0 text-ink-400" %}{{ "service.delegate.confidential_note" | t(L) }}</p>
+    </div>
+  </section>
+
+  {#- ============================================================ coming up -#}
+  {%- if gsc.upcoming.length %}
+  <section aria-labelledby="coming-title">
+    {{ sectionHead({ eyebrow: "service.delegate.coming_eyebrow" | t(L), title: "service.delegate.coming_title" | t(L), lead: "service.delegate.coming_lead" | t(L), id: "coming-title", accent: "sea" }) }}
+    <div class="svc-autogrid" data-limit="8" data-empty="#coming-empty">
+      {%- for r in gsc.upcoming %}{% if r.kind != "deadline" %}
+      {{ gscCard({ row: r, lang: L, calendar: calendar }) }}
+      {%- endif %}{% endfor %}
+    </div>
+    <p id="coming-empty" hidden class="card p-8 text-center text-ink-500">{{ "service.delegate.coming_empty" | t(L) }}</p>
+  </section>
+  {%- endif %}
+
+  {#- ============================================================ Delegate's Corner archive -#}
+  <section id="archive" aria-labelledby="archive-title" class="scroll-mt-28" x-data="svcPosts({{ delegatePosts.count or 0 }}, 12)">
+    {{ sectionHead({ eyebrow: "service.posts.eyebrow" | t(L), title: "service.delegate.archive_title" | t(L), lead: "service.delegate.archive_lead" | t(L, { n: delegatePosts.count }), id: "archive-title", accent: "iris" }) }}
+    <div class="grid grid-cols-1 gap-8 xl:grid-cols-12">
+      <div class="xl:col-span-3">
+        <div class="space-y-5 xl:sticky xl:top-28">
+          <label class="block">
+            <span class="sr-only">{{ "service.delegate.archive_search" | t(L) }}</span>
+            <span class="relative block">
+              {% icon "search", "pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-ink-400" %}
+              <input type="search" x-model.debounce.150ms="q" class="field pl-12" placeholder="{{ 'service.delegate.archive_search' | t(L) }}" autocomplete="off">
+            </span>
+          </label>
+          <div>
+            <p class="mb-2 text-xs font-bold tracking-wider text-ink-500 uppercase">{{ "service.motions.panel" | t(L) }}</p>
+            <div class="flex flex-wrap gap-2" role="group" aria-label="{{ 'service.motions.panel' | t(L) }}">
+              <button type="button" class="svc-chip" style="{{ 'iris' | accent }}" :aria-pressed="(panel === 'all').toString()" @click="panel = 'all'">{{ "ui.all" | t(L) }}</button>
+              {%- for pn in delegatePosts.panels %}
+              <button type="button" class="svc-chip" style="{{ (delegatePosts.panelInfo[pn].color if delegatePosts.panelInfo[pn] else 'ocean') | accent }}" :aria-pressed="(panel === '{{ pn }}').toString()" @click="panel = '{{ pn }}'">{{ "service.posts.panel_n" | t(L, { n: pn }) }}<span class="text-xs font-normal opacity-80">{{ delegatePosts.panelInfo[pn].years if delegatePosts.panelInfo[pn] }}</span></button>
+              {%- endfor %}
+            </div>
+          </div>
+          <div>
+            <p class="mb-2 text-xs font-bold tracking-wider text-ink-500 uppercase">{{ "service.delegate.archive_kind" | t(L) }}</p>
+            <div class="flex flex-wrap gap-2" role="group" aria-label="{{ 'service.delegate.archive_kind' | t(L) }}">
+              <button type="button" class="svc-chip" style="{{ 'iris' | accent }}" :aria-pressed="(kind === 'all').toString()" @click="kind = 'all'">{{ "ui.all" | t(L) }}</button>
+              {%- for k in ["sharing", "report", "conference", "reflection"] %}
+              <button type="button" class="svc-chip" style="{{ 'coral' | accent }}" :aria-pressed="(kind === '{{ k }}').toString()" @click="kind = '{{ k }}'">{{ ("service.posts.kind_" + k) | t(L) }}</button>
+              {%- endfor %}
+            </div>
+          </div>
+          <p class="text-sm text-ink-500" aria-live="polite"><span x-text="count">{{ delegatePosts.count }}</span> / {{ delegatePosts.count }} · {{ "service.delegate.archive_shown" | t(L) }}</p>
+          {%- if es %}<p class="rounded-2xl bg-sun-50 p-3 text-sm text-ink-600 ring-1 ring-sun-200">{% icon "languages", "size-4 mr-1 inline-block align-[-3px] text-sun-700" %}{{ "service.delegate.archive_english" | t(L) }}</p>{% endif %}
+        </div>
+      </div>
+      <div class="xl:col-span-9">
+        <ul class="grid grid-cols-1 gap-3 lg:grid-cols-2" role="list">
+          {%- for p in delegatePosts.list or [] %}{{ postCard({ p: p, lang: L }) }}{% endfor %}
+        </ul>
+        <div class="mt-6 flex justify-center" x-show="hiddenCount > 0">
+          <button type="button" class="btn btn-ocean btn-lg" @click="all = true">{% icon "chevrons-down", "size-5" %}<span data-tpl="{{ 'service.delegate.archive_more' | t(L) }}" x-text="$el.dataset.tpl.replace('{n}', hiddenCount)">{{ "service.delegate.archive_more" | t(L, { n: delegatePosts.count - 12 }) }}</span></button>
+        </div>
+        <div x-cloak x-show="count === 0" class="card mt-4 flex flex-col items-center gap-3 p-10 text-center">
+          <span class="icon-tile-soft size-12" style="{{ 'iris' | accent }}">{% icon "search-x", "size-6" %}</span>
+          <p class="font-semibold text-ink-800">{{ "ui.no_results" | t(L) }}</p>
+          <button type="button" class="btn btn-ghost btn-sm" @click="clear()">{{ "ui.clear" | t(L) }}</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {#- ============================================================ links -#}
+  <section aria-labelledby="links-title">
+    {{ sectionHead({ eyebrow: "service.delegate.links_eyebrow" | t(L), title: "service.delegate.links_title" | t(L), id: "links-title", accent: "ocean" }) }}
+    {%- set links = [
+      ["structure", "https://www.aa.org/general-service-conference-structure-us-and-canada", "network", "iris"],
+      ["manual", "https://www.aa.org/es/el-manual-de-servicio-de-aa-y-doce-conceptos-para-el-servicio-mundial" if es else "https://www.aa.org/aa-service-manualtwelve-concepts-world-services", "book-marked", "ocean"],
+      ["box459", "https://www.aa.org/box-459", "newspaper", "sun"],
+      ["forums", "https://www.aa.org/es/regional-local-and-special-forums" if es else "https://www.aa.org/regional-local-and-special-forums", "messages-square", "sea"],
+      ["praasa", "https://praasa.org/es/" if es else "https://praasa.org/", "users", "lilac"],
+      ["region", "https://www.aa.org/contact-pacific-region", "map", "sage"],
+      ["gso", "https://www.aa.org/es/aa-gso" if es else "https://www.aa.org/aa-gso", "building-2", "copper"],
+      ["concepts", "https://www.aa.org/es/the-twelve-concepts" if es else "https://www.aa.org/the-twelve-concepts", "landmark", "coral"]
+    ] -%}
+    <ul class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4" role="list">
+      {%- for l in links %}
+      <li style="{{ l[3] | accent }}">
+        <a href="{{ l[1] }}" target="_blank" rel="noopener" class="group flex h-full items-center gap-3 rounded-2xl bg-white p-4 shadow-soft ring-1 ring-ink-900/5 transition hover:-translate-y-0.5 hover:shadow-lift">
+          <span class="icon-tile size-11 rounded-xl">{% icon l[2], "size-5" %}</span>
+          <span class="min-w-0 flex-1"><span class="block font-semibold text-ink-900 group-hover:text-(--a-700)">{{ ("service.delegate.link_" + l[0]) | t(L) }}</span><span class="block truncate text-xs text-ink-500">{{ l[1] | hostname }}</span></span>
+          {% icon "external-link", "size-4 shrink-0 text-ink-300 group-hover:text-(--a-600)" %}
+        </a>
+      </li>
+      {%- endfor %}
+    </ul>
+  </section>
+</div>

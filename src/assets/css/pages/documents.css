@@ -1,0 +1,769 @@
+/* ------------------------------------------------------------------
+   Document library — /documents/, /documents/<shelf>/, /documents/archive/
+   and the docList / docRow / docCard macros used on other pages.
+   Colours come from the shelf's accent variables (--a-50 … --a-900).
+   Kept in the components layer so Tailwind utilities on the same element win.
+------------------------------------------------------------------ */
+@layer components {
+  /* ---------------------------------------------------- rows (docRow) */
+  .doc-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    min-height: 3.5rem;
+    padding: 0.7rem 0.75rem;
+    border-radius: 1rem;
+    transition: background-color 0.2s ease;
+  }
+  .doc-row:hover,
+  .doc-row:focus-visible {
+    background: var(--a-50, var(--color-ink-50));
+  }
+  .doc-row-compact {
+    gap: 0.7rem;
+    min-height: 3rem;
+    padding: 0.55rem 0.6rem;
+  }
+  .doc-ico {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.8rem;
+    background: var(--a-100, var(--color-ocean-100));
+    color: var(--a-700, var(--color-ocean-700));
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.25s ease;
+  }
+  .doc-ico > svg { width: 1.25rem; height: 1.25rem; }
+  .doc-row-compact .doc-ico { width: 2.25rem; height: 2.25rem; border-radius: 0.7rem; }
+  .doc-row:hover .doc-ico,
+  .doc-card:hover .doc-ico,
+  .doc-tr:hover .doc-ico {
+    background: var(--a-600, var(--color-ocean-600));
+    color: white;
+  }
+  .doc-title {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--color-ink-900);
+    text-wrap: pretty;
+  }
+  .doc-row:hover .doc-title { color: var(--color-iris-700); }
+  .doc-meta {
+    margin-top: 0.2rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.15rem 0.65rem;
+    font-size: 0.8125rem;
+    line-height: 1.35;
+    color: var(--color-ink-500);
+  }
+  .doc-go { color: var(--color-ink-300); transition: color 0.2s ease; }
+  .doc-row:hover .doc-go { color: var(--color-ink-600); }
+
+  /* language / format badges */
+  .doc-badges {
+    display: inline-flex;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  .doc-card .doc-badges { justify-content: flex-end; }
+  .doc-badge {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 0.45rem;
+    padding: 0.22rem 0.42rem;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .doc-badge-en { background: var(--color-sea-100); color: var(--color-sea-800); }
+  .doc-badge-es { background: var(--color-coral-100); color: var(--color-coral-800); }
+  .doc-badge-bi { background: var(--color-sun-100); color: var(--color-sun-800); }
+  .doc-badge-fmt { background: var(--color-ink-100); color: var(--color-ink-600); text-transform: uppercase; }
+
+  /* ---------------------------------------------------- cards (docCard) */
+  .doc-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    height: 100%;
+    overflow: hidden;
+    padding: 1.15rem 1.15rem 1rem;
+    border-radius: 1.5rem;
+    background: linear-gradient(170deg, color-mix(in oklab, var(--a-50) 70%, white), white 45%);
+    box-shadow: var(--shadow-soft);
+    outline: 1px solid color-mix(in oklab, var(--color-ink-900) 6%, transparent);
+    outline-offset: -1px;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .doc-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--a-400), var(--a-600));
+  }
+  .doc-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lift); }
+  .doc-card:focus-visible { outline: 3px solid var(--color-ocean-500); outline-offset: 2px; }
+  .doc-card-cat {
+    margin-top: 0.55rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--a-700);
+  }
+  .doc-card-title {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+    font-family: var(--font-display);
+    font-size: 1.03rem;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--color-ink-950);
+    text-wrap: pretty;
+  }
+  .doc-card:hover .doc-card-title { color: var(--color-iris-700); }
+
+  /* ---------------------------------------------------- docList pieces */
+  .doc-year-block + .doc-year-block { margin-top: 1.25rem; }
+  .doc-year-label {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    margin: 0 0 0.2rem;
+    padding: 0 0.75rem;
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    font-weight: 800;
+    color: var(--color-ink-900);
+  }
+  .doc-year-label > span {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-ink-500);
+  }
+  .doc-empty {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1rem 1.1rem;
+    border-radius: 1rem;
+    background: var(--color-ink-50);
+    font-size: 0.9rem;
+    color: var(--color-ink-500);
+  }
+  .doc-more > summary::-webkit-details-marker { display: none; }
+
+  /* ---------------------------------------------------- page: quick search + figures */
+  .doc-quick {
+    background:
+      radial-gradient(36rem 16rem at 100% 0%, color-mix(in oklab, var(--color-sun-100) 75%, transparent), transparent 70%),
+      radial-gradient(30rem 14rem at 0% 100%, color-mix(in oklab, var(--color-sea-100) 70%, transparent), transparent 70%),
+      white;
+    box-shadow: var(--shadow-lift);
+  }
+  .doc-fig {
+    border-radius: 1.25rem;
+    padding: 0.9rem 1rem;
+    background: linear-gradient(160deg, var(--a-50), white 85%);
+    outline: 1px solid var(--a-100);
+    outline-offset: -1px;
+  }
+
+  /* latest cards */
+  .doc-latest {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 1.5rem;
+    background: white;
+    box-shadow: var(--shadow-soft);
+    outline: 1px solid color-mix(in oklab, var(--color-ink-900) 6%, transparent);
+    outline-offset: -1px;
+  }
+  .doc-latest > header { background: linear-gradient(135deg, var(--a-50), white 70%); }
+
+  /* shelves */
+  .doc-shelf {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 1rem;
+    border-radius: 1.5rem;
+    background: linear-gradient(165deg, var(--a-50), white 60%);
+    box-shadow: var(--shadow-soft);
+    outline: 1px solid color-mix(in oklab, var(--a-200) 70%, transparent);
+    outline-offset: -1px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, outline-color 0.3s ease;
+  }
+  @media (width >= 40rem) {
+    .doc-shelf { padding: 1.25rem; }
+  }
+  .doc-shelf:hover { transform: translateY(-4px); box-shadow: var(--shadow-lift); outline-color: var(--a-300); }
+  .doc-shelf:focus-visible { outline: 3px solid var(--color-ocean-500); }
+
+  /* sparkline: documents per year (single series in the shelf's colour) */
+  .doc-spark {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 2.25rem;
+    border-bottom: 1px solid var(--color-ink-100);
+  }
+  .doc-spark-bar {
+    flex: 1 1 0;
+    min-width: 0;
+    height: var(--h);
+    border-radius: 2px 2px 0 0;
+    background: var(--a-400);
+    transition: background-color 0.2s ease;
+  }
+  .doc-spark-bar.is-zero { height: 0; }
+  .doc-shelf:hover .doc-spark-bar { background: var(--a-500); }
+
+  /* ---------------------------------------------------- library layout */
+  .doc-lib-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+  }
+  .doc-lib-grid > * { min-width: 0; }
+  @media (width >= 64rem) {
+    .doc-lib-grid { grid-template-columns: 17.5rem minmax(0, 1fr); gap: 2.25rem; }
+  }
+  @media (width >= 96rem) {
+    .doc-lib-grid { grid-template-columns: 19.5rem minmax(0, 1fr); gap: 2.75rem; }
+  }
+
+  /* Filters: drawer (phones) → collapsible panel (tablets) → sticky sidebar (desktop) */
+  .doc-facets {
+    position: fixed;
+    inset-block: 0;
+    left: 0;
+    z-index: 70;
+    width: min(23rem, 88vw);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    background: white;
+    box-shadow: var(--shadow-lift);
+    transform: translateX(-105%);
+    visibility: hidden;
+    transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1), visibility 0.3s;
+  }
+  .doc-facets.is-open { transform: none; visibility: visible; }
+  .doc-facets-inner { padding: 1.25rem 1.25rem 0; }
+  @media (width >= 48rem) {
+    .doc-facets {
+      position: static;
+      z-index: auto;
+      width: auto;
+      display: none;
+      overflow: visible;
+      transform: none;
+      visibility: visible;
+      transition: none;
+      border-radius: 1.5rem;
+      box-shadow: var(--shadow-soft);
+      outline: 1px solid color-mix(in oklab, var(--color-ink-900) 6%, transparent);
+      outline-offset: -1px;
+    }
+    .doc-facets.is-open { display: block; }
+    .doc-facets-inner { padding: 1.25rem 1.5rem 0.5rem; }
+    .doc-facet-groups { column-count: 2; column-gap: 2rem; }
+    .doc-facet-groups > .doc-facet { break-inside: avoid; display: block; }
+  }
+  @media (width >= 64rem) {
+    .doc-facets {
+      display: block;
+      position: sticky;
+      top: 7.25rem;
+      align-self: start;
+      max-height: calc(100dvh - 8.25rem);
+      overflow-y: auto;
+      scrollbar-width: thin;
+    }
+    .doc-facets-inner { padding: 1.25rem 1.25rem 0.5rem; }
+    .doc-facet-groups { column-count: 1; }
+  }
+  .doc-page input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
+  .doc-facet { padding-block: 1.1rem; border-bottom: 1px solid var(--color-ink-100); min-width: 0; }
+  .doc-facet:last-child { border-bottom: 0; }
+  .doc-facet > legend + * { clear: both; }
+  p.doc-facet-title { float: none; }
+  .doc-facet-title {
+    float: left;
+    width: 100%;
+    margin-bottom: 0.75rem;
+    padding: 0;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-ink-500);
+  }
+  .doc-n {
+    margin-left: auto;
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-ink-500);
+  }
+
+  /* segmented control (collection) */
+  .doc-seg {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.25rem;
+    padding: 0.25rem;
+    border-radius: 1rem;
+    background: var(--color-ink-100);
+  }
+  .doc-seg > button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.1rem;
+    min-height: 2.75rem;
+    padding: 0.4rem 0.25rem;
+    border-radius: 0.75rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--color-ink-600);
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  .doc-seg > button .doc-n { margin: 0; }
+  .doc-seg > button:hover { color: var(--color-ink-900); }
+  .doc-seg > button.is-on { background: white; color: var(--color-ink-950); box-shadow: var(--shadow-soft); }
+
+  /* checkbox rows (category, committee) */
+  .doc-check {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 2.5rem;
+    padding: 0.35rem 0.55rem;
+    border-radius: 0.85rem;
+    font-size: 0.9rem;
+    color: var(--color-ink-700);
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+  }
+  .doc-check:hover { background: var(--a-50, var(--color-ink-50)); }
+  .doc-check.is-empty { opacity: 0.5; }
+  .doc-box {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 1.15rem;
+    height: 1.15rem;
+    border-radius: 0.35rem;
+    box-shadow: inset 0 0 0 1.5px var(--color-ink-300);
+    color: transparent;
+    transition: background-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .doc-check input:checked + .doc-box {
+    background: var(--a-600, var(--color-ocean-600));
+    box-shadow: none;
+    color: white;
+  }
+  .doc-check input:focus-visible + .doc-box { outline: 3px solid var(--color-ocean-500); outline-offset: 2px; }
+  .doc-check:has(input:checked) { color: var(--color-ink-950); font-weight: 600; }
+  .doc-check-ico { display: grid; color: var(--a-600, var(--color-ink-500)); }
+  .doc-check-ico > svg { width: 1rem; height: 1rem; }
+
+  /* pills (language, district, format, decades) */
+  .doc-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 2.25rem;
+    padding: 0.35rem 0.8rem;
+    border-radius: 9999px;
+    background: white;
+    box-shadow: inset 0 0 0 1px var(--color-ink-200);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-ink-700);
+    transition: background-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .doc-pill:hover { background: var(--color-ink-50); box-shadow: inset 0 0 0 1px var(--color-ink-300); }
+  .doc-pill .doc-n { margin-left: 0.1rem; }
+  .doc-pill.is-on { background: var(--color-ink-900); color: white; box-shadow: none; }
+  .doc-pill.is-on .doc-n { color: color-mix(in oklab, white 70%, transparent); }
+
+  /* year histogram (documents per year; the whole column is the hit target) */
+  .doc-hist {
+    display: flex;
+    align-items: stretch;
+    gap: 2px;
+    height: 4.5rem;
+    border-bottom: 1px solid var(--color-ink-200);
+  }
+  .doc-hist-bar {
+    position: relative;
+    flex: 1 1 0;
+    min-width: 0;
+    border-radius: 3px 3px 0 0;
+    cursor: pointer;
+  }
+  .doc-hist-bar::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0 0;
+    height: var(--h);
+    border-radius: 3px 3px 0 0;
+    background: var(--color-sea-200);
+    transition: background-color 0.15s ease;
+  }
+  .doc-hist-bar.is-in::after { background: var(--color-sea-500); }
+  .doc-hist-bar:hover { background: var(--color-ink-50); }
+  .doc-hist-bar:hover::after { background: var(--color-iris-500); }
+  .doc-hist-bar.is-on::after { background: var(--color-iris-600); }
+
+  .doc-select {
+    width: 100%;
+    min-width: 0;
+    height: 2.75rem;
+    padding: 0.4rem 0.7rem;
+    border-radius: 0.9rem;
+    font-size: 0.875rem;
+  }
+
+  /* ---------------------------------------------------- results */
+  /* The search bar stays under the header while you scroll the results (phones: search + Filters on one line). */
+  .doc-page { --doc-top: 6.3125rem; --doc-bar: 4.5rem; }
+  @media (width >= 64rem) {
+    .doc-page { --doc-top: 6.3125rem; }
+  }
+  .doc-toolbar {
+    position: sticky;
+    top: var(--doc-top);
+    z-index: 20;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    margin-block: -0.75rem;
+    padding-block: 0.75rem;
+    background: color-mix(in oklab, white 88%, transparent);
+    backdrop-filter: blur(12px);
+  }
+  @media (width < 40rem) {
+    .doc-toolbar { flex-wrap: nowrap; gap: 0.5rem; }
+  }
+  .doc-sort {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    padding: 0 0.25rem 0 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-ink-800);
+    cursor: pointer;
+  }
+  .doc-sort:focus { outline: none; }
+  .doc-views {
+    display: flex;
+    flex-shrink: 0;
+    gap: 0.15rem;
+    padding: 0.25rem;
+    border-radius: 9999px;
+    background: white;
+    box-shadow: inset 0 0 0 1px var(--color-ink-200);
+  }
+  .doc-views > button {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 9999px;
+    color: var(--color-ink-500);
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+  .doc-views > button:hover { color: var(--color-ink-900); }
+  .doc-views > button.is-on { background: var(--color-ink-900); color: white; }
+
+  .doc-group { margin-top: 2rem; }
+  .doc-group:first-child { margin-top: 0.75rem; }
+  .doc-group-h {
+    position: sticky;
+    top: calc(var(--doc-top, 6.25rem) + var(--doc-bar, 0rem));
+    z-index: 10;
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin: 0 -0.25rem 0.85rem;
+    padding: 0.55rem 0.25rem;
+    background: color-mix(in oklab, white 90%, transparent);
+    backdrop-filter: blur(10px);
+  }
+  .doc-group-h > span:first-child {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    background-image: linear-gradient(100deg, var(--color-ocean-500), var(--color-iris-600) 70%, var(--color-coral-600));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .doc-group-h::after {
+    content: "";
+    flex: 1;
+    align-self: center;
+    height: 1px;
+    background: linear-gradient(90deg, var(--color-ink-200), transparent);
+  }
+  .doc-group-n {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-ink-500);
+  }
+  @media (width >= 64rem) {
+    .doc-group-h { top: 10.75rem; }
+  }
+
+  /* collapsible filter groups */
+  .doc-fold > summary { list-style: none; }
+  .doc-fold > summary::-webkit-details-marker { display: none; }
+  .doc-fold-sum {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    margin-block: -0.6rem;
+    cursor: pointer;
+    border-radius: 0.75rem;
+  }
+  .doc-fold-sum .doc-facet-title { float: none; margin: 0; flex: 1; display: flex; align-items: center; gap: 0.5rem; }
+  .doc-fold-sum:hover .doc-facet-title { color: var(--color-ink-800); }
+  .doc-fold-ico { color: var(--color-ink-500); transition: transform 0.2s ease; }
+  details[open] > summary .doc-fold-ico { transform: rotate(180deg); }
+  .doc-fold[open] > fieldset { margin-top: 1rem; }
+  .doc-fold-n {
+    display: inline-grid;
+    place-items: center;
+    min-width: 1.25rem;
+    height: 1.25rem;
+    padding: 0 0.3rem;
+    border-radius: 9999px;
+    background: var(--color-coral-600);
+    font-size: 0.7rem;
+    letter-spacing: 0;
+    color: white;
+  }
+
+  /* table view */
+  .doc-table thead th { position: static; }
+  .doc-table td { vertical-align: middle; }
+  .doc-tr-year > th {
+    position: sticky;
+    top: 10.75rem;
+    z-index: 5;
+    padding: 0.6rem 1rem;
+    background: linear-gradient(90deg, var(--color-ocean-50), var(--color-iris-50));
+    text-align: left;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .doc-tr-year > th > span:first-child {
+    margin-right: 0.6rem;
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--color-ink-950);
+  }
+  .doc-tr:hover > td { background: var(--a-50); }
+
+  /* ---------------------------------------------------- archive call-out */
+  .doc-archive-card {
+    position: relative;
+    isolation: isolate;
+    display: block;
+    overflow: hidden;
+    padding: 1.75rem;
+    border-radius: 1.5rem;
+    background: linear-gradient(120deg, var(--color-iris-700), var(--color-ocean-700));
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  @media (width >= 40rem) {
+    .doc-archive-card { padding: 2.25rem; }
+  }
+  .doc-archive-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(circle at 94% 12%, rgb(255 255 255 / 0.14) 0 4.5rem, transparent 4.6rem),
+      radial-gradient(circle at 78% 105%, rgb(255 255 255 / 0.08) 0 7rem, transparent 7.1rem),
+      radial-gradient(28rem 16rem at 100% 100%, color-mix(in oklab, var(--color-coral-500) 35%, transparent), transparent 70%),
+      radial-gradient(22rem 14rem at 0% 0%, color-mix(in oklab, var(--color-sea-400) 30%, transparent), transparent 70%);
+  }
+  .doc-archive-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lift); }
+  /* ---------------------------------------------------- shelf pages */
+  .doc-cat-year { margin-top: 2rem; scroll-margin-top: 3.75rem; }
+  @media (width >= 64rem) {
+    .doc-cat-year { margin-top: 2.5rem; scroll-margin-top: 1rem; }
+  }
+  .doc-group-h.doc-group-h-static { top: calc(var(--doc-top, 6.25rem) + var(--doc-rail, 0rem)); }
+  /* year chips (phones, tablets): stick under the header */
+  .doc-year-rail {
+    position: sticky;
+    top: var(--doc-top, 4.25rem);
+    z-index: 15;
+    margin: 1.25rem -1rem 0;
+    padding-inline: 1rem;
+    background: color-mix(in oklab, white 90%, transparent);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 1px 0 var(--color-ink-100);
+  }
+  .doc-pill.is-gap, .doc-yearlink.is-gap { color: var(--color-ink-500); font-weight: 600; }
+  .doc-pill.is-gap { box-shadow: inset 0 0 0 1px var(--color-ink-200); background: repeating-linear-gradient(135deg, white 0 6px, var(--color-ink-50) 6px 12px); }
+  /* a folded year: the summary is the year heading */
+  .doc-year-fold > summary { list-style: none; }
+  .doc-year-fold > summary::-webkit-details-marker { display: none; }
+  .doc-year-sum {
+    position: sticky;
+    top: calc(var(--doc-top, 6.25rem) + var(--doc-rail, 0rem));
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 -0.25rem 0.85rem;
+    padding: 0.55rem 0.25rem;
+    min-height: 2.75rem;
+    cursor: pointer;
+    background: color-mix(in oklab, white 90%, transparent);
+    backdrop-filter: blur(10px);
+  }
+  .doc-year-sum .doc-year-h { position: static; flex: 1; margin: 0; padding: 0; background: none; backdrop-filter: none; }
+  .doc-year-sum:hover .doc-fold-ico { color: var(--color-ink-800); }
+  .doc-year-fold:not([open]) > .doc-year-sum { margin-bottom: 0; position: static; }
+  .doc-cat-year:has(> .doc-year-fold:not([open])) { margin-top: 0.25rem; }
+  .doc-cat-page { --doc-top: 6.3125rem; --doc-rail: 3.25rem; }
+  @media (width >= 64rem) {
+    .doc-cat-page { --doc-top: 6.3125rem; --doc-rail: 0rem; }
+  }
+  /* a year with nothing posted yet */
+  .doc-gap {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.9rem;
+    padding: 1rem 1.1rem;
+    border-radius: 1.25rem;
+    background: repeating-linear-gradient(135deg, var(--color-sun-50) 0 10px, white 10px 20px);
+    outline: 1px dashed var(--color-sun-300);
+    outline-offset: -1px;
+  }
+  .doc-yearlink {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 2.25rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 0.75rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-ink-700);
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+  .doc-yearlink:hover { background: var(--a-50); color: var(--a-800); }
+  .doc-spark-lg { height: 7rem; gap: 3px; }
+  .doc-spark-lg .doc-spark-bar { border-radius: 4px 4px 0 0; background: var(--a-500); }
+
+  /* one document in several languages */
+  .doc-row-pair:hover { background: var(--a-50); }
+  .doc-row-pair:hover .doc-ico { background: var(--a-600); color: white; }
+  .doc-pair-link::after { content: ""; position: absolute; inset: 0; border-radius: 1rem; }
+  .doc-pair-link:focus-visible { outline: none; }
+  .doc-pair-link:focus-visible::after { outline: 3px solid var(--color-ocean-500); outline-offset: 0; }
+  .doc-row-pair:hover .doc-pair-link { color: var(--color-iris-700); }
+  .doc-versions { position: relative; z-index: 1; display: flex; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; gap: 0.35rem; }
+  .doc-ver {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 2.25rem;
+    padding: 0.3rem 0.55rem 0.3rem 0.35rem;
+    border-radius: 0.75rem;
+    background: white;
+    box-shadow: inset 0 0 0 1px var(--color-ink-200);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--color-ink-600);
+    transition: box-shadow 0.15s ease, background-color 0.15s ease;
+  }
+  .doc-ver:hover { background: var(--a-50); box-shadow: inset 0 0 0 1.5px var(--a-400); color: var(--color-ink-900); }
+  .doc-ver-fmt { text-transform: uppercase; letter-spacing: 0.03em; }
+  @media (width < 40rem) {
+    .doc-row-pair { flex-wrap: wrap; row-gap: 0.4rem; }
+    .doc-row-pair .doc-versions { width: 100%; justify-content: flex-start; padding-left: 3.35rem; }
+  }
+
+  /* ---------------------------------------------------- archive page */
+  .doc-timeline { position: relative; display: grid; gap: 2rem; padding-left: 2.75rem; }
+  .doc-timeline::before {
+    content: "";
+    position: absolute;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    left: 0.95rem;
+    width: 2px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, var(--color-copper-300), var(--color-ocean-300), var(--color-sage-300));
+  }
+  .doc-timeline > li { position: relative; }
+  .doc-tl-dot {
+    position: absolute;
+    top: -0.1rem;
+    left: -2.75rem;
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, var(--a-400), var(--a-600));
+    color: white;
+    box-shadow: 0 0 0 4px white, var(--shadow-soft);
+  }
+  .doc-chart {
+    display: flex;
+    align-items: stretch;
+    gap: 3px;
+    height: 13rem;
+    border-bottom: 1px solid var(--color-ink-200);
+  }
+  .doc-chart-col { position: relative; flex: 1 1 0; min-width: 0; border-radius: 4px 4px 0 0; }
+  .doc-chart-col:hover { background: var(--color-ink-50); }
+  .doc-chart-bar {
+    position: absolute;
+    inset: auto 0 0 0;
+    height: var(--h);
+    border-radius: 4px 4px 0 0;
+    background: linear-gradient(180deg, var(--color-iris-500), var(--color-ocean-500));
+    transition: filter 0.15s ease;
+  }
+  .doc-chart-col:hover .doc-chart-bar { filter: brightness(1.12) saturate(1.1); }
+  .doc-chart-col.is-zero { pointer-events: none; }
+  .doc-chart-col[data-href] { cursor: pointer; }
+}

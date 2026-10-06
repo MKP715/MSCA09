@@ -1,0 +1,43 @@
+---
+pagination:
+  addAllPagesToCollections: true
+  data: districts.redirects
+  size: 1
+  alias: r
+permalink: "{{ r.lang.prefix }}/districts/{{ r.item.slug }}/"
+eleventyExcludeFromCollections: true
+---
+{#-
+  Old district numbers that no longer have their own page (data/districts.csv rows with
+  status "merged" or "inactive" and a merged_into slug): District 3 → District 1 & 3,
+  District 11 → District 8. A tiny page that forwards to the district that took them in.
+  The target is relative ("../d01-03/") so it also works when the site lives in a sub-folder.
+-#}
+{%- set L = r.lang -%}
+{%- set to = r.to -%}
+{%- set target = "../" + to.slug + "/" -%}
+{%- set toName = to | loc("name", L) -%}
+{%- set fromName = r.item | loc("name", L) -%}
+<!doctype html>
+<html lang="{{ L.htmlLang }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ fromName }} → {{ toName }} · {{ "site.short" | t(L) }}</title>
+  <meta name="robots" content="noindex">
+  <meta http-equiv="refresh" content="0; url={{ target }}">
+  <link rel="canonical" href="{{ (L.prefix + '/districts/' + to.slug + '/') | absUrl(site.url + '/') }}">
+  <style>
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; font: 17px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; color: #1c2033; background: #f5f6fb; }
+    main { max-width: 34rem; margin: 1.5rem; padding: 2rem; border-radius: 1.5rem; background: #fff; box-shadow: 0 12px 40px -16px rgb(19 23 43 / .25); }
+    a { color: #1f6fa8; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <main data-pagefind-ignore="all">
+    <p>{{ "districts.redirect.body" | t(L, { from: fromName, to: toName }) }}</p>
+    <p><a href="{{ target }}">{{ "districts.redirect.link" | t(L, { to: toName }) }} →</a></p>
+  </main>
+  <script>location.replace({{ target | json | safe }});</script>
+</body>
+</html>

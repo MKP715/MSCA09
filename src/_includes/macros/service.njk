@@ -1,0 +1,326 @@
+{#-
+  Building blocks for the Area-business pages (/service/…, /about/structure/). Owner: service.
+    {% from "macros/service.njk" import kindChip, districtLinks, nextMeeting, meetingTimeline, docRows, gscCard, motionCard, postCard with context %}
+  Every macro takes one object; all lists are guarded so a missing data file never breaks the page.
+-#}
+{%- from "macros/ui.njk" import formatBadge, copyable, emailLink -%}
+{%- from "macros/documents.njk" import docList -%}
+
+{#- Coloured chip for an Area-meeting kind. o: { kind, lang, glass } -#}
+{% macro kindChip(o) %}
+{%- set info = o.kind | svcKindInfo -%}
+{%- if o.glass -%}
+{#- on the coloured hero: a smoked-glass chip (dark tint, so the white label keeps 4.5:1 over any part of the gradient) -#}
+<span class="chip bg-ink-950/25 text-white ring-1 ring-white/45 backdrop-blur">{% icon info.icon, "size-3.5" %}{{ ("service.kind." + o.kind) | t(o.lang) }}</span>
+{%- else -%}
+<span class="chip chip-accent" style="{{ info.color | accent }}">{% icon info.icon, "size-3.5" %}{{ ("service.kind." + o.kind) | t(o.lang) }}</span>
+{%- endif -%}
+{% endmacro %}
+
+{#- A big number with its label. Same look as statTile in macros/ui.njk, but number and label share one <p>,
+    so the figure is not taken for a heading (axe p-as-heading). o: { value, label, icon, color, suffix, sub (small second line) } -#}
+{% macro svcStat(o) %}
+<div class="card flex items-center gap-4 p-5 2xl:p-6" style="{{ o.color | accent }}">
+  <span class="icon-tile">{% icon o.icon or "sparkles", "size-6" %}</span>
+  <p>
+    <span class="block font-display text-3xl font-extrabold text-ink-950 2xl:text-4xl" data-pagefind-ignore><span x-data="countUp({{ o.value }})" x-intersect.once="start()" x-text="display">{{ o.value }}</span>{{ o.suffix }}</span>
+    <span class="block text-sm font-medium text-ink-500">{{ o.label }}</span>
+    {%- if o.sub %}<span class="block text-xs font-semibold text-(--a-700)">{{ o.sub }}</span>{% endif %}
+  </p>
+</div>
+{% endmacro %}
+
+{#- "District 5", "Districts 9 & 30" as links. o: { slugs, lang, cls } -#}
+{% macro districtLinks(o) %}
+{%- set L = o.lang -%}
+{%- for s in (o.slugs or []) -%}
+{%- if not loop.first %}<span aria-hidden="true">{{ " · " }}</span>{% endif -%}
+<a href="{{ ('/districts/' + s + '/') | lurl(L) }}" class="{{ o.cls or 'font-semibold underline decoration-2 underline-offset-4 hover:decoration-(--a-400)' }}">{{ "service.district_n" | t(L, { n: s | svcDistrictNum }) }}</a>
+{%- endfor -%}
+{% endmacro %}
+
+{#- The big "next Area meeting" card with a live countdown. o: { occ, calendar, lang, compact, hlevel (heading level, default 3) } -#}
+{% macro nextMeeting(o) %}
+{%- set L = o.lang -%}
+{%- set occ = o.occ -%}
+{%- if occ -%}
+{%- set s = occ | svcSeries(o.calendar) -%}
+{%- set kind = occ | svcKind(s) -%}
+{%- set info = kind | svcKindInfo -%}
+{%- set hosts = occ | svcHosts(s) -%}
+{%- set agenda = s | svcLinks("agenda|orden del d") -%}
+{%- set flyers = (s.flyers if s else []) or [] -%}
+<article class="svc-next relative isolate overflow-hidden rounded-[2rem] text-white shadow-lift" style="{{ info.color | accent }}"
+         data-hide-after="{{ occ.end }}" data-when="{{ occ.start }}" data-until="{{ occ.end }}">
+  <div class="svc-next__bg absolute inset-0 -z-10" aria-hidden="true"></div>
+  <div class="svc-next__waves absolute inset-x-0 bottom-0 -z-10 h-24 opacity-30" aria-hidden="true"></div>
+  <div class="grid grid-cols-1 gap-8 p-6 sm:p-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:p-10 2xl:p-12">
+    <div class="min-w-0">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="chip bg-white text-ink-900 shadow-sm">{% icon "calendar-clock", "size-3.5 text-(--a-600)" %}{{ "service.next.eyebrow" | t(L) }}</span>
+        {{ kindChip({ kind: kind, lang: L, glass: true }) }}
+        {{- formatBadge({ format: occ.format, lang: L }) | replace("chip chip-accent", "chip bg-white/90 text-ink-800") | safe }}
+        <span data-rel hidden class="chip bg-sun-300 text-ink-950"></span>
+      </div>
+      {%- set hl = o.hlevel or 3 %}
+      <h{{ hl }} class="mt-5 font-display text-3xl font-extrabold tracking-tight text-balance sm:text-4xl 2xl:text-5xl">{{ ("service.kind_title." + kind) | t(L) }}</h{{ hl }}>
+      <p class="mt-3 text-lg font-semibold text-white/95 sm:text-xl">
+        <span class="inline-block first-letter:uppercase">{{ occ.start | dt("long", L) }}</span>
+        <span class="text-white/80" aria-hidden="true">·</span> {{ occ | loc("timeLabel", L) }}
+      </p>
+      {#- "Registration from 8:00 AM", from a 'Registration:' line in the calendar entry -#}
+      {%- set reg = (occ | calLoc("registration", L)) if (occ.registration_en or occ.registration_es) else "" %}
+      {%- if reg %}<p class="mt-1.5 flex items-center gap-2 font-semibold text-white/90">{% icon "clipboard-check", "size-4 shrink-0" %}<span class="first-letter:uppercase">{{ reg }}</span></p>{% endif %}
+      <dl class="mt-6 grid grid-cols-1 gap-4 text-[15px] sm:grid-cols-2">
+        {%- if hosts.length %}
+        <div class="flex items-start gap-3">
+          <dt class="grid size-10 shrink-0 place-items-center rounded-2xl bg-white/15 ring-1 ring-white/25">{% icon "flag", "size-5" %}<span class="sr-only">{{ "service.next.host" | t(L) }}</span></dt>
+          <dd><span class="block text-xs font-bold tracking-wider text-white/90 uppercase">{{ "service.next.host" | t(L) }}</span>{{ districtLinks({ slugs: hosts, lang: L, cls: "font-semibold underline decoration-white/40 decoration-2 underline-offset-4 hover:decoration-white" }) }}</dd>
+        </div>
+        {%- endif %}
+        <div class="flex items-start gap-3">
+          <dt class="grid size-10 shrink-0 place-items-center rounded-2xl bg-white/15 ring-1 ring-white/25">{% icon "map-pin", "size-5" %}<span class="sr-only">{{ "service.next.where" | t(L) }}</span></dt>
+          <dd class="min-w-0">
+            <span class="block text-xs font-bold tracking-wider text-white/90 uppercase">{{ "service.next.where" | t(L) }}</span>
+            {%- if s and s.location and not s.location.tba %}
+            <span class="block font-semibold">{{ s.location.name or s.location.raw }}</span>
+            {%- if s.location.address %}<span class="block text-white/85">{{ s.location.address }}</span>{% endif %}
+            {%- if s.location.mapsUrl %}<a href="{{ s.location.mapsUrl }}" target="_blank" rel="noopener" class="mt-1 inline-flex items-center gap-1 text-sm font-semibold underline decoration-white/40 underline-offset-4 hover:decoration-white">{% icon "navigation", "size-3.5" %}{{ "service.next.map" | t(L) }}</a>{% endif %}
+            {%- elif occ.venue or occ.city %}
+            <span class="block font-semibold">{{ occ.venue or occ.city }}</span>
+            {%- else %}
+            <span class="block font-semibold">{{ "service.next.place_tba" | t(L) }}</span>
+            {%- endif %}
+          </dd>
+        </div>
+      </dl>
+      {%- if s and s.online and s.online.zoomId %}
+      <div class="mt-6 flex flex-wrap items-stretch gap-3">
+        <div class="flex items-center gap-3 rounded-2xl bg-white/12 px-4 py-2.5 ring-1 ring-white/25" x-data="copyText({{ s.online.zoomId | json }})">
+          <span class="text-xs font-bold tracking-wider text-white/90 uppercase">{{ "service.next.zoom_id" | t(L) }}</span>
+          <span class="font-mono text-base font-bold">{{ s.online.zoomId }}</span>
+          <button type="button" @click="copy()" class="-my-1.5 grid size-11 shrink-0 place-items-center rounded-full bg-white/15 hover:bg-white/30 lg:my-0 lg:size-8" aria-label="{{ 'ui.copy_x' | t(L, { what: ('service.next.zoom_id' | t(L)) }) }}">
+            <span x-show="!copied">{% icon "copy", "size-3.5" %}</span><span x-cloak x-show="copied">{% icon "check", "size-3.5" %}</span>
+          </button>
+        </div>
+        {%- if s.online.passcode %}
+        <div class="flex items-center gap-3 rounded-2xl bg-white/12 px-4 py-2.5 ring-1 ring-white/25" x-data="copyText({{ s.online.passcode | json }})">
+          <span class="text-xs font-bold tracking-wider text-white/90 uppercase">{{ "service.next.passcode" | t(L) }}</span>
+          <span class="font-mono text-base font-bold">{{ s.online.passcode }}</span>
+          <button type="button" @click="copy()" class="-my-1.5 grid size-11 shrink-0 place-items-center rounded-full bg-white/15 hover:bg-white/30 lg:my-0 lg:size-8" aria-label="{{ 'ui.copy_x' | t(L, { what: ('service.next.passcode' | t(L)) }) }}">
+            <span x-show="!copied">{% icon "copy", "size-3.5" %}</span><span x-cloak x-show="copied">{% icon "check", "size-3.5" %}</span>
+          </button>
+        </div>
+        {%- endif %}
+      </div>
+      {%- endif %}
+
+      {#- live countdown -#}
+      <div class="mt-8" x-data="countdown({{ occ.start | json }})">
+        <p class="text-xs font-bold tracking-[0.18em] text-white/90 uppercase" x-show="!past">{{ "service.next.countdown" | t(L) }}</p>
+        <p x-cloak x-show="past" class="text-lg font-bold">{{ "time.in_progress" | t(L) }}</p>
+        <div class="mt-2 flex gap-2 sm:gap-3" x-show="!past" aria-hidden="true">
+          {%- for u in [["d", "time.days"], ["h", "time.hours"], ["m", "time.minutes"], ["s", "time.seconds"]] %}
+          <div class="svc-count">
+            <span class="svc-count__n" x-text="String({{ u[0] }}).padStart(2, '0')">--</span>
+            <span class="svc-count__l">{{ u[1] | t(L) }}</span>
+          </div>
+          {%- endfor %}
+        </div>
+      </div>
+
+      <div class="mt-8 flex flex-wrap gap-2.5">
+        {%- if s and s.online and s.online.joinUrl %}
+        <a href="{{ s.online.joinUrl }}" target="_blank" rel="noopener" class="btn bg-white text-ink-950 shadow-soft hover:-translate-y-0.5">{% icon "video", "size-4 text-(--a-600)" %}{{ "service.next.join" | t(L) }}</a>
+        {%- endif %}
+        <a href="{{ occ.url | lurl(L) }}" class="btn svc-glass">{% icon "info", "size-4" %}{{ "service.next.details" | t(L) }}</a>
+        {%- for a in agenda | limit(2) %}
+        <a href="{{ a.url }}" target="_blank" rel="noopener" class="btn svc-glass">{% icon "list-ordered", "size-4" %}{{ (a | loc("label", L)) or ("service.next.agenda" | t(L)) }}</a>
+        {%- endfor %}
+        {%- if flyers.length %}
+        <a href="{{ flyers[0].view }}" target="_blank" rel="noopener" class="btn svc-glass">{% icon "image", "size-4" %}{{ "service.next.flyer" | t(L) }}</a>
+        {%- endif %}
+      </div>
+    </div>
+
+    {%- if flyers.length and not o.compact %}
+    <div class="hidden lg:block">
+      <div class="svc-next__flyers" data-gallery>
+        {%- for f in flyers | limit(2) %}
+        <a href="{{ f.img }}" data-pswp data-pswp-width="0" data-pswp-height="0" target="_blank" rel="noopener" class="svc-next__flyer svc-next__flyer--{{ loop.index }}">
+          <img src="{{ f.thumb or (f.id | driveImg(640)) }}" alt="{{ 'service.next.flyer_alt' | t(L, { n: loop.index }) }}" loading="lazy" decoding="async"
+               onerror="this.onerror=function(){this.closest('a').remove()};this.src='{{ f.fallback }}'">
+        </a>
+        {%- endfor %}
+      </div>
+    </div>
+    {%- endif %}
+  </div>
+</article>
+{%- endif -%}
+{% endmacro %}
+
+{#- Panel timeline: one node per Area meeting in a year. o: { items: Occ[], calendar, lang, id } -#}
+{% macro meetingTimeline(o) %}
+{%- set L = o.lang -%}
+{%- set items = o.items or [] -%}
+{%- set nextKey = (o.next.key if o.next else "") -%}
+<ol class="svc-tl" role="list" {% if o.id %}id="{{ o.id }}"{% endif %}>
+  {%- for occ in items %}
+  {%- set s = occ | svcSeries(o.calendar) -%}
+  {%- set kind = occ | svcKind(s) -%}
+  {%- set info = kind | svcKindInfo -%}
+  {%- set hosts = occ | svcHosts(s) -%}
+  {%- set past = occ.end | svcIsPast -%}
+  {%- set isNext = occ.key == nextKey -%}
+  <li class="svc-tl__item{{ ' is-past' if past }}{{ ' is-next' if isNext }}" style="{{ info.color | accent }}" data-past-after="{{ occ.end }}">
+    <a href="{{ occ.url | lurl(L) }}" class="svc-tl__card group">
+      <span class="svc-tl__dot" aria-hidden="true">{% icon info.icon, "size-4" %}</span>
+      <span class="svc-tl__mon">{{ occ.start | dt("mon", L) | replace(".", "") }}</span>
+      <span class="svc-tl__day">{{ occ.start | dt("day", L) }}</span>
+      <span class="svc-tl__kind">{{ ("service.kind." + kind) | t(L) }}</span>
+      <span class="svc-tl__host">{% if hosts.length %}{% for h in hosts %}{{ "service.district_short" | t(L, { n: h | svcDistrictNum }) }}{% if not loop.last %} · {% endif %}{% endfor %}{% else %}{{ "service.timeline.host_tba" | t(L) }}{% endif %}</span>
+      {%- if isNext %}<span class="svc-tl__flag">{{ "service.timeline.next" | t(L) }}</span>{% endif %}
+      {%- if past %}<span class="svc-tl__done" title="{{ 'service.timeline.done' | t(L) }}">{% icon "check", "size-3" %}<span class="sr-only">{{ "service.timeline.done" | t(L) }}</span></span>{% endif %}
+    </a>
+  </li>
+  {%- endfor %}
+</ol>
+{% endmacro %}
+
+{#- A compact list of documents: the English and Spanish copies of one document are one entry with an EN / ES button each
+    (docList from macros/documents.njk with pairs: true). o: { docs, lang, limit (documents, not files), empty } -#}
+{% macro docRows(o) %}
+{%- set L = o.lang -%}
+{%- if (o.docs or []).length %}
+<div class="-mx-2.5">{{ docList({ docs: o.docs, lang: L, pairs: true, max: o.limit or 5, compact: true, emptyText: false }) }}</div>
+{%- else %}
+<p class="rounded-2xl bg-ink-50 px-4 py-6 text-center text-sm text-ink-500">{{ o.empty or ("service.docs.empty" | t(L)) }}</p>
+{%- endif %}
+{% endmacro %}
+
+{#- The motions on the floor as a compact list (newest first), each with its agenda. o: { items, lang, limit } -#}
+{% macro motionRows(o) %}
+{%- set L = o.lang -%}
+{%- set items = (o.items or []) | limit(o.limit or 5) -%}
+{%- if items.length %}
+<ul class="divide-y divide-ink-100" role="list">
+  {%- for m in items %}
+  {%- set agendaUrl = m | loc("agenda_url", L) %}
+  <li class="py-3">
+    <a href="{{ ('/service/motions/#motion-' + (m.id | slugify)) | lurl(L) }}" class="group flex items-start gap-3">
+      <span class="svc-motion__id mt-0.5 shrink-0">{{ (m | loc("label", L)) or m.id }}</span>
+      <span class="min-w-0 flex-1">
+        <span class="block font-semibold leading-snug text-ink-900 group-hover:text-(--a-700)">{{ m | loc("title", L) }}</span>
+        <span class="mt-0.5 block text-xs text-ink-500">{{ ("service.motions.status_" + m.status) | t(L) }}{% if m.date_introduced %} · {{ "service.motions.introduced" | t(L) }} {{ m.date_introduced | dt("full", L) }}{% endif %}</span>
+      </span>
+      {% icon "arrow-right", "mt-1 size-4 shrink-0 text-ink-300 transition group-hover:translate-x-0.5 group-hover:text-(--a-600)" %}
+    </a>
+    {%- if agendaUrl %}
+    <a href="{{ agendaUrl }}" target="_blank" rel="noopener" class="mt-2 inline-flex min-h-8 items-center gap-1.5 rounded-full bg-(--a-50) px-2.5 py-1 text-xs font-semibold text-(--a-800) ring-1 ring-(--a-200) hover:bg-(--a-100)">{% icon "list-ordered", "size-3.5" %}{{ "service.motions.agenda" | t(L) }}<span class="sr-only"> — {{ m | loc("title", L) }}</span></a>
+    {%- endif %}
+  </li>
+  {%- endfor %}
+</ul>
+{%- else %}
+<p class="rounded-2xl bg-ink-50 px-4 py-6 text-center text-sm text-ink-500">{{ "service.docs.motions_none" | t(L) }}</p>
+{%- endif %}
+{% endmacro %}
+
+{#- A GSC / PRAASA / Forum row from data/gsc.csv. o: { row, lang, calendar } -#}
+{% macro gscCard(o) %}
+{%- set L = o.lang -%}
+{%- set r = o.row -%}
+{%- set occ = (o.calendar.upcoming | svcCalMatch(r)) if o.calendar else null -%}
+{%- set days = r.date_start | svcDaysFrom -%}
+<article class="card-accent card-hover flex h-full flex-col p-6 2xl:p-7" style="{{ r.color | accent }}" {% if r.hideAfter %}data-hide-after="{{ r.hideAfter }}"{% endif %} {% if r.startIso and days != null and days <= 400 %}data-when="{{ r.startIso }}" data-until="{{ r.hideAfter }}"{% endif %}>
+  <div class="flex items-start justify-between gap-3">
+    <span class="icon-tile">{% icon r.icon, "size-6" %}</span>
+    <span class="flex flex-col items-end gap-1.5">
+      <span class="chip chip-accent">{{ ("service.gsc.kind." + r.kind) | t(L) }}</span>
+      <span data-rel hidden class="chip bg-sun-200 text-ink-900"></span>
+    </span>
+  </div>
+  <h3 class="mt-4 font-display text-xl font-bold text-balance text-ink-950">{{ r | loc("title", L) }}</h3>
+  <p class="mt-2 flex items-center gap-2 font-semibold text-(--a-700)">{% icon "calendar-days", "size-4 shrink-0" %}
+    {%- if r.date_start %}<span>{{ r.date_start | svcRange(r.date_end, L) }}</span>{% else %}<span>{{ "service.gsc.dates_tba" | t(L) }}</span>{% endif %}
+  </p>
+  {%- if r.place %}<p class="mt-1 flex items-start gap-2 text-sm text-ink-600">{% icon "map-pin", "size-4 mt-0.5 shrink-0" %}<span>{{ r.place }}</span></p>{% endif %}
+  {%- set sum = r | loc("summary", L) %}
+  {%- if sum %}<p class="mt-3 flex-1 leading-relaxed text-ink-600">{{ sum }}</p>{% else %}<div class="flex-1"></div>{% endif %}
+  <div class="mt-5 flex flex-wrap gap-2">
+    {%- if r.url %}<a href="{{ r.url }}" target="_blank" rel="noopener" class="btn btn-accent btn-sm max-w-full whitespace-normal text-left leading-snug">{{ (r | loc("url_label", L)) or ("ui.website" | t(L)) }}{% icon "external-link", "size-3.5 shrink-0 opacity-80" %}</a>{% endif %}
+    {%- if occ %}<a href="{{ occ.url | lurl(L) }}" class="btn btn-ghost btn-sm max-w-full whitespace-normal text-left leading-snug">{% icon "calendar-plus", "size-3.5 shrink-0" %}{{ "service.gsc.on_calendar" | t(L) }}</a>{% endif %}
+  </div>
+</article>
+{% endmacro %}
+
+{#- A motion card. o: { m, lang, statuses } -#}
+{% macro motionCard(o) %}
+{%- set L = o.lang -%}
+{%- set m = o.m -%}
+{%- set st = m.statusInfo -%}
+{%- set summary = m | loc("summary", L) -%}
+{%- set agendaUrl = m | loc("agenda_url", L) -%}
+<article class="svc-motion card-accent" style="{{ st.color | accent }}" id="motion-{{ m.id | slugify }}"
+         data-status="{{ m.status }}" data-panel="{{ m.panel }}" data-text="{{ (m | loc('title', L) + ' ' + summary + ' ' + m.id) | svcFold }}"
+         x-data="{ more: false }">
+  <div class="flex items-start justify-between gap-2">
+    <span class="svc-motion__id">{{ (m | loc("label", L)) or m.id }}</span>
+    <span class="text-xs font-semibold text-ink-500">{{ "service.posts.panel_n" | t(L, { n: m.panel }) }}</span>
+  </div>
+  <h4 class="mt-2.5 font-display text-[17px] font-bold leading-snug text-balance text-ink-950">{{ m | loc("title", L) }}</h4>
+  {#- "result not recorded": say what the record shows last (tabled on …, or on an agenda as old business) -#}
+  {%- set dk = m.recordedStatus if m.status == "unrecorded" else m.status -%}
+  {%- set dIcon = m.recordedInfo.icon if m.status == "unrecorded" else st.icon -%}
+  <p class="mt-1.5 flex flex-wrap items-center gap-x-2 text-xs font-semibold text-(--a-700)">
+    {%- if m.decided_date and dk not in ["new", "old"] %}{% icon dIcon, "size-3.5" %}<span>{{ ("service.motions.decided_" + dk) | t(L) }} · {{ m.decided_date | dt("full", L) }}</span>{% if m.vote %}<span class="text-ink-500">· {{ m.vote }}</span>{% endif %}
+    {%- elif m.date_introduced %}{% icon "calendar", "size-3.5" %}<span>{{ "service.motions.introduced" | t(L) }} · {{ m.date_introduced | dt("full", L) }}</span>{% endif %}
+  </p>
+  {%- if m.status == "unrecorded" %}
+  <p class="mt-1.5 inline-flex w-fit items-center gap-1.5 rounded-full bg-(--a-100) px-2.5 py-1 text-xs font-semibold text-(--a-800)">{% icon "history", "size-3.5" %}{{ "service.motions.last_known" | t(L, { status: (("service.motions.status_" + m.recordedStatus) | t(L)) }) }}{% if m.vote and not (m.decided_date and dk not in ["new", "old"]) %} · {{ m.vote }}{% endif %}</p>
+  {%- endif %}
+  <p class="mt-2 text-[15px] leading-relaxed text-ink-600" :class="more ? '' : '{{ 'line-clamp-3' if m.open else 'line-clamp-2' }}'">{{ summary }}</p>
+  <div x-show="more" x-collapse x-cloak>
+    <dl class="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
+      {%- if m.date_introduced %}<div><dt class="font-bold tracking-wide text-ink-500 uppercase">{{ "service.motions.introduced" | t(L) }}</dt><dd class="mt-0.5 font-semibold text-ink-700">{{ m.date_introduced | dt("full", L) }}</dd></div>{% endif %}
+      {%- if m.bodyKey %}<div><dt class="font-bold tracking-wide text-ink-500 uppercase">{{ "service.motions.body" | t(L) }}</dt><dd class="mt-0.5 font-semibold text-ink-700">{{ ("service.motions.body_" + m.bodyKey) | t(L) }}</dd></div>{% endif %}
+    </dl>
+    {%- if m.notes %}<p class="mt-3 rounded-xl bg-ink-50 p-2.5 text-xs leading-relaxed text-ink-500" lang="en">{{ m.notes }}</p>{% endif %}
+  </div>
+  <div class="mt-3 flex flex-wrap items-center gap-2">
+    <button type="button" class="btn btn-ghost btn-sm" @click="more = !more" :aria-expanded="more.toString()">
+      <span x-show="!more" class="inline-flex items-center gap-1">{% icon "chevron-down", "size-3.5" %}{{ "service.motions.details" | t(L) }}</span><span x-cloak x-show="more" class="inline-flex items-center gap-1">{% icon "chevron-up", "size-3.5" %}{{ "ui.show_less" | t(L) }}</span>
+    </button>
+    {%- if m.background_url %}<a href="{{ m.background_url }}" target="_blank" rel="noopener" class="btn btn-ghost btn-sm">{% icon "file-text", "size-3.5" %}{{ "service.motions.background" | t(L) }}</a>{% endif %}
+    {%- if agendaUrl %}<a href="{{ agendaUrl }}" target="_blank" rel="noopener" class="btn btn-ghost btn-sm">{% icon "list-ordered", "size-3.5" %}{{ "service.motions.agenda" | t(L) }}</a>{% endif %}
+  </div>
+</article>
+{% endmacro %}
+
+{#- One archived Delegate's Corner post in the searchable list. o: { p, lang } -#}
+{% macro postCard(o) %}
+{%- set L = o.lang -%}
+{%- set p = o.p -%}
+{%- set pc = (p.panelInfo.color if p.panelInfo else "ocean") -%}
+<li class="svc-post" style="{{ pc | accent }}" data-search="{{ p.search }}" data-panel="{{ p.panel }}" data-kind="{{ p.kind }}">
+  <a href="{{ p.url | lurl(L) }}" class="svc-post__link group">
+    <span class="svc-post__date">
+      <span class="svc-post__mon">{{ p.date | dt("mon", L) | replace(".", "") }}</span>
+      <span class="svc-post__day">{{ p.date | dt("day", L) }}</span>
+      <span class="svc-post__yr">{{ p.year }}</span>
+    </span>
+    <span class="min-w-0 flex-1">
+      <span class="flex flex-wrap items-center gap-1.5">
+        <span class="chip chip-accent">{{ "service.posts.panel_n" | t(L, { n: p.panel }) }}</span>
+        <span class="chip chip-soft">{{ ("service.posts.kind_" + p.kind) | t(L) }}</span>
+        <span class="text-xs text-ink-500">{{ "service.posts.minutes" | t(L, { n: p.minutes }) }}</span>
+      </span>
+      <span class="mt-1.5 block font-display text-lg font-bold leading-snug text-ink-950 group-hover:text-(--a-700)" lang="en">{{ p.title }}</span>
+      <span class="mt-1 line-clamp-2 block text-sm leading-relaxed text-ink-600" lang="en">{{ p.summary }}</span>
+      <span class="mt-1.5 block text-xs font-semibold text-ink-500">{{ p.author_es if L.code == "es" else p.author_en }}</span>
+    </span>
+    {% icon "arrow-right", "size-5 shrink-0 self-center text-ink-300 transition group-hover:translate-x-1 group-hover:text-(--a-600)" %}
+  </a>
+</li>
+{% endmacro %}

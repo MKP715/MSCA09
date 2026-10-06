@@ -1,0 +1,72 @@
+---
+permalink: /404.html
+layout: base.njk
+title_key: notfound.title
+description_key: notfound.description
+accent: iris
+noindex: true
+eleventyExcludeFromCollections: true
+# redirects.js (shell) sends old msca09aa.org WordPress addresses to their new pages; it runs first.
+scripts: ["/assets/js/redirects.js", "/assets/js/content.js"]
+---
+{%- set en = { code: "en" } -%}
+{%- set es = { code: "es" } -%}
+{%- set keys = ["newcomers", "calendar", "districts", "committees", "service-hub", "documents", "resources-hub", "contribute", "about-area", "contact"] -%}
+
+<section class="relative isolate overflow-hidden" x-data="notFound" data-email="{{ site.email_webmaster }}">
+  <div class="absolute inset-0 -z-10" style="background:
+      radial-gradient(60rem 30rem at 0% 0%, color-mix(in oklab, var(--color-ocean-200) 75%, transparent), transparent 60%),
+      radial-gradient(50rem 30rem at 100% 0%, color-mix(in oklab, var(--color-iris-200) 70%, transparent), transparent 60%),
+      radial-gradient(40rem 26rem at 50% 100%, color-mix(in oklab, var(--color-sun-100) 85%, transparent), transparent 60%),
+      white;"></div>
+  <div class="bg-confetti absolute inset-0 -z-10 opacity-70" aria-hidden="true"></div>
+
+  <div class="wrap py-12 lg:py-20">
+    <div class="grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-12">
+      <div class="text-center lg:col-span-5 lg:text-left">
+        <p class="nf-number" aria-hidden="true">404</p>
+        <p class="mt-2 inline-flex max-w-full items-center gap-2 rounded-full bg-white/80 px-4 py-2 font-mono text-sm text-ink-600 shadow-soft ring-1 ring-ink-900/5" x-cloak x-show="path">
+          {% icon "link-2-off", "size-4 shrink-0 text-coral-600" %}<span class="truncate" x-text="path"></span>
+        </p>
+      </div>
+      <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:col-span-7">
+        {%- for pair in [[en, "en"], [es, "es"]] %}
+        {%- set T = pair[0] %}
+        <div class="card flex flex-col p-6 sm:p-7" lang="{{ pair[1] }}" style="{{ ('ocean' if pair[1] == 'en' else 'coral') | accent }}" :class="{{ 'spanish' if pair[1] == 'es' else '!spanish' }} ? 'order-first ring-2 ring-[var(--a-300)]' : ''">
+          <span class="chip chip-accent self-start">{% icon "languages", "size-3.5" %}{{ "English" if pair[1] == "en" else "Español" }}</span>
+          {%- set hl = "h1" if pair[1] == "en" else "h2" %}
+          <{{ hl }} class="mt-4 font-display text-3xl font-extrabold tracking-tight text-balance text-ink-950">{{ "notfound.heading" | t(T) }}</{{ hl }}>
+          <p class="mt-3 flex-1 leading-relaxed text-ink-600">{{ "notfound.body" | t(T) }}</p>
+          <div class="mt-6 flex flex-wrap gap-2">
+            <button type="button" @click="$dispatch('open-search')" class="btn btn-accent">{% icon "search", "size-4" %}{{ "notfound.search" | t(T) }}</button>
+            <a href="{{ '/' | lurl(T) }}" class="btn btn-ghost bg-white">{% icon "house", "size-4" %}{{ "notfound.home" | t(T) }}</a>
+          </div>
+          <a :href="mailto" href="mailto:{{ site.email_webmaster }}" class="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--a-700)] hover:underline">{% icon "flag", "size-4" %}{{ "notfound.report" | t(T) }}</a>
+        </div>
+        {%- endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="nf-links" class="py-12 lg:py-16">
+  <div class="wrap">
+    <h2 id="nf-links" class="mb-8 font-display text-2xl font-bold text-ink-950 sm:text-3xl"><span lang="en">{{ "notfound.links" | t(en) }}</span> <span class="text-ink-400" aria-hidden="true">·</span> <span lang="es" class="text-ink-500">{{ "notfound.links" | t(es) }}</span></h2>
+    {#- Ten tiles: two columns on phones and tablets, two rows of five from lg. Labels wrap (never cut off). -#}
+    <ul class="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-5 2xl:gap-5">
+      {%- for k in keys %}{% set n = nav.all | find("key", k) if nav and nav.all else null %}{% if n %}
+      <li class="nf-tile card card-hover relative flex flex-col overflow-hidden" style="{{ n.color | accent(loop.index0) }}">
+        <span class="absolute inset-x-0 top-0 h-1.5" style="background: linear-gradient(90deg, var(--a-400), var(--a-600));" aria-hidden="true"></span>
+        <a href="{{ n.url }}" lang="en" class="group flex flex-1 flex-col gap-3 p-4 pt-5 sm:p-5 sm:pt-6">
+          <span class="icon-tile size-11 transition group-hover:scale-110 group-hover:-rotate-3">{% icon n.icon or "circle", "size-5" %}</span>
+          <span class="min-w-0 pr-9">
+            <span class="line-clamp-2 block font-display leading-snug font-bold text-ink-950 group-hover:text-[var(--a-700)]">{{ n.label_en }}</span>
+            <span class="mt-0.5 line-clamp-2 block text-sm leading-snug text-ink-500" lang="es">{{ n.label_es }}</span>
+          </span>
+        </a>
+        <a href="{{ n.url | lurl(es) }}" lang="es" hreflang="es" class="absolute top-3.5 right-3 grid size-11 place-items-center rounded-full bg-[var(--a-50)] text-xs font-bold text-[var(--a-800)] ring-1 ring-[var(--a-200)] transition hover:bg-[var(--a-100)] sm:top-4 sm:right-4" aria-label="{{ n.label_es }} (español)">ES</a>
+      </li>
+      {%- endif %}{% endfor %}
+    </ul>
+  </div>
+</section>

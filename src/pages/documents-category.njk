@@ -1,0 +1,177 @@
+---
+pagination: { data: documents.pages, size: 1, alias: entry, addAllPagesToCollections: true }
+permalink: "{{ entry.lang.prefix }}/documents/{{ entry.item.key }}/"
+layout: page.njk
+bare: true
+source: data/documents/
+scripts: ["/assets/js/documents.js"]
+crumbs: [{ label_key: "documents.crumb_service", url: "/service/" }, { label_key: "documents.title", url: "/documents/" }]
+eyebrow_key: documents.cat_eyebrow
+eleventyComputed:
+  title: "{{ entry.item | loc('label', entry.lang) | safe }}"
+  description: "{{ 'documents.cat_description' | t(entry.lang, { shelf: entry.item | loc('label', entry.lang), n: entry.item.count, first: entry.item.firstYear, last: entry.item.lastYear }) | safe }}"
+  lead: "{{ entry.item | loc('description', entry.lang) | safe }}"
+  heroIcon: "{{ entry.item.icon }}"
+  accent: "{{ entry.item.color }}"
+---
+{#- One shelf of the library: every document, year by year. Plain HTML; JavaScript only opens folded years.
+    Phones and tablets: the newest three years are open, older years are folded (<details>) and the year chips
+    stick under the header. Desktop: every year is open and the year list sits in the left column.
+    A shelf marked expect_yearly in data/document-categories.csv shows a "not posted yet" row for a missing year. -#}
+{%- from "macros/documents.njk" import docPairRow -%}
+{%- set L = lang -%}
+{%- set c = entry.item -%}
+{%- set D = documents or {} -%}
+{%- set libUrl = '/documents/' | lurl(L) -%}
+{%- set langs = c.languages or {} -%}
+
+{{ [c.icon] | docIconSprite | safe }}
+<div class="doc-cat-page wrap pt-8 pb-16 lg:pt-12 lg:pb-24" style="{{ c.color | accent }}">
+  <div class="grid gap-8 lg:grid-cols-[12.5rem_minmax(0,1fr)] xl:gap-10 2xl:grid-cols-[13.5rem_minmax(0,1fr)_21rem] 2xl:gap-12">
+
+    {#- ---------------------------------------------- left: years + other shelves -#}
+    <nav class="hidden lg:block" aria-label="{{ 'documents.cat_years_nav' | t(L) }}">
+      <div class="sticky top-28 max-h-[calc(100dvh-8rem)] overflow-y-auto pr-1 pb-6 [scrollbar-width:thin]">
+        <p class="doc-facet-title">{{ "documents.cat_jump" | t(L) }}</p>
+        <ul class="grid grid-cols-2 gap-1" role="list">
+          {%- for g in c.groups %}
+          <li><a href="#y{{ g.year or 'undated' }}" class="doc-yearlink {{ 'is-gap' if g.gap }}"><span>{{ g.year or ("documents.undated" | t(L)) }}</span><span class="doc-n">{{ "–" if g.gap else g.items.length }}</span></a></li>
+          {%- endfor %}
+        </ul>
+        <p class="doc-facet-title mt-8">{{ "documents.cat_other" | t(L) }}</p>
+        <ul class="space-y-0.5" role="list">
+          {%- for o in D.categories or [] %}
+          <li>
+            <a href="{{ o.url | lurl(L) }}" class="doc-check {{ 'font-semibold text-ink-950' if o.key == c.key }}" style="{{ o.color | accent(loop.index0) }}" {% if o.key == c.key %}aria-current="page"{% endif %}>
+              <span class="doc-check-ico">{% icon o.icon, "size-4" %}</span>
+              <span class="min-w-0 flex-1 leading-snug">{{ o | loc("label", L) }}</span>
+              <span class="doc-n">{{ o.count | docNum(L) }}</span>
+            </a>
+          </li>
+          {%- endfor %}
+        </ul>
+      </div>
+    </nav>
+
+    {#- ---------------------------------------------- main: the documents -#}
+    <div class="min-w-0">
+      {#- Summary strip -#}
+      <div class="card doc-quick flex flex-col gap-5 p-5 sm:p-6 md:flex-row md:items-center md:justify-between">
+        <dl class="flex flex-wrap gap-x-8 gap-y-3">
+          <div><dt class="text-xs font-semibold text-ink-500">{{ "documents.fig_total" | t(L) }}</dt><dd class="font-display text-2xl font-extrabold text-ink-950 tabular-nums">{{ c.count | docNum(L) }}</dd></div>
+          {%- if c.firstYear %}<div><dt class="text-xs font-semibold text-ink-500">{{ "documents.fig_years" | t(L) }}</dt><dd class="font-display text-2xl font-extrabold text-ink-950 tabular-nums">{{ c.firstYear }}{% if c.lastYear != c.firstYear %}–{{ c.lastYear }}{% endif %}</dd></div>{% endif %}
+          {%- if langs.Spanish or langs.Bilingual %}<div><dt class="text-xs font-semibold text-ink-500">{{ "documents.fig_spanish" | t(L) }}</dt><dd class="font-display text-2xl font-extrabold text-ink-950 tabular-nums">{{ ((langs.Spanish or 0) + (langs.Bilingual or 0)) | docNum(L) }}</dd></div>{% endif %}
+          {%- if c.archive %}<div><dt class="text-xs font-semibold text-ink-500">{{ "documents.coll_archive" | t(L) }}</dt><dd class="font-display text-2xl font-extrabold text-ink-950 tabular-nums">{{ c.archive | docNum(L) }}</dd></div>{% endif %}
+        </dl>
+        <a href="{{ libUrl }}?cat={{ c.key }}#library" class="btn btn-accent shrink-0 self-start md:self-auto">{% icon "search", "size-4" %}{{ "documents.cat_search" | t(L) }}</a>
+      </div>
+
+      {#- Year chips for phones and tablets (they stick under the header while you scroll the shelf) -#}
+      {%- if c.groups.length > 1 %}
+      <nav class="doc-year-rail lg:hidden" aria-label="{{ 'documents.cat_years_nav' | t(L) }}">
+        <ul class="rail no-scrollbar gap-2 py-2" role="list">
+          {%- for g in c.groups %}
+          <li><a href="#y{{ g.year or 'undated' }}" class="doc-pill whitespace-nowrap {{ 'is-gap' if g.gap }}" data-fold-link>{{ g.year or ("documents.undated" | t(L)) }}<span class="doc-n">{{ "–" if g.gap else g.items.length }}</span></a></li>
+          {%- endfor %}
+        </ul>
+      </nav>
+      {%- endif %}
+
+      {%- for g in c.groups %}
+      {%- set yid = "y" + (g.year or "undated") %}
+      {%- if g.gap %}
+      <section id="{{ yid }}" class="doc-cat-year" aria-labelledby="h-{{ yid }}">
+        <h2 id="h-{{ yid }}" class="doc-group-h doc-group-h-static"><span>{{ g.year }}</span><span class="doc-group-n">{{ "documents.gap_n" | t(L) }}</span></h2>
+        <div class="doc-gap">
+          <span class="icon-tile-soft size-10 shrink-0 rounded-xl">{% icon "hourglass", "size-5" %}</span>
+          <p class="min-w-0">
+            <span class="block font-semibold text-ink-900">{{ "documents.gap_title" | t(L, { year: g.year, shelf: c | loc("label", L) }) }}</span>
+            <span class="mt-0.5 block text-sm text-ink-600">{{ "documents.gap_body" | t(L) }}
+              <a href="mailto:{{ c.gap_email or site.email_webmaster }}?subject={{ ('documents.gap_subject' | t(L, { year: g.year, shelf: c | loc('label', L) })) | urlencode }}" class="inline-block font-semibold [overflow-wrap:anywhere] text-ocean-700 hover:underline">{{ c.gap_email or site.email_webmaster }}</a></span>
+          </p>
+        </div>
+      </section>
+      {%- else %}
+      {%- set pairs = g.items | docPairs(L) %}
+      <section id="{{ yid }}" class="doc-cat-year" aria-labelledby="h-{{ yid }}">
+        <details class="doc-year-fold" data-fold {% if g.rank < 3 %}open{% endif %}>
+          <summary class="doc-year-sum">
+            <h2 id="h-{{ yid }}" class="doc-group-h doc-year-h"><span>{{ g.year or ("documents.undated" | t(L)) }}</span><span class="doc-group-n">{{ ("documents.count_one" if g.items.length == 1 else "documents.count_many") | t(L, { n: g.items.length }) }}</span></h2>
+            {% icon "chevron-down", "doc-fold-ico size-5 shrink-0" %}
+          </summary>
+          <ul class="grid gap-x-6 xl:grid-cols-2" role="list">
+            {%- for e in pairs %}
+            <li>{{ docPairRow({ entry: e, lang: L, showCategory: false, inherit: true, sprite: true }) }}</li>
+            {%- endfor %}
+          </ul>
+        </details>
+      </section>
+      {%- endif %}
+      {%- endfor %}
+
+      {%- if not c.groups.length %}
+      <p class="doc-empty mt-8">{% icon "folder-open", "size-5 shrink-0" %}<span>{{ "documents.empty_list" | t(L) }}</span></p>
+      {%- endif %}
+    </div>
+
+    {#- ---------------------------------------------- right: about this shelf (wide screens) -#}
+    <aside class="space-y-5 lg:col-start-2 2xl:col-start-auto" aria-label="{{ 'documents.cat_about' | t(L) }}">
+      <div class="2xl:sticky 2xl:top-28 space-y-5">
+        <section class="card p-6">
+          <h2 class="flex items-center gap-2 font-display text-lg font-bold text-ink-950"><span class="icon-tile-soft size-9 rounded-xl">{% icon "chart-column", "size-4" %}</span>{{ "documents.cat_by_year" | t(L) }}</h2>
+          {%- if c.spark and c.spark.length > 1 %}
+          <div class="doc-spark doc-spark-lg mt-5" role="img" aria-label="{{ 'documents.cat_chart_alt' | t(L, { shelf: c | loc('label', L), first: c.spark[0].year, last: c.spark[c.spark.length - 1].year }) }}">
+            {%- for y in c.spark %}<span class="doc-spark-bar{{ ' is-zero' if not y.n }}" style="--h:{{ y.h }}%" title="{{ y.year }}: {{ y.n }}"></span>{% endfor -%}
+          </div>
+          <p class="mt-1.5 flex justify-between text-xs font-medium text-ink-500" aria-hidden="true"><span>{{ c.spark[0].year }}</span><span>{{ c.spark[c.spark.length - 1].year }}</span></p>
+          {%- endif %}
+          {#- Languages: a small 100% bar with a legend (identity never by colour alone) -#}
+          {%- set total = c.count or 1 %}
+          <h3 class="mt-6 text-xs font-bold tracking-[0.14em] text-ink-500 uppercase">{{ "documents.f_language" | t(L) }}</h3>
+          <div class="mt-2 flex h-2.5 gap-0.5 overflow-hidden rounded-full" aria-hidden="true">
+            {%- if langs.English %}<span class="bg-sea-500" style="width: {{ langs.English * 100 / total }}%"></span>{% endif %}
+            {%- if langs.Bilingual %}<span class="bg-sun-500" style="width: {{ langs.Bilingual * 100 / total }}%"></span>{% endif %}
+            {%- if langs.Spanish %}<span class="bg-coral-500" style="width: {{ langs.Spanish * 100 / total }}%"></span>{% endif %}
+          </div>
+          <ul class="mt-3 space-y-1.5 text-sm" role="list">
+            {%- for k in ["English", "Bilingual", "Spanish"] %}{% if langs[k] %}
+            <li class="flex items-center gap-2"><span class="doc-badge doc-badge-{{ k | docLang }}">{{ k | docLangShort }}</span><span class="text-ink-700">{{ k | docLangName(L) }}</span><span class="ml-auto font-semibold text-ink-900 tabular-nums">{{ langs[k] | docNum(L) }}</span></li>
+            {%- endif %}{% endfor %}
+          </ul>
+        </section>
+
+        {%- if c.archive %}
+        <a href="{{ '/documents/archive/' | lurl(L) }}" class="card card-hover group flex items-start gap-4 p-5" style="{{ 'iris' | accent }}">
+          <span class="icon-tile-soft">{% icon "archive", "size-5" %}</span>
+          <span class="min-w-0">
+            <span class="block font-display font-bold text-ink-950">{{ "documents.cat_archive_title" | t(L) }}</span>
+            <span class="mt-1 block text-sm text-ink-600">{{ "documents.cat_archive_body" | t(L, { n: c.archive | docNum(L), from: D.stats.currentFrom }) }}</span>
+          </span>
+        </a>
+        {%- endif %}
+
+        <div class="card p-5 text-sm leading-relaxed text-ink-600" style="{{ 'sage' | accent }}">
+          <p class="flex items-center gap-2 font-semibold text-ink-900">{% icon "shield-check", "size-4 text-sage-600" %}{{ "documents.anon_title" | t(L) }}</p>
+          <p class="mt-2">{{ "documents.anon_body" | t(L) }}</p>
+          <p class="mt-2">{{ "documents.request_body" | t(L) }} <a href="mailto:{{ site.email_webmaster }}" class="font-semibold text-ocean-700 hover:underline">{{ site.email_webmaster }}</a></p>
+        </div>
+
+        {#- Other shelves for phones and tablets (the left column holds them on desktop) -#}
+        <nav class="card p-5 lg:hidden" aria-label="{{ 'documents.cat_other' | t(L) }}">
+          <p class="doc-facet-title">{{ "documents.cat_other" | t(L) }}</p>
+          <ul class="grid gap-0.5 sm:grid-cols-2" role="list">
+            {%- for o in D.categories or [] %}{% if o.key != c.key %}
+            <li>
+              <a href="{{ o.url | lurl(L) }}" class="doc-check" style="{{ o.color | accent(loop.index0) }}">
+                <span class="doc-check-ico">{% icon o.icon, "size-4" %}</span>
+                <span class="min-w-0 flex-1 truncate">{{ o | loc("label", L) }}</span>
+                <span class="doc-n">{{ o.count | docNum(L) }}</span>
+              </a>
+            </li>
+            {%- endif %}{% endfor %}
+          </ul>
+        </nav>
+      </div>
+    </aside>
+  </div>
+</div>

@@ -1,0 +1,92 @@
+{#- Calendar toolbar: quick views, date navigation, title, view switch, search, active filters. Part of /calendar/.
+    Below 1024px a slim bar (Filters + count + views) sticks under the site header once this toolbar scrolls away. -#}
+{%- set L = lang -%}
+{%- set views = [{ k: "agenda", icon: "rows-3" }, { k: "month", icon: "calendar-days" }, { k: "week", icon: "calendar-range" }, { k: "list", icon: "list" }] %}
+<div class="cal-toolbar" x-ref="toolbar">
+  {#- quick views: one swipeable row on phones, wrapping on wide screens -#}
+  <div class="cal-quick no-scrollbar" role="group" aria-label="{{ 'calendar.quick.label' | t(L) }}">
+    {%- set quicks = [
+      { k: "all", icon: "layout-grid", color: "slate" },
+      { k: "week", icon: "calendar-range", color: "ocean" },
+      { k: "area", icon: "landmark", color: "coral" },
+      { k: "districts", icon: "map-pinned", color: "sea" },
+      { k: "workshops", icon: "lightbulb", color: "sun" },
+      { k: "spanish", icon: "languages", color: "blush" },
+      { k: "online", icon: "video", color: "iris" }
+    ] %}
+    {%- for q in quicks %}
+    <button type="button" class="cal-quick__btn" style="{{ q.color | accent }}" @click="quick('{{ q.k }}')" :class="isQuick('{{ q.k }}') && 'is-on'" :aria-pressed="isQuick('{{ q.k }}').toString()" :disabled="!ready">
+      {% icon q.icon, "size-4" %}{{ ("calendar.quick." + q.k) | t(L) }}
+    </button>
+    {%- endfor %}
+  </div>
+
+  <div class="cal-toolbar__top">
+    <div class="cal-nav" x-show="view !== 'agenda'">
+      <button type="button" class="cal-icon-btn" @click="nav(-1)" :disabled="!ready" aria-label="{{ 'calendar.nav.prev' | t(L) }}">{% icon "chevron-left", "size-5" %}</button>
+      <button type="button" class="cal-today-btn" @click="nav(0)" :disabled="!ready">{{ "calendar.nav.today" | t(L) }}</button>
+      <button type="button" class="cal-icon-btn" @click="nav(1)" :disabled="!ready" aria-label="{{ 'calendar.nav.next' | t(L) }}">{% icon "chevron-right", "size-5" %}</button>
+    </div>
+    <h2 id="cal-title" class="cal-title" tabindex="-1" aria-live="polite"><span x-text="title || {{ 'calendar.js.upcoming' | t(L) | json }}">{{ "calendar.js.upcoming" | t(L) }}</span></h2>
+    {#- phones: the count and the share button sit beside the title (one row less above the calendar) -#}
+    <p class="cal-count cal-count--phone sm:hidden" x-cloak x-show="ready"><strong x-text="counts.total"></strong> <span x-text="view === 'agenda' ? {{ 'calendar.count.agenda' | t(L) | json }} : {{ 'calendar.count.view' | t(L) | json }}"></span></p>
+    <button type="button" class="cal-share-btn cal-share-btn--phone sm:hidden" x-cloak x-show="ready" @click="copy(shareUrl(), 'share')" :aria-label="copied === 'share' ? {{ 'ui.link_copied' | t(L) | json }} : {{ 'calendar.share_view' | t(L) | json }}">
+      <span x-show="copied !== 'share'" class="contents">{% icon "link-2", "size-4" %}</span><span x-show="copied === 'share'" class="contents text-sage-700">{% icon "check", "size-4" %}</span>
+    </button>
+    <div class="cal-seg" role="group" aria-label="{{ 'calendar.view.label' | t(L) }}">
+      {%- for v in views %}
+      <button type="button" class="cal-seg__btn{{ ' max-sm:hidden' if v.k == 'week' }}" @click="setView('{{ v.k }}')" :class="view === '{{ v.k }}' && 'is-on'" :aria-pressed="(view === '{{ v.k }}').toString()" :disabled="!ready">
+        {% icon v.icon, "size-4" %}<span>{{ ("calendar.view." + v.k) | t(L) }}</span>
+      </button>
+      {%- endfor %}
+    </div>
+  </div>
+
+  <div class="cal-toolbar__bottom">
+    <label class="cal-search">
+      <span class="sr-only">{{ "calendar.search.label" | t(L) }}</span>
+      {% icon "search", "size-4 shrink-0 text-ink-500" %}
+      <input type="search" x-ref="search" x-model.debounce.300ms="f.q" placeholder="{{ 'calendar.search.placeholder' | t(L) }}" autocomplete="off" enterkeyhint="search" :disabled="!ready">
+    </label>
+    <button type="button" class="cal-filter-btn xl:hidden" @click="openDrawer($event)" aria-controls="cal-filters" :aria-expanded="drawer.toString()" :disabled="!ready">
+      {% icon "sliders-horizontal", "size-4" %}<span>{{ "ui.filters" | t(L) }}</span>
+      <span x-cloak x-show="activeCount() > 0" class="cal-filter-btn__n" x-text="activeCount()"></span>
+    </button>
+    <p class="cal-count max-sm:hidden" x-cloak x-show="ready" aria-live="polite">
+      <strong x-text="counts.total"></strong>
+      <span x-show="view === 'agenda'">{{ "calendar.count.agenda" | t(L) }}</span>
+      <span x-show="view !== 'agenda'">{{ "calendar.count.view" | t(L) }}</span>
+    </p>
+    <button type="button" class="cal-share-btn max-sm:hidden" x-cloak x-show="ready" @click="copy(shareUrl(), 'share')" :aria-label="copied === 'share' ? {{ 'ui.link_copied' | t(L) | json }} : {{ 'calendar.share_view' | t(L) | json }}">
+      <span x-show="copied !== 'share'" class="inline-flex items-center gap-1.5">{% icon "link-2", "size-4" %}<span class="max-lg:sr-only">{{ "calendar.share_view" | t(L) }}</span></span>
+      <span x-show="copied === 'share'" class="inline-flex items-center gap-1.5 text-sage-700">{% icon "check", "size-4" %}<span class="max-lg:sr-only">{{ "ui.link_copied" | t(L) }}</span></span>
+    </button>
+  </div>
+
+  <div class="cal-chips" x-cloak x-show="ready && chips().length">
+    <span class="text-xs font-bold tracking-wider text-ink-500 uppercase">{{ "calendar.filters.active" | t(L) }}</span>
+    <template x-for="c in chips()" :key="c.key + '|' + (c.v ?? '')">
+      <button type="button" class="cal-chip" @click="removeChip(c)" :aria-label="{{ 'calendar.filters.remove' | t(L) | json }} + ' ' + c.label">
+        <span x-text="c.label"></span>{% icon "x", "size-3.5" %}
+      </button>
+    </template>
+    <button type="button" class="cal-clear" @click="clearAll()">{{ "calendar.filters.clear" | t(L) }}</button>
+  </div>
+</div>
+
+{#- phones and tablets: once the toolbar has scrolled away, the essentials stay reachable -#}
+<div class="cal-sticky" x-cloak x-show="ready && tbOut && !lg" x-transition.opacity role="region" aria-label="{{ 'calendar.sticky.label' | t(L) }}">
+  <div class="wrap flex items-center gap-2">
+    <button type="button" class="cal-filter-btn" @click="openDrawer($event)" aria-controls="cal-filters" :aria-expanded="drawer.toString()">
+      {% icon "sliders-horizontal", "size-4" %}<span class="max-[430px]:sr-only">{{ "ui.filters" | t(L) }}</span>
+      <span x-show="activeCount() > 0" class="cal-filter-btn__n" x-text="activeCount()"></span>
+    </button>
+    <p class="cal-count min-w-0 truncate"><strong x-text="counts.total"></strong> <span x-text="view === 'agenda' ? {{ 'calendar.count.agenda' | t(L) | json }} : {{ 'calendar.count.view' | t(L) | json }}"></span></p>
+    <div class="ml-auto flex shrink-0 items-center gap-1" role="group" aria-label="{{ 'calendar.view.label' | t(L) }}">
+      {%- for v in views %}{% if v.k != "week" %}
+      <button type="button" class="cal-sticky__view" @click="setView('{{ v.k }}')" :class="view === '{{ v.k }}' && 'is-on'" :aria-pressed="(view === '{{ v.k }}').toString()" aria-label="{{ ('calendar.view.' + v.k) | t(L) }}">{% icon v.icon, "size-4" %}</button>
+      {%- endif %}{% endfor %}
+      <button type="button" class="cal-sticky__view" @click="toTop()" aria-label="{{ 'calendar.sticky.top' | t(L) }}">{% icon "search", "size-4" %}</button>
+    </div>
+  </div>
+</div>

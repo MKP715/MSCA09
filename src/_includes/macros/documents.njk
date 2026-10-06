@@ -1,0 +1,175 @@
+{#-
+  Document macros (owner: documents). Reusable on district, committee, service and other pages.
+
+    {% from "macros/documents.njk" import docList, docRow, docCard %}
+
+  docList({ docs, lang, groupByYear, limit, moreUrl, moreLabel, emptyText, columns, showCategory, showDistrict, compact, heading, pairs })
+    docs          array of Doc — e.g. documents.byDistrict[d.slug], documents.byCommittee[c.slug],
+                  documents.byCategory["minutes"], documents.latest.minutes. Missing/undefined → empty state.
+    lang          the page's language object (required)
+    groupByYear   true → a small year heading before each year (docs are already newest first)
+    limit         show this many; the rest sit behind a "Show all N" disclosure (works without JavaScript). Default: all.
+    max           show at most this many and leave the rest out (no disclosure) — for short "latest" lists
+    moreUrl       optional link under the list, e.g. "/documents/?d=d15" or "/documents/minutes/" (pass it through lurl yourself)
+    moreLabel     text for that link (default "Browse the document library")
+    emptyText     text when there are no documents (default: documents.empty_list). Pass false to print nothing.
+    columns       1 (default) | 2 (two columns from lg) | 3 (two from lg, three from 2xl)
+    showCategory  true → each row names its shelf (Minutes, Reports …)
+    showDistrict  false → leave out "District N" (use on a district's own page)
+    compact       true → smaller rows (asides, sidebars)
+    heading       2–6, level of the year headings (default 3)
+    pairs         true → the English and Spanish copies of one document share a row, with a small button per
+                  language (limit then counts documents, not files). Recommended for "latest" lists.
+
+  docRow({ doc, lang, showCategory, showDistrict, compact })   one document as a row (link opens the file in a new tab)
+  docCard({ doc, lang })                          one document as a colourful card (for grids and rails)
+  docPairRow({ entry, lang, showCategory, compact })  one document with a button per language version
+                                                  (entries come from the docPairs filter: docs | docPairs(lang))
+
+  Linking to a filtered library: /documents/?d=<districtSlug>#library, ?c=<committeeSlug>, ?cat=<shelf>, ?q=<words>,
+  ?col=archive|current, ?from=YYYY&to=YYYY, ?lang=en|es|bi, ?fmt=pdf|doc|xls|ppt|html (comma-separate several values).
+  Shelf pages: /documents/<shelf>/ (minutes, motions, reports, conference, finances, guidelines, newsletters, districts …).
+
+  Doc fields used: title, title_es, url, category, cat_en, cat_es, icon, color, date, year, language, fmt, format,
+  size_kb, meeting_type, district, district_label, committee_en, committee_es, collection.
+-#}
+
+{#- Small coloured language / format badges. -#}
+{% macro docBadges(doc, lang) %}
+{%- set lk = doc.language | docLang -%}
+{%- if lk %}<span class="doc-badge doc-badge-{{ lk }}" title="{{ doc.language | docLangName(lang) }}"><span aria-hidden="true">{{ doc.language | docLangShort }}</span><span class="sr-only">{{ doc.language | docLangName(lang) }}</span></span>{% endif -%}
+{%- if doc.fmt %}<span class="doc-badge doc-badge-fmt">{{ doc.fmt | docFormat(lang) }}</span>{% endif -%}
+{% endmacro %}
+
+{% macro docRow(o) %}
+{%- set d = o.doc -%}
+{%- set L = o.lang -%}
+{%- set when = d | docDate(L) -%}
+<a href="{{ d.url }}" target="_blank" rel="noopener" class="doc-row group {{ 'doc-row-compact' if o.compact }}" style="{{ d.color | accent }}">
+  <span class="doc-ico">{% icon d.icon or "file-text", "size-5" %}</span>
+  <span class="min-w-0 flex-1">
+    <span class="doc-title">{{ d | docTitle(L) }}</span>
+    <span class="doc-meta">
+      {%- if o.showCategory %}<span class="font-semibold text-(--a-700)">{{ d | loc("cat", L) }}</span>{% endif -%}
+      {%- if when %}<span>{{ when }}</span>{% endif -%}
+      {%- if d.meeting_type and not o.compact %}<span>{{ d.meeting_type | docMeeting(L) }}</span>{% endif -%}
+      {%- if d.district_label and not o.compact and o.showDistrict !== false %}<span>{{ "documents.district_n" | t(L, { n: d.district_label }) }}</span>{% endif -%}
+      {%- if d.size_kb and not o.compact %}<span>{{ d.size_kb | docSize(L) }}</span>{% endif -%}
+      <span class="doc-badges">{{ docBadges(d, L) }}</span>
+    </span>
+  </span>
+  {%- if not o.compact %}{% icon "external-link", "doc-go size-4 shrink-0" %}{% endif %}
+  <span class="sr-only">{{ "documents.new_tab" | t(L) }}</span>
+</a>
+{% endmacro %}
+
+{% macro docCard(o) %}
+{%- set d = o.doc -%}
+{%- set L = o.lang -%}
+{%- set when = d | docDate(L) -%}
+<a href="{{ d.url }}" target="_blank" rel="noopener" class="doc-card group" style="{{ d.color | accent }}">
+  <span class="flex items-start justify-between gap-3">
+    <span class="doc-ico size-11 rounded-2xl">{% icon d.icon or "file-text", "size-5" %}</span>
+    <span class="doc-badges">{{ docBadges(d, L) }}</span>
+  </span>
+  <span class="doc-card-cat">{{ d | loc("cat", L) }}{% if d.meeting_type %} · {{ d.meeting_type | docMeeting(L) }}{% endif %}</span>
+  <span class="doc-card-title">{{ d | docTitle(L) }}</span>
+  <span class="mt-auto flex flex-wrap items-center gap-x-3 gap-y-1 pt-2 text-[13px] text-ink-500">
+    {%- if when %}<span class="inline-flex items-center gap-1">{% icon "calendar", "size-3.5 opacity-70" %}{{ when }}</span>{% endif -%}
+    {%- if d.size_kb %}<span>{{ d.size_kb | docSize(L) }}</span>{% endif -%}
+    {%- if d.district_label %}<span class="chip chip-soft">{% icon "map-pin", "size-3" %}{{ "documents.district_n" | t(L, { n: d.district_label }) }}</span>{% endif -%}
+    {%- set cm = d | loc("committee", L) %}{% if cm %}<span class="chip chip-soft">{% icon "users", "size-3" %}{{ cm }}</span>{% endif -%}
+    <span class="ml-auto text-ink-300 transition group-hover:text-(--a-600)">{% icon "arrow-up-right", "size-4" %}</span>
+  </span>
+  <span class="sr-only">{{ "documents.new_tab" | t(L) }}</span>
+</a>
+{% endmacro %}
+
+{#- Internal: rows of documents, optionally under year headings. -#}
+{% macro docRowsBlock(list, o) %}
+{%- set L = o.lang -%}
+{%- set hl = o.heading or 3 -%}
+{%- set gridCls = ("grid gap-x-6 lg:grid-cols-2 2xl:grid-cols-3" if o.columns == 3 else ("grid gap-x-6 lg:grid-cols-2" if o.columns == 2 else "grid")) -%}
+{%- if o.groupByYear %}
+  {%- for g in list | docGroupYears %}
+  <section class="doc-year-block">
+    <h{{ hl }} class="doc-year-label">{{ g.year or ("documents.undated" | t(L)) }} <span>{{ ("documents.count_one" if g.items.length == 1 else "documents.count_many") | t(L, { n: g.items.length }) }}</span></h{{ hl }}>
+    <ul class="{{ gridCls }}" role="list">
+      {%- for d in g.items %}<li>{{ docRow({ doc: d, lang: L, showCategory: o.showCategory, showDistrict: o.showDistrict, compact: o.compact }) }}</li>{% endfor %}
+    </ul>
+  </section>
+  {%- endfor %}
+{%- elif o.pairs %}
+  <ul class="{{ gridCls }}" role="list">
+    {%- for e in list %}<li>{{ docPairRow({ entry: e, lang: L, showCategory: o.showCategory, compact: o.compact }) }}</li>{% endfor %}
+  </ul>
+{%- else %}
+  <ul class="{{ gridCls }}" role="list">
+    {%- for d in list %}<li>{{ docRow({ doc: d, lang: L, showCategory: o.showCategory, showDistrict: o.showDistrict, compact: o.compact }) }}</li>{% endfor %}
+  </ul>
+{%- endif %}
+{% endmacro %}
+
+{% macro docList(o) %}
+{%- set L = o.lang -%}
+{%- set items = (o.docs or []) | docPairs(L) if (o.pairs and not o.groupByYear) else (o.docs or []) -%}
+{%- if o.max %}{% set items = items | limit(o.max) %}{% endif -%}
+{%- set n = o.limit or items.length -%}
+{%- set shown = items | limit(n) -%}
+{%- set rest = items | offset(n) -%}
+{%- if not items.length -%}
+  {%- if o.emptyText !== false %}
+  <p class="doc-empty">{% icon "folder-open", "size-5 shrink-0" %}<span>{{ o.emptyText or ("documents.empty_list" | t(L)) }}</span></p>
+  {%- endif %}
+{%- else -%}
+<div class="doc-list">
+  {{ docRowsBlock(shown, o) }}
+  {%- if rest.length %}
+  <details class="doc-more group/more">
+    <summary class="btn btn-ghost btn-sm mt-3 cursor-pointer list-none">
+      <span class="group-open/more:hidden">{{ "documents.show_all" | t(L, { n: items.length }) }}</span>
+      <span class="hidden group-open/more:inline">{{ "ui.show_less" | t(L) }}</span>
+      {% icon "chevron-down", "size-4 transition group-open/more:rotate-180" %}
+    </summary>
+    <div class="mt-2">{{ docRowsBlock(rest, o) }}</div>
+  </details>
+  {%- endif %}
+  {%- if o.moreUrl %}
+  <a href="{{ o.moreUrl }}" class="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-ocean-700 hover:text-iris-700 hover:underline">{{ o.moreLabel or ("documents.browse_library" | t(L)) }}{% icon "arrow-right", "size-4" %}</a>
+  {%- endif %}
+</div>
+{%- endif -%}
+{% endmacro %}
+
+{#- One document that may exist in several languages: [{ doc, versions }] from the docPairs filter.
+    The title opens the first version; each version also gets its own small language button.
+    o: { entry, lang, showCategory, compact, inherit (accent set on a parent), sprite (icon from docIconSprite) } -#}
+{% macro docPairRow(o) %}
+{%- set e = o.entry -%}
+{%- set d = e.doc -%}
+{%- set L = o.lang -%}
+{%- set when = d | docDate(L) -%}
+<div class="doc-row doc-row-pair group/pair {{ 'doc-row-compact' if o.compact }}" {% if not o.inherit %}style="{{ d.color | accent }}"{% endif %}>
+  <span class="doc-ico">{% if o.sprite %}<svg class="lucide size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><use href="#doc-ico-{{ d.icon or 'file-text' }}"></use></svg>{% else %}{% icon d.icon or "file-text", "size-5" %}{% endif %}</span>
+  <span class="min-w-0 flex-1">
+    <a href="{{ d.url }}" target="_blank" rel="noopener" class="doc-title doc-pair-link">{{ d | docTitle(L) }}<span class="sr-only"> — {{ d.language | docLangName(L) }} {{ "documents.new_tab" | t(L) }}</span></a>
+    <span class="doc-meta">
+      {%- if o.showCategory %}<span class="font-semibold text-(--a-700)">{{ d | loc("cat", L) }}</span>{% endif -%}
+      {%- if when %}<span>{{ when }}</span>{% endif -%}
+      {%- if d.meeting_type and not o.compact %}<span>{{ d.meeting_type | docMeeting(L) }}</span>{% endif -%}
+      {%- if d.district_label and not o.compact %}<span>{{ "documents.district_n" | t(L, { n: d.district_label }) }}</span>{% endif -%}
+      {%- set cm = d | loc("committee", L) %}{% if cm and not o.compact %}<span>{{ cm }}</span>{% endif -%}
+    </span>
+  </span>
+  <span class="doc-versions">
+    {%- for v in e.versions %}
+    {%- set lk = v.language | docLang %}
+    <a href="{{ v.url }}" target="_blank" rel="noopener" class="doc-ver" title="{{ v.language | docLangName(L) }}{% if v.fmt %} · {{ v.fmt | docFormat(L) }}{% endif %}{% if v.size_kb %} · {{ v.size_kb | docSize(L) }}{% endif %}">
+      {%- if lk %}<span class="doc-badge doc-badge-{{ lk }}" aria-hidden="true">{{ v.language | docLangShort }}</span>{% endif -%}
+      <span class="doc-ver-fmt" aria-hidden="true">{{ (v.fmt | docFormat(L)) or "↗" }}</span>
+      <span class="sr-only">{{ v.language | docLangName(L) or (d | docTitle(L)) }}{% if v.fmt %}, {{ v.fmt | docFormat(L) }}{% endif %}{% if v.size_kb %}, {{ v.size_kb | docSize(L) }}{% endif %} {{ "documents.new_tab" | t(L) }}</span>
+    </a>
+    {%- endfor %}
+  </span>
+</div>
+{% endmacro %}

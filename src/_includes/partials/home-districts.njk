@@ -1,0 +1,83 @@
+{#-
+  "Find your district": type a city, jump to its district page. Data from src/_data/districts.js
+  (data/districts.csv). Map pins from districts.geoJsonPoints. The map shows from 768 px; phones
+  use the city search and the district buttons (the Districts page has the map too).
+-#}
+{%- from "macros/ui.njk" import mapBlock -%}
+{%- set L = lang -%}
+{%- set dl = (districts.list if districts else []) or [] -%}
+{%- set index = (districts.cities if districts else []) | homeCityIndex(districts.bySlug if districts else {}, L) -%}
+{%- set points = (districts.geoJsonPoints if districts else []) | homeLocalizePoints(L) -%}
+{%- set nEs = (dl | where("kind", "linguistic")).length -%}
+{%- set nCities = (index.c | pluck("0") | unique).length if index.c else 0 -%}
+<section class="home-districts relative isolate overflow-hidden py-10 sm:py-16 lg:py-24" aria-labelledby="home-districts-title">
+  <div class="home-districts-bg absolute inset-0 -z-10" aria-hidden="true"></div>
+  <div class="wrap grid items-center gap-10 xl:grid-cols-12 xl:gap-12 2xl:gap-16">
+    <div class="min-w-0 xl:col-span-5">
+      <div style="{{ 'sage' | accent }}">
+        <p class="eyebrow mb-2">{{ "home.districts.eyebrow" | t(L) }}</p>
+        <h2 id="home-districts-title" class="h-section text-balance">{{ "home.districts.title" | t(L) }}</h2>
+        <p class="lead mt-3 text-pretty">{{ "home.districts.lead" | t(L) }}</p>
+      </div>
+
+      {%- if index.c and index.c.length %}
+      <script type="application/json" id="home-city-index">{{ index | json | safe }}</script>
+      <div class="relative mt-7" x-data="homeCitySearch('home-city-index')" @click.outside="open = false" @keydown.escape="open = false">
+        <label for="home-city" class="mb-2 block text-sm font-semibold text-ink-700">{{ "home.districts.label" | t(L) }}</label>
+        <div class="hm-city-field">
+          {% icon "search", "size-5 shrink-0 text-sage-700" %}
+          <input id="home-city" type="text" inputmode="search" autocomplete="off" spellcheck="false"
+                 class="min-w-0 flex-1 bg-transparent text-base text-ink-900 outline-none placeholder:text-ink-500 sm:text-lg"
+                 placeholder="{{ 'home.districts.placeholder' | t(L) }}"
+                 role="combobox" aria-autocomplete="list" aria-controls="home-city-list" :aria-expanded="(open && q.length > 0).toString()"
+                 :aria-activedescendant="active >= 0 ? 'home-city-opt-' + active : null"
+                 x-model="q" @input="open = true; active = results.length ? 0 : -1" @focus="open = true"
+                 @keydown.arrow-down.prevent="move(1)" @keydown.arrow-up.prevent="move(-1)" @keydown.enter.prevent="go()">
+          <button type="button" x-cloak x-show="q" @click="q = ''; $refs.status.textContent = ''; $el.previousElementSibling.focus()" class="grid size-8 shrink-0 place-items-center rounded-full text-ink-400 hover:bg-ink-100 hover:text-ink-700" aria-label="{{ 'ui.clear' | t(L) }}">{% icon "x", "size-4" %}</button>
+        </div>
+        <ul id="home-city-list" role="listbox" aria-label="{{ 'home.districts.list_label' | t(L) }}" x-cloak x-show="open && q.length > 0" class="hm-city-list">
+          <template x-for="(r, n) in results" :key="r.c + r.s">
+            <li :id="'home-city-opt-' + n" role="option" :aria-selected="(n === active).toString()" @mousemove="active = n" @click="go(n)"
+                class="hm-city-opt" :class="n === active && 'is-active'">
+              <span class="hm-city-num" :style="r.col ? '--a-500: var(--color-' + r.col + '-500); --a-700: var(--color-' + r.col + '-700)' : ''" x-text="r.n"></span>
+              <span class="min-w-0 flex-1">
+                <span class="block truncate font-semibold text-ink-900" x-text="r.c"></span>
+                <span class="block truncate text-sm text-ink-500"><span x-text="r.l"></span> · <span x-text="r.k === 'es' ? {{ ('home.districts.spanish' | t(L)) | json }} : {{ ('home.districts.english' | t(L)) | json }}"></span></span>
+              </span>
+              {% icon "arrow-right", "size-4 shrink-0 text-ink-300" %}
+            </li>
+          </template>
+          <li x-show="!results.length" class="px-4 py-3 text-sm text-ink-500">{{ "home.districts.none" | t(L) }}</li>
+        </ul>
+        <p class="sr-only" role="status" aria-live="polite" x-ref="status" x-text="q ? (results.length + ' ' + {{ ('home.districts.results' | t(L)) | json }}) : ''"></p>
+      </div>
+      {%- endif %}
+
+      {%- if dl.length %}
+      <dl class="mt-8 hidden grid-cols-3 gap-3 sm:grid">
+        <div class="hm-dist-stat" style="{{ 'sage' | accent }}"><dt>{{ "home.districts.stat_districts" | t(L) }}</dt><dd>{{ dl.length }}</dd></div>
+        <div class="hm-dist-stat" style="{{ 'coral' | accent }}"><dt>{{ "home.districts.stat_spanish" | t(L) }}</dt><dd>{{ nEs }}</dd></div>
+        <div class="hm-dist-stat" style="{{ 'ocean' | accent }}"><dt>{{ "home.districts.stat_cities" | t(L) }}</dt><dd>{{ nCities }}</dd></div>
+      </dl>
+      <ul class="mt-6 flex flex-wrap gap-2" role="list" aria-label="{{ 'nav.districts' | t(L) }}">
+        {%- for d in dl %}
+        <li><a href="{{ ('/districts/' + d.slug + '/') | lurl(L) }}" class="hm-dist-pill" style="{{ d.color | accent(loop.index0) }}" title="{{ d | loc('name', L) }}"><span class="sr-only">{{ d | loc("name", L) }}</span><span aria-hidden="true">{{ d.number_es if (L.code == "es" and d.number_es) else d.number }}</span></a></li>
+        {%- endfor %}
+      </ul>
+      {%- endif %}
+      <a href="{{ '/districts/' | lurl(L) }}" class="btn btn-accent btn-lg mt-7 sm:mt-8" style="{{ 'sage' | accent }}">{% icon "map", "size-5" %}{{ "home.districts.all" | t(L) }}</a>
+    </div>
+
+    <div class="hidden min-w-0 md:block xl:col-span-7">
+      {%- if points.length %}
+      <div class="home-map-frame reveal">
+        {{ mapBlock({ id: "home-map", points: points, height: "h-[22rem] sm:h-[26rem] lg:h-[32rem] 2xl:h-[36rem]", lang: L }) }}
+      </div>
+      {%- else %}
+      <a href="{{ '/districts/' | lurl(L) }}" class="home-map-placeholder group" aria-label="{{ 'home.districts.all' | t(L) }}">
+        <img src="/assets/img/logo/logo-{{ L.code }}-384.webp" alt="" width="384" height="384" loading="lazy" class="size-48 opacity-90 drop-shadow-xl transition duration-500 group-hover:rotate-[-6deg] sm:size-64">
+      </a>
+      {%- endif %}
+    </div>
+  </div>
+</section>

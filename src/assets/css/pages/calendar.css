@@ -1,0 +1,653 @@
+/* Calendar: event cards, date badges, meeting panels, the /calendar/ page and /events/ pages.
+   Colours come from the type's accent variables (--a-50 … --a-900), set inline from data/event-types.csv. */
+
+@layer components {
+  /* ---------------------------------------------------------------- date badge */
+  .date-badge {
+    @apply grid w-14 shrink-0 overflow-hidden rounded-2xl bg-white text-center ring-1 ring-ink-900/5;
+    box-shadow: 0 1px 2px rgb(19 23 43 / 0.05), 0 6px 16px -6px color-mix(in oklab, var(--a-600) 45%, transparent);
+  }
+  .date-badge__mon {
+    @apply py-1 font-display text-[11px] leading-none font-bold tracking-wider text-white uppercase;
+    background: linear-gradient(135deg, var(--a-700), var(--a-800));
+  }
+  .date-badge__day { @apply pt-1.5 font-display text-2xl leading-none font-extrabold text-ink-950; }
+  .date-badge__wkd { @apply pt-0.5 pb-1.5 text-[10px] leading-none font-semibold tracking-wide text-ink-500 uppercase; }
+  .date-badge--sm { @apply w-11 rounded-xl; }
+  .date-badge--sm .date-badge__mon { @apply py-0.5 text-[9px]; }
+  .date-badge--sm .date-badge__day { @apply pt-1 text-lg; }
+  .date-badge--sm .date-badge__wkd { @apply pb-1 text-[9px]; }
+  .date-badge--lg { @apply w-20 rounded-3xl; }
+  .date-badge--lg .date-badge__mon { @apply py-1.5 text-sm; }
+  .date-badge--lg .date-badge__day { @apply pt-2 text-4xl; }
+  .date-badge--lg .date-badge__wkd { @apply pb-2 text-xs; }
+
+  /* ---------------------------------------------------------------- live "Today / In 3 days" badge (app.js fills it) */
+  .rel-badge {
+    @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] leading-4 font-bold whitespace-nowrap;
+    background: var(--color-ink-100);
+    color: var(--color-ink-700);
+  }
+  .rel-badge[hidden] { display: none; }
+  .rel-badge[data-tone="live"] { background: var(--color-coral-700); color: white; }
+  .rel-badge[data-tone="live"]::before { content: ""; @apply size-1.5 rounded-full bg-white; animation: pulse-ring 1.6s infinite; }
+  .rel-badge[data-tone="today"] { background: var(--color-sun-300); color: var(--color-ink-950); }
+  .rel-badge[data-tone="soon"] { background: var(--color-coral-100); color: var(--color-coral-800); }
+  .rel-badge[data-tone="week"] { background: var(--color-ocean-100); color: var(--color-ocean-800); }
+  .rel-badge[data-tone="later"] { background: var(--color-ink-100); color: var(--color-ink-600); }
+  .rel-badge[data-tone="past"] { background: var(--color-ink-100); color: var(--color-ink-500); }
+
+  /* ---------------------------------------------------------------- shared card text */
+  .ev-type {
+    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] leading-none font-bold tracking-wide uppercase;
+    background: var(--a-100);
+    color: var(--a-800);
+  }
+  .ev-type--sm { @apply px-2 py-0.5 text-[10px] leading-4; }
+  .ev-title { @apply font-display text-lg leading-snug font-bold text-balance break-words text-ink-950 transition-colors; }
+  .ev-meta { @apply mt-1.5 flex items-start gap-2 text-sm leading-snug text-ink-600; }
+  .ev-meta > svg { color: var(--a-500); margin-top: 1px; }
+  .ev.is-cancelled .ev-title, .ev.is-cancelled .ev-row__title { @apply text-ink-500 line-through; }
+
+  /* ---------------------------------------------------------------- default card */
+  .ev-card {
+    @apply block h-full p-5 transition duration-300 2xl:p-6;
+  }
+  .ev-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lift); }
+  .ev-card:hover .ev-title { color: var(--a-700); }
+  .ev-card__thumb { @apply hidden h-24 w-20 shrink-0 rounded-xl object-cover ring-1 ring-ink-900/10 sm:block; }
+
+  /* ---------------------------------------------------------------- flyer card */
+  .ev-flyer {
+    @apply flex h-full flex-col overflow-hidden rounded-3xl bg-white ring-1 ring-ink-900/5 shadow-soft transition duration-300;
+  }
+  .ev-flyer:hover { transform: translateY(-4px); box-shadow: var(--shadow-lift); }
+  .ev-flyer:hover .ev-title { color: var(--a-700); }
+  .ev-flyer__media {
+    @apply relative aspect-[4/5] overflow-hidden;
+    background: linear-gradient(160deg, var(--a-100), var(--a-200));
+  }
+  .ev-flyer__blur { @apply absolute inset-0 size-full scale-125 object-cover opacity-70 blur-2xl; }
+  .ev-flyer__img { @apply relative size-full object-contain transition duration-500; filter: drop-shadow(0 10px 18px rgb(0 0 0 / 0.18)); }
+  .ev-flyer:hover .ev-flyer__img { transform: scale(1.03); }
+  .ev-flyer__art {
+    @apply grid size-full place-items-center text-white/90;
+    background:
+      radial-gradient(circle at 20% 15%, color-mix(in oklab, white 28%, transparent) 0 18%, transparent 19%),
+      radial-gradient(circle at 85% 80%, color-mix(in oklab, white 18%, transparent) 0 24%, transparent 25%),
+      linear-gradient(145deg, var(--a-400), var(--a-700));
+  }
+  /* no flyer: a typographic poster — type, title, day and city on the type's colours, a faint Panel logo.
+     White text sits on the 700 / 800 shades (light shades like sun or lime fail AA there); the sunny glow stays in the
+     corner and the soft light circle low on the left, so neither lightens the text. */
+  .ev-poster {
+    @apply relative isolate flex size-full flex-col justify-start gap-3 overflow-hidden px-5 pt-6 pb-12 text-white;
+    background:
+      radial-gradient(circle at 100% 0%, color-mix(in oklab, var(--color-sun-200) 30%, transparent) 0 11%, transparent 11.5%),
+      radial-gradient(circle at 0% 100%, color-mix(in oklab, white 10%, transparent) 0 30%, transparent 30.5%),
+      linear-gradient(160deg, var(--a-700), var(--a-800) 55%, var(--color-iris-900));
+  }
+  .ev-poster__logo { @apply pointer-events-none absolute -right-10 -bottom-10 -z-10 size-44 rotate-12 opacity-[0.13] mix-blend-luminosity; }
+  .ev-poster__icon { @apply pointer-events-none absolute -top-6 -left-8 -z-10 opacity-[0.09]; }
+  /* a dark glass pill: the small label stays readable on every type colour */
+  .ev-poster__type {
+    @apply inline-flex w-fit items-center gap-1.5 rounded-full bg-black/20 px-2.5 py-1 text-[11px] leading-none font-bold tracking-wider uppercase ring-1 ring-white/25 backdrop-blur-sm;
+  }
+  .ev-poster__title {
+    @apply line-clamp-4 font-display text-[1.65rem] leading-[1.12] font-extrabold tracking-tight text-balance break-words;
+    text-shadow: 0 1px 2px rgb(0 0 0 / 0.2), 0 2px 14px rgb(0 0 0 / 0.22);
+  }
+  .ev-poster__when { @apply mt-auto text-sm leading-snug font-semibold text-white; }
+  .ev-flyer:hover .ev-poster__title { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 4px; }
+  .ev-flyer__badge { @apply absolute -bottom-7 left-4 z-[1]; }
+  .ev-flyer__body { @apply flex flex-1 flex-col gap-1 px-5 pt-2 pb-5; }
+  .ev-flyer__body .ev-title { @apply mt-1.5; }
+
+  /* ---------------------------------------------------------------- compact row */
+  .ev-row {
+    @apply -mx-2 flex items-center gap-3 rounded-2xl p-2 transition;
+  }
+  .ev-row:hover { background: var(--a-50); }
+  .ev-row__title { @apply line-clamp-2 leading-snug font-semibold text-ink-900; }
+  .ev-row:hover .ev-row__title { color: var(--a-800); }
+  .ev-row__meta { @apply mt-0.5 block text-[13px] whitespace-nowrap text-ink-600; }
+  .ev-row__place { @apply block truncate text-[13px] text-ink-500; }
+
+  /* ---------------------------------------------------------------- lists */
+  .ev-list { @apply flex flex-col gap-1; }
+  .ev-grid { @apply grid gap-4 md:grid-cols-2 2xl:grid-cols-3 2xl:gap-5; }
+  .ev-grid--flyer { @apply grid-cols-1 gap-5 min-[480px]:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 3xl:grid-cols-5; }
+  .ev-grid > li, .ev-list > li { @apply min-w-0; }
+  /* phones and tablets: a long run of flyer cards becomes one swipeable row (the next card peeks in) instead of a
+     tall stack; a grid from 1024px */
+  @media (max-width: 1023px) {
+    .ev-grid--rail {
+      @apply -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pt-1 pb-5 sm:-mx-6 sm:px-6;
+      scroll-padding-inline: 1rem;
+      scrollbar-width: thin;
+    }
+    .ev-grid--rail > li { @apply shrink-0 snap-start; width: min(78vw, 20rem); }
+    .ev-grid--rail > li[hidden] { display: none; }
+  }
+  .ev-empty {
+    @apply flex flex-wrap items-center gap-3 rounded-3xl bg-white p-5 text-ink-600 ring-1 ring-ink-900/5;
+  }
+  .ev-empty > p { @apply min-w-0 flex-1; }
+
+  /* ---------------------------------------------------------------- add to calendar */
+  .add-cal__label { @apply mb-2.5 flex items-center gap-2 text-xs font-bold tracking-wider text-ink-500 uppercase; }
+  .add-cal__hint { @apply mt-2 text-xs text-ink-500; }
+
+  /* ---------------------------------------------------------------- meeting info panel */
+  .meeting-info {
+    @apply relative overflow-hidden rounded-3xl bg-white p-5 ring-1 ring-ink-900/5 shadow-soft sm:p-6 2xl:p-7;
+  }
+  .meeting-info::before {
+    content: "";
+    @apply absolute inset-x-0 top-0 h-1.5;
+    background: linear-gradient(90deg, var(--a-400), var(--a-600), var(--color-iris-500));
+  }
+  .meeting-info__heading { @apply mb-4 font-display text-xl font-bold text-ink-950; }
+  .meeting-info__grid { @apply mt-5 grid gap-x-6 gap-y-5 sm:grid-cols-2; }
+  .mi-block { @apply flex min-w-0 gap-3.5; }
+  .mi-block--wide { @apply sm:col-span-2; }
+  .mi-icon {
+    @apply grid size-10 shrink-0 place-items-center rounded-xl;
+    background: var(--a-100);
+    color: var(--a-700);
+  }
+  .mi-label { @apply text-[11px] font-bold tracking-wider text-ink-500 uppercase; }
+  .mi-value { @apply mt-0.5 font-display text-lg leading-snug font-bold text-ink-950; overflow-wrap: anywhere; }
+  .mi-sub { @apply mt-0.5 text-sm text-ink-600; overflow-wrap: anywhere; }
+  .mi-link { @apply mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-ocean-700 hover:text-iris-700 hover:underline; }
+  .mi-next { @apply flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-ink-700; }
+  .mi-next svg { color: var(--a-600); }
+  .mi-reg { @apply mt-1.5 flex items-center gap-1.5 text-sm font-semibold text-ink-700; }
+  .mi-reg > svg { color: var(--a-600); }
+  .mi-notes { @apply mt-5 space-y-2 rounded-2xl p-4 text-sm leading-relaxed text-ink-700; background: var(--a-50); overflow-wrap: anywhere; }
+  .mi-notes > li > span { @apply min-w-0; }
+  .mi-notes > li { @apply flex gap-2.5; }
+  .mi-notes > li > svg { color: var(--a-600); }
+  .mi-notes__tag { @apply text-xs font-semibold whitespace-nowrap text-ink-500; }
+  .mi-copy { @apply flex items-center justify-between gap-3 rounded-2xl bg-ink-50 px-4 py-3; }
+
+  /* ---------------------------------------------------------------- flyer gallery */
+  .flyer-gallery__title { @apply mb-3 flex items-center gap-2 text-xs font-bold tracking-wider text-ink-500 uppercase; }
+  .flyer-gallery__grid { @apply grid grid-cols-2 gap-3 sm:grid-cols-3; }
+  .flyer-gallery__grid--1 { @apply grid-cols-1 sm:grid-cols-1; }
+  .flyer-gallery__grid--2 { @apply grid-cols-2 sm:grid-cols-2; }
+  .flyer-gallery__item {
+    @apply relative isolate block aspect-[4/5] overflow-hidden rounded-2xl bg-ink-100 ring-1 ring-ink-900/10;
+  }
+  .flyer-gallery__grid--1 .flyer-gallery__item { @apply aspect-auto; }
+  .flyer-gallery__blur { @apply absolute inset-0 -z-10 size-full scale-125 object-cover opacity-60 blur-xl; }
+  .flyer-gallery__img { @apply relative size-full object-contain p-2 transition duration-500; filter: drop-shadow(0 8px 14px rgb(0 0 0 / 0.18)); }
+  .flyer-gallery__grid--1 .flyer-gallery__img { @apply h-auto p-0; }
+  .flyer-gallery__grid--1 .flyer-gallery__blur { display: none; }
+  .flyer-gallery__item:hover > .flyer-gallery__img { transform: scale(1.03); }
+  .flyer-gallery__zoom {
+    @apply absolute right-2.5 bottom-2.5 grid size-10 place-items-center rounded-full bg-white/90 text-ink-800 shadow-soft backdrop-blur transition;
+  }
+}
+
+/* ======================================================================= /calendar/ page */
+@layer components {
+  /* ---- slim page header: the calendar itself starts on the first screen */
+  .cal-hero__bg {
+    background:
+      radial-gradient(60rem 22rem at 0% -20%, var(--a-200), transparent 60%),
+      radial-gradient(50rem 22rem at 100% -10%, color-mix(in oklab, var(--color-iris-200) 80%, transparent), transparent 60%),
+      linear-gradient(180deg, var(--a-50), white);
+  }
+  .cal-skip {
+    @apply sr-only;
+  }
+  .cal-skip:focus {
+    @apply not-sr-only mb-3 inline-flex items-center gap-2 rounded-full bg-ink-900 px-4 py-2.5 text-sm font-semibold text-white;
+  }
+  /* stats: three small tiles beside the title on laptops and up (phones go straight to the calendar) */
+  .cal-stats { @apply hidden shrink-0 grid-cols-3 gap-2.5 lg:grid 2xl:gap-3; }
+  .cal-stat { @apply flex min-w-[7.5rem] flex-col-reverse justify-end rounded-2xl px-3.5 py-2 2xl:min-w-[8.5rem] 2xl:px-4 2xl:py-2.5; background: color-mix(in oklab, white 70%, var(--a-50)); box-shadow: inset 0 0 0 1px var(--a-100); }
+  .cal-stat dt { @apply mt-0.5 text-[11px] leading-tight font-semibold text-ink-600 2xl:text-xs; }
+  .cal-stat dd { @apply font-display text-2xl leading-none font-extrabold 2xl:text-[1.75rem]; color: var(--a-700); }
+
+  /* ---- quick views: first row of the toolbar; one swipeable row on phones / tablets, wrapping from 1024px */
+  .cal-quick { @apply -mx-3 flex gap-2 overflow-x-auto px-3 pb-0.5 sm:-mx-4 sm:px-4 lg:mx-0 lg:flex-wrap lg:overflow-visible lg:px-0; scroll-padding-inline: 0.75rem; }
+  .cal-quick__btn {
+    @apply inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full bg-white px-3.5 py-2 text-sm font-semibold whitespace-nowrap text-ink-700 ring-1 ring-ink-200 transition lg:min-h-10 lg:gap-1 lg:px-2.5 lg:py-1.5 lg:text-[13px] 2xl:gap-1.5 2xl:px-3.5 2xl:text-sm;
+  }
+  .cal-toolbar .cal-quick { @apply lg:gap-1.5 2xl:gap-2; }
+  .cal-quick__btn > svg { color: var(--a-600); }
+  .cal-quick__btn:hover { background: var(--a-50); box-shadow: inset 0 0 0 1px var(--a-300); }
+  .cal-quick__btn.is-on { background: var(--a-700); color: white; box-shadow: 0 8px 20px -10px var(--a-600); @apply ring-transparent; }
+  .cal-quick__btn.is-on > svg { color: white; }
+  .cal-quick__btn:disabled { @apply opacity-60; }
+
+  /* ---- layout. The calendar is first in the page; grid areas put the filters on the left.
+       < 1280px   calendar, then the rail (filters are a drawer)
+       1280–1919  filters | calendar (≥ 900px wide), the rail as a two-column band under the calendar
+       ≥ 1920     filters | calendar | rail */
+  .cal-layout {
+    @apply grid gap-6 2xl:gap-8;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "main" "rail";
+  }
+  .cal-main { @apply min-w-0; grid-area: main; }
+  .cal-filters { grid-area: filters; }
+  .cal-rail { @apply grid grid-cols-1 content-start gap-6; grid-area: rail; }
+  /* tablets and 1280–1919: two balanced columns, each card at its natural height */
+  @media (min-width: 768px) {
+    .cal-rail { display: block; columns: 2; column-gap: 1.5rem; }
+    .cal-rail > * { break-inside: avoid; margin-bottom: 1.5rem; }
+  }
+  @media (min-width: 1280px) {
+    .cal-layout {
+      grid-template-columns: 16.5rem minmax(0, 1fr);
+      grid-template-areas: "filters main" "filters rail";
+      grid-template-rows: auto 1fr;
+    }
+  }
+  @media (min-width: 1536px) {
+    .cal-layout { grid-template-columns: 17.5rem minmax(0, 1fr); }
+  }
+  @media (min-width: 1920px) {
+    .cal-layout {
+      grid-template-columns: 17rem minmax(0, 1fr) 22rem;
+      grid-template-areas: "filters main rail";
+      grid-template-rows: auto;
+    }
+    .cal-rail { display: grid; columns: auto; grid-template-columns: minmax(0, 1fr); }
+    .cal-rail > * { margin-bottom: 0; }
+  }
+
+  /* ---- filters: drawer below 1280px, sticky sidebar above */
+  .cal-filters {
+    @apply fixed inset-y-0 left-0 z-[65] flex w-[min(23rem,92vw)] flex-col bg-white shadow-2xl;
+    transform: translateX(-104%);
+    visibility: hidden;
+    transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1), visibility 0s linear 0.3s;
+  }
+  .cal-filters.is-open { transform: none; visibility: visible; transition: transform 0.3s cubic-bezier(0.2, 0.7, 0.2, 1); }
+  @media (min-width: 1280px) {
+    .cal-filters {
+      position: sticky; top: 6.75rem; z-index: 1; width: auto; transform: none; visibility: visible; transition: none;
+      max-height: calc(100dvh - 7.75rem); align-self: start;
+      @apply rounded-3xl ring-1 ring-ink-900/5 shadow-soft;
+    }
+  }
+  .cal-filters__inner { @apply flex min-h-0 flex-1 flex-col; }
+  .cal-filters__head { @apply flex items-center gap-3 border-b border-ink-100 px-4 py-3.5 xl:px-5; }
+  .cal-filters__head > h2 { @apply mr-auto; }
+  .cal-filters__body { @apply flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto overscroll-contain px-4 py-5 xl:px-5; scrollbar-width: thin; }
+  .cal-filters__foot { @apply flex gap-2 border-t border-ink-100 bg-white p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]; }
+
+  .flt-group { @apply m-0 min-w-0 border-0 p-0; }
+  .flt-legend { @apply mb-2.5 block text-[11px] font-bold tracking-[0.14em] text-ink-500 uppercase; }
+  .flt-cat { @apply mb-3 last:mb-0; }
+  .flt-cat__head { @apply flex w-full items-center gap-2.5 rounded-xl px-2 py-2 text-sm font-bold text-ink-800 transition hover:bg-ink-50; }
+  .flt-tri { @apply grid size-[18px] shrink-0 place-items-center rounded-[5px] border-2 border-ink-300 text-white transition; }
+  .flt-tri > svg { display: none; }
+  .flt-tri[data-state="all"] { @apply border-ink-800 bg-ink-800; }
+  .flt-tri[data-state="all"] .flt-tri__all { display: block; }
+  .flt-tri[data-state="some"] { @apply border-ink-400 bg-ink-400; }
+  .flt-tri[data-state="some"] .flt-tri__some { display: block; }
+  .flt-types { @apply mt-0.5 space-y-0.5; }
+  .flt-type { @apply relative flex items-center transition-opacity; }
+  /* an empty category stays readable (contrast): grey text, and its "0" says the rest */
+  .flt-type.is-empty .flt-type__label { @apply text-ink-500; }
+  .flt-type.is-empty .flt-type__icon { @apply text-ink-400; }
+  .flt-type__label { @apply flex min-h-10 min-w-0 flex-1 cursor-pointer items-center gap-2.5 rounded-xl px-2 py-1.5 text-sm text-ink-700 transition; }
+  .flt-type__label:hover { background: var(--a-50); }
+  .flt-box { @apply grid size-[18px] shrink-0 place-items-center rounded-[5px] border-2 text-white transition; border-color: var(--a-400); }
+  .flt-box > svg { opacity: 0; transition: opacity 0.15s; }
+  input:checked + .flt-box { background: var(--a-500); border-color: var(--a-500); }
+  input:checked + .flt-box > svg { opacity: 1; }
+  input:focus-visible + .flt-box { outline: 3px solid var(--color-ocean-500); outline-offset: 2px; }
+  .flt-type__icon { color: var(--a-600); }
+  .flt-count { @apply ml-auto min-w-7 shrink-0 rounded-full bg-ink-100 px-1.5 py-0.5 text-center text-[11px] font-bold text-ink-600 tabular-nums; }
+  .flt-only {
+    @apply absolute top-1/2 right-11 -translate-y-1/2 rounded-full bg-white px-2 py-0.5 text-[11px] font-bold opacity-0 shadow-sm transition focus:opacity-100;
+    color: var(--a-700); box-shadow: inset 0 0 0 1px var(--a-200);
+  }
+  .flt-type:hover .flt-only, .flt-type:focus-within .flt-only { opacity: 1; }
+  @media (hover: none) { .flt-only { display: none; } }
+  .flt-pills { @apply flex flex-wrap gap-2; }
+  .flt-pill { @apply cursor-pointer; }
+  .flt-pill__in { @apply inline-flex min-h-10 items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-ink-700 ring-1 ring-ink-200 transition; }
+  .flt-pill__in > svg { color: var(--a-600); }
+  .flt-pill:hover .flt-pill__in { background: var(--a-50); }
+  .flt-pill__n { @apply ml-0.5 rounded-full bg-ink-100 px-1.5 py-px text-[11px] font-bold text-ink-600 tabular-nums; }
+  input:checked + .flt-pill__in { background: var(--a-700); color: white; @apply ring-transparent; }
+  input:checked + .flt-pill__in > svg { color: white; }
+  input:checked + .flt-pill__in .flt-pill__n { background: rgb(255 255 255 / 0.25); color: white; }
+  input:focus-visible + .flt-pill__in { outline: 3px solid var(--color-ocean-500); outline-offset: 2px; }
+  .flt-select { @apply mt-0 w-full rounded-2xl border-0 bg-white px-3.5 py-2.5 text-sm text-ink-900 ring-1 ring-ink-200 focus:ring-2 focus:ring-ocean-500 focus:outline-none; }
+  .flt-days { @apply grid grid-cols-7 gap-1; }
+  .flt-day { @apply grid h-10 place-items-center rounded-xl text-sm font-bold text-ink-600 ring-1 ring-ink-200 transition hover:bg-ink-50; }
+  .flt-day.is-on { @apply bg-ocean-700 text-white ring-ocean-700 hover:bg-ocean-800; }
+  .flt-switch { @apply flex min-h-11 cursor-pointer items-center gap-3 rounded-xl px-2 py-1.5 text-sm font-semibold text-ink-700 transition hover:bg-ink-50; }
+  .flt-switch__track { @apply relative h-6 w-11 shrink-0 rounded-full bg-ink-200 transition; }
+  .flt-switch__dot { @apply absolute top-0.5 left-0.5 size-5 rounded-full bg-white shadow transition; }
+  input:checked + .flt-switch__track { @apply bg-ocean-600; }
+  input:checked + .flt-switch__track .flt-switch__dot { transform: translateX(1.25rem); }
+  input:focus-visible + .flt-switch__track { outline: 3px solid var(--color-ocean-500); outline-offset: 2px; }
+
+  /* ---- toolbar */
+  .cal-toolbar { @apply mb-4 scroll-mt-28 space-y-3 rounded-3xl bg-white p-3 ring-1 ring-ink-900/5 shadow-soft sm:p-4; }
+  .cal-title:focus { outline: none; }
+  .cal-title:focus-visible { @apply rounded-lg outline-2 outline-offset-4 outline-ocean-500; }
+  .cal-toolbar__top { @apply flex flex-wrap items-center gap-x-3 gap-y-3; }
+  .cal-title { @apply min-w-0 flex-1 font-display text-2xl font-bold text-ink-950 first-letter:uppercase max-sm:order-1 2xl:text-3xl; }
+  .cal-count--phone { @apply order-2; }
+  .cal-share-btn--phone { @apply order-3 size-11 shrink-0 justify-center px-0; }
+  @media (max-width: 639px) {
+    .cal-toolbar__top > .cal-nav { order: 4; }
+    .cal-toolbar__top > .cal-seg { order: 5; }
+  }
+  .cal-nav { @apply flex items-center gap-1.5; }
+  .cal-icon-btn { @apply grid size-10 shrink-0 place-items-center rounded-full text-ink-700 ring-1 ring-ink-200 transition hover:bg-ink-50 disabled:opacity-40; }
+  .cal-today-btn { @apply h-10 rounded-full px-4 text-sm font-semibold text-ink-800 ring-1 ring-ink-200 transition hover:bg-ink-50 disabled:opacity-40; }
+  .cal-seg { @apply flex w-full rounded-full bg-ink-100 p-1 sm:w-auto; }
+  .cal-seg__btn { @apply inline-flex min-h-10 flex-1 items-center justify-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold text-ink-600 transition hover:text-ink-900 disabled:opacity-50 sm:flex-none sm:px-4; }
+  .cal-seg__btn.is-on { @apply bg-white text-ink-950 shadow-soft; }
+  .cal-seg__btn.is-on > svg { @apply text-iris-600; }
+  .cal-toolbar__bottom { @apply flex flex-wrap items-center gap-2 sm:gap-3; }
+  .cal-search { @apply flex min-h-11 min-w-0 flex-1 basis-[14rem] items-center gap-2 rounded-full bg-ink-50 px-4 ring-1 ring-ink-100 transition focus-within:bg-white focus-within:ring-2 focus-within:ring-ocean-500; }
+  .cal-search input { @apply w-full min-w-0 border-0 bg-transparent py-2 text-[15px] text-ink-900 outline-none placeholder:text-ink-500; }
+  .cal-filter-btn { @apply inline-flex min-h-11 items-center gap-2 rounded-full bg-iris-600 px-4 text-sm font-semibold text-white transition hover:bg-iris-700 disabled:opacity-50; box-shadow: 0 10px 24px -12px var(--color-iris-600); }
+  .cal-filter-btn__n { @apply grid size-5 place-items-center rounded-full bg-white text-xs font-bold text-iris-700; }
+  .cal-count { @apply text-sm whitespace-nowrap text-ink-500; }
+  .cal-count strong { @apply font-display text-base text-ink-900; }
+  .cal-share-btn { @apply inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-sm font-semibold text-ink-600 ring-1 ring-ink-200 transition hover:bg-ink-50 hover:text-ink-900; }
+  .cal-chips { @apply flex flex-wrap items-center gap-2 border-t border-ink-100 pt-3; }
+  .cal-chip { @apply inline-flex min-h-9 items-center gap-1.5 rounded-full bg-iris-50 px-3 py-1 text-sm font-semibold text-iris-800 ring-1 ring-iris-200 transition hover:bg-iris-100; }
+  .cal-clear { @apply rounded-full px-2 py-1 text-sm font-semibold text-coral-700 hover:underline; }
+
+  /* ---- the surface */
+  .cal-surface { @apply relative min-h-[26rem] rounded-3xl bg-white p-2 ring-1 ring-ink-900/5 shadow-soft sm:p-4 2xl:p-5; }
+  .cal-ssr__note { @apply flex items-center gap-2 px-2 pt-1 pb-3 text-sm text-ink-500; }
+  .cal-error, .cal-none { @apply m-1 flex flex-wrap items-start gap-4 rounded-2xl bg-ink-50 p-5 sm:m-0; }
+  .cal-none { @apply mb-4 items-center; }
+  .cal-none__text { @apply min-w-0 flex-1 basis-[calc(100%-4rem)] sm:basis-0; }
+  .cal-none__actions { @apply flex basis-full flex-wrap gap-2 sm:basis-auto; }
+
+  /* ---- phones / tablets: slim bar under the site header once the toolbar has scrolled away */
+  .cal-sticky {
+    @apply fixed inset-x-0 top-[6.25rem] z-40 border-b border-ink-900/5 bg-white/95 py-2 shadow-soft backdrop-blur-xl lg:hidden;
+  }
+  .cal-sticky .cal-filter-btn { @apply min-h-10 px-3.5; }
+  .cal-sticky__view { @apply grid size-10 place-items-center rounded-full text-ink-600 ring-1 ring-ink-200 transition hover:bg-ink-50; }
+  .cal-sticky__view.is-on { @apply bg-ink-900 text-white ring-ink-900; }
+  @media (max-width: 1023px) {
+    .cal-page.tb-out .ag-day__head { top: 9.25rem; }
+  }
+
+  /* ---- agenda */
+  .cal-agenda { @apply px-1 sm:px-0; }
+  .ag-day + .ag-day { @apply mt-6; }
+  .ag-day { scroll-margin-top: 1rem; } /* on top of the page's scroll-padding (the fixed header) */
+  .ag-day__head {
+    @apply sticky top-[6.25rem] z-[5] -mx-1 mb-2 flex items-center gap-3 rounded-xl bg-white/95 px-1 py-2 backdrop-blur sm:-mx-2 sm:px-2;
+  }
+  /* a day number in the month grid moves the keyboard here (tabindex=-1) */
+  .ag-day__head:focus { outline: none; }
+  .ag-day__head:focus-visible { outline: 3px solid var(--color-ocean-500); outline-offset: 2px; }
+  .ag-day__badge { @apply grid w-12 shrink-0 overflow-hidden rounded-xl text-center ring-1 ring-ink-900/5; }
+  .ag-day__mon { @apply bg-ink-800 py-0.5 text-[10px] font-bold tracking-wider text-white uppercase; }
+  .ag-day__num { @apply bg-white py-1 font-display text-xl leading-none font-extrabold text-ink-950; }
+  /* today: warm coral to orange, on the 700 shades so the small white month stays readable (AA) */
+  .ag-day.is-today .ag-day__mon { background: linear-gradient(135deg, var(--color-coral-700), var(--color-sun-700)); }
+  .ag-day__wkd { @apply block font-display text-lg leading-tight font-bold text-ink-950 first-letter:uppercase; }
+  .ag-day__date { @apply block text-sm text-ink-500 first-letter:uppercase; }
+  .ag-day__count { @apply grid size-7 shrink-0 place-items-center rounded-full bg-ink-100 text-xs font-bold text-ink-600; }
+  .ag-list { @apply space-y-2; }
+  .ag-item {
+    @apply relative grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 overflow-hidden rounded-2xl bg-white py-3 pr-3 pl-4 ring-1 ring-ink-900/10 transition sm:grid-cols-[6.75rem_minmax(0,1fr)_auto_auto] sm:gap-x-4 sm:py-3.5;
+  }
+  .ag-item::before { content: ""; @apply absolute inset-y-0 left-0 w-1.5; background: linear-gradient(180deg, var(--a-400), var(--a-600)); }
+  .ag-item:hover { background: var(--a-50); box-shadow: 0 8px 22px -14px var(--a-600); transform: translateX(2px); }
+  .ag-item__time { @apply col-span-2 text-[13px] font-bold text-ink-800 tabular-nums sm:col-span-1 sm:text-sm; }
+  .ag-item__main { @apply min-w-0; }
+  .ag-item__type { @apply inline-flex items-center gap-1 text-[11px] font-bold tracking-wide uppercase; color: var(--a-700); }
+  .ag-item__title { @apply mt-0.5 block font-display text-[17px] leading-snug font-bold break-words text-ink-950; }
+  .ag-item:hover .ag-item__title { color: var(--a-800); }
+  .ag-item__meta { @apply mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-500; }
+  .ag-item__lang { @apply inline-flex items-center gap-1 rounded-full bg-coral-50 px-2 py-0.5 text-xs font-semibold text-coral-700; }
+  .ag-item__flag { @apply rounded-full bg-red-50 px-2 py-0.5 text-xs font-bold text-red-700; }
+  .ag-item__thumb { @apply hidden h-16 w-12 rounded-lg object-cover object-top ring-1 ring-ink-900/10 sm:block; }
+  .ag-item__chev { @apply hidden text-ink-300 transition sm:block; }
+  .ag-item:hover .ag-item__chev { color: var(--a-600); transform: translateX(2px); }
+  .ag-item.is-cancelled .ag-item__title { @apply text-ink-500 line-through; }
+  .ag-foot { @apply mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-ink-100 pt-5; }
+
+  /* ---- phone month */
+  .mini-grid { @apply grid grid-cols-7 gap-1; }
+  .mini-head { @apply py-1 text-center text-[11px] font-bold text-ink-500 uppercase; }
+  .mini-day { @apply flex aspect-square min-h-11 flex-col items-center justify-start gap-1 rounded-xl pt-1.5 text-sm font-semibold text-ink-800 transition hover:bg-ink-50; }
+  .mini-day.is-out { @apply bg-ink-50/70 font-normal text-ink-500; }
+  .mini-day__n { @apply grid size-7 place-items-center rounded-full; }
+  .mini-day.is-today .mini-day__n { @apply bg-coral-700 text-white; }
+  .mini-day.is-sel { @apply bg-iris-50 ring-2 ring-iris-500; }
+  .mini-dots { @apply flex flex-wrap justify-center gap-0.5 px-1; }
+  .mini-dot { @apply size-1.5 rounded-full; background: var(--a-500); }
+  .mini-title { @apply mt-6 mb-3 px-1 font-display text-lg font-bold text-ink-950 first-letter:uppercase; }
+  .mini-empty { @apply rounded-2xl bg-ink-50 p-4 text-sm text-ink-500; }
+
+  /* ---- right rail */
+  .area-next {
+    @apply relative isolate overflow-hidden rounded-3xl p-6 text-white 2xl:p-7;
+    background: linear-gradient(145deg, var(--color-iris-700), var(--color-ocean-700) 58%, var(--color-sea-800));
+    box-shadow: 0 24px 48px -24px color-mix(in oklab, var(--color-iris-700) 70%, transparent);
+  }
+  .area-next .btn-glass { @apply bg-black/15 hover:bg-black/25; }
+  .area-next__glow {
+    @apply absolute -top-16 -right-16 -z-10 size-56 rounded-full opacity-60 blur-2xl;
+    background: radial-gradient(circle, var(--color-sun-300), transparent 65%);
+  }
+  .area-next .btn-glass { @apply text-white; }
+  .cd-box { @apply rounded-2xl bg-white/10 py-2.5 ring-1 ring-white/20 backdrop-blur; }
+  .cd-num { @apply block font-display text-2xl leading-none font-extrabold tabular-nums; }
+  .cd-lbl { @apply mt-1 block text-[10px] font-semibold tracking-wider text-white uppercase; }
+  .sub-btn {
+    @apply flex min-h-12 items-center gap-3 rounded-2xl px-4 py-2.5 text-sm font-semibold text-ink-800 transition;
+    background: var(--a-50); box-shadow: inset 0 0 0 1px var(--a-100);
+  }
+  .sub-btn > svg:first-child { color: var(--a-600); }
+  .sub-btn:hover { background: var(--a-100); }
+  .help-card {
+    @apply rounded-3xl p-5 ring-1 ring-coral-100 sm:p-6;
+    background: linear-gradient(135deg, var(--color-coral-50), var(--color-sun-50));
+  }
+
+  /* ---- details panel */
+  .cal-detail {
+    @apply absolute inset-x-0 bottom-0 flex max-h-[90dvh] flex-col overflow-hidden rounded-t-3xl bg-white shadow-2xl sm:inset-y-0 sm:right-0 sm:left-auto sm:max-h-none sm:w-[30rem] sm:rounded-none sm:rounded-l-3xl 2xl:w-[34rem];
+  }
+  .cal-detail--from { transform: translateY(100%); }
+  .cal-detail--to { transform: none; }
+  @media (min-width: 640px) { .cal-detail--from { transform: translateX(100%); } }
+  .cal-detail__close { @apply absolute top-3 right-3 z-10 grid size-11 place-items-center rounded-full bg-white/95 text-ink-800 shadow-soft ring-1 ring-ink-900/5 transition hover:bg-white hover:text-ink-950; }
+  .cal-detail__scroll { @apply flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain; }
+  .cal-detail__media { @apply relative block h-60 shrink-0 overflow-hidden sm:h-72; background: var(--a-100); }
+  .cal-detail__blur { @apply absolute inset-0 size-full scale-125 object-cover opacity-70 blur-2xl; }
+  .cal-detail__img { @apply relative mx-auto h-full w-auto max-w-full object-contain py-3; filter: drop-shadow(0 12px 22px rgb(0 0 0 / 0.25)); }
+  .cal-detail__band {
+    @apply relative grid h-36 shrink-0 place-items-center overflow-hidden text-white;
+    background:
+      radial-gradient(circle at 15% 20%, rgb(255 255 255 / 0.22) 0 14%, transparent 15%),
+      radial-gradient(circle at 85% 90%, rgb(255 255 255 / 0.14) 0 22%, transparent 23%),
+      linear-gradient(135deg, var(--a-400), var(--a-700));
+  }
+  .cal-detail__band-icon { @apply grid size-20 place-items-center rounded-3xl bg-white/15 ring-1 ring-white/30; }
+  .cal-detail__body { @apply min-w-0 flex-1 p-5 sm:p-6; overflow-wrap: anywhere; }
+  .cal-detail__foot { @apply sticky bottom-0 grid grid-cols-2 gap-2 border-t border-ink-100 bg-white/95 p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] backdrop-blur; }
+  .cd-row { @apply flex gap-3; }
+  .cd-row__icon { @apply grid size-9 shrink-0 place-items-center rounded-xl; background: var(--a-100); color: var(--a-700); }
+
+  /* ---- browse cards */
+  .browse-card { @apply flex items-start gap-4 rounded-3xl bg-white p-5 ring-1 ring-ink-900/5 shadow-soft transition duration-300 2xl:p-6; }
+  .browse-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lift); }
+  .browse-card__title { @apply block font-display text-lg font-bold text-ink-950; }
+  .browse-card:hover .browse-card__title { color: var(--a-700); }
+  .browse-card__body { @apply mt-1 block text-sm leading-relaxed text-ink-600; }
+
+}
+
+/* ======================================================================= FullCalendar
+   Not in a layer: FullCalendar injects its own (unlayered) CSS at run time, which would beat layered rules. */
+/* icons injected as HTML carry a size class; make the big ones big */
+.cal-detail__band-icon svg { width: 2.5rem; height: 2.5rem; }
+
+/* ---- FullCalendar, in the site's colours (its own variables are declared on .fc, so restate them more specifically) */
+.cal-fc.fc {
+  --fc-border-color: var(--color-ink-100);
+  --fc-today-bg-color: color-mix(in oklab, var(--color-sun-100) 75%, transparent);
+  --fc-event-border-color: transparent;
+  --fc-event-bg-color: var(--color-ocean-100);
+  --fc-event-text-color: var(--color-ink-900);
+  --fc-page-bg-color: var(--color-white);
+  --fc-neutral-bg-color: var(--color-ink-50);
+  --fc-list-event-hover-bg-color: transparent;
+  --fc-more-link-bg-color: transparent;
+  --fc-small-font-size: 0.75rem;
+  font-size: 0.875rem;
+}
+.cal-fc .fc-scrollgrid { @apply overflow-hidden rounded-2xl; }
+.cal-fc.fc-theme-standard .fc-scrollgrid { border-color: var(--color-ink-100); }
+.cal-fc .fc-col-header-cell { @apply bg-ink-50 py-2; }
+.cal-fc .fc-col-header-cell-cushion { @apply text-xs font-bold tracking-wider text-ink-500 uppercase; }
+.cal-fc .fc-daygrid-day-frame { min-height: 7.25rem; }
+.cal-fc .fc-daygrid-day-top { @apply flex-row; }
+.cal-fc .fc-daygrid-day-number { @apply m-1 grid size-7 place-items-center rounded-full p-0 text-[13px] font-semibold text-ink-700; }
+.cal-fc .fc-daygrid-day-number:hover { @apply bg-ink-100 text-ink-950; }
+.cal-fc .fc-day-today .fc-daygrid-day-number { @apply bg-coral-700 text-white; }
+/* days of the next / previous month: a grey cell, the number still readable (AA contrast) */
+.cal-fc .fc-daygrid-day.fc-day-other { background: color-mix(in oklab, var(--color-ink-50) 70%, white); }
+.cal-fc .fc-day-other .fc-daygrid-day-top { opacity: 1; } /* FullCalendar fades it to 30 % */
+.cal-fc .fc-day-other .fc-daygrid-day-number { @apply font-normal text-ink-500; }
+.cal-fc .fc-daygrid-event-harness { margin: 1px 4px; }
+/* at least 24px tall: WCAG 2.2 target size (2.5.8) */
+.cal-fc .msca-ev.fc-daygrid-event {
+  @apply min-h-6 cursor-pointer rounded-md border-0 px-1.5 py-1 transition;
+  background: var(--a-100); color: var(--a-900); box-shadow: inset 3px 0 0 var(--a-500);
+}
+.cal-fc .msca-ev.fc-daygrid-event:hover { background: var(--a-200); }
+.cal-fc .msca-ev.fc-daygrid-event:focus-visible { outline: 2px solid var(--a-600); outline-offset: 1px; }
+.fce { @apply block min-w-0 overflow-hidden text-[12px] leading-[1.3] whitespace-normal; }
+.fce-time { @apply shrink-0 font-bold tabular-nums; color: var(--a-800); }
+.fce-title { @apply font-semibold text-ink-900; }
+.fc-dayGridMonth-view .fce { @apply line-clamp-2; }
+.fce-flag { @apply shrink-0 rounded bg-red-100 px-1 text-[10px] font-bold text-red-700; }
+.is-cancelled .fce-title { @apply text-ink-600 line-through; }
+.fc-dayGridWeek-view .fce { @apply py-0.5; }
+.fc-dayGridWeek-view .fce-time { @apply block; }
+.fc-dayGridWeek-view .fce-title { @apply line-clamp-3; }
+.fce-meta { @apply mt-0.5 line-clamp-2 block text-[11px] text-ink-600; }
+.cal-fc .fc-dayGridWeek-view .fc-daygrid-day-frame { min-height: 24rem; }
+.cal-fc .fc-daygrid-more-link { @apply mx-1 inline-flex min-h-6 items-center rounded-md px-1.5 py-0.5 text-[12px] font-bold text-iris-700 hover:bg-iris-50; }
+.cal-fc .fc-popover { @apply overflow-hidden rounded-2xl border-0 shadow-lift ring-1 ring-ink-900/10; }
+.cal-fc .fc-popover-header { @apply bg-ink-50 px-3 py-2 font-display font-bold; }
+.cal-fc .fc-list { @apply overflow-hidden rounded-2xl border-ink-100; }
+.cal-fc .fc-list-day-cushion { @apply bg-ink-50 px-4 py-2.5 font-display text-[15px] font-bold text-ink-900; }
+.cal-fc .fc-list-day-text { @apply text-ink-900 no-underline first-letter:uppercase; }
+.cal-fc .fc-list-event { @apply cursor-pointer; }
+.cal-fc .fc-list-event:hover td { background: var(--a-50); }
+.cal-fc .fc-list-event td { @apply border-ink-100 py-3 align-middle; }
+.cal-fc .fc-list-event-time { @apply w-36 text-[13px] font-semibold whitespace-nowrap text-ink-700 tabular-nums; }
+.cal-fc .fc-list-event-dot { border-color: var(--a-500); border-width: 6px; border-radius: 6px; }
+.cal-fc .fc-list-event-title a { @apply no-underline; }
+.fcl { @apply flex flex-col gap-0.5; }
+.fcl-type { @apply inline-flex items-center gap-1 text-[11px] font-bold tracking-wide uppercase; color: var(--a-700); }
+.fcl-title { @apply block w-fit rounded font-display text-[15px] leading-snug font-bold text-ink-950 no-underline; }
+.cal-fc a.fcl-title:hover { color: var(--a-800); text-decoration: underline; }
+.cal-fc a.fcl-title:focus-visible { outline: 3px solid var(--a-600); outline-offset: 3px; }
+.cal-fc .fc-list-event:focus-within td { background: var(--a-50); }
+.cal-fc .fc-more-link:focus-visible, .cal-fc .fc-daygrid-day-number:focus-visible, .cal-fc .fc-popover-close:focus-visible { outline: 3px solid var(--color-ocean-500); outline-offset: 2px; }
+.cal-fc .fc-popover-close { @apply grid size-8 place-items-center rounded-full opacity-80 hover:bg-ink-100; }
+.fcl-meta { @apply text-[13px] text-ink-500; }
+.fc-empty { @apply p-6 text-ink-500; }
+@media (max-width: 639px) {
+  .cal-fc .fc-list-event-time { @apply w-24 text-xs whitespace-normal; }
+  .cal-fc .fc-list-event-graphic { @apply px-1; }
+}
+
+/* ======================================================================= /events/<slug>/ and /events/ */
+@layer components {
+  /* the bar itself is the sticky element (its parent is the whole page body) */
+  .ev-jump-bar { @apply sticky top-[6.25rem] z-30 border-b border-ink-900/5 bg-white/90 backdrop-blur-xl lg:relative lg:top-auto lg:z-10 lg:-mt-10 lg:border-0 lg:bg-transparent lg:backdrop-blur-none; }
+  .ev-jump { @apply flex gap-2 overflow-x-auto py-2.5 lg:flex-wrap lg:overflow-visible; }
+  @media (min-width: 1024px) {
+    .ev-jump { @apply rounded-3xl bg-white/95 p-5 ring-1 ring-ink-900/5; box-shadow: var(--shadow-lift); }
+  }
+  .ev-jump .cal-quick__btn { @apply min-h-10 px-3 py-1.5 text-[13px] lg:min-h-11 lg:px-3.5 lg:py-2 lg:text-sm; }
+  .ev-hero__bg {
+    background:
+      radial-gradient(60rem 30rem at 0% -10%, var(--a-200), transparent 60%),
+      radial-gradient(50rem 28rem at 100% 10%, color-mix(in oklab, var(--a-300) 55%, transparent), transparent 62%),
+      radial-gradient(40rem 22rem at 60% 110%, color-mix(in oklab, var(--color-sun-100) 80%, transparent), transparent 60%),
+      linear-gradient(180deg, var(--a-50), white);
+  }
+  .ev-type--hero { @apply px-3 py-1.5 text-xs; }
+  @media (max-width: 639px) { .ev-hero-btn { @apply px-4 py-2.5 text-sm; } }
+  .ev-hero__flyer {
+    @apply relative overflow-hidden rounded-[1.75rem] bg-white p-2 ring-1 ring-ink-900/5 transition duration-500 lg:rotate-[1.5deg] lg:hover:rotate-0;
+    box-shadow: 0 30px 60px -28px color-mix(in oklab, var(--a-700) 60%, transparent), var(--shadow-lift);
+  }
+  .ev-hero__flyer img { @apply rounded-[1.35rem]; }
+  .ev-hero__art {
+    @apply relative grid aspect-[4/5] place-items-center overflow-hidden rounded-[2rem] text-white lg:rotate-[1.5deg];
+    background:
+      radial-gradient(circle at 18% 14%, rgb(255 255 255 / 0.28) 0 16%, transparent 17%),
+      radial-gradient(circle at 88% 78%, rgb(255 255 255 / 0.16) 0 22%, transparent 23%),
+      radial-gradient(circle at 70% 20%, color-mix(in oklab, var(--color-sun-300) 45%, transparent) 0 10%, transparent 11%),
+      linear-gradient(150deg, var(--a-400), var(--a-600) 55%, var(--color-iris-600));
+    box-shadow: 0 30px 60px -28px color-mix(in oklab, var(--a-700) 65%, transparent);
+  }
+  .ev-hero__art-icon { @apply grid size-36 place-items-center rounded-[2rem] bg-white/15 ring-1 ring-white/30 backdrop-blur xl:size-44; }
+  .ended-banner { @apply inline-flex max-w-full items-center gap-3 rounded-2xl bg-ink-900/90 px-4 py-3 font-semibold text-white shadow-soft; }
+  .ended-banner[hidden] { display: none; }
+  .rel-badge--lg { @apply px-3 py-1 text-sm; }
+  .date-row { @apply -mx-2 flex items-center gap-3 rounded-2xl p-2 transition hover:bg-ink-50; }
+  .date-row__date { @apply block text-sm font-semibold text-ink-900; }
+  .date-row__time { @apply block text-xs text-ink-500; }
+  .date-row.is-cancelled .date-row__date { @apply text-ink-500 line-through; }
+  .who-link { @apply flex items-center gap-3 rounded-2xl p-3 ring-1 ring-ink-100 transition; }
+  a.who-link[href]:hover { background: var(--a-50); box-shadow: inset 0 0 0 1px var(--a-200); }
+  .who-link__icon { @apply grid size-9 shrink-0 place-items-center rounded-xl; background: var(--a-100); color: var(--a-700); }
+  .who-link__role { @apply block text-[11px] font-bold tracking-wide text-ink-500 uppercase; }
+  .who-link__name { @apply block font-semibold text-ink-900; }
+  .doc-tile { @apply flex h-full items-center gap-4 rounded-2xl bg-white p-3 ring-1 ring-ink-900/10 transition hover:shadow-soft; }
+  .doc-tile__thumb { @apply h-16 w-12 shrink-0 rounded-lg bg-ink-50 object-cover object-top ring-1 ring-ink-900/10; }
+  .doc-tile__icon { @apply grid h-16 w-12 shrink-0 place-items-center rounded-lg bg-coral-50 text-coral-600; }
+  /* free text from the Google Calendar: a long unbroken token (a line of dashes, a file name, a long link) wraps
+     instead of widening the page on phones */
+  .about-text { @apply text-[17px] leading-relaxed text-ink-700; overflow-wrap: anywhere; }
+  .about-text p + p { @apply mt-4; }
+  .about-text a { @apply font-semibold break-words text-ocean-700 underline decoration-ocean-200 underline-offset-2 hover:text-iris-700; }
+  .countdown-card {
+    @apply rounded-3xl p-6 text-white;
+    background: linear-gradient(145deg, var(--a-700), var(--a-800) 60%, var(--color-iris-800));
+    box-shadow: 0 24px 48px -26px var(--a-700);
+  }
+  .ev-grid--4 { @apply grid gap-4 md:grid-cols-2 2xl:grid-cols-4; }
+  .ev-grid--rel { @apply grid grid-cols-1 gap-5 min-[480px]:grid-cols-2 xl:grid-cols-4; }
+  .sub-card { @apply flex items-center gap-4 rounded-3xl p-5; background: linear-gradient(135deg, var(--a-50), white); box-shadow: inset 0 0 0 1px var(--a-100); }
+  .series-card { @apply flex h-full flex-col gap-1 rounded-3xl bg-white p-5 ring-1 ring-ink-900/5 shadow-soft transition duration-300; }
+  .series-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lift); }
+  .series-card__title { @apply block font-display text-lg leading-snug font-bold text-ink-950; }
+  .series-card:hover .series-card__title { color: var(--a-700); }
+  .series-card__rule { @apply mt-1 flex items-center gap-1.5 text-sm font-semibold; color: var(--a-700); }
+  .series-card__meta { @apply flex items-center gap-1.5 text-sm text-ink-600; }
+  .series-card__meta > svg { color: var(--a-500); }
+  .archive-year { @apply rounded-3xl bg-white p-4 ring-1 ring-ink-900/5 shadow-soft sm:p-5; }
+  .archive-year__head { @apply flex cursor-pointer list-none flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl px-1 py-1; }
+  .archive-year__head::-webkit-details-marker { display: none; }
+  .archive-year__thumbs { @apply ml-auto hidden -space-x-3 sm:flex; }
+  .archive-year__thumbs > img { @apply h-12 w-9 rounded-md object-cover object-top shadow-soft ring-2 ring-white; }
+  .archive-year__chev { @apply grid size-10 place-items-center rounded-full bg-ink-50 text-ink-600 transition group-open:rotate-180 max-sm:ml-auto; }
+  .past-row { @apply flex h-full items-center gap-3 rounded-2xl bg-white p-3 ring-1 ring-ink-900/5 transition hover:shadow-soft; }
+  .past-row:hover .past-row__title { color: var(--a-700); }
+  .past-row__title { @apply line-clamp-2 leading-snug font-semibold break-words text-ink-900; }
+  .past-row__meta { @apply mt-1 flex min-w-0 items-center gap-2 text-xs text-ink-500; }
+  .past-row__thumb { @apply h-14 w-11 shrink-0 rounded-lg object-cover object-top ring-1 ring-ink-900/10; }
+}

@@ -1,0 +1,101 @@
+---
+pagination: { data: langs, size: 1, alias: lang, addAllPagesToCollections: true }
+permalink: "{{ lang.prefix }}/resources/"
+layout: page.njk
+title_key: resources.title
+description_key: resources.description
+eyebrow_key: resources.eyebrow
+lead_key: resources.lead
+heroIcon: book-open
+accent: copper
+bare: true
+scripts: ["/assets/js/content.js"]
+---
+{%- from "macros/content.njk" import officeCard, resourceCard, pageNav with context -%}
+{%- set L = lang -%}
+{%- set groups = resources.resourcesGroups or [] -%}
+{%- set navItems = [] -%}
+{%- set total = (groups | pluck('items') | flatten | length) + (offices.list or []).length -%}
+{%- for g in groups %}{% set _n = navItems.push({ id: "r-" + g.key, label: ("resources.group." + g.key + ".title") | t(L), icon: g.icon, color: g.color }) %}
+  {%- if loop.index == 1 %}{% set _n = navItems.push({ id: "offices", label: "resources.offices_nav" | t(L), icon: "phone", color: "sea" }) %}{% endif %}
+{%- endfor %}
+
+<div class="wrap py-10 lg:py-14" x-data="resourceFilter">
+  <div class="grid grid-cols-1 gap-10 xl:grid-cols-[16rem_minmax(0,1fr)] 2xl:grid-cols-[18rem_minmax(0,1fr)] 2xl:gap-14">
+    {#- side navigation (wide screens) -#}
+    <aside class="hidden xl:block">
+      {{ pageNav({ lang: L, label: "content.on_this_page" | t(L), items: navItems, variant: "side" }) }}
+    </aside>
+
+    <div class="min-w-0">
+      {#- search + chips -#}
+      <div class="mb-10 rounded-3xl bg-white p-4 shadow-soft ring-1 ring-ink-900/5 sm:p-5">
+        <div class="flex flex-col gap-3 md:flex-row md:items-center">
+          <label for="resource-q" class="sr-only">{{ "resources.filter_label" | t(L) }}</label>
+          <div class="relative flex-1">
+            <span class="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-ink-400">{% icon "search", "size-5" %}</span>
+            <input id="resource-q" type="search" x-model.debounce.150ms="q" class="field pl-12" placeholder="{{ 'resources.filter_placeholder' | t(L) }}" autocomplete="off">
+          </div>
+          <p class="shrink-0 text-sm text-ink-500" aria-live="polite"><span x-text="count">{{ total }}</span> {{ "resources.filter_count" | t(L) }}</p>
+        </div>
+        <div class="mt-4 xl:hidden">
+          {{ pageNav({ lang: L, label: "content.on_this_page" | t(L), items: navItems }) }}
+        </div>
+      </div>
+
+      <div class="space-y-16 lg:space-y-20">
+        {%- for g in groups %}
+        <section id="r-{{ g.key }}" aria-labelledby="r-{{ g.key }}-title" class="scroll-mt-28" data-resource-group style="{{ g.color | accent }}">
+          <div class="mb-6 flex items-start gap-4">
+            <span class="icon-tile hidden size-14 rounded-2xl sm:grid">{% icon g.icon, "size-7" %}</span>
+            <div class="max-w-3xl">
+              <h2 id="r-{{ g.key }}-title" class="font-display text-2xl font-bold tracking-tight text-ink-950 sm:text-3xl">{{ ("resources.group." + g.key + ".title") | t(L) }}</h2>
+              {%- set gl = "resources.group." + g.key + ".lead" %}{% if gl | hasText %}<p class="mt-1.5 text-[17px] leading-relaxed text-ink-600 text-pretty">{{ gl | t(L) }}</p>{% endif %}
+            </div>
+          </div>
+          <ul class="rail sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-5 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5">
+            {%- for r in g.items %}
+            <li data-resource-wrap class="w-[82%] shrink-0 sm:w-auto">{{ resourceCard({ r: r, lang: L, index: loop.index0 }) }}</li>
+            {%- endfor %}
+          </ul>
+        </section>
+
+        {%- if loop.index == 1 %}
+        {#- Central offices: full cards -#}
+        <section id="offices" aria-labelledby="offices-title" class="scroll-mt-28" data-resource-group>
+          <div class="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-sea-50 via-white to-ocean-50 px-4 py-6 ring-1 ring-sea-200/60 sm:p-8 2xl:p-10">
+            <div class="mb-8 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+              <div class="flex items-start gap-4">
+                <span class="icon-tile hidden size-14 rounded-2xl sm:grid" style="{{ 'sea' | accent }}">{% icon "phone", "size-7" %}</span>
+                <div class="max-w-3xl">
+                  <h2 id="offices-title" class="font-display text-2xl font-bold tracking-tight text-ink-950 sm:text-3xl">{{ "resources.offices_title" | t(L) }}</h2>
+                  <p class="mt-1.5 text-[17px] leading-relaxed text-ink-600 text-pretty">{{ "resources.offices_lead" | t(L) }}</p>
+                </div>
+              </div>
+              <a href="{{ '/newcomers/' | lurl(L) }}#call" class="btn btn-white shrink-0">{% icon "heart-handshake", "size-4" %}{{ "resources.offices_newcomers" | t(L) }}</a>
+            </div>
+            <ul class="rail sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-5 sm:overflow-visible sm:px-0 sm:pb-0 2xl:grid-cols-3 3xl:grid-cols-4">
+              {%- for f in offices.list or [] %}
+              <li data-resource-wrap class="w-[86%] shrink-0 sm:w-auto">
+                <div data-resource data-search="{{ (f.name + ' ' + (f.name_es or '') + ' ' + (f.serves_en or '') + ' ' + (f.serves_es or '') + ' ' + (f.address or '') + ' ' + (('offices.region.' + f.region) | t(L)) + ' central office intergroup oficina intergrupo') | lower }}" class="h-full">
+                  {{ officeCard({ office: f, lang: L, showRegion: true }) }}
+                </div>
+              </li>
+              {%- endfor %}
+            </ul>
+            <p class="mt-8 flex items-start gap-2 text-sm leading-relaxed text-ink-500">{% icon "info", "mt-0.5 size-4 shrink-0" %}{{ "resources.offices_note" | t(L) }}</p>
+          </div>
+        </section>
+        {%- endif %}
+        {%- endfor %}
+
+        <div x-cloak x-show="count === 0" class="rounded-3xl bg-white p-10 text-center shadow-soft ring-1 ring-ink-900/5">
+          <p class="font-display text-lg font-bold text-ink-900">{{ "ui.no_results" | t(L) }}</p>
+          <button type="button" class="btn btn-ghost mt-4" @click="q = ''">{{ "ui.clear" | t(L) }}</button>
+        </div>
+      </div>
+
+      <p class="mt-16 rounded-3xl bg-ink-50 p-6 text-sm leading-relaxed text-ink-600">{% icon "info", "mr-1 inline size-4 align-[-3px] text-ink-400" %}{{ "resources.disclaimer" | t(L) }}</p>
+    </div>
+  </div>
+</div>

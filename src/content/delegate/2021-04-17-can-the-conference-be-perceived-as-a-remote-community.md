@@ -1,0 +1,30 @@
+---
+title: "Can the Conference Be Perceived as a Remote Community?"
+date: 2021-04-17
+panel: 70
+author_en: "Ed L., Panel 70 Delegate"
+author_es: "Ed L., Delegado del Panel 70"
+kind: conference
+summary: "'Can the Conference Be Perceived as a Remote Community?' - essay on accessibility of general servants in the virtual era."
+words: 941
+old_url: "https://msca09aa.org/2021/04/04-17-2021-can-the-conference-be-perceived-as-a-remote-community/"
+---
+Having served as a GSR in 2006-07 in my second year sober and now in my second year as a Panel 70 delegate in 2021, I’ve kept coming back and more has been revealed about the nature of General Servants. As a new GSR actively participating in the Area, delegates and trustees seemed remote and inaccessible, and I never knew nontrustee directors existed. Virtual meetings have definitely made our General Servants more accessible, and I’ve seen trustees at District Zoom meetings with as few as 15 people. Hopefully this accessibility will persist after the COVID apocalypse!
+
+I’ve often thought that our statement, “I am *responsible* when anyone, anywhere reaches out” might better reflect A.A.’s culture and function if it read “I am *available* when anyone, anywhere reaches out;” after all, I’m not even responsible for my own sobriety. Difficult questions: Does our focus and self-identification as the “responsible ones” in A.A. make us less available (i.e., remote) to the still suffering alcoholic? Does our love for one another and compassionate support on the lowermost, and arguably most stressful rungs of the General Service ladder, lead to the perception of privilege and exclusion to new GSRs who are on the upper rungs of the service ladder just beginning their descent?
+
+As a GSR, I noted I was prohibited from delegates-only and past delegates-only luncheons at Regional Service Assemblies and Regional Forums. At Service Assembly round tables for delegates and alternate delegates, GSRs and District members interested in those positions have been asked to leave for lack of those titles. Even when the assembled masses attended General Sharing Sessions and evening banquets, the “lower echelons” of service, our delegates and trustees, occupied tables at the front of the auditorium where seats and tables were unavailable to most attendees, effectively reserved.
+
+Hard questions: Do General Servants sitting at the front of the room, as often as not on elevated stages, promote attraction to the alcoholic too shaky to drink from a coffee cup? If your answer is, “Such a new person would never be at a Service Assembly,” are you shocked by that answer? Is suiting up and showing up, where pearls are suggested for women and ties are required for the men, sending A.A.’s inherently compassionate message to the person who is still self-conscious about their poverty-induced inability to suit up? In those early years, I could not imagine any Conference members as gutter drunks, though I’ve both slept in and drank from gutters.
+
+If you haven’t read the book or seen the movie, “The Hunger Games” offers a cautionary metaphor of how Conference members could be perceived, but for compassion and availability to A.A. members just entering General Service and most importantly to the still-suffering alcoholic. In the metaphor, there is a minority class of polished people who oversee a majority class of impoverished people who are struggling just to stay alive. Among the upper echelon, Woody Harrelson plays the drunk who serves as the liaison, the hand of hope extended to several of the still-suffering masses who are forced to compete and even kill one another. Ironically, like our GSRs, those masses occupy Districts! Harrelson is my hero; serving in a niche that as a Conference member I hope I’ve occupied.
+
+At 2020 PRAASA, I asked a young alternate DCM named Isaack at the last minute to fill a vacancy to read to a thousand people from the podium, postponing his and his sponsor’s departure from Tucson to California by three hours. (I expect that only the three of us knew what a thrill that was for him.) I then noticed a new GSR, helpless and alone, as circles of friends gathered round to say goodbye for another year. When I asked him about his experience, he asked why there were no other GSRs. That’s when it occurred to me, and I shared with him, that everyone in the room had likely started as a GSR; we kept coming back, and were now the orchard of General Servants who had ripened into committee members, DCMs, delegates, and trustees.
+
+It would seem to me that in most A.A. meetings, General Service is considered an “outside issue,” dismissed as the “politics of A.A.,” occupied by the “right type of person,” where the word “delegate” has no meaning. Let us be sure that we, the Conference, are never perceived as a Remote Community, somehow elevated above the ranks of the still-rank alcoholic. I’m convinced that Compassion, invitations to participate (i.e., Preconference workshops), transparency, and being available are the ways to dispel perceived privilege. Compassion has transmitted to me the best A.A. has to offer. So, Am I responsible? Yes. Am I available? Hell yes!
+
+(P.S. Conference members need one another in such a way that relying on each other, leaning on each other, particularly within the Pacific Region, is as or more important than any of the other “crutches” that get us through Conference … chocolate, coffee, candles, and silly socks… From inside the Conference, the Hunger Games metaphor doesn’t exist. But I want to be sure that from outside the 135 members of the Conference – and here, I’m speaking directly to GSRs – please know that whereas we may be pretty in our ties and pearls, far more than that, our care, concern, and dedication for Alcoholics Anonymous makes all of us absolutely beautiful on the inside! And, I sincerely hope that each of you who wants to serve as a delegate gets to have that experience.)
+
+__________
+
+[1] It turns out that this was one of three – out of 19 submissions – essays chosen to be presented at the Conference

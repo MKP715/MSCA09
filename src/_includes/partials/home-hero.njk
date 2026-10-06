@@ -1,0 +1,117 @@
+{#-
+  Home page banner: rotating California-coast photos (data/hero.csv), navy scrim, the Panel logo,
+  headline, two calls to action, the next Area meeting with a countdown, and animated waves.
+  Only the first photo loads with the page; each of the others is added just before it fades in
+  (never for people who turn off animations or ask their browser to save data).
+  Phones get a tall crop of each photo (homeHeroPicture in src/_lib/plugins/home.js).
+-#}
+{%- from "partials/home-next-meeting.njk" import nextMeetingCard, nextMeetingFallback with context -%}
+{%- set L = lang -%}
+{%- set slides = hero.slides if (hero and hero.slides) else [] -%}
+{%- set nm = calendar.nextAreaMeeting if calendar else null -%}
+{%- set credits = [] -%}
+{%- for s in slides -%}
+  {%- set _ = credits.push({ text: s | loc("credit", L), source: s.source_url, license: s.license, licenseUrl: s.license_url }) -%}
+{%- endfor -%}
+{#- Motion (WCAG 2.2.2): the banner's Pause button also pauses every animation on the site (MSCA.setMotionPaused,
+    the same switch as the footer's "Pause animations", remembered on this device), which stops the events
+    carousel too. The slideshow starts paused when animations are paused, and follows the footer switch. -#}
+<section class="home-hero relative isolate overflow-hidden bg-ocean-950 text-white" aria-labelledby="home-title"
+         x-data="homeHero({{ credits | json }})" :class="paused && 'is-still'" @keydown.escape="pause()"
+         x-init="window.MSCA && MSCA.motionPaused && pause()"
+         @msca:motion.window="$event.detail.paused ? pause() : (paused && slides.length && toggle())">
+  {#- photos -#}
+  <div class="hm-hero-slides absolute inset-0 -z-20" x-ref="slides">
+    {%- for s in slides %}
+    {%- if loop.first %}
+    <div class="hm-hero-slide is-active" style="--pos-d: {{ s.posDesktop }}; --pos-m: {{ s.posMobile }};">
+      {% homeHeroPicture s, (s | loc("alt", L)), "hm-hero-img", "eager" %}
+    </div>
+    {%- else %}
+    <template data-hero-slide>
+      <div class="hm-hero-slide" style="--pos-d: {{ s.posDesktop }}; --pos-m: {{ s.posMobile }};">
+        {% homeHeroPicture s, (s | loc("alt", L)), "hm-hero-img", "lazy" %}
+      </div>
+    </template>
+    {%- endif %}
+    {%- endfor %}
+  </div>
+  <div class="hm-hero-scrim absolute inset-0 -z-10" aria-hidden="true"></div>
+  <div class="hm-hero-glow absolute inset-0 -z-10" aria-hidden="true"></div>
+
+  <div class="wrap relative">
+    <div class="hm-hero-grid">
+      {#- logo -#}
+      <div class="hm-hero-logo-wrap">
+        <picture>
+          <source type="image/webp" srcset="/assets/img/logo/logo-{{ L.code }}-256.webp 256w, /assets/img/logo/logo-{{ L.code }}-384.webp 384w, /assets/img/logo/logo-{{ L.code }}-512.webp 512w" sizes="(min-width: 1536px) 300px, (min-width: 1024px) 230px, 140px">
+          <img src="/assets/img/logo/logo-{{ L.code }}-384.png" alt="{{ 'site.logo_alt' | t(L) }}" width="384" height="384" fetchpriority="high" class="hm-hero-logo">
+        </picture>
+      </div>
+
+      {#- words -#}
+      <div class="hm-hero-copy">
+        <p class="hm-hero-pill">
+          <span class="relative flex size-2" aria-hidden="true"><span class="absolute inline-flex size-full animate-ping rounded-full bg-sun-300 opacity-75 [animation-iteration-count:3]"></span><span class="relative inline-flex size-2 rounded-full bg-sun-300"></span></span>
+          {{ "header.panel" | t(L, { panel: site.panel, years: site.panel_years }) }}
+        </p>
+        <h1 id="home-title" class="hm-hero-title">
+          {%- set tparts = ("home.hero.title" | t(L)).split("{hl}") -%}
+          {%- if tparts[0] | trim %}<span class="block">{{ tparts[0] | trim }}</span> {% endif -%}
+          <span class="hm-hero-title-accent">{{ "home.hero.title_highlight" | t(L) }}</span>{{ " " }}
+          {%- if tparts[1] and (tparts[1] | trim) %}<span class="block">{{ tparts[1] | trim }}</span> {% endif -%}
+          <span class="hm-hero-title-sub">{{ "site.of_aa" | t(L) }}</span>
+        </h1>
+        <p class="hm-hero-tagline">{{ "home.hero.tagline" | t(L) }}</p>
+        <div class="hm-hero-ctas">
+          <a href="{{ '/newcomers/' | lurl(L) }}" class="btn btn-primary btn-lg hm-hero-cta">{% icon "heart-handshake", "size-5" %}{{ "home.hero.cta_meeting" | t(L) }}</a>
+          <a href="{{ '/calendar/' | lurl(L) }}" class="btn btn-glass btn-lg hm-hero-cta">{% icon "calendar-days", "size-5" %}{{ "home.hero.cta_calendar" | t(L) }}</a>
+        </div>
+        <ul class="hm-hero-facts" role="list">
+          <li>{% icon "calendar-range", "size-4" %}{{ "home.hero.fact_meetings" | t(L) }}</li>
+          <li>{% icon "languages", "size-4" %}{{ "home.hero.fact_languages" | t(L) }}</li>
+        </ul>
+      </div>
+
+      {#- next Area meeting (wide screens; phones and tablets get it below the banner) -#}
+      <div class="hm-hero-aside">
+        {%- if nm %}{{ nextMeetingCard({ occ: nm, lang: L, variant: "glass" }) }}{% else %}{{ nextMeetingFallback({ lang: L, variant: "glass" }) }}{% endif %}
+      </div>
+    </div>
+  </div>
+
+  {#- photo credit + slideshow controls -#}
+  {%- if slides.length %}
+  <div class="hm-hero-credit">
+    {%- if slides.length > 1 %}
+    <div class="hm-hero-controls" x-cloak x-show="rotating">
+      <button type="button" class="hm-hero-ctrl" @click="toggle(); window.MSCA && MSCA.setMotionPaused && MSCA.setMotionPaused(paused)" :aria-pressed="paused.toString()" aria-pressed="false"
+              aria-label="{{ 'home.hero.pause' | t(L) }}" :title="paused ? {{ ('home.hero.play' | t(L)) | json }} : {{ ('home.hero.pause' | t(L)) | json }}">
+        <span x-show="!paused">{% icon "pause", "size-3.5" %}</span><span x-show="paused" x-cloak>{% icon "play", "size-3.5" %}</span>
+      </button>
+      <span class="flex items-center gap-1.5" aria-hidden="true">
+        <template x-for="(c, n) in credits" :key="n"><span class="hm-hero-dot" :class="n === i && 'is-on'"></span></template>
+      </span>
+    </div>
+    {%- endif %}
+    <p class="min-w-0 truncate">
+      <a :href="credits[i].source" href="{{ credits[0].source }}" target="_blank" rel="noopener" class="hover:underline" x-text="credits[i].text">{{ credits[0].text }}</a>
+      <span aria-hidden="true">·</span>
+      <a :href="credits[i].licenseUrl" href="{{ credits[0].licenseUrl }}" target="_blank" rel="noopener license" class="hover:underline" x-text="credits[i].license">{{ credits[0].license }}</a>
+    </p>
+  </div>
+  {%- endif %}
+
+  {#- animated waves in the logo's colours -#}
+  <div class="hm-hero-waves" aria-hidden="true">
+    <svg class="hm-hero-wave hm-hero-wave--1" viewBox="0 0 2880 100" preserveAspectRatio="none"><path fill="currentColor" d="M0 40 C 240 0, 480 0, 720 40 S 1200 80, 1440 40 S 1920 0, 2160 40 S 2640 80, 2880 40 V 100 H 0 Z"/></svg>
+    <svg class="hm-hero-wave hm-hero-wave--2" viewBox="0 0 2880 100" preserveAspectRatio="none"><path fill="currentColor" d="M0 52 C 240 22, 480 22, 720 52 S 1200 82, 1440 52 S 1920 22, 2160 52 S 2640 82, 2880 52 V 100 H 0 Z"/></svg>
+    <svg class="hm-hero-wave hm-hero-wave--3" viewBox="0 0 2880 100" preserveAspectRatio="none"><path fill="currentColor" d="M0 62 C 240 40, 480 40, 720 62 S 1200 84, 1440 62 S 1920 40, 2160 62 S 2640 84, 2880 62 V 100 H 0 Z"/></svg>
+    <svg class="hm-hero-wave hm-hero-wave--front" viewBox="0 0 2880 100" preserveAspectRatio="none"><path fill="currentColor" d="M0 74 C 240 56, 480 56, 720 74 S 1200 92, 1440 74 S 1920 56, 2160 74 S 2640 92, 2880 74 V 100 H 0 Z"/></svg>
+  </div>
+</section>
+
+{#- phones and tablets: the next Area meeting sits just under the banner -#}
+<div class="home-next-mobile wrap relative z-10 -mt-4 xl:hidden">
+  {%- if nm %}{{ nextMeetingCard({ occ: nm, lang: L, variant: "light" }) }}{% else %}{{ nextMeetingFallback({ lang: L, variant: "light" }) }}{% endif %}
+</div>

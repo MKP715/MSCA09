@@ -1,0 +1,46 @@
+path,category,collection,include,notes
+"# Used only by the optional automatic Drive listing (scripts/drive-index.mjs, needs GOOGLE_API_KEY): files in the Area's Drive folder that the document index (data/documents/*.csv) does not list yet. path = folder below MSCA09AA/ — the longest matching path wins.",,,,
+# category = the shelf for files found in that folder; collection = Current | Archive; include = no keeps the whole folder out of the listing (never switch archive folders to yes: they hold originals kept off the site). Rows in data/documents/held.csv always win.,,,,
+,,,yes,The Area's shared Drive folder (MSCA09AA). Needed so the listing can start; files at the top level are ignored by the site.
+docs,Misc,Current,yes,Everything the public site may link to lives under docs/.
+docs/minutes,Minutes,Current,yes,"Approved Assembly (ASA), Area Service Committee (ASC) and Board minutes, one sub-folder per year."
+docs/agendas,Agendas,Current,yes,ASC / ASA agendas and meeting packets.
+docs/motions,Motions,Current,yes,Motions and motion backgrounds.
+docs/reports,Reports,Current,yes,"Committee, district and officer reports, one sub-folder per year."
+docs/reports/Delegate,Delegate,Current,yes,Delegate's reports and share-backs.
+docs/reports/Treasurer AP,Finances,Current,yes,"Treasurer (A/P) reports, statements of activity, budget vs. actual."
+docs/reports/Treasurer AR,Finances,Current,yes,Treasurer (A/R) reports and group-contribution statements.
+docs/finances,Finances,Current,yes,"Budgets, audits and other finance documents."
+docs/guidelines,Guidelines,Current,yes,Current Area Guidelines and Bylaws.
+docs/Committee Guidelines,Guidelines,Current,yes,Current guidelines of each Area committee.
+docs/Committee Guidelines/OLD,Guidelines,Archive,no,Superseded copies; not listed.
+docs/conference,Conference,Current,yes,General Service Conference material for the current panel (never the confidential background).
+docs/gso,GSO,Current,yes,"Letters, memos and reports from GSO, AAWS and AA Grapevine."
+docs/workbooks,Workbooks,Current,yes,"Area workbook, DCMC and committee-chair tool kits, Mock Conference workbooks."
+docs/service,Service,Current,yes,"Orientations, sharing sessions and other service material."
+docs/forms,Forms,Current,yes,"Budget request, expense reimbursement and other forms."
+docs/calendars,Calendar,Current,yes,Approved Area calendars.
+docs/contributions,Contributions,Current,yes,7th Tradition material.
+docs/flyers,Flyers,Current,no,"Contributions flyer, Zelle QR and calendar flyer are listed by hand in data/documents/current.csv."
+docs/events,Flyers,Current,no,Event flyers belong to the calendar (they are linked from calendar entries).
+docs/meetings,Flyers,Current,no,Committee meeting flyers shown on committee pages.
+docs/archive,Misc,Archive,no,The archive is fully listed in data/documents/ (each file checked for anonymity); listing the folder automatically would bring back files held for review.
+docs/archive/minutes,Minutes,Archive,no,
+docs/archive/conference,Conference,Archive,no,
+docs/archive/newsletters,Newsletters,Archive,no,
+docs/archive/finances,Finances,Archive,no,
+docs/archive/reports,Reports,Archive,no,
+docs/archive/guidelines,Guidelines,Archive,no,
+docs/archive/workbooks,Workbooks,Archive,no,
+docs/archive/calendars,Calendar,Archive,no,
+docs/archive/forms,Forms,Archive,no,
+docs/archive/delegate,Delegate,Archive,no,
+docs/archive/praasa,PRAASA,Archive,no,
+docs/archive/archives,Archives,Archive,no,
+docs/archive/flyers,Flyers,Archive,no,
+docs/archive/districts,District,Archive,no,
+docs/archive/misc,Misc,Archive,no,
+docs/archive/motions,Motions,Archive,no,
+docs/archive/gso,GSO,Archive,no,
+docs/archive/service,Service,Archive,no,
+docs/archive/pages,Delegate,Archive,no,PDF copies of archived web pages (delegate sharing sessions and similar).

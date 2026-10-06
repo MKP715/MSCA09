@@ -1,0 +1,130 @@
+/* content page styles — About, Policy, Newcomers, Resources, Contribute, 404.
+   Plain CSS + Tailwind @apply. Colours come from the --a-* accent variables
+   set by the `accent` filter on each element. */
+
+/* ---------------------------------------------------------------- tap-to-call */
+/* logo red deepened to coral 700 behind the white number and label (5:1 or better), warming to orange on the right */
+.call-btn {
+  @apply flex min-h-14 w-full items-center gap-3 rounded-2xl px-4 py-3 text-white transition duration-200 hover:-translate-y-0.5 focus-visible:outline-offset-4;
+  background: linear-gradient(120deg, var(--color-coral-700), color-mix(in oklab, var(--color-coral-700) 65%, var(--color-sun-700)));
+  box-shadow: 0 12px 28px -14px var(--color-coral-600);
+}
+.call-btn:hover { filter: brightness(1.05); }
+.call-btn-icon {
+  @apply grid size-10 shrink-0 place-items-center rounded-full bg-white/20 ring-1 ring-white/40;
+}
+.call-btn-soft {
+  @apply flex min-h-12 items-center gap-3 rounded-2xl bg-white px-4 py-2.5 text-ink-900 shadow-soft ring-1 ring-ink-900/5 transition hover:-translate-y-0.5 hover:shadow-lift;
+}
+
+/* Floating "call" shortcut on phones (sits above the bottom tab bar). */
+.call-fab {
+  @apply fixed right-4 z-30 inline-flex items-center gap-2 rounded-full px-5 py-3.5 text-sm font-bold text-white shadow-lift transition duration-300 lg:hidden;
+  bottom: calc(5rem + env(safe-area-inset-bottom));
+  background: linear-gradient(120deg, var(--color-coral-700), color-mix(in oklab, var(--color-coral-600) 50%, var(--color-coral-700)));
+}
+.call-fab.is-hidden { @apply pointer-events-none translate-y-6 opacity-0; }
+
+/* ---------------------------------------------------------------- in-page navigation */
+.page-nav-side {
+  @apply sticky top-32 hidden max-h-[calc(100dvh-9rem)] overflow-y-auto pr-2 xl:block;
+}
+.page-nav-link {
+  @apply flex items-center gap-3 rounded-2xl px-3 py-2 text-[15px] font-medium text-ink-600 transition hover:bg-[var(--a-50)] hover:text-ink-950;
+}
+.page-nav-dot {
+  @apply grid size-8 shrink-0 place-items-center rounded-xl bg-ink-50 text-ink-400 transition;
+}
+.page-nav-link.is-active { @apply bg-[var(--a-50)] font-semibold text-ink-950; }
+.page-nav-link.is-active .page-nav-dot,
+.page-nav-link:hover .page-nav-dot {
+  background: var(--a-500);
+  color: white;
+}
+.chip-link {
+  @apply inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full bg-white px-4 text-sm font-semibold whitespace-nowrap text-ink-800 shadow-soft ring-1 ring-ink-900/5 transition hover:-translate-y-0.5;
+}
+.chip-link svg { color: var(--a-600); }
+
+/* ---------------------------------------------------------------- FAQ accordion */
+.faq-item > summary::-webkit-details-marker { display: none; }
+.faq-item > summary::marker { content: ""; }
+.faq-item[open] { @apply ring-[var(--a-200)]; }
+.faq-item[open] .faq-chevron {
+  background: var(--a-500);
+  color: white;
+  transform: rotate(45deg);
+}
+.faq-item > summary:hover .faq-chevron { background: var(--a-100); color: var(--a-700); }
+.faq-item[open] > summary:hover .faq-chevron { background: var(--a-600); color: white; }
+
+/* ---------------------------------------------------------------- filter chips */
+.filter-chip {
+  @apply inline-flex min-h-11 items-center gap-2 rounded-full px-4 text-sm font-semibold whitespace-nowrap ring-1 transition;
+}
+.filter-chip[aria-pressed="false"] { @apply bg-white text-ink-700 ring-ink-200 hover:bg-ink-50; }
+.filter-chip[aria-pressed="true"] { @apply bg-ink-900 text-white ring-ink-900; }
+
+/* ---------------------------------------------------------------- inverted triangle (About) */
+.tri-band {
+  @apply relative mx-auto flex items-center justify-center rounded-2xl px-4 py-3 text-center font-display font-bold text-white shadow-soft;
+  background: linear-gradient(120deg, var(--a-700), var(--a-800));
+}
+
+/* ---------------------------------------------------------------- year grid (About) */
+.month-tile {
+  @apply relative flex min-h-28 flex-col justify-between overflow-hidden rounded-2xl p-3.5 ring-1 ring-ink-900/5 transition hover:-translate-y-0.5;
+  background: linear-gradient(160deg, var(--a-50), white 70%);
+}
+.month-tile[data-big="1"] {
+  background: linear-gradient(150deg, var(--a-700), var(--a-800));
+  @apply text-white ring-0 shadow-soft;
+}
+
+/* deep ocean-to-iris ring for white text (the site .bg-ring is decoration only) */
+.ct-ring {
+  background: linear-gradient(120deg, var(--color-ocean-700), var(--color-iris-700));
+}
+
+/* ---------------------------------------------------------------- show more offices (Newcomers) */
+/* The office list is one grid; a native <details> after it decides (with :has) whether the extra cards show.
+   Closed on phones and tablets until "Show N more" is pressed — no JavaScript needed. Wide screens show every card.
+   (A browser without :has simply shows every card.) */
+@media (max-width: 79.999rem) {
+  .nc-offices:has(+ .nc-more:not([open])) > .nc-extra { display: none; }
+}
+@media (min-width: 80rem) {
+  .nc-more { display: none; }
+}
+.nc-more > summary { list-style: none; }
+.nc-more > summary::-webkit-details-marker { display: none; }
+.nc-more[open] .nc-more__closed, .nc-more:not([open]) .nc-more__open { display: none; }
+.nc-more[open] .nc-more__chev { transform: rotate(180deg); }
+
+/* ---------------------------------------------------------------- preamble */
+.preamble-card {
+  @apply relative overflow-hidden rounded-3xl p-7 text-white shadow-lift sm:p-9 2xl:p-10;
+}
+.preamble-card p { @apply text-pretty; }
+
+/* ---------------------------------------------------------------- QR code */
+.qr-frame {
+  @apply relative mx-auto w-full max-w-[15rem] rounded-[1.6rem] p-1.5 shadow-lift;
+  background: conic-gradient(from 180deg, var(--color-ocean-400), var(--color-iris-500), var(--color-coral-500), var(--color-sun-400), var(--color-ocean-400));
+}
+
+/* ---------------------------------------------------------------- 404 */
+.nf-number {
+  @apply font-display leading-none font-black tracking-tighter;
+  font-size: clamp(6rem, 22vw, 15rem);
+  background: linear-gradient(110deg, var(--color-ocean-500), var(--color-iris-600) 45%, var(--color-coral-600) 75%, var(--color-sun-500));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------------------------------------------------------------- print (Contribute) */
+@media print {
+  .call-fab, .page-nav-side, .no-print { display: none !important; }
+  .card, .card-hover { box-shadow: none !important; }
+}

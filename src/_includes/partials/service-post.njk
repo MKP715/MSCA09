@@ -1,0 +1,69 @@
+---
+layout: page.njk
+---
+{#- Layout for one archived Delegate's Corner post (src/content/delegate/*.md). -#}
+{%- set L = lang -%}
+{%- set posts = delegatePosts.list or [] -%}
+{%- set idx = posts | svcIndexOf("slug", postSlug) -%}
+{%- set newer = posts[idx - 1] if idx > 0 else null -%}
+{%- set older = posts[idx + 1] if (idx >= 0 and idx + 1 < posts.length) else null -%}
+{%- set me = posts[idx] if idx >= 0 else null -%}
+{%- set pc = (me.panelInfo.color if (me and me.panelInfo) else "coral") -%}
+{%- set ymd = me.date if me else postSlug.slice(0, 10) -%}
+<div class="wrap py-10 lg:py-14 2xl:py-16">
+  <div class="grid grid-cols-1 gap-10 xl:grid-cols-12 xl:gap-14">
+    <article class="min-w-0 xl:col-span-8 2xl:col-span-8" aria-labelledby="post-meta">
+      <div id="post-meta" class="mb-8 flex flex-wrap items-center gap-2.5" style="{{ pc | accent }}">
+        <span class="chip chip-accent">{% icon "calendar", "size-3.5" %}{{ ymd | dt("full", L) }}</span>
+        {%- if panel %}<span class="chip chip-accent">{{ "service.posts.panel_n" | t(L, { n: panel }) }}</span>{% endif %}
+        {%- if me %}<span class="chip chip-soft">{{ ("service.posts.kind_" + me.kind) | t(L) }}</span><span class="chip chip-soft">{% icon "clock", "size-3.5" %}{{ "service.posts.minutes" | t(L, { n: me.minutes }) }}</span>{% endif %}
+        <span class="chip chip-soft svc-byline">{% icon "pen-line", "size-3.5 shrink-0" %}<span>{{ author_es if L.code == "es" else author_en }}</span></span>
+      </div>
+      {%- if L.code == "es" %}
+      <p class="mb-8 flex items-start gap-3 rounded-2xl bg-sun-50 p-4 text-[15px] text-ink-700 ring-1 ring-sun-200">{% icon "languages", "size-5 shrink-0 text-sun-700" %}<span>{{ "service.post.english_only" | t(L) }}</span></p>
+      {%- endif %}
+      <div class="prose-msca svc-article max-w-3xl" lang="en">
+        {{ content | safe }}
+      </div>
+      <p class="mt-10 max-w-3xl rounded-2xl bg-ink-50 p-4 text-sm leading-relaxed text-ink-500">{% icon "archive", "size-4 mr-1 inline-block align-[-2px]" %}{{ "service.post.archived_note" | t(L) }}</p>
+
+      <nav class="mt-10 grid grid-cols-1 max-w-3xl gap-4 sm:grid-cols-2" aria-label="{{ 'service.post.more' | t(L) }}">
+        {%- if older %}
+        <a href="{{ older.url | lurl(L) }}" class="card card-hover group flex flex-col gap-1 p-5">
+          <span class="flex items-center gap-1.5 text-xs font-bold tracking-wider text-ink-500 uppercase">{% icon "arrow-left", "size-3.5" %}{{ "service.post.older" | t(L) }}</span>
+          <span class="font-display font-bold text-ink-950 group-hover:text-coral-700" lang="en">{{ older.title }}</span>
+          <span class="text-sm text-ink-500">{{ older.date | dt("full", L) }}</span>
+        </a>
+        {%- else %}<span></span>{% endif %}
+        {%- if newer %}
+        <a href="{{ newer.url | lurl(L) }}" class="card card-hover group flex flex-col items-end gap-1 p-5 text-right">
+          <span class="flex items-center gap-1.5 text-xs font-bold tracking-wider text-ink-500 uppercase">{{ "service.post.newer" | t(L) }}{% icon "arrow-right", "size-3.5" %}</span>
+          <span class="font-display font-bold text-ink-950 group-hover:text-coral-700" lang="en">{{ newer.title }}</span>
+          <span class="text-sm text-ink-500">{{ newer.date | dt("full", L) }}</span>
+        </a>
+        {%- endif %}
+      </nav>
+    </article>
+
+    <aside class="space-y-6 xl:col-span-4" aria-label="{{ 'service.post.aside' | t(L) }}">
+      <div class="card-accent p-6 xl:sticky xl:top-28" style="{{ 'coral' | accent }}">
+        <span class="icon-tile">{% icon "mic", "size-6" %}</span>
+        <h2 class="mt-4 font-display text-xl font-bold text-ink-950">{{ "service.post.about_title" | t(L) }}</h2>
+        <p class="mt-2 leading-relaxed text-ink-600">{{ "service.post.about_body" | t(L, { n: posts.length }) }}</p>
+        <a href="{{ '/service/delegate/#archive' | lurl(L) }}" class="btn btn-primary mt-5 w-full sm:w-auto">{% icon "library-big", "size-4" %}{{ "service.post.all" | t(L) }}</a>
+        <div class="mt-6 border-t border-ink-100 pt-5">
+          <h3 class="text-xs font-bold tracking-wider text-ink-500 uppercase">{{ "service.post.same_year" | t(L, { year: ymd.slice(0, 4) }) }}</h3>
+          <ul class="mt-3 space-y-1" role="list">
+            {%- for p in posts %}{% if p.year == ymd.slice(0, 4) and p.slug != postSlug %}
+            <li><a href="{{ p.url | lurl(L) }}" class="flex items-baseline gap-3 rounded-xl px-2 py-1.5 text-sm hover:bg-coral-50"><span class="w-14 shrink-0 text-xs font-semibold text-ink-500">{{ p.date | dt("short", L) }}</span><span class="font-semibold text-ink-800" lang="en">{{ p.title }}</span></a></li>
+            {%- endif %}{% endfor %}
+          </ul>
+        </div>
+        <div class="mt-6 border-t border-ink-100 pt-5 text-sm">
+          <p class="font-semibold text-ink-800">{{ "service.post.contact" | t(L) }}</p>
+          <a href="mailto:delegate@msca09aa.org" class="mt-1 inline-flex items-center gap-1.5 font-semibold text-ocean-700 hover:underline">{% icon "mail", "size-4" %}delegate@msca09aa.org</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>

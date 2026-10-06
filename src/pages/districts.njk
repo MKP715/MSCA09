@@ -1,0 +1,484 @@
+---
+pagination:
+  addAllPagesToCollections: true
+  data: langs
+  size: 1
+  alias: lang
+permalink: "{{ lang.prefix }}/districts/"
+layout: base.njk
+title_key: districts.title
+description_key: districts.description
+accent: coral
+scripts: ["/assets/js/districts.js"]
+---
+{#-
+  /districts/ — every district of Area 09: city search, map, filterable cards, the
+  Spanish-speaking districts, their Inter-District Meeting and what a district / DCM is.
+  Data: src/_data/districts.js (data/districts.csv) + calendar (meeting times) + servants.
+-#}
+{%- from "macros/ui.njk" import mapBlock, emailLink, btn, statTile with context -%}
+{%- from "macros/districts.njk" import numTile, districtCard, districtRow, districtChip, miniDistrict, nextDates, meetingLine, occRow, clamp with context -%}
+{%- set L = lang -%}
+{%- set D = districts -%}
+{%- set hasEventMacros = "macros/events.njk" | dxTemplateExists -%}
+{%- set points = D.list | dxPoints(L, site.base, calendar) -%}
+
+{#- ============================================================== HERO + FINDER -#}
+<section class="dx-hero relative isolate overflow-hidden text-white" aria-labelledby="dx-title">
+  <div class="dx-hero-dots absolute inset-0 -z-10" aria-hidden="true"></div>
+  <img src="/assets/img/logo/logo-{{ L.code }}-384.webp" alt="" aria-hidden="true" width="384" height="384" loading="lazy"
+       class="pointer-events-none absolute -bottom-28 -left-24 -z-10 hidden size-[28rem] -rotate-12 opacity-[0.06] xl:block">
+  <div class="wrap relative pt-6 pb-10 sm:pt-8 lg:pt-10 lg:pb-14 2xl:pb-16">
+    <nav aria-label="{{ 'nav.breadcrumb' | t(L) }}" class="mb-6 text-sm">
+      <ol class="flex flex-wrap items-center gap-1.5 text-white/90">
+        <li><a href="{{ '/' | lurl(L) }}" class="inline-flex items-center gap-1 hover:text-white">{% icon "house", "size-4" %}<span class="sr-only">{{ "nav.home" | t(L) }}</span></a></li>
+        <li class="flex items-center gap-1.5">{% icon "chevron-right", "size-3.5 text-white/50" %}<span class="font-medium text-white" aria-current="page">{{ "districts.title" | t(L) }}</span></li>
+      </ol>
+    </nav>
+
+    <div class="grid grid-cols-1 items-start gap-8 lg:grid-cols-12 lg:gap-10 2xl:gap-16">
+      <div class="lg:col-span-6 xl:col-span-5">
+        <p class="mb-3 inline-flex items-center gap-2 text-xs font-bold tracking-[0.18em] text-sun-200 uppercase">{% icon "map", "size-4" %}{{ "districts.eyebrow" | t(L) }}</p>
+        <h1 id="dx-title" class="font-display text-4xl font-extrabold tracking-tight text-balance sm:text-5xl 2xl:text-6xl">{{ "districts.title" | t(L) }}</h1>
+        <p class="mt-4 max-w-2xl text-lg leading-relaxed text-pretty text-white/90 2xl:text-xl">{{ "districts.lead" | t(L, { n: D.stats.active, en: D.stats.english, es: D.stats.spanish }) }}</p>
+
+        {#- Which district am I in? -#}
+        <div class="relative mt-7 lg:mt-8" x-data="districtFinder" @keydown.escape="open = false" @click.outside="open = false">
+          <label for="dx-q" class="mb-2.5 flex items-center gap-2 font-display text-lg font-bold sm:text-xl">
+            <span class="grid grid-cols-1 size-8 place-items-center rounded-full bg-sun-300 text-ink-950">{% icon "map-pin", "size-4" %}</span>{{ "districts.finder.label" | t(L) }}
+          </label>
+          <div class="relative">
+            <span class="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-ink-400">{% icon "search", "size-5" %}</span>
+            <input id="dx-q" x-ref="input" type="search" class="dx-search" placeholder="{{ 'districts.finder.placeholder' | t(L) }}"
+                   autocomplete="off" spellcheck="false" role="combobox" aria-autocomplete="list" aria-controls="dx-list"
+                   aria-describedby="dx-hint" :aria-expanded="(open && results.length > 0).toString()" aria-expanded="false"
+                   :aria-activedescendant="(open && active >= 0) ? 'dx-opt-' + active : null"
+                   x-model="q" @input="onInput()" @focus="if (q && !picked) open = true"
+                   @keydown.down.prevent="move(1)" @keydown.up.prevent="move(-1)" @keydown.enter.prevent="choose()">
+            <button type="button" x-cloak x-show="q" @click="clear()" class="absolute top-1/2 right-3 grid grid-cols-1 size-9 -translate-y-1/2 place-items-center rounded-full text-ink-500 hover:bg-ink-100 hover:text-ink-900" aria-label="{{ 'ui.clear' | t(L) }}">{% icon "x", "size-4" %}</button>
+            <ul id="dx-list" role="listbox" aria-label="{{ 'districts.finder.results' | t(L) }}" x-cloak x-show="open && results.length > 0"
+                class="absolute z-30 mt-2 max-h-[22rem] w-full overflow-auto rounded-2xl bg-white p-2 text-ink-900 shadow-lift ring-1 ring-ink-900/5">
+              <template x-for="(r, i) in results" :key="r.type + ':' + r.label + ':' + i">
+                <li :id="'dx-opt-' + i" role="option" :aria-selected="(i === active).toString()" class="dx-option" @click="choose(i)" @mousemove="active = i">
+                  <span class="grid grid-cols-1 size-8 shrink-0 place-items-center rounded-lg bg-ocean-50 text-ocean-700" x-show="r.type === 'city'">{% icon "map-pin", "size-4" %}</span>
+                  <span class="grid grid-cols-1 size-8 shrink-0 place-items-center rounded-lg bg-coral-50 text-coral-700" x-show="r.type === 'district'">{% icon "hash", "size-4" %}</span>
+                  <span class="min-w-0 flex-1 truncate font-semibold" x-text="r.label"></span>
+                  <span class="flex shrink-0 gap-1" x-show="r.type === 'city'">
+                    <template x-for="x in (r.city ? r.city.d : [])" :key="x.s">
+                      <span class="grid grid-cols-1 h-6 min-w-6 place-items-center rounded-full px-1.5 font-display text-[11px] font-extrabold text-white" :style="district(x.s).style + ';background:var(--a-700)'" x-text="district(x.s).n"></span>
+                    </template>
+                  </span>
+                </li>
+              </template>
+            </ul>
+            <p x-cloak x-show="open && q.length > 1 && results.length === 0" class="absolute z-30 mt-2 w-full rounded-2xl bg-white p-4 text-sm text-ink-700 shadow-lift" role="status">
+              {{ "districts.finder.none" | t(L) }}
+            </p>
+          </div>
+          <p id="dx-hint" class="mt-2.5 text-sm text-white/90">{{ "districts.finder.hint" | t(L) }}</p>
+
+          <div x-cloak x-show="picked" x-transition.opacity class="mt-5 rounded-3xl bg-white/12 p-4 ring-1 ring-white/25 backdrop-blur-md sm:p-5" aria-live="polite" x-ref="answer">
+            <p class="text-sm font-semibold text-white/90">
+              {%- set servedTpl = "districts.finder.served_by" | t(L) -%}
+              <span x-text="{{ servedTpl | json }}.replace('{city}', picked ? picked.c : '')"></span>
+            </p>
+            <div class="mt-3 grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-1">
+              <template x-for="x in (picked ? picked.d : [])" :key="x.s">
+                <a :href="district(x.s).url" class="dx-answer" :style="district(x.s).style">
+                  <span class="dx-num size-12 rounded-2xl text-lg" x-text="district(x.s).n"></span>
+                  <span class="min-w-0 flex-1">
+                    <span class="dx-kicker block" x-text="district(x.s).kindLabel"></span>
+                    <span class="block font-display text-lg leading-tight font-bold text-ink-950" x-text="district(x.s).name"></span>
+                    <span class="block text-xs font-medium text-ink-500" x-show="qual(x)" x-text="qual(x)"></span>
+                    <span class="mt-0.5 block text-sm text-ink-600" x-text="district(x.s).line"></span>
+                  </span>
+                  <span class="text-ink-300">{% icon "arrow-right", "size-5" %}</span>
+                </a>
+              </template>
+            </div>
+          </div>
+          <script type="application/json" id="dx-data">{{ D | dxFinderData(L, site.base, calendar) | json | safe }}</script>
+        </div>
+
+        <ul class="mt-7 flex flex-wrap gap-2 text-sm font-semibold">
+          <li class="rounded-full bg-white/12 px-3.5 py-1.5 ring-1 ring-white/20">{{ "districts.stat.english" | t(L, { n: D.stats.english }) }}</li>
+          <li class="rounded-full bg-white/12 px-3.5 py-1.5 ring-1 ring-white/20">{{ "districts.stat.spanish" | t(L, { n: D.stats.spanish }) }}</li>
+          <li class="rounded-full bg-white/12 px-3.5 py-1.5 ring-1 ring-white/20">{{ "districts.stat.counties" | t(L, { n: D.stats.counties }) }}</li>
+          <li class="rounded-full bg-white/12 px-3.5 py-1.5 ring-1 ring-white/20">{{ "districts.stat.cities" | t(L, { n: D.stats.cities }) }}</li>
+        </ul>
+
+        {#- the next district business meetings (prunes itself in the browser) -#}
+        {%- set soon = D.list | dxUpcoming(calendar) %}
+        {%- if soon | length %}
+        <div class="mt-7 lg:mt-9">
+          <p class="mb-3 flex items-center gap-2 text-xs font-bold tracking-[0.18em] text-white/90 uppercase">{% icon "calendar-clock", "size-4" %}{{ "districts.soon.title" | t(L) }}</p>
+          <ul class="dx-soon no-scrollbar" data-limit="6">
+            {%- for m in soon %}
+            <li data-hide-after="{{ m.end }}" data-when="{{ m.start }}" data-until="{{ m.end }}" style="{{ m.d.color | accent }}">
+              <a href="{{ ('/districts/' + m.d.slug + '/') | lurl(L) }}" class="flex h-full items-center gap-3 rounded-2xl bg-black/15 p-2 pr-3 ring-1 ring-white/15 transition hover:bg-black/25">
+                {{ numTile({ d: m.d, lang: L, size: "xs" }) }}
+                <span class="min-w-0 flex-1">
+                  <span class="block truncate text-sm font-semibold">{{ m.d | loc("name", L) }}</span>
+                  <span class="block truncate text-xs text-white">{{ m.start | dt("wkd", L) }} {{ m.start | dt("short", L) }} · {{ m.start | dt("time", L) }}</span>
+                </span>
+                <span data-rel hidden class="dx-rel shrink-0"></span>
+              </a>
+            </li>
+            {%- endfor %}
+          </ul>
+        </div>
+        {%- endif %}
+      </div>
+
+      <div class="hidden lg:col-span-6 lg:block xl:col-span-7">
+        <div class="rounded-[2rem] bg-white/10 p-2 ring-1 ring-white/20 backdrop-blur-sm">
+          {{ mapBlock({ id: "dx-map", points: points, height: "h-[32rem] xl:h-[36rem] 2xl:h-[40rem]", lang: L }) }}
+        </div>
+        <p class="mt-3 flex items-center gap-2 text-sm text-white/90">{% icon "mouse-pointer-click", "size-4" %}{{ "districts.map.hint" | t(L) }}</p>
+      </div>
+    </div>
+
+    {#- Jump to a district -#}
+    <nav aria-label="{{ 'districts.jump' | t(L) }}" class="mt-10 lg:mt-12">
+      <p class="mb-3 text-xs font-bold tracking-[0.18em] text-white/90 uppercase">{{ "districts.jump" | t(L) }}</p>
+      <ul class="no-scrollbar -mx-4 flex snap-x scroll-px-4 gap-2.5 overflow-x-auto px-4 py-1.5 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
+        {%- for d in D.list %}
+        <li><a href="{{ ('/districts/' + d.slug + '/') | lurl(L) }}" class="dx-jump {{ 'dx-jump-long' if (d | dxNum(L)) | length > 2 }}" style="{{ d.color | accent }}" title="{{ d | loc('name', L) }}" aria-label="{{ d | loc('name', L) }}">{{ d | dxNum(L) }}</a></li>
+        {%- endfor %}
+      </ul>
+    </nav>
+  </div>
+</section>
+
+{#- ============================================================== IN-PAGE LINKS -#}
+<nav aria-label="{{ 'districts.toc.label' | t(L) }}" class="dx-toc" x-data>
+  <div class="wrap no-scrollbar flex items-center gap-2 overflow-x-auto py-3">
+    <span class="hidden shrink-0 pr-1 text-xs font-bold tracking-[0.16em] text-ink-500 uppercase sm:inline">{{ "districts.toc.label" | t(L) }}</span>
+    <a href="#all" @click="$dispatch('dx-view', 'list')">{% icon "list", "size-4" %}{{ "districts.toc.all" | t(L) }}</a>
+    <a href="#all" class="dx-toc-phone" @click="$dispatch('dx-view', 'map')">{% icon "map", "size-4" %}{{ "districts.toc.map" | t(L) }}</a>
+    <a href="#spanish">{% icon "languages", "size-4" %}{{ "districts.toc.spanish" | t(L) }}</a>
+    {%- if D.interdistrict %}<a href="#interdistrict">{% icon "handshake", "size-4" %}{{ "districts.toc.inter" | t(L) }}</a>{% endif %}
+    <a href="#what">{% icon "circle-help", "size-4" %}{{ "districts.toc.what" | t(L) }}</a>
+  </div>
+</nav>
+
+{#- ============================================================== ALL DISTRICTS -#}
+{#- Laptops: card grid (the map is in the hero). Tablets: cards, or the map (List | Map switch).
+    Phones: compact rows that open into the full card, or the map. -#}
+<section id="all" class="dx-section" aria-labelledby="dx-all" x-data="districtFilter({{ D.list | dxCardMeta | json }})"
+         data-view="list" :data-view="view" @dx-view.window="setView($event.detail)">
+  <div class="wrap py-8 sm:py-10 lg:py-16 2xl:py-20">
+    <div class="flex flex-col gap-5 2xl:flex-row 2xl:items-end 2xl:justify-between">
+      <div style="{{ 'coral' | accent }}">
+        <p class="eyebrow mb-2">{{ "districts.all.eyebrow" | t(L) }}</p>
+        <h2 id="dx-all" class="h-section">{{ "districts.all.title" | t(L) }}</h2>
+        {%- set showingTpl = "districts.filter.showing" | t(L) %}
+        <p class="dx-listview mt-2 text-ink-600" aria-live="polite"><span x-text="{{ showingTpl | json }}.replace('{n}', count)">{{ "districts.filter.showing" | t(L, { n: D.list | length }) }}</span></p>
+      </div>
+      {#- List | Map (phones and tablets) -#}
+      <div role="group" aria-label="{{ 'districts.view.label' | t(L) }}" class="dx-seg inline-flex self-start lg:hidden" x-cloak>
+        <button type="button" :aria-pressed="(view === 'list').toString()" aria-pressed="true" @click="setView('list')">{% icon "list", "size-4" %}{{ "districts.view.list" | t(L) }}</button>
+        <button type="button" :aria-pressed="(view === 'map').toString()" aria-pressed="false" @click="setView('map')">{% icon "map", "size-4" %}{{ "districts.view.map" | t(L) }}</button>
+      </div>
+      <div role="group" aria-label="{{ 'districts.filter.label' | t(L) }}" class="dx-listview no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:-mx-6 sm:px-6 lg:mx-0 lg:flex-wrap lg:px-0 2xl:justify-end">
+        <button type="button" class="dx-filter" :aria-pressed="(f === 'all').toString()" aria-pressed="true" @click="set('all')">{% icon "layout-grid", "size-4" %}{{ "districts.filter.all" | t(L) }}</button>
+        <button type="button" class="dx-filter" :aria-pressed="(f === 'en').toString()" aria-pressed="false" @click="set('en')"><span class="dx-filter-dot bg-sea-500"></span>{{ "districts.filter.english" | t(L) }}</button>
+        <button type="button" class="dx-filter" :aria-pressed="(f === 'es').toString()" aria-pressed="false" @click="set('es')"><span class="dx-filter-dot bg-coral-500"></span>{{ "districts.filter.spanish" | t(L) }}</button>
+        <span class="mx-1 hidden w-px self-stretch bg-ink-200 sm:block" aria-hidden="true"></span>
+        {%- for c in D.counties %}
+        <button type="button" class="dx-filter" :aria-pressed="(f === 'county-{{ c | slugify }}').toString()" aria-pressed="false" @click="set('county-{{ c | slugify }}')">{% icon "map-pinned", "size-4" %}{{ ("districts.county." + (c | slugify)) | t(L) }}</button>
+        {%- endfor %}
+      </div>
+    </div>
+
+    <div class="dx-listview">
+      {#- phones: one row per district -#}
+      <div class="mt-5 space-y-2.5 md:hidden" data-pagefind-ignore="all">
+        {%- for d in D.list %}
+        {{ districtRow({ d: d, lang: L, series: calendar | dxSeries(d) }) }}
+        {%- endfor %}
+      </div>
+      {#- tablets and up: cards -#}
+      <div class="mt-8 hidden grid-cols-2 gap-5 md:grid lg:grid-cols-3 2xl:grid-cols-4 2xl:gap-6 3xl:grid-cols-5">
+        {%- for d in D.list %}
+        {{ districtCard({ d: d, lang: L, series: calendar | dxSeries(d), index: loop.index0 }) }}
+        {%- endfor %}
+      </div>
+      <p x-cloak x-show="count === 0" class="mt-8 rounded-3xl bg-ink-50 p-8 text-center text-ink-600">{{ "ui.no_results" | t(L) }}</p>
+    </div>
+
+    {#- phones and tablets: the map (loads when it is first shown) -#}
+    <div class="dx-mapview mt-5 lg:hidden">
+      <h3 class="sr-only">{{ "districts.map.title" | t(L) }}</h3>
+      {{ mapBlock({ id: "dx-map-m", points: points, height: "h-[68svh] min-h-[22rem] max-h-[40rem]", lang: L }) }}
+      <p class="mt-3 flex items-center gap-2 text-sm text-ink-500">{% icon "hand", "size-4 shrink-0" %}{{ "districts.map.hint" | t(L) }}</p>
+    </div>
+  </div>
+</section>
+
+{#- ============================================================== SPANISH-SPEAKING DISTRICTS -#}
+<section id="spanish" class="dx-section relative isolate overflow-hidden" aria-labelledby="dx-es" style="{{ 'coral' | accent }}">
+  <div class="absolute inset-0 -z-10" style="background:
+      radial-gradient(50rem 26rem at 0% 0%, var(--color-coral-100), transparent 60%),
+      radial-gradient(46rem 28rem at 100% 100%, var(--color-sun-100), transparent 60%),
+      linear-gradient(180deg, var(--color-blush-50), white);"></div>
+  <div class="bg-confetti absolute inset-0 -z-10 opacity-60" aria-hidden="true"></div>
+  <div class="wrap py-10 sm:py-14 lg:py-20 2xl:py-24">
+    <div class="grid grid-cols-1 gap-8 sm:gap-10 xl:grid-cols-12 xl:gap-12">
+      <div class="xl:sticky xl:top-28 xl:col-span-4 xl:self-start 2xl:col-span-3">
+        <p class="eyebrow mb-2" lang="es">{{ "districts.es.eyebrow" | t(L) }}</p>
+        <h2 id="dx-es" class="h-section">{{ "districts.es.title" | t(L) }}</h2>
+        <p class="lead mt-4">{{ "districts.es.lead" | t(L) }}</p>
+        {% call clamp({ lang: L, height: "9.5rem", class: "mt-6" }) %}
+        <blockquote class="rounded-3xl border-l-4 border-coral-500 bg-white/80 p-5 text-ink-700 shadow-soft">
+          <p class="leading-relaxed">{{ "districts.es.quote" | t(L) }}</p>
+          <footer class="mt-2 text-sm text-ink-500">{{ "districts.es.quote_source" | t(L) }}</footer>
+        </blockquote>
+        <p class="mt-5 flex items-start gap-2 text-sm text-ink-600">{% icon "history", "size-4 mt-0.5 shrink-0 text-coral-600" %}<span>{{ "districts.es.history" | t(L) }}</span></p>
+        {% endcall %}
+        <a href="#interdistrict" class="btn btn-primary mt-6">{% icon "handshake", "size-4" %}{{ "districts.es.to_interdistrict" | t(L) }}</a>
+      </div>
+
+      <div class="xl:col-span-8 2xl:col-span-9">
+        <ul class="no-scrollbar -mx-4 flex snap-x scroll-px-4 gap-4 overflow-x-auto px-4 pt-1 pb-3 sm:-mx-6 sm:scroll-px-6 sm:px-6 md:mx-0 md:grid md:overflow-visible md:p-0 md:grid-cols-2 md:gap-5 2xl:grid-cols-3">
+          {%- for s in D.spanish %}
+          {%- set ser = calendar | dxSeries(s) %}
+          <li class="dx-card w-[85%] shrink-0 snap-start sm:w-[60%] md:w-auto" style="{{ s.color | accent }}">
+            <div class="flex items-start gap-4 p-5 2xl:p-6">
+              {{ numTile({ d: s, lang: L, size: "lg", href: ('/districts/' + s.slug + '/') | lurl(L) }) }}
+              <div class="min-w-0 flex-1">
+                <h3 class="font-display text-xl font-bold text-ink-950"><a href="{{ ('/districts/' + s.slug + '/') | lurl(L) }}" class="hover:text-(--a-800) hover:underline">{{ s | loc("name", L) }}</a></h3>
+                <p class="mt-1 flex items-start gap-1.5 text-sm font-semibold text-ink-700">{% icon "calendar-clock", "size-4 mt-0.5 shrink-0 text-(--a-600)" %}<span>{{ meetingLine({ d: s, lang: L, series: ser }) }}</span></p>
+                <p class="mt-0.5 flex items-start gap-1.5 text-sm text-ink-500">{% icon "map-pin", "size-4 mt-0.5 shrink-0" %}<span>{{ s.meeting.city }}</span></p>
+                <div class="mt-1 pl-5.5 text-sm text-ink-600">{{ nextDates({ dates: (ser | dxNextMeetings(s)) | limit(4), lang: L, limit: 1, prefix: ("districts.card.next" | t(L)) }) }}</div>
+              </div>
+            </div>
+            <div class="mt-auto border-t border-ink-100 px-5 py-4 2xl:px-6">
+              <p class="mb-2 text-xs font-bold tracking-wide text-ink-500 uppercase">{{ "districts.es.covers" | t(L) }}</p>
+              <div class="flex flex-wrap gap-1.5">
+                {%- for c in s.covers | dxFor(D.bySlug) %}{{ districtChip({ d: c, lang: L, short: true }) }}{% endfor %}
+              </div>
+              {%- set tbl = s | loc("interdistrict_table", L) %}
+              {%- if tbl %}<p class="mt-3 flex items-start gap-1.5 text-sm text-ink-600">{% icon "presentation", "size-4 mt-0.5 shrink-0 text-(--a-600)" %}<span>{{ "districts.es.table" | t(L, { topic: tbl }) }}</span></p>{% endif %}
+            </div>
+          </li>
+          {%- endfor %}
+        </ul>
+
+        {#- English district → Spanish district lookup -#}
+        <div class="mt-8 rounded-3xl bg-white/85 p-5 shadow-soft ring-1 ring-ink-900/5 backdrop-blur sm:p-6">
+          <h3 class="flex items-center gap-2 font-display text-lg font-bold text-ink-950">{% icon "arrow-left-right", "size-5 text-coral-600" %}{{ "districts.es.lookup" | t(L) }}</h3>
+          {% call clamp({ lang: L, height: "13.5rem", class: "mt-4" }) %}
+          <ul class="grid grid-cols-2 gap-x-4 gap-y-2.5 sm:gap-x-6 lg:grid-cols-3 2xl:grid-cols-4">
+            {%- for e in D.english %}
+            <li class="flex flex-wrap items-center gap-2">
+              {{ districtChip({ d: e, lang: L, short: true }) }}
+              <span class="text-ink-300">{% icon "arrow-right", "size-4" %}</span>
+              {%- for s in e.spanish | dxFor(D.bySlug) %}{{ districtChip({ d: s, lang: L, short: true }) }}{% else %}<span class="text-sm text-ink-500">—</span>{% endfor %}
+            </li>
+            {%- endfor %}
+          </ul>
+          <p class="mt-4 text-sm text-ink-500">{{ "districts.es.lookup_note" | t(L) }}</p>
+          {% endcall %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{#- ============================================================== INTER-DISTRICT MEETING -#}
+{%- set I = D.interdistrict %}
+{%- if I %}
+<section id="interdistrict" class="dx-section" aria-labelledby="dx-inter" style="{{ I.color | accent }}">
+  <div class="wrap py-10 sm:py-14 lg:py-20 2xl:py-24">
+    <div class="grid grid-cols-1 gap-10 xl:grid-cols-12 xl:gap-12">
+      <div class="xl:col-span-7 2xl:col-span-8">
+        <p class="eyebrow mb-2">{{ "districts.inter.eyebrow" | t(L) }}</p>
+        <h2 id="dx-inter" class="h-section">{{ I | loc("name", L) }}</h2>
+        <p class="lead mt-3">{{ I | loc("region", L) }} · {{ I | loc("pattern", L) }}</p>
+
+        <ol class="mt-6 grid grid-cols-3 gap-2.5 sm:mt-8 sm:gap-4">
+          <li class="card-accent p-3 sm:p-5" style="{{ 'sun' | accent }}">
+            <div class="font-display text-base font-extrabold whitespace-nowrap text-(--a-800) sm:text-2xl">8:00</div>
+            <p class="mt-1 text-sm leading-snug font-semibold text-ink-900 sm:text-base">{{ "districts.inter.step1" | t(L) }}</p>
+          </li>
+          <li class="card-accent p-3 sm:p-5" style="{{ 'coral' | accent }}">
+            <div class="font-display text-base font-extrabold whitespace-nowrap text-(--a-800) sm:text-2xl">9:00–10:30</div>
+            <p class="mt-1 text-sm leading-snug font-semibold text-ink-900 sm:text-base">{{ "districts.inter.step2" | t(L) }}</p>
+          </li>
+          <li class="card-accent p-3 sm:p-5" style="{{ 'iris' | accent }}">
+            <div class="font-display text-base font-extrabold whitespace-nowrap text-(--a-800) sm:text-2xl">10:30</div>
+            <p class="mt-1 text-sm leading-snug font-semibold text-ink-900 sm:text-base">{{ "districts.inter.step3" | t(L) }}</p>
+          </li>
+        </ol>
+        <p class="mt-3 text-sm text-ink-500">{{ I | loc("note", L) }} ({{ "time.pacific" | t(L) }})</p>
+
+        <div class="prose-msca mt-8 max-w-none" x-data="{ more: false }">
+          <div class="relative overflow-hidden transition-[max-height] duration-500" :class="more ? 'max-h-[200rem]' : 'max-h-56'">
+            {{ I | loc("about", L) | md | safe }}
+            <p>{{ I | loc("extra", L) }}</p>
+            <div x-show="!more" class="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-white"></div>
+          </div>
+          <button type="button" class="btn btn-ghost not-prose mt-3" @click="more = !more" :aria-expanded="more.toString()">
+            <span x-text="more ? {{ ('ui.show_less' | t(L)) | json }} : {{ ('districts.inter.read_more' | t(L)) | json }}">{{ "districts.inter.read_more" | t(L) }}</span>
+            <span class="transition" :class="more && 'rotate-180'">{% icon "chevron-down", "size-4" %}</span>
+          </button>
+        </div>
+      </div>
+
+      <aside class="space-y-5 xl:col-span-5 2xl:col-span-4">
+        <div class="dx-panel">
+          <h3 class="flex items-center gap-2 font-display text-lg font-bold text-ink-950">{% icon "calendar-days", "size-5 text-(--a-600)" %}{{ "districts.inter.next" | t(L) }}</h3>
+          {%- set interItems = calendar | dxInterEvents %}
+          <div class="mt-4">
+            {%- if hasEventMacros and interItems | length %}
+              {%- set upItems = interItems %}{% set upLimit = 3 %}{% set upEmpty = "districts.inter.none" | t(L) %}{% set upId = "dx-inter-list" %}{% set upVariant = "compact" %}
+              {% include "partials/district-upcoming.njk" %}
+            {%- elif interItems | length %}
+              <ul class="-mx-3" data-limit="3" data-empty="#dx-inter-empty">{% for e in interItems %}{{ occRow({ occ: e, lang: L }) }}{% endfor %}</ul>
+              <p id="dx-inter-empty" hidden class="text-ink-600">{{ "districts.inter.none" | t(L) }}</p>
+            {%- else %}
+              <p class="text-ink-600">{{ "districts.inter.none" | t(L) }}</p>
+            {%- endif %}
+            <a href="{{ '/calendar/' | lurl(L) }}" class="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-(--a-800) hover:underline">{{ "districts.inter.calendar" | t(L) }}{% icon "arrow-right", "size-4" %}</a>
+          </div>
+        </div>
+
+        {%- if I.tables | length %}
+        <div class="dx-panel">
+          <h3 class="flex items-center gap-2 font-display text-lg font-bold text-ink-950">{% icon "presentation", "size-5 text-(--a-600)" %}{{ "districts.inter.tables" | t(L) }}</h3>
+          <ol class="mt-4 space-y-3">
+            {%- for tb in I.tables %}
+            {%- set td = D.bySlug[tb.slug] %}
+            <li class="flex items-center gap-3" style="{{ td.color | accent }}">
+              {{ numTile({ d: td, lang: L, size: "xs", href: ('/districts/' + td.slug + '/') | lurl(L) }) }}
+              <span class="text-ink-800">{{ tb.es if L.code == "es" and tb.es else tb.en }}</span>
+            </li>
+            {%- endfor %}
+          </ol>
+          <p class="mt-4 text-xs text-ink-500">{{ "districts.inter.tables_note" | t(L) }}</p>
+        </div>
+        {%- endif %}
+
+        <div class="dx-panel">
+          <h3 class="flex items-center gap-2 font-display text-lg font-bold text-ink-950">{% icon "user-round", "size-5 text-(--a-600)" %}{{ "districts.inter.contact" | t(L) }}</h3>
+          {%- set coord = (servants.current or []) | dxRoleMatch("inter-?distri") %}
+          {%- for c in coord | limit(1) %}
+          <p class="mt-3 text-xs font-bold tracking-wide text-(--a-800) uppercase">{{ (c | loc("position", L)) or (c | loc("role", L)) }}</p>
+          <div class="font-display text-lg font-bold text-ink-950">{{ c.name or ("people.open_position" | t(L)) }}</div>
+          {%- else %}
+          <p class="mt-3 text-xs font-bold tracking-wide text-(--a-800) uppercase">{{ "districts.inter.coordinator" | t(L) }}</p>
+          {%- endfor %}
+          <div class="mt-2 text-sm">{{ emailLink({ email: I.email, lang: L }) }}</div>
+          <p class="mt-2 text-sm text-ink-500">{{ I | loc("email_note", L) }}</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+{%- endif %}
+
+{#- ============================================================== WHAT IS A DISTRICT? -#}
+<section id="what" class="dx-section relative isolate overflow-hidden bg-ink-50/70" aria-labelledby="dx-what">
+  <div class="wrap py-10 sm:py-14 lg:py-20 2xl:py-24">
+    <div class="mx-auto mb-8 max-w-3xl text-center sm:mb-10 lg:mb-14" style="{{ 'iris' | accent }}">
+      <p class="eyebrow mb-2">{{ "districts.what.eyebrow" | t(L) }}</p>
+      <h2 id="dx-what" class="h-section text-balance">{{ "districts.what.title" | t(L) }}</h2>
+      <p class="lead mt-3 text-pretty">{{ "districts.what.lead" | t(L) }}</p>
+    </div>
+
+    <div class="grid grid-cols-1 gap-6 xl:grid-cols-12 2xl:gap-8">
+      {#- the upside-down triangle -#}
+      {#- The two narrowest bars show the short name (GSC / GSB, CSG / JSG) unless the panel is wide enough
+          for the full name; the full name is always what screen readers hear, and the key below spells it out. -#}
+      <figure class="dx-panel dx-tri-fig xl:sticky xl:top-28 xl:col-span-4 xl:self-start 2xl:col-span-3" style="{{ 'ocean' | accent }}">
+        <ol class="dx-tri" aria-label="{{ 'districts.what.tri_label' | t(L) }}">
+          <li class="w-full" style="{{ 'sea' | accent }}">{{ "districts.tri.groups" | t(L) }}</li>
+          <li class="w-[88%]" style="{{ 'ocean' | accent }}">{{ "districts.tri.gsrs" | t(L) }}</li>
+          <li class="is-here w-[76%]" aria-current="true">{{ "districts.tri.districts" | t(L) }}</li>
+          <li class="w-[64%]" style="{{ 'iris' | accent }}">{{ "districts.tri.areas" | t(L) }}</li>
+          {%- for k in [{ key: "gsc", color: "lilac", w: "w-[52%]" }, { key: "gsb", color: "blush", w: "w-[40%]" }] %}
+          <li class="{{ k.w }}" style="{{ k.color | accent }}"><span class="dx-tri-abbr" aria-hidden="true">{{ ("districts.tri." + k.key + "_abbr") | t(L) }}</span><span class="dx-tri-full">{{ ("districts.tri." + k.key) | t(L) }}</span></li>
+          {%- endfor %}
+        </ol>
+        <dl class="dx-tri-key" aria-hidden="true">
+          {%- for k in [{ key: "gsc", color: "lilac" }, { key: "gsb", color: "blush" }] %}
+          <div style="{{ k.color | accent }}"><dt>{{ ("districts.tri." + k.key + "_abbr") | t(L) }}</dt><dd>{{ ("districts.tri." + k.key) | t(L) }}</dd></div>
+          {%- endfor %}
+        </dl>
+        <figcaption class="mt-5 text-sm leading-relaxed text-ink-600">{{ "districts.tri.caption" | t(L) }}</figcaption>
+      </figure>
+
+      <div class="no-scrollbar -mx-4 flex snap-x scroll-px-4 gap-4 overflow-x-auto px-4 pt-1 pb-3 sm:-mx-6 sm:scroll-px-6 sm:px-6 md:mx-0 md:grid md:overflow-visible md:p-0 md:grid-cols-2 md:gap-5 xl:col-span-8 2xl:col-span-9 2xl:grid-cols-3">
+        {%- set cards = [
+          { k: "district", icon: "map", color: "coral" },
+          { k: "dcm", icon: "user-round-check", color: "ocean" },
+          { k: "dcmc", icon: "users", color: "iris" },
+          { k: "linguistic", icon: "languages", color: "sun" },
+          { k: "committee", icon: "clipboard-list", color: "sage" },
+          { k: "gsr", icon: "hand-heart", color: "blush" }
+        ] %}
+        {%- for c in cards %}
+        <div class="card-accent flex w-[85%] shrink-0 snap-start flex-col p-6 sm:w-[60%] md:w-auto" style="{{ c.color | accent }}">
+          <span class="icon-tile">{% icon c.icon, "size-6" %}</span>
+          <h3 class="mt-4 font-display text-xl font-bold text-ink-950">{{ ("districts.what." + c.k + ".title") | t(L) }}</h3>
+          <p class="mt-2 leading-relaxed text-ink-700">{{ ("districts.what." + c.k + ".body") | t(L) | mdi | safe }}</p>
+        </div>
+        {%- endfor %}
+      </div>
+    </div>
+
+    <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2 2xl:mt-8 2xl:gap-8">
+      <div class="dx-panel" style="{{ 'ocean' | accent }}">
+        <h3 class="dx-h2 text-2xl!"><span class="icon-tile">{% icon "history", "size-5" %}</span>{{ "districts.history.title" | t(L) }}</h3>
+        {% call clamp({ lang: L, height: "15rem", class: "mt-6" }) %}
+        <ol class="dx-timeline">
+          {%- set hist = [
+            { y: "1959", c: "ocean" }, { y: "1961", c: "sun" }, { y: "1972–1980", c: "copper" }, { y: "1985", c: "violet" },
+            { y: "1987–1995", c: "coral" }, { y: "1989–1996", c: "slate" }, { y: "2008", c: "blue" }, { y: "2020", c: "ocean" }, { y: "2023", c: "iris" }
+          ] %}
+          {%- for h in hist %}
+          <li style="{{ h.c | accent }}">
+            <div class="font-display text-sm font-extrabold tracking-wide text-(--a-800)">{{ h.y }}</div>
+            <p class="mt-0.5 text-ink-700">{{ ("districts.history.h" + loop.index) | t(L) }}</p>
+          </li>
+          {%- endfor %}
+        </ol>
+        <p class="mt-5 text-xs text-ink-500">{{ "districts.history.source" | t(L) }}</p>
+        {% endcall %}
+      </div>
+
+      <div class="flex flex-col gap-6">
+        <div class="relative isolate overflow-hidden rounded-3xl p-6 text-white shadow-lift sm:p-8" style="background: linear-gradient(130deg, var(--color-coral-800), var(--color-coral-700) 45%, var(--color-sun-800));">
+          <div class="bg-confetti absolute inset-0 -z-10 opacity-30" aria-hidden="true"></div>
+          <h3 class="font-display text-2xl font-bold">{{ "districts.cta.title" | t(L) }}</h3>
+          <p class="mt-3 max-w-xl leading-relaxed text-white">{{ "districts.cta.body" | t(L) }}</p>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <a href="{{ '/newcomers/' | lurl(L) }}" class="btn btn-white">{% icon "heart-handshake", "size-4" %}{{ "districts.cta.newcomers" | t(L) }}</a>
+            <a href="{{ '/resources/' | lurl(L) }}#offices" class="btn btn-glass">{% icon "phone", "size-4" %}{{ "districts.cta.offices" | t(L) }}</a>
+          </div>
+        </div>
+        <div class="hidden grid-cols-2 gap-4 sm:grid">
+          {{ statTile({ value: D.stats.active, label: ("districts.tiles.active" | t(L)), icon: "map", color: "coral" }) }}
+          {{ statTile({ value: D.stats.cities, label: ("districts.tiles.cities" | t(L)), icon: "map-pin", color: "ocean" }) }}
+          {{ statTile({ value: D.stats.english, label: ("districts.tiles.english" | t(L)), icon: "languages", color: "sea" }) }}
+          {{ statTile({ value: D.stats.spanish, label: ("districts.tiles.spanish" | t(L)), icon: "languages", color: "sun" }) }}
+        </div>
+        <div class="dx-panel" style="{{ 'sage' | accent }}">
+          <h3 class="flex items-center gap-2 font-display text-lg font-bold text-ink-950">{% icon "graduation-cap", "size-5 text-(--a-600)" %}{{ "districts.learn.title" | t(L) }}</h3>
+          <ul class="mt-4 space-y-3 text-[15px]">
+            <li><a href="https://www.aa.org/your-dcm-district-committee-member" target="_blank" rel="noopener" class="inline-flex items-start gap-2 font-semibold text-ocean-700 hover:text-iris-700 hover:underline">{% icon "external-link", "size-4 mt-1 shrink-0" %}{{ "districts.learn.f12" | t(L) }}</a></li>
+            <li><a href="https://www.aa.org/district-committee-member-dcm-kit-list" target="_blank" rel="noopener" class="inline-flex items-start gap-2 font-semibold text-ocean-700 hover:text-iris-700 hover:underline">{% icon "external-link", "size-4 mt-1 shrink-0" %}{{ "districts.learn.kit" | t(L) }}</a></li>
+            <li><a href="{{ 'districts.learn.manual_url' | t(L) }}" target="_blank" rel="noopener" class="inline-flex items-start gap-2 font-semibold text-ocean-700 hover:text-iris-700 hover:underline">{% icon "external-link", "size-4 mt-1 shrink-0" %}{{ "districts.learn.manual" | t(L) }}</a></li>
+            <li><a href="{{ '/about/structure/' | lurl(L) }}" class="inline-flex items-start gap-2 font-semibold text-ocean-700 hover:text-iris-700 hover:underline">{% icon "arrow-right", "size-4 mt-1 shrink-0" %}{{ "districts.learn.structure" | t(L) }}</a></li>
+          </ul>
+          <p class="mt-5 text-sm text-ink-600">{{ "districts.learn.schools" | t(L) }}</p>
+          <div class="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-sm">
+            {{ emailLink({ email: "dcmschoolchair@msca09aa.org", lang: L }) }}
+            {{ emailLink({ email: ("dcmschoolchair-es@msca09aa.org" if L.code == "es" else "gsrschoolchair@msca09aa.org"), lang: L }) }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

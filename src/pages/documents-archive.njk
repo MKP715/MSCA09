@@ -1,0 +1,190 @@
+---
+pagination: { data: langs, size: 1, alias: lang, addAllPagesToCollections: true }
+permalink: "{{ lang.prefix }}/documents/archive/"
+layout: page.njk
+title_key: documents.arch_title
+description_key: documents.arch_description
+eyebrow_key: documents.cat_eyebrow
+heroIcon: archive
+accent: iris
+crumbs: [{ label_key: "documents.crumb_service", url: "/service/" }, { label_key: "documents.title", url: "/documents/" }]
+bare: true
+source: data/documents/
+scripts: ["/assets/js/documents.js"]
+eleventyComputed:
+  lead: "{{ 'documents.arch_lead' | t(lang, { n: documents.stats.archive | docNum(lang), first: documents.stats.archiveFirstYear, last: documents.stats.archiveLastYear, from: documents.stats.currentFrom }) | safe }}"
+---
+{#- What the archive is, where it came from, what it holds, and why some files are held back. -#}
+{%- from "macros/ui.njk" import sectionHead -%}
+{%- set L = lang -%}
+{%- set D = documents or {} -%}
+{%- set S = D.stats or {} -%}
+{%- set SY = S.sourceYears or {} -%}
+{%- set libUrl = '/documents/' | lurl(L) -%}
+
+{#- ------------------------------------------------------------ figures -#}
+<section class="relative z-10 -mt-6 lg:-mt-10">
+  <div class="wrap">
+    <dl class="card doc-quick grid grid-cols-2 gap-3 p-4 sm:p-6 md:grid-cols-4 lg:p-8 2xl:gap-5">
+      {%- set figs = [
+        { v: (S.archive or 0) | docNum(L), l: "documents.arch_fig_docs" | t(L), icon: "archive", color: "iris" },
+        { v: (S.archiveFirstYear ~ "–" ~ S.archiveLastYear) if S.archiveFirstYear else "—", l: "documents.arch_fig_years" | t(L), icon: "history", color: "ocean" },
+        { v: (D.stats.archiveShelves or []).length, l: "documents.fig_shelves" | t(L), icon: "library", color: "sun" },
+        { v: (S.withheld or 0) | docNum(L), l: "documents.arch_fig_withheld" | t(L), icon: "shield-check", color: "sage" }
+      ] %}
+      {%- for f in figs %}
+      <div class="doc-fig" style="{{ f.color | accent }}">
+        <dt class="flex items-center gap-2 text-xs font-semibold text-ink-500"><span class="icon-tile-soft size-7 rounded-lg">{% icon f.icon, "size-4" %}</span>{{ f.l }}</dt>
+        <dd class="mt-2 font-display text-2xl font-extrabold tracking-tight text-ink-950 tabular-nums sm:text-3xl">{{ f.v }}</dd>
+      </div>
+      {%- endfor %}
+    </dl>
+  </div>
+</section>
+
+{#- ------------------------------------------------------------ story + chart -#}
+<section class="wrap py-14 lg:py-20" aria-labelledby="arch-where-h">
+  <div class="grid gap-10 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] 2xl:gap-16">
+    <div>
+      <p class="eyebrow mb-2">{{ "documents.arch_where_eyebrow" | t(L) }}</p>
+      <h2 id="arch-where-h" class="h-section text-balance">{{ "documents.arch_where_title" | t(L) }}</h2>
+      <p class="lead mt-4">{{ "documents.arch_where_lead" | t(L) }}</p>
+
+      <ol class="doc-timeline mt-10" role="list">
+        <li style="{{ 'copper' | accent }}">
+          <span class="doc-tl-dot">{% icon "globe", "size-4" %}</span>
+          <p class="text-xs font-bold tracking-[0.14em] text-(--a-700) uppercase">{{ "documents.arch_src1_when" | t(L, { first: SY.area09.first if SY.area09 else "", last: SY.area09.last if SY.area09 else "" }) }}</p>
+          <h3 class="mt-1 font-display text-xl font-bold text-ink-950">area09.org</h3>
+          <p class="mt-2 leading-relaxed text-ink-600">{{ "documents.arch_src1_body" | t(L, { n: (SY.area09.count if SY.area09 else 0) | docNum(L) }) }}</p>
+        </li>
+        <li style="{{ 'ocean' | accent }}">
+          <span class="doc-tl-dot">{% icon "globe", "size-4" %}</span>
+          <p class="text-xs font-bold tracking-[0.14em] text-(--a-700) uppercase">{{ "documents.arch_src2_when" | t(L, { first: SY.msca09.first if SY.msca09 else "", last: SY.msca09.last if SY.msca09 else "" }) }}</p>
+          <h3 class="mt-1 font-display text-xl font-bold text-ink-950">msca09aa.org</h3>
+          <p class="mt-2 leading-relaxed text-ink-600">{{ "documents.arch_src2_body" | t(L, { n: (SY.msca09.count if SY.msca09 else 0) | docNum(L) }) }}</p>
+        </li>
+        <li style="{{ 'sage' | accent }}">
+          <span class="doc-tl-dot">{% icon "hard-drive", "size-4" %}</span>
+          <p class="text-xs font-bold tracking-[0.14em] text-(--a-700) uppercase">{{ "documents.arch_src3_when" | t(L) }}</p>
+          <h3 class="mt-1 font-display text-xl font-bold text-ink-950">{{ "documents.arch_src3_title" | t(L) }}</h3>
+          <p class="mt-2 leading-relaxed text-ink-600">{{ "documents.arch_src3_body" | t(L) }}</p>
+        </li>
+      </ol>
+    </div>
+
+    <div class="space-y-6">
+      {#- Archive documents per year: one series, so the heading names it (no legend). Table view below. -#}
+      <figure class="card p-6 sm:p-8">
+        <figcaption>
+          <h3 class="font-display text-xl font-bold text-ink-950">{{ "documents.arch_chart_title" | t(L) }}</h3>
+          <p class="mt-1 text-sm text-ink-500">{{ "documents.arch_chart_sub" | t(L) }}</p>
+        </figcaption>
+        {%- set ay = S.archiveYears or [] %}
+        {%- if ay.length > 1 %}
+        {#- The bars are a mouse shortcut (click a year); the table below lists the same numbers, with links. -#}
+        <div class="doc-chart mt-6" aria-hidden="true">
+          {%- for y in ay %}
+          <span {% if y.n %}data-href="{{ libUrl }}?col=archive&amp;from={{ y.year }}&amp;to={{ y.year }}#library"{% endif %} class="doc-chart-col{{ ' is-zero' if not y.n }}" style="--h:{{ y.h }}%" title="{{ y.year }}: {{ ('documents.count_one' if y.n == 1 else 'documents.count_many') | t(L, { n: y.n }) }}">
+            <span class="doc-chart-bar"></span>
+          </span>
+          {%- endfor %}
+        </div>
+        <p class="sr-only">{{ 'documents.arch_chart_alt' | t(L, { first: ay[0].year, last: ay[ay.length - 1].year }) }}</p>
+        <div class="relative mt-2 h-4 text-xs font-medium text-ink-500" aria-hidden="true">
+          {%- set nY = ay.length %}
+          {%- for y in ay %}
+          {%- set edge = loop.first or loop.last %}
+          {%- set nearEdge = (loop.index0 < 3 or loop.index0 > nY - 4) and not edge %}
+          {%- if edge or (y.year % 5 == 0 and not nearEdge) %}
+          <span class="absolute top-0 -translate-x-1/2 tabular-nums" style="left: {{ (loop.index0 + 0.5) * 100 / nY }}%">{{ y.year }}</span>
+          {%- endif %}
+          {%- endfor %}
+        </div>
+        <details class="doc-more mt-5">
+          <summary class="inline-flex cursor-pointer list-none items-center gap-1.5 text-sm font-semibold text-ocean-700 hover:underline">{% icon "table-2", "size-4" %}{{ "documents.arch_chart_table" | t(L) }}</summary>
+          <div class="mt-3 max-h-80 overflow-y-auto rounded-2xl ring-1 ring-ink-100">
+            <table class="table-msca">
+              <thead><tr><th scope="col">{{ "documents.col_year" | t(L) }}</th><th scope="col" class="text-right">{{ "documents.fig_total" | t(L) }}</th></tr></thead>
+              <tbody>
+                {%- for y in ay | reverse %}{% if y.n %}<tr><td><a href="{{ libUrl }}?col=archive&amp;from={{ y.year }}&amp;to={{ y.year }}#library" class="font-semibold text-ocean-700 hover:underline">{{ y.year }}</a></td><td class="text-right tabular-nums">{{ y.n }}</td></tr>{% endif %}{% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </details>
+        {%- endif %}
+      </figure>
+
+      <div class="grid gap-4 sm:grid-cols-2">
+        <a href="{{ libUrl }}?col=archive#library" class="doc-archive-card group sm:col-span-2" style="{{ 'iris' | accent }}">
+          <span class="relative z-10 flex flex-col gap-4 sm:flex-row sm:items-center">
+            <span class="grid size-14 shrink-0 place-items-center rounded-3xl bg-white/15 ring-1 ring-white/30 text-white">{% icon "search", "size-7" %}</span>
+            <span class="min-w-0 flex-1">
+              <span class="block font-display text-2xl font-bold text-white">{{ "documents.arch_cta_title" | t(L) }}</span>
+              <span class="mt-1 block text-white/85">{{ "documents.arch_cta_body" | t(L) }}</span>
+            </span>
+            <span class="btn btn-white shrink-0 self-start sm:self-center">{{ "documents.arch_cta_btn" | t(L) }}{% icon "arrow-right", "size-4" %}</span>
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{#- ------------------------------------------------------------ what it holds -#}
+<section class="relative isolate py-14 lg:py-20" aria-labelledby="arch-holds-h">
+  <div class="absolute inset-0 -z-10 bg-ring-soft opacity-80" aria-hidden="true"></div>
+  <div class="wrap">
+    {{ sectionHead({ eyebrow: "documents.arch_holds_eyebrow" | t(L), title: "documents.arch_holds_title" | t(L), lead: "documents.arch_holds_lead" | t(L), id: "arch-holds-h" }) }}
+    <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5" role="list">
+      {%- for c in S.archiveShelves or [] %}
+      <li>
+        <a href="{{ libUrl }}?col=archive&amp;cat={{ c.key }}#library" class="doc-shelf group flex-row items-center gap-4" style="{{ c.color | accent(loop.index0) }}">
+          <span class="icon-tile transition duration-300 group-hover:scale-110">{% icon c.icon, "size-6" %}</span>
+          <span class="min-w-0 flex-1">
+            <span class="block font-display text-lg leading-tight font-bold text-ink-950">{{ c | loc("label", L) }}</span>
+            <span class="mt-0.5 block text-sm font-semibold text-(--a-700)">{{ ("documents.count_one" if c.count == 1 else "documents.count_many") | t(L, { n: c.count | docNum(L) }) }}</span>
+          </span>
+          <span class="text-ink-300 transition group-hover:text-(--a-600)">{% icon "arrow-up-right", "size-5" %}</span>
+        </a>
+      </li>
+      {%- endfor %}
+    </ul>
+  </div>
+</section>
+
+{#- ------------------------------------------------------------ anonymity + help -#}
+<section class="wrap py-14 lg:py-20" aria-labelledby="arch-anon-h">
+  <div class="grid gap-6 lg:grid-cols-3 2xl:gap-8">
+    <div class="card-accent p-6 sm:p-8 lg:col-span-2" style="{{ 'sage' | accent }}">
+      <div class="flex items-start gap-4">
+        <span class="icon-tile">{% icon "shield-check", "size-6" %}</span>
+        <div class="min-w-0">
+          <h2 id="arch-anon-h" class="font-display text-2xl font-bold text-ink-950 sm:text-3xl">{{ "documents.arch_anon_title" | t(L) }}</h2>
+          <div class="mt-4 space-y-3 text-lg leading-relaxed text-ink-600">
+            <p>{{ "documents.arch_anon_p1" | t(L) }}</p>
+            <p>{{ "documents.arch_anon_p2" | t(L, { n: (S.withheld or 0) | docNum(L) }) }}</p>
+            <p>{{ "documents.arch_anon_p3" | t(L) }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="space-y-4">
+      <a href="{{ '/committees/archives/' | lurl(L) }}" class="card card-hover group flex items-start gap-4 p-5" style="{{ 'amber' | accent }}">
+        <span class="icon-tile-soft">{% icon "landmark", "size-5" %}</span>
+        <span class="min-w-0 flex-1">
+          <span class="block font-display text-lg font-bold text-ink-950">{{ "documents.arch_committee_title" | t(L) }}</span>
+          <span class="mt-1 block text-sm leading-relaxed text-ink-600">{{ "documents.arch_committee_body" | t(L) }}</span>
+        </span>
+        <span class="text-ink-300 group-hover:text-(--a-600)">{% icon "arrow-up-right", "size-5" %}</span>
+      </a>
+      <div class="card flex items-start gap-4 p-5" style="{{ 'ocean' | accent }}">
+        <span class="icon-tile-soft">{% icon "mail", "size-5" %}</span>
+        <div class="min-w-0">
+          <p class="font-display text-lg font-bold text-ink-950">{{ "documents.arch_help_title" | t(L) }}</p>
+          <p class="mt-1 text-sm leading-relaxed text-ink-600">{{ "documents.arch_help_body" | t(L) }}</p>
+          <a href="mailto:{{ site.email_webmaster }}" class="mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-ocean-700 hover:underline">{{ site.email_webmaster }}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

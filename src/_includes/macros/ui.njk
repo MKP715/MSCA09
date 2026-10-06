@@ -1,0 +1,202 @@
+{#-
+  Shared building blocks. Import what you need:
+    {% from "macros/ui.njk" import sectionHead, linkCard, chip, btn, emailLink, copyable, statTile, personCard, formatBadge, langBadge, docLink, emptyState, mapBlock with context %}
+  Every macro takes one object argument so call sites stay readable.
+  Colours are names from the palette (ocean, iris, coral, sun, sage, copper, blush, lilac, sea, or any Tailwind colour name).
+-#}
+
+{#- The colourful band at the top of interior pages. o: { lang, title, eyebrow, lead, icon, accent, crumbs, page } -#}
+{% macro pageHero(o) %}
+{%- set L = o.lang -%}
+<section class="relative isolate overflow-hidden" style="{{ (o.accent or 'ocean') | accent }}">
+  <div class="absolute inset-0 -z-10" style="background:
+      radial-gradient(70rem 32rem at 0% -10%, var(--a-200), transparent 60%),
+      radial-gradient(60rem 30rem at 100% 0%, color-mix(in oklab, var(--color-iris-200) 80%, transparent), transparent 60%),
+      linear-gradient(180deg, var(--a-50), white);"></div>
+  <div class="bg-confetti absolute inset-0 -z-10 opacity-70" aria-hidden="true"></div>
+  <img src="/assets/img/logo/logo-{{ L.code }}-384.webp" alt="" aria-hidden="true" width="384" height="384" loading="lazy"
+       class="pointer-events-none absolute -right-16 -bottom-24 -z-10 hidden size-[26rem] rotate-12 opacity-[0.07] md:block 2xl:right-10 2xl:size-[32rem]">
+  <div class="wrap pt-8 pb-12 sm:pt-10 lg:pt-12 lg:pb-16 2xl:pb-20">
+    <nav aria-label="{{ 'nav.breadcrumb' | t(L) }}" class="mb-6 text-sm">
+      <ol class="-my-3 flex flex-wrap items-center gap-x-1.5 text-ink-600 lg:my-0 lg:gap-y-1.5">
+        <li><a href="{{ '/' | lurl(L) }}" class="-ml-3.5 inline-flex size-11 items-center justify-center hover:text-ink-900 lg:ml-0 lg:size-auto">{% icon "house", "size-4" %}<span class="sr-only">{{ "nav.home" | t(L) }}</span></a></li>
+        {%- for c in o.crumbs %}
+        <li class="flex items-center gap-1.5">{% icon "chevron-right", "size-3.5 text-ink-300" %}<a href="{{ c.url | lurl(L) }}" class="inline-flex min-h-11 min-w-11 items-center justify-center hover:text-ink-900 lg:min-h-0 lg:min-w-0">{{ (c.label_key | t(L)) if c.label_key else c.label }}</a></li>
+        {%- endfor %}
+        <li class="flex min-h-11 min-w-0 items-center gap-1.5 lg:min-h-0">{% icon "chevron-right", "size-3.5 text-ink-300" %}<span class="truncate font-medium text-ink-800" aria-current="page" {% if o.titleLang and o.titleLang != L.code %}lang="{{ o.titleLang }}"{% endif %}>{{ o.title }}</span></li>
+      </ol>
+    </nav>
+    <div class="flex items-start gap-5 lg:gap-7">
+      {%- if o.icon %}
+      <span class="icon-tile hidden size-16 rounded-3xl sm:grid lg:size-20">{% icon o.icon, "size-8 lg:size-10" %}</span>
+      {%- endif %}
+      <div class="min-w-0 max-w-4xl">
+        {%- if o.eyebrow %}<p class="eyebrow mb-3">{{ o.eyebrow }}</p>{% endif %}
+        <h1 data-pagefind-weight="10" {% if o.titleLang and o.titleLang != L.code %}lang="{{ o.titleLang }}"{% endif %} class="font-display text-4xl font-extrabold tracking-tight text-balance text-ink-950 sm:text-5xl 2xl:text-6xl">{{ o.title }}</h1>
+        {%- if o.lead %}<p class="lead mt-5 max-w-3xl text-pretty">{{ o.lead }}</p>{% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endmacro %}
+
+{#- Section heading. o: { eyebrow, title, lead, accent, align ("center"), id, action: { label, url, icon }, level } -#}
+{% macro sectionHead(o) %}
+<div class="mb-8 flex flex-col gap-4 lg:mb-10 {{ 'items-center text-center' if o.align == 'center' else 'sm:flex-row sm:items-end sm:justify-between' }}" {% if o.accent %}style="{{ o.accent | accent }}"{% endif %}>
+  <div class="{{ 'max-w-3xl' if o.align == 'center' else 'max-w-3xl' }}">
+    {%- if o.eyebrow %}<p class="eyebrow mb-2">{{ o.eyebrow }}</p>{% endif %}
+    <h{{ o.level or 2 }} {% if o.id %}id="{{ o.id }}"{% endif %} class="h-section text-balance">{{ o.title }}</h{{ o.level or 2 }}>
+    {%- if o.lead %}<p class="lead mt-3 text-pretty">{{ o.lead }}</p>{% endif %}
+  </div>
+  {%- if o.action %}
+  <a href="{{ o.action.url }}" class="btn btn-ghost shrink-0">{{ o.action.label }}{% icon o.action.icon or "arrow-right", "size-4" %}</a>
+  {%- endif %}
+</div>
+{% endmacro %}
+
+{#- Small pill. o: { text, color, icon, soft } -#}
+{% macro chip(o) %}
+<span class="chip {{ 'chip-soft' if o.soft else 'chip-accent' }}" {% if o.color %}style="{{ o.color | accent }}"{% endif %}>{% if o.icon %}{% icon o.icon, "size-3.5" %}{% endif %}{{ o.text }}</span>
+{% endmacro %}
+
+{#- Button link. o: { label, url, style ("primary"|"ocean"|"white"|"ghost"|"glass"|"accent"), icon, iconRight, size ("lg"|"sm"), external, color } -#}
+{% macro btn(o) %}
+<a href="{{ o.url }}" class="btn btn-{{ o.style or 'primary' }} {{ ('btn-' + o.size) if o.size }}" {% if o.color %}style="{{ o.color | accent }}"{% endif %} {% if o.external %}target="_blank" rel="noopener"{% endif %}>
+  {%- if o.icon %}{% icon o.icon, "size-4" %}{% endif %}{{ o.label }}{% if o.iconRight %}{% icon o.iconRight, "size-4" %}{% elif o.external %}{% icon "external-link", "size-3.5 opacity-70" %}{% endif %}
+</a>
+{% endmacro %}
+
+{#- A card that is a link. o: { url, title, body, icon, color, index, external, meta, cta } -#}
+{% macro linkCard(o) %}
+<a href="{{ o.url }}" {% if o.external %}target="_blank" rel="noopener"{% endif %}
+   class="card card-hover group flex h-full flex-col gap-4 p-6 2xl:p-7" style="{{ o.color | accent(o.index or 0) }}">
+  <div class="flex items-start justify-between gap-3">
+    <span class="icon-tile transition duration-300 group-hover:scale-110 group-hover:rotate-[-4deg]">{% icon o.icon or "arrow-right", "size-6" %}</span>
+    <span class="grid size-9 place-items-center rounded-full bg-ink-50 text-ink-400 transition group-hover:bg-[var(--a-500)] group-hover:text-white">{% set cornerIcon = "external-link" if o.external else "arrow-up-right" %}{% icon cornerIcon, "size-4" %}</span>
+  </div>
+  <div class="flex-1">
+    <h3 class="font-display text-xl font-bold text-ink-950">{{ o.title }}</h3>
+    {%- if o.body %}<p class="mt-2 leading-relaxed text-ink-600">{{ o.body }}</p>{% endif %}
+  </div>
+  {%- if o.meta %}<p class="text-sm font-semibold text-[var(--a-700)]">{{ o.meta }}</p>{% endif %}
+</a>
+{% endmacro %}
+
+{#- Big number. o: { value, label, icon, color, suffix } — numbers count up when scrolled into view. -#}
+{% macro statTile(o) %}
+<div class="card flex items-center gap-4 p-5 2xl:p-6" style="{{ o.color | accent }}">
+  <span class="icon-tile">{% icon o.icon or "sparkles", "size-6" %}</span>
+  <div>
+    <p><span class="block font-display text-3xl font-extrabold text-ink-950 2xl:text-4xl" data-pagefind-ignore><span x-data="countUp({{ o.value }})" x-intersect.once="start()" x-text="display">{{ o.value }}</span>{{ o.suffix }}</span>
+    <span class="block text-sm font-medium text-ink-500">{{ o.label }}</span></p>
+  </div>
+</div>
+{% endmacro %}
+
+{#- Role-based e-mail with a copy button. o: { email, label, lang, compact }
+    A long address wraps after the @ (then anywhere, if one half is still too wide) instead of being cut off. -#}
+{% macro emailLink(o) %}
+{%- if o.email %}
+{%- set e = o.email | string -%}
+{%- set at = e.indexOf("@") -%}
+<span class="inline-flex max-w-full items-center gap-1" x-data="copyText({{ e | json }})">
+  <a href="mailto:{{ e }}" class="inline-flex min-h-6 min-w-0 items-start gap-1.5 py-0.5 font-semibold text-ocean-700 hover:text-iris-700 hover:underline">
+    {% icon "mail", "size-4 shrink-0 mt-[0.2em]" %}<span class="mail-text min-w-0">{% if o.label %}{{ o.label }}{% elif at > 0 %}{{ e.slice(0, at) }}<wbr>{{ e.slice(at) }}{% else %}{{ e }}{% endif %}</span>
+  </a>
+  {#- 44px tap target on touch screens (negative margin keeps the line height); "Copied!" is announced by app.js -#}
+  <button type="button" @click="copy()" class="-my-2 grid size-11 shrink-0 place-items-center rounded-full text-ink-500 hover:bg-ink-100 hover:text-ink-700 lg:my-0 lg:size-7" aria-label="{{ 'ui.copy_x' | t(o.lang, { what: e }) }}">
+    <span x-show="!copied">{% icon "copy", "size-3.5" %}</span><span x-cloak x-show="copied" class="text-sage-600">{% icon "check", "size-3.5" %}</span>
+  </button>
+</span>
+{%- endif %}
+{% endmacro %}
+
+{#- A value people need to type somewhere (Zoom ID, passcode) with a copy button. o: { label, value, lang, icon } -#}
+{% macro copyable(o) %}
+{%- if o.value %}
+<div class="flex items-center justify-between gap-3 rounded-2xl bg-ink-50 px-4 py-3" x-data="copyText({{ o.value | json }})">
+  <div class="min-w-0">
+    <p class="text-xs font-semibold tracking-wide text-ink-500 uppercase">{{ o.label }}</p>
+    <p class="truncate font-mono text-[15px] font-semibold text-ink-900">{{ o.value }}</p>
+  </div>
+  <button type="button" @click="copy()" class="btn btn-white btn-sm min-h-11 shrink-0 lg:min-h-0" aria-label="{{ 'ui.copy_x' | t(o.lang, { what: o.label }) }}">
+    <span x-show="!copied" class="inline-flex items-center gap-1.5">{% icon "copy", "size-3.5" %}{{ "ui.copy" | t(o.lang) }}</span>
+    <span x-cloak x-show="copied" class="inline-flex items-center gap-1.5 text-sage-700">{% icon "check", "size-3.5" %}{{ "ui.copied" | t(o.lang) }}</span>
+  </button>
+</div>
+{%- endif %}
+{% endmacro %}
+
+{#- Trusted servant. Anonymity: first name + last initial only, role e-mail only. o: { name, role, email, color, index, lang, note } -#}
+{% macro personCard(o) %}
+<div class="card flex items-start gap-4 p-5" style="{{ o.color | accent(o.index or 0) }}">
+  <span class="grid size-12 shrink-0 place-items-center rounded-full font-display text-lg font-bold text-white" style="background: linear-gradient(135deg, var(--a-600), var(--a-800));" aria-hidden="true">{{ (o.name | initials) or "?" }}</span>
+  <div class="min-w-0 flex-1">
+    <p class="text-xs font-bold tracking-wide text-[var(--a-700)] uppercase">{{ o.role }}</p>
+    <p class="mt-0.5 font-display text-lg font-bold text-ink-950">{{ o.name or ("people.open_position" | t(o.lang)) }}</p>
+    {%- if o.note %}<p class="mt-1 text-sm text-ink-500">{{ o.note }}</p>{% endif %}
+    {%- if o.email %}<div class="mt-2 text-sm">{{ emailLink({ email: o.email, lang: o.lang }) }}</div>{% endif %}
+  </div>
+</div>
+{% endmacro %}
+
+{#- Meeting format badge. o: { format ("In person"|"Hybrid"|"Virtual"), lang } -#}
+{% macro formatBadge(o) %}
+{%- set f = (o.format or "") | lower -%}
+{%- if "hybrid" in f -%}
+<span class="chip chip-accent" style="{{ 'iris' | accent }}">{% icon "monitor-smartphone", "size-3.5" %}{{ "format.hybrid" | t(o.lang) }}</span>
+{%- elif "virtual" in f or "online" in f or "zoom" in f -%}
+<span class="chip chip-accent" style="{{ 'ocean' | accent }}">{% icon "video", "size-3.5" %}{{ "format.virtual" | t(o.lang) }}</span>
+{%- elif "person" in f -%}
+<span class="chip chip-accent" style="{{ 'sage' | accent }}">{% icon "map-pin", "size-3.5" %}{{ "format.in_person" | t(o.lang) }}</span>
+{%- endif -%}
+{% endmacro %}
+
+{#- Language badge. o: { language ("English"|"Spanish"|"Bilingual"), lang } -#}
+{% macro langBadge(o) %}
+{%- set g = (o.language or "") | lower -%}
+{%- if g -%}
+<span class="chip chip-accent" style="{{ ('coral' if 'span' in g or 'esp' in g else ('sun' if 'bil' in g else 'sea')) | accent }}">{% icon "languages", "size-3.5" %}{{ ("language.spanish" if ("span" in g or "esp" in g) else ("language.bilingual" if "bil" in g else "language.english")) | t(o.lang) }}</span>
+{%- endif -%}
+{% endmacro %}
+
+{#- A document row. o: { title, url, date, language, format, size, lang, meta } -#}
+{% macro docLink(o) %}
+<a href="{{ o.url }}" target="_blank" rel="noopener" class="group flex items-center gap-4 rounded-2xl p-3 transition hover:bg-ink-50">
+  <span class="grid size-11 shrink-0 place-items-center rounded-xl bg-coral-50 text-coral-600 transition group-hover:bg-coral-600 group-hover:text-white">{% icon "file-text", "size-5" %}</span>
+  <span class="min-w-0 flex-1">
+    <span class="block font-semibold text-ink-900 group-hover:text-iris-700">{{ o.title }}</span>
+    <span class="mt-0.5 flex flex-wrap gap-x-3 text-sm text-ink-500">
+      {%- if o.date %}<span>{{ o.date | dt("auto", o.lang) }}</span>{% endif %}
+      {%- if o.language %}
+      {#- the language in the page's own language (language.* text keys); anything unrecognised is shown as written -#}
+      {%- set g = o.language | lower %}
+      {%- set isEs = ("span" in g) or ("esp" in g) %}
+      {%- set isEn = ("eng" in g) or ("ingl" in g) %}
+      {%- set lk = "language.bilingual" if (("bil" in g) or (isEs and isEn)) else ("language.spanish" if isEs else ("language.english" if isEn else "")) %}
+      <span>{{ (lk | t(o.lang)) if lk else o.language }}</span>{% endif %}
+      {%- if o.format %}<span>{{ o.format }}</span>{% endif %}
+      {%- if o.meta %}<span>{{ o.meta }}</span>{% endif %}
+    </span>
+  </span>
+  {% icon "external-link", "size-4 shrink-0 text-ink-300 group-hover:text-ink-600" %}
+</a>
+{% endmacro %}
+
+{#- Friendly empty state. o: { icon, title, body, color } -#}
+{% macro emptyState(o) %}
+<div class="card flex flex-col items-center gap-3 p-10 text-center" style="{{ (o.color or 'ocean') | accent }}">
+  <span class="icon-tile-soft size-14">{% icon o.icon or "sparkles", "size-7" %}</span>
+  <p class="font-display text-lg font-bold text-ink-900">{{ o.title }}</p>
+  {%- if o.body %}<p class="max-w-md text-ink-500">{{ o.body }}</p>{% endif %}
+</div>
+{% endmacro %}
+
+{#- Leaflet map. o: { id, points: [{ lat, lng, label, url, color, num }], height ("h-[28rem]"), zoom, lang }
+    The page must add "/assets/vendor/leaflet/leaflet.css" to styles and "/assets/vendor/leaflet/leaflet.js" to scripts. -#}
+{% macro mapBlock(o) %}
+<div class="relative overflow-hidden rounded-3xl ring-1 ring-ink-900/5 shadow-soft">
+  <div id="{{ o.id }}" class="{{ o.height or 'h-[28rem]' }} w-full bg-ocean-50" x-data="leafletMap({{ o.points | json }}, {{ (o.zoom or 0) }})" x-intersect.once="load()" role="region" aria-label="{{ 'map.label' | t(o.lang) }}"></div>
+  <p class="absolute right-3 bottom-2 z-[400] rounded-full bg-white/80 px-2 py-0.5 text-[10px] text-ink-500">© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a></p>
+</div>
+{% endmacro %}

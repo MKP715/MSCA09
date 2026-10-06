@@ -1,0 +1,119 @@
+{#-
+  The outer shell of every page: <head>, header, footer.
+  Page front matter it understands:
+    title / title_key, description / description_key
+    accent        colour name for the page (ocean, coral, sage, iris, …)
+    styles        extra stylesheets   e.g. ["/assets/vendor/leaflet/leaflet.css"]
+    headInclude   a partial rendered inside <head> (e.g. image preloads): "partials/home-head.njk"
+    jsText        extra data/text keys the page's scripts read from MSCA.t
+    scripts       extra scripts (loaded with defer, before Alpine starts)
+    bodyClass     extra classes on <body>
+    noindex       true to keep a page out of search engines (and out of the site search); such a page (and the
+                  404 page) gets no canonical or hreflang links
+    altNoindex    true when the same page in the other language is noindex: no hreflang alternates are linked
+                  (set automatically for the English Delegate's Corner posts, see _data/eleventyComputed.js)
+    searchExclude true to keep a page out of the site search only (past one-off events are left out automatically)
+    source        the file volunteers edit to change this page, for the footer's "Edit" link (see _data/eleventyComputed.js)
+    ogImage       path to a link-preview image
+  Site search (Pagefind): the page title and any extra words in data/text/common.csv under
+  "search.kw.<English path>" (e.g. search.kw./newcomers/) are weighted so the page itself ranks first.
+-#}
+{%- set L = lang -%}
+{%- set lc = L.code -%}
+{%- set siteName = "site.name" | t(L) -%}
+{%- set isHome = page.url == "/" or page.url == "/es/" -%}
+{%- set homeTitle = "site.home_title" | t(L) -%}
+{%- set pageTitle = (title + " · " + ("site.title_suffix" | t(L))) if (title and not isHome) else homeTitle -%}
+{%- set enPath = page.url if lc == "en" else (page.url | altUrl(L)) -%}
+{%- set searchable = not (noindex or searchSkip) -%}
+{%- set searchTitle = ((title if (title and not isHome) else homeTitle)) | strip -%}
+{%- set desc = description or ("site.description" | t(L)) -%}
+{%- set alt = page.url | altUrl(L) -%}
+{#- Search engines: a noindex page (and the 404 page) names no canonical address and no language alternates;
+    a page whose other-language copy is noindex names only itself. -#}
+{%- set indexable = not (noindex or page.url == "/404.html") -%}
+<!doctype html>
+<html lang="{{ L.htmlLang }}" data-lang="{{ lc }}" data-base="{{ site.base }}" class="scroll-smooth">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{{ pageTitle | strip }}</title>
+  <meta name="description" content="{{ desc | strip | truncate(300) }}">
+  {%- if not indexable %}
+  <meta name="robots" content="noindex">
+  {%- else %}
+  <link rel="canonical" href="{{ page.url | absUrl(site.url + '/') }}">
+  {%- if not altNoindex %}
+  <link rel="alternate" hreflang="{{ L.htmlLang }}" href="{{ page.url | absUrl(site.url + '/') }}">
+  <link rel="alternate" hreflang="{{ 'es' if lc == 'en' else 'en' }}" href="{{ alt | absUrl(site.url + '/') }}">
+  <link rel="alternate" hreflang="x-default" href="{{ (alt if lc == 'es' else page.url) | absUrl(site.url + '/') }}">
+  {%- endif %}
+  {%- endif %}
+  <meta name="theme-color" content="#2ea3dd">
+  {#- Drive serves flyer images reliably only without a Referer; also keeps visitors' paths private. #}
+  <meta name="referrer" content="no-referrer">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="{{ siteName }}">
+  <meta property="og:title" content="{{ searchTitle }}">
+  <meta property="og:description" content="{{ desc | strip | truncate(200) }}">
+  <meta property="og:url" content="{{ page.url | absUrl(site.url + '/') }}">
+  <meta property="og:locale" content="{{ 'es_US' if lc == 'es' else 'en_US' }}">
+  <meta property="og:image" content="{{ (ogImage or '/assets/img/social-card.jpg') | absUrl(site.url + '/') }}">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" href="/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="preload" href="/assets/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/assets/css/site.css?v={{ site.build.ms }}">
+  {%- for href in styles %}
+  <link rel="stylesheet" href="{{ href }}">
+  {%- endfor %}
+  {#- Page scripts first, then the site script, then Alpine plugins, then Alpine: all deferred, so they run in this order. #}
+  {%- for src in scripts %}
+  <script defer src="{{ src }}"></script>
+  {%- endfor %}
+  <script defer src="/assets/js/app.js?v={{ site.build.ms }}"></script>
+  <script defer src="/assets/vendor/alpine-collapse.min.js"></script>
+  <script defer src="/assets/vendor/alpine-focus.min.js"></script>
+  <script defer src="/assets/vendor/alpine-intersect.min.js"></script>
+  <script defer src="/assets/vendor/alpine-persist.min.js"></script>
+  <script defer src="/assets/vendor/alpine.min.js"></script>
+  <script type="application/ld+json">{{ {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": siteName,
+    "alternateName": "MSCA09",
+    "url": site.url,
+    "logo": site.url + "/assets/img/logo/logo-en-512.png",
+    "email": site.email_webmaster
+  } | json | safe }}</script>
+  {%- include "partials/i18n-js.njk" %}
+  {#- Always include (an empty partial when there is none): async shortcodes such as the home hero
+      preload are dropped when the include sits inside {% if %}. #}
+  {%- include (headInclude or "partials/empty.njk") %}
+</head>
+<body class="min-h-dvh bg-white {{ bodyClass }}" style="{{ (accent or 'ocean') | accent }}">
+  <a href="#main" class="skip-link">{{ "a11y.skip" | t(L) }}</a>
+
+  {% include "partials/header.njk" %}
+
+  {#- Site search: archived delegate posts (2020–2023) and event pages count a little less, so the hub page
+      (a district, a committee, Minutes …) comes first for general words; they are still found by their own names. #}
+  <main id="main" tabindex="-1" class="outline-none" {% if searchable %}data-pagefind-body{% if searchType == "post" %} data-pagefind-weight="0.3"{% elif searchType == "event" %} data-pagefind-weight="0.6"{% endif %}{% endif %}
+        data-pagefind-meta="title[data-search-title], type[data-search-type]" data-search-title="{{ searchTitle }}" data-search-type="{{ searchType }}">
+    {{ content | safe }}
+    {%- if searchable and searchType != "event" and searchType != "post" %}
+    {#- Not shown: lets the site search rank this hub page (district, committee, documents …) above the many
+        event pages and archived posts that mention it, for its own name and keywords. #}
+    {%- set searchKw = ("search.kw." + enPath) | tOpt(L) %}
+    <div hidden data-pagefind-weight="10">{{ searchTitle }}{% if searchKw %} · {{ searchKw }}{% endif %}</div>
+    {%- endif %}
+  </main>
+
+  {% include "partials/footer.njk" %}
+  {% include "partials/mobile-bar.njk" %}
+  {% include "partials/search.njk" %}
+</body>
+</html>

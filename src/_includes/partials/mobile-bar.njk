@@ -1,0 +1,24 @@
+{#- Thumb-reachable tab bar on phones and tablets. -#}
+{%- set L = lang -%}
+{%- set enPath = page.url if L.code == "en" else (page.url | altUrl(L)) -%}
+{%- set tabs = [
+  { url: "/", icon: "house", key: "nav.home", exact: true },
+  { url: "/calendar/", icon: "calendar-days", key: "nav.calendar" },
+  { url: "/districts/", icon: "map", key: "nav.districts" },
+  { url: "/committees/", icon: "users", key: "nav.committees" },
+  { url: "/newcomers/", icon: "heart-handshake", key: "nav.get_help" }
+] -%}
+<nav aria-label="{{ 'nav.quick' | t(L) }}" class="no-print fixed inset-x-0 bottom-0 z-40 border-t border-ink-900/5 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl lg:hidden">
+  <ul class="mx-auto grid max-w-xl grid-cols-5">
+    {%- for tab in tabs %}
+    {%- set on = (enPath == tab.url) if tab.exact else enPath.startsWith(tab.url) %}
+    <li>
+      <a href="{{ tab.url | lurl(L) }}" {% if on %}aria-current="page"{% endif %}
+         class="flex flex-col items-center gap-1 px-1 pt-2.5 pb-2 text-[11px] font-semibold {{ 'text-iris-700' if on else 'text-ink-600' }}">
+        <span class="grid h-7 w-12 place-items-center rounded-full transition {{ 'bg-iris-100' if on }}">{% icon tab.icon, "size-5" %}</span>
+        <span class="truncate">{{ tab.key | t(L) }}</span>
+      </a>
+    </li>
+    {%- endfor %}
+  </ul>
+</nav>

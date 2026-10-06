@@ -1,0 +1,26 @@
+{#- Strings the browser-side scripts need, in the page's language. Keys live in data/text/common.csv. -#}
+{%- set jsKeys = [
+  "time.today", "time.tomorrow", "time.yesterday", "time.in_days", "time.days_ago", "time.now", "time.starting_soon",
+  "time.in_progress", "time.ended", "time.days", "time.hours", "time.minutes", "time.seconds",
+  "ui.copied", "ui.copy", "ui.link_copied", "ui.share", "ui.loading", "ui.no_results", "ui.show_more", "ui.show_less",
+  "search.placeholder", "search.zero_results", "search.many_results", "search.one_result", "search.load_more",
+  "format.in_person", "format.hybrid", "format.virtual", "map.two_fingers",
+  "gallery.close", "gallery.zoom", "gallery.prev", "gallery.next", "gallery.error", "gallery.label"
+] -%}
+{%- set jsKeys = jsKeys.concat(jsText or []) -%}
+<script>
+  {#- The visitor's "Pause animations" choice, applied before the page paints (see app.js). #}
+  try { if (localStorage.getItem("msca-motion") === "paused") document.documentElement.dataset.motion = "paused"; } catch (e) {}
+  window.MSCA = {
+    lang: "{{ lang.code }}",
+    locale: "{{ lang.locale }}",
+    base: "{{ site.base }}",
+    tz: "{{ site.timezone }}",
+    built: "{{ site.build.iso }}",
+    t: {
+      {%- for k in jsKeys %}
+      "{{ k }}": {{ k | t(lang) | json | safe }}{% if not loop.last %},{% endif %}
+      {%- endfor %}
+    }
+  };
+</script>

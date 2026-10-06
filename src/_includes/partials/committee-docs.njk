@@ -1,0 +1,3 @@
+{#- Committee reports from the document library (needs macros/documents.njk); English and Spanish copies of one document share a row. Expects: lib, L. -#}
+{%- from "macros/documents.njk" import docList with context -%}
+{{ docList({ docs: lib.reports, lang: L, limit: 8, compact: true, showCategory: true, pairs: true, moreUrl: ('/documents/' | lurl(L)), emptyText: false }) }}

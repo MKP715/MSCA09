@@ -1,0 +1,19 @@
+node_modules/
+_site/
+_site_*/
+.cache/
+data/generated/
+*.log
+.DS_Store
+Thumbs.db
+desktop.ini
+# never commit the private panel roster with personal contact details
+*roster*private*
+*.xlsx
+# local Python caches (they embed every string of the scripts, and local paths)
+__pycache__/
+*.py[cod]
+# local secrets and Office lock files
+.env
+.env.*
+~$*

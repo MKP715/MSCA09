@@ -1,0 +1,350 @@
+---
+pagination: { data: langs, size: 1, alias: lang, addAllPagesToCollections: true }
+permalink: "{{ lang.prefix }}/about/"
+layout: page.njk
+title_key: about.title
+description_key: about.description
+eyebrow_key: about.eyebrow
+lead_key: about.lead
+heroIcon: info
+accent: ocean
+bare: true
+scripts: ["/assets/js/content.js"]
+---
+{%- from "macros/content.njk" import factTile, quoteCard, pageNav, nextMeetingCard with context -%}
+{%- from "macros/ui.njk" import linkCard, mapBlock, emailLink with context -%}
+{%- set L = lang -%}
+{%- set es = { code: "es" } -%}
+{%- set en = { code: "en" } -%}
+{%- set stats = districts | districtStats -%}
+{%- set points = districts | districtPoints(L) -%}
+{%- set nDistricts = stats.total if stats.total else ("about.districts_fallback" | t(L)) -%}
+{%- set nEnglish = stats.english if stats.total else ("about.districts_fallback_en" | t(L)) -%}
+{%- set nSpanish = stats.spanish if stats.total else ("about.districts_fallback_es" | t(L)) -%}
+{%- set cl = (committees.list if (committees and committees.list) else []) -%}
+{%- set nStanding = (cl | where("category", "standing") | length) + (cl | where("category", "school") | length) -%}
+{%- set nCoord = cl | where("category", "coordinate") | length -%}
+{%- set nCommittees = (nStanding + nCoord) if (nStanding + nCoord) else (cl | length) -%}
+
+<div class="wrap pt-2 pb-2">
+  {{ pageNav({ lang: L, label: "content.on_this_page" | t(L), items: [
+    { id: "who", label: "about.nav_who" | t(L), icon: "users", color: "ocean" },
+    { id: "where", label: "about.nav_where" | t(L), icon: "map", color: "coral" },
+    { id: "does", label: "about.nav_does" | t(L), icon: "sparkles", color: "sage" },
+    { id: "how", label: "about.nav_how" | t(L), icon: "triangle", color: "iris" },
+    { id: "meets", label: "about.nav_meets" | t(L), icon: "calendar-days", color: "sun" },
+    { id: "history", label: "about.nav_history" | t(L), icon: "history", color: "copper" },
+    { id: "preambles", label: "about.nav_preambles" | t(L), icon: "quote", color: "lilac" }
+  ] }) }}
+</div>
+
+{#- ============================================================ STATS -#}
+<section aria-label="{{ 'about.stats_label' | t(L) }}" class="py-8">
+  <div class="wrap grid grid-cols-2 gap-4 md:grid-cols-3 2xl:grid-cols-6 2xl:gap-5">
+    {{ factTile({ value: nDistricts, count: stats.total > 0, label: "about.stat_districts" | t(L), sub: "about.stat_districts_sub" | t(L, { en: nEnglish, es: nSpanish }), icon: "map", color: "coral" }) }}
+    {{ factTile({ value: "about.stat_counties_value" | t(L), label: "about.stat_counties" | t(L), sub: "about.stat_counties_sub" | t(L), icon: "mountain", color: "sun" }) }}
+    {%- if nCommittees %}
+    {{ factTile({ value: nCommittees, count: true, label: "about.stat_committees" | t(L), sub: ("about.stat_committees_sub" | t(L, { standing: nStanding, coordinate: nCoord })) if nStanding else ("about.stat_committees_sub_any" | t(L)), icon: "users", color: "sage" }) }}
+    {%- else %}
+    {{ factTile({ value: "about.stat_officers_value" | t(L), label: "about.stat_officers" | t(L), sub: "about.stat_officers_sub" | t(L), icon: "users", color: "sage" }) }}
+    {%- endif %}
+    {{ factTile({ value: "1958", label: "about.stat_formed" | t(L), sub: "about.stat_formed_sub" | t(L), icon: "history", color: "copper" }) }}
+    {{ factTile({ value: 93, count: true, label: "about.stat_areas" | t(L), sub: "about.stat_areas_sub" | t(L), icon: "earth", color: "ocean" }) }}
+    {{ factTile({ value: 15, count: true, label: "about.stat_region" | t(L), sub: "about.stat_region_sub" | t(L), icon: "compass", color: "iris" }) }}
+  </div>
+</section>
+
+{#- ============================================================ WHO WE ARE -#}
+<section id="who" aria-labelledby="who-title" class="scroll-mt-28 py-12 lg:py-16">
+  <div class="wrap grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-12 2xl:gap-16">
+    <div class="lg:col-span-7 2xl:col-span-8">
+      <p class="eyebrow mb-2">{% icon "users", "size-4" %}{{ "about.who_eyebrow" | t(L) }}</p>
+      <h2 id="who-title" class="h-section text-balance">{{ "about.who_title" | t(L) }}</h2>
+      <div class="mt-6 max-w-4xl space-y-5 text-lg leading-relaxed text-ink-700 2xl:text-xl 2xl:leading-relaxed">
+        <p class="text-pretty">{{ "about.who_1" | t(L) }}</p>
+        <p class="text-pretty">{{ "about.who_2" | t(L) }}</p>
+      </div>
+      <div class="mt-8 max-w-4xl">
+        {{ quoteCard({ text: "about.purpose_quote" | t(L), cite: "about.purpose_cite" | t(L), color: "ocean", size: "lg" }) }}
+      </div>
+      <div class="mt-8 grid grid-cols-1 max-w-4xl gap-5 sm:grid-cols-2">
+        <div class="card p-6" style="{{ 'coral' | accent }}">
+          <p class="flex items-center gap-2 font-display text-lg font-bold text-ink-950">{% icon "languages", "size-5 text-[var(--a-600)]" %}{{ "about.lang_title" | t(L) }}</p>
+          <p class="mt-2 leading-relaxed text-ink-600">{{ "about.lang_body" | t(L) }}</p>
+        </div>
+        <div class="card p-6" style="{{ 'sage' | accent }}">
+          <p class="flex items-center gap-2 font-display text-lg font-bold text-ink-950">{% icon "hand-heart", "size-5 text-[var(--a-600)]" %}{{ "about.selfsupport_title" | t(L) }}</p>
+          <p class="mt-2 leading-relaxed text-ink-600">{{ "about.selfsupport_body" | t(L) }}</p>
+          <a href="{{ '/contribute/' | lurl(L) }}" class="mt-3 inline-flex items-center gap-1 text-sm font-semibold text-[var(--a-700)] hover:underline">{{ "about.selfsupport_cta" | t(L) }}{% icon "arrow-right", "size-4" %}</a>
+        </div>
+      </div>
+    </div>
+
+    <aside class="lg:col-span-5 2xl:col-span-4" aria-labelledby="glance-title">
+      <div class="card overflow-hidden lg:sticky lg:top-32">
+        <div class="ct-ring flex items-center gap-4 px-6 py-5 text-white">
+          <img src="/assets/img/logo/logo-{{ L.code }}-160.webp" alt="{{ 'site.logo_alt' | t(L) }}" width="64" height="64" loading="lazy" class="size-16 rounded-full bg-white p-0.5 shadow-soft">
+          <div>
+            <h2 id="glance-title" class="font-display text-xl font-bold">{{ "about.glance_title" | t(L) }}</h2>
+            <p class="text-sm text-white/95">{{ "site.name" | t(L) }}</p>
+          </div>
+        </div>
+        {#- Each row is its own <dl> so every <dt>/<dd> pair sits directly in a <div> child of a <dl>. -#}
+        <div class="divide-y divide-ink-100 px-6">
+          <dl class="py-4">
+            <div>
+              <dt class="text-xs font-bold tracking-wide text-ink-500 uppercase">{{ "about.glance_legal" | t(L) }}</dt>
+              <dd class="mt-1 font-semibold text-ink-900">{{ "about.glance_legal_value" | t(L) }}</dd>
+              <dd class="mt-0.5 text-sm text-ink-500">{{ "about.glance_legal_note" | t(L) }}</dd>
+            </div>
+          </dl>
+          <dl class="grid grid-cols-2 gap-4 py-4">
+            <div><dt class="text-xs font-bold tracking-wide text-ink-500 uppercase">{{ "about.glance_panel" | t(L) }}</dt><dd class="mt-1 font-semibold text-ink-900">{{ site.panel }} · {{ site.panel_years }}</dd></div>
+            <div><dt class="text-xs font-bold tracking-wide text-ink-500 uppercase">{{ "about.glance_region" | t(L) }}</dt><dd class="mt-1 font-semibold text-ink-900">{{ "about.glance_region_value" | t(L) }}</dd></div>
+          </dl>
+          <dl class="py-4">
+            <div>
+              <dt class="text-xs font-bold tracking-wide text-ink-500 uppercase">{{ "about.glance_formed" | t(L) }}</dt>
+              <dd class="mt-1 text-ink-800">{{ "about.glance_formed_value" | t(L) }}</dd>
+            </div>
+          </dl>
+          <dl class="py-4">
+            <div>
+              <dt class="text-xs font-bold tracking-wide text-ink-500 uppercase">{{ "about.glance_mail" | t(L) }}</dt>
+              <dd class="mt-1 font-semibold text-ink-900">{{ site.mailing_name }}, {{ site.mailing_po_box }}<br>{{ site.mailing_city }}</dd>
+            </div>
+          </dl>
+          <dl class="py-4">
+            <div>
+              <dt class="text-xs font-bold tracking-wide text-ink-500 uppercase">{{ "about.glance_contact" | t(L) }}</dt>
+              <dd class="mt-1">{{ emailLink({ email: site.email_webmaster, lang: L }) }}</dd>
+              <dd class="mt-1"><a href="{{ '/contact/' | lurl(L) }}" class="text-sm font-semibold text-ocean-700 hover:underline">{{ "about.glance_contact_all" | t(L) }} →</a></dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+{#- ============================================================ WHERE WE SERVE -#}
+<section id="where" aria-labelledby="where-title" class="scroll-mt-28 bg-gradient-to-b from-ocean-50/70 to-white py-14 lg:py-20">
+  <div class="wrap">
+    <div class="mb-10 max-w-3xl">
+      <p class="eyebrow mb-2" style="{{ 'coral' | accent }}">{% icon "map", "size-4" %}{{ "about.where_eyebrow" | t(L) }}</p>
+      <h2 id="where-title" class="h-section text-balance">{{ "about.where_title" | t(L) }}</h2>
+      <p class="lead mt-3 text-pretty">{{ "about.where_lead" | t(L) }}</p>
+    </div>
+    <div class="grid gap-8 {{ 'xl:grid-cols-12' if points.length }}">
+      <ul class="grid gap-4 {{ 'xl:col-span-5 2xl:col-span-4' if points.length else 'md:grid-cols-2 2xl:grid-cols-4' }}">
+        {%- for it in "about.territory" | tlist(L) %}
+        <li class="card flex gap-4 p-5" style="{{ it.color | accent(loop.index0) }}">
+          <span class="icon-tile size-11">{% icon it.icon or "map-pin", "size-5" %}</span>
+          <div class="min-w-0 flex-1">
+            <h3 class="font-display text-lg font-bold text-ink-950">{{ it.title }}</h3>
+            <p class="mt-1 text-[15px] leading-relaxed text-ink-600">{{ it.body }}</p>
+            <div class="mt-3 flex flex-wrap gap-1.5">
+              {%- for n0 in (it.districts or "").split(";") %}{% set n = (n0 | trim) | districtLabel(L) %}{% if n %}
+              <a href="{{ ('/districts/' + (n0 | districtSlug) + '/') | lurl(L) }}" class="chip chip-accent min-h-8 px-3 text-[13px] hover:brightness-95" aria-label="{{ 'offices.district' | t(L, { n: n }) }}">{{ n }}</a>
+              {%- endif %}{% endfor %}
+              {%- for n0 in (it.spanish or "").split(";") %}{% set n = (n0 | trim) | districtLabel(L) %}{% if n %}
+              <a href="{{ ('/districts/' + (n0 | districtSlug) + '/') | lurl(L) }}" class="chip chip-accent min-h-8 px-3 text-[13px] hover:brightness-95" style="{{ 'coral' | accent }}" aria-label="{{ 'offices.district' | t(L, { n: n }) }} ({{ 'language.spanish' | t(L) }})">{% icon "languages", "size-3" %}{{ n }}</a>
+              {%- endif %}{% endfor %}
+            </div>
+          </div>
+        </li>
+        {%- endfor %}
+      </ul>
+      {%- if points.length %}
+      <div class="xl:col-span-7 2xl:col-span-8">
+        {{ mapBlock({ id: "area-map", points: points, height: "h-[26rem] sm:h-[32rem] 2xl:h-[40rem]", lang: L }) }}
+        <p class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-ink-500">
+          <span class="inline-flex items-center gap-1.5">{% icon "map-pin", "size-4 text-iris-600" %}{{ "about.map_note" | t(L) }}</span>
+        </p>
+      </div>
+      {%- endif %}
+    </div>
+    <div class="mt-8 flex flex-col gap-4 rounded-3xl bg-white p-5 shadow-soft ring-1 ring-ink-900/5 sm:flex-row sm:items-center sm:p-6">
+      <p class="flex items-center gap-2 font-display font-bold text-ink-900">{% icon "map-pinned", "size-5 text-coral-600" %}{{ "about.neighbors_title" | t(L) }}</p>
+      <div class="flex flex-wrap gap-2">
+        {%- for k in ["area-05", "area-08", "area-93"] %}{% set r = resources.byKey[k] if resources and resources.byKey else null %}{% if r %}
+        <a href="{{ r.url }}" target="_blank" rel="noopener" class="chip-link" style="{{ r.color | accent }}">{% icon "map-pinned", "size-4" %}{{ r | loc("title", L) }}</a>
+        {%- endif %}{% endfor %}
+      </div>
+      <a href="{{ '/districts/' | lurl(L) }}" class="btn btn-ocean shrink-0 sm:ml-auto">{% icon "search", "size-4" %}{{ "about.find_district" | t(L) }}</a>
+    </div>
+  </div>
+</section>
+
+{#- ============================================================ WHAT THE AREA DOES -#}
+<section id="does" aria-labelledby="does-title" class="scroll-mt-28 py-14 lg:py-20">
+  <div class="wrap">
+    <div class="mb-10 max-w-3xl">
+      <p class="eyebrow mb-2" style="{{ 'sage' | accent }}">{% icon "sparkles", "size-4" %}{{ "about.does_eyebrow" | t(L) }}</p>
+      <h2 id="does-title" class="h-section text-balance">{{ "about.does_title" | t(L) }}</h2>
+    </div>
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-6">
+      {%- for it in "about.does" | tlist(L) %}
+      <article class="reveal card card-accent flex flex-col gap-3 p-6 pt-7" style="{{ it.color | accent(loop.index0) }}; --reveal-delay:{{ loop.index0 * 60 }}ms">
+        <span class="icon-tile">{% icon it.icon or "sparkles", "size-6" %}</span>
+        <h3 class="font-display text-xl font-bold text-ink-950">{{ it.title }}</h3>
+        <p class="leading-relaxed text-ink-600">{{ it.body }}</p>
+      </article>
+      {%- endfor %}
+    </div>
+  </div>
+</section>
+
+{#- ============================================================ HOW IT IS ORGANISED -#}
+<section id="how" aria-labelledby="how-title" class="scroll-mt-28 bg-ring-soft py-14 lg:py-20">
+  <div class="wrap">
+    <div class="mb-10 max-w-3xl">
+      <p class="eyebrow mb-2" style="{{ 'iris' | accent }}">{% icon "triangle", "size-4" %}{{ "about.how_eyebrow" | t(L) }}</p>
+      <h2 id="how-title" class="h-section text-balance">{{ "about.how_title" | t(L) }}</h2>
+      <p class="lead mt-3 text-pretty">{{ "about.how_lead" | t(L, { panel: site.panel }) }}</p>
+    </div>
+    <div class="grid grid-cols-1 gap-10 xl:grid-cols-12 xl:gap-12">
+      <figure class="self-start xl:sticky xl:top-32 xl:col-span-5" aria-labelledby="tri-caption">
+        <ol class="space-y-2">
+          {%- set bands = "about.tri" | tlist(L) %}
+          {%- for b in bands %}
+          <li class="tri-band flex-col gap-0.5 sm:flex-row sm:gap-3" style="{{ b.color | accent(loop.index0) }}; width: {{ 100 - loop.index0 * 9 }}%;">
+            <span class="text-base sm:text-lg">{{ b.title }}</span>
+            <span class="text-xs font-semibold text-white sm:text-sm">{{ b.note | replace("{districts}", nDistricts) }}</span>
+          </li>
+          {%- endfor %}
+        </ol>
+        <figcaption id="tri-caption" class="mx-auto mt-5 max-w-md text-center text-sm leading-relaxed text-ink-500">“{{ "about.tri_quote" | t(L) }}” — {{ "about.tri_cite" | t(L) }}</figcaption>
+      </figure>
+      <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:col-span-7 3xl:grid-cols-3">
+        {%- for it in "about.body" | tlist(L) %}
+        <article class="card flex flex-col gap-3 p-6" style="{{ it.color | accent(loop.index0) }}">
+          <div class="flex items-center gap-3">
+            <span class="icon-tile-soft">{% icon it.icon or "users", "size-5" %}</span>
+            <h3 class="font-display text-lg leading-tight font-bold text-ink-950">{{ it.title }}</h3>
+          </div>
+          <p class="flex-1 leading-relaxed text-ink-600">{{ it.body }}</p>
+          {%- if it.url %}<a href="{{ it.url | lurl(L) }}" class="inline-flex items-center gap-1 text-sm font-semibold text-[var(--a-700)] hover:underline">{{ it.cta }}{% icon "arrow-right", "size-4" %}</a>{% endif %}
+        </article>
+        {%- endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+
+{#- ============================================================ WHEN THE AREA MEETS -#}
+<section id="meets" aria-labelledby="meets-title" class="scroll-mt-28 py-14 lg:py-20">
+  <div class="wrap grid grid-cols-1 gap-10 xl:grid-cols-12 xl:gap-12">
+    <div class="xl:col-span-4">
+      <p class="eyebrow mb-2" style="{{ 'sun' | accent }}">{% icon "calendar-days", "size-4" %}{{ "about.meets_eyebrow" | t(L) }}</p>
+      <h2 id="meets-title" class="h-section text-balance">{{ "about.meets_title" | t(L) }}</h2>
+      <p class="lead mt-3 text-pretty">{{ "about.meets_lead" | t(L) }}</p>
+      <ul class="mt-6 space-y-3 text-ink-700">
+        {%- for it in "about.meetfact" | tlist(L) %}
+        <li class="flex items-start gap-3"><span class="mt-0.5 grid size-8 shrink-0 place-items-center rounded-xl bg-sun-100 text-sun-800">{% icon it.icon or "check", "size-4" %}</span><span class="leading-relaxed">{{ it.text }}</span></li>
+        {%- endfor %}
+      </ul>
+    </div>
+    <div class="xl:col-span-8">
+      <ol class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6" aria-label="{{ 'about.year_label' | t(L) }}">
+        {%- set kindColor = { assembly: "coral", asc: "ocean", conference: "iris", foro: "sage", servathon: "copper" } %}
+        {%- for m in "about.month" | tlist(L) %}
+        <li class="month-tile" data-big="{{ '1' if m.kind in ['assembly','conference','foro','servathon'] else '0' }}" style="{{ (kindColor[m.kind] or 'ocean') | accent }}">
+          <span class="text-xs font-bold tracking-[0.16em] uppercase {{ 'text-white' if m.kind in ['assembly','conference','foro','servathon'] else 'text-[var(--a-700)]' }}">{{ m.month }}</span>
+          <span class="mt-3 block font-display text-lg leading-tight font-bold">{{ m.title }}</span>
+          {%- if m.note %}<span class="mt-1 block text-xs leading-snug {{ 'text-white/95' if m.kind in ['assembly','conference','foro','servathon'] else 'text-ink-600' }}">{{ m.note }}</span>{% endif %}
+        </li>
+        {%- endfor %}
+      </ol>
+      {#- colour key for the tiles -#}
+      <ul class="mt-4 flex flex-wrap gap-x-5 gap-y-2" aria-label="{{ 'about.kind_label' | t(L) }}">
+        {%- for k in ["assembly", "asc", "conference", "foro", "servathon"] %}
+        <li class="inline-flex items-center gap-2 text-sm font-semibold text-ink-700" style="{{ kindColor[k] | accent }}"><span class="size-3.5 rounded-md" style="background: linear-gradient(150deg, var(--a-500), var(--a-700));" aria-hidden="true"></span>{{ ("about.kind." + k) | t(L) }}</li>
+        {%- endfor %}
+      </ul>
+      <p class="mt-3 flex items-start gap-2 text-sm leading-relaxed text-ink-500">{% icon "info", "mt-0.5 size-4 shrink-0" %}{{ "about.year_note" | t(L) }}</p>
+      <div class="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
+        {%- if calendar and calendar.nextAreaMeeting %}{{ nextMeetingCard({ occ: calendar.nextAreaMeeting, lang: L }) }}{% endif %}
+        <div class="flex flex-wrap gap-2 lg:justify-end">
+          <a href="{{ '/service/area-meetings/' | lurl(L) }}" class="btn btn-primary">{% icon "calendar-range", "size-4" %}{{ "about.meets_cta" | t(L) }}</a>
+          <a href="{{ '/calendar/' | lurl(L) }}" class="btn btn-ghost bg-white">{% icon "calendar-days", "size-4" %}{{ "about.meets_calendar" | t(L) }}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{#- ============================================================ HISTORY -#}
+<section id="history" aria-labelledby="history-title" class="scroll-mt-28 bg-gradient-to-b from-copper-50/60 to-white py-14 lg:py-20">
+  <div class="wrap">
+    <div class="mb-10 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+      <div class="max-w-3xl">
+        <p class="eyebrow mb-2" style="{{ 'copper' | accent }}">{% icon "history", "size-4" %}{{ "about.history_eyebrow" | t(L) }}</p>
+        <h2 id="history-title" class="h-section text-balance">{{ "about.history_title" | t(L) }}</h2>
+        <p class="lead mt-3 text-pretty">{{ "about.history_lead" | t(L) }}</p>
+      </div>
+      {%- set arch = resources.byKey['archives-site'] if resources and resources.byKey else null %}
+      {%- if arch %}<a href="{{ arch.url }}" target="_blank" rel="noopener" class="btn btn-white shrink-0">{% icon "archive", "size-4" %}{{ "about.history_archives" | t(L) }}{% icon "external-link", "size-3.5 opacity-60" %}</a>{% endif %}
+    </div>
+    <ol class="tl-grid grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5">
+      {%- for it in "about.timeline" | tlist(L) %}
+      <li class="reveal tl-card-grid card relative flex flex-col gap-2 overflow-hidden p-6" style="{{ ['ocean','coral','sage','iris','sun','sea','copper','blush','lilac'][loop.index0 % 9] | accent }}; --reveal-delay:{{ (loop.index0 % 4) * 70 }}ms">
+        <span class="absolute inset-x-0 top-0 h-1.5" style="background: linear-gradient(90deg, var(--a-400), var(--a-600));"></span>
+        <span class="font-display text-4xl leading-none font-black tracking-tight text-[var(--a-700)]">{{ it.year }}</span>
+        <h3 class="mt-1 font-display text-lg leading-snug font-bold text-ink-950">{{ it.title }}</h3>
+        <p class="text-[15px] leading-relaxed text-ink-600">{{ it.body }}</p>
+      </li>
+      {%- endfor %}
+    </ol>
+    <p class="mt-6 text-sm leading-relaxed text-ink-500">{{ "about.history_sources" | t(L) }}</p>
+  </div>
+</section>
+
+{#- ============================================================ PREAMBLES -#}
+<section id="preambles" aria-labelledby="preambles-title" class="scroll-mt-28 py-14 lg:py-20">
+  <div class="wrap">
+    <div class="mb-10 max-w-3xl">
+      <p class="eyebrow mb-2" style="{{ 'lilac' | accent }}">{% icon "quote", "size-4" %}{{ "about.preambles_eyebrow" | t(L) }}</p>
+      <h2 id="preambles-title" class="h-section text-balance">{{ "about.preambles_title" | t(L) }}</h2>
+    </div>
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2 2xl:gap-8">
+      <figure class="preamble-card flex flex-col" style="background: linear-gradient(135deg, var(--color-ocean-700), var(--color-iris-700));">
+        <span class="pointer-events-none absolute -top-4 right-6 font-display text-[10rem] leading-none text-white/10" aria-hidden="true">“</span>
+        <p class="relative text-xs font-bold tracking-[0.18em] uppercase">{{ "about.preamble_kicker" | t(L) }}</p>
+        <h3 class="relative mt-1 font-display text-2xl font-bold sm:text-3xl">{{ "about.preamble_title" | t(L) }}</h3>
+        <blockquote class="relative mt-5 space-y-4 text-lg leading-relaxed 2xl:text-xl">
+          <p>{{ "about.preamble_p1" | t(L) }}</p>
+          <p>{{ "about.preamble_p2" | t(L) }}</p>
+        </blockquote>
+        <figcaption class="relative mt-auto flex flex-wrap items-center justify-between gap-3 pt-6 text-sm text-white/95">
+          <span>{{ "about.preamble_credit" | t(L) }}</span>
+          {%- set pr = resources.byKey['preamble'] if resources and resources.byKey else null %}
+          {%- if pr %}<a href="{{ pr | loc('url', L) }}" target="_blank" rel="noopener" class="btn btn-glass btn-sm">{{ "about.preamble_link" | t(L) }}{% icon "external-link", "size-3.5" %}</a>{% endif %}
+        </figcaption>
+      </figure>
+      <figure class="preamble-card flex flex-col" style="background: linear-gradient(135deg, var(--color-coral-700), var(--color-copper-700) 65%, var(--color-sun-800));">
+        <span class="pointer-events-none absolute -top-4 right-6 font-display text-[10rem] leading-none text-white/10" aria-hidden="true">“</span>
+        <p class="relative text-xs font-bold tracking-[0.18em] uppercase">{{ "about.gsr_kicker" | t(L) }}</p>
+        <h3 class="relative mt-1 font-display text-2xl font-bold sm:text-3xl">{{ "about.gsr_title" | t(L) }}</h3>
+        <blockquote class="relative mt-5 space-y-3 text-lg leading-relaxed 2xl:text-xl" lang="en">
+          {%- for line in "about.gsr_line" | tlist(en) %}
+          <p>{{ line.text }}</p>
+          {%- endfor %}
+        </blockquote>
+        <figcaption class="relative mt-6 text-sm text-white">{{ "about.gsr_credit" | t(L) }}</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+{#- ============================================================ ONWARD -#}
+<section aria-labelledby="more-title" class="pb-6">
+  <div class="wrap">
+    <h2 id="more-title" class="h-section mb-8 text-balance">{{ "about.more_title" | t(L) }}</h2>
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6">
+      {%- for it in "about.next" | tlist(L) %}
+      {{ linkCard({ url: it.url | lurl(L), title: it.title, body: it.body, icon: it.icon, color: it.color, index: loop.index0 }) }}
+      {%- endfor %}
+    </div>
+  </div>
+</section>

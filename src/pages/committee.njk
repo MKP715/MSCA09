@@ -1,0 +1,381 @@
+---
+pagination: { data: committees.pages, size: 1, alias: entry, addAllPagesToCollections: true }
+permalink: "{{ entry.lang.prefix }}/committees/{{ entry.item.slug }}/"
+layout: base.njk
+scripts: ["/assets/js/committees.js"]
+eleventyComputed:
+  title: "{{ entry.item | loc('name', entry.lang) }}"
+  description: "{{ entry.item | loc('summary', entry.lang) }}"
+  accent: "{{ entry.item.color }}"
+---
+{%- from "macros/ui.njk" import emailLink, btn, copyable with context -%}
+{%- from "macros/committees.njk" import personCardCm, resRow, aaRow, seriesMini, nextCard, committeeCard, cmEmail with context -%}
+{%- set c = entry.item -%}
+{%- set L = lang -%}
+{%- set isEs = (L | langCode) == "es" -%}
+{%- set meetings = calendar | cmMeetings(c.slug) -%}
+{%- set events = calendar | cmEvents(c.slug) -%}
+{%- set nextInfo = calendar | cmNext(c) -%}
+{%- set lib = c | cmLibrary(documents) -%}
+{%- set askEmail = (c.chairs | where("filled", true) | first).email or c.email or site.email_webmaster -%}
+{%- set hasEv = "macros/events.njk" | cmExists -%}
+{%- set hasDocs = "macros/documents.njk" | cmExists -%}
+{%- set catLabel = ("committees.cat." + c.category) | t(L) -%}
+{%- set activities = c | loc("activities", L) -%}
+{%- set involve = c | loc("involve", L) -%}
+{%- set structure = c | loc("structure", L) -%}
+{%- set history = c | loc("history", L) -%}
+{%- set people = c.chairs.concat(c.positions) -%}
+{%- set hasPeople = people.length or c.liaisons.length or c.members.length -%}
+{%- set hasGuides = lib.guidelines.length or lib.pendingGuidelines.length or lib.older.length or lib.extraGuidelines.length -%}
+{%- set hasReports = lib.reports.length or c.reports.length or lib.pendingReports.length -%}
+{%- set hasAa = c.aaResources.length -%}
+{#- a "thin" page (two people or fewer, two documents or fewer): on wide screens "Who serves" and the guidelines sit side by side -#}
+{%- set nPeople = people.length + c.liaisons.length -%}
+{%- set nDocs = lib.guidelines.length + lib.pendingGuidelines.length + lib.older.length + lib.extraGuidelines.length + lib.reports.length + c.reports.length + lib.pendingReports.length -%}
+{%- set thin = hasPeople and (hasGuides or hasReports) and nPeople <= 2 and not c.members.length and nDocs <= 2 -%}
+
+{#- the sections present on this page, for the section nav -#}
+{%- set sections = [{ id: "about", key: "committees.sec_about", icon: "info" }, { id: "meetings", key: "committees.sec_meetings", icon: "calendar-days" }] -%}
+{%- if hasPeople %}{% set sections = sections.concat([{ id: "people", key: "committees.sec_people", icon: "users" }]) %}{% endif -%}
+{%- if hasGuides or hasReports %}{% set sections = sections.concat([{ id: "documents", key: "committees.sec_documents", icon: "book-marked" }]) %}{% endif -%}
+{%- if hasAa or c.links.length or lib.pendingLinks.length %}{% set sections = sections.concat([{ id: "literature", key: "committees.sec_literature", icon: "library" }]) %}{% endif -%}
+{%- if c.faqs.length %}{% set sections = sections.concat([{ id: "faq", key: "committees.sec_faq", icon: "circle-help" }]) %}{% endif -%}
+
+{% include "partials/committee-hero.njk" %}
+
+<div class="cm-page wrap pb-8" x-data="cmSpy" style="{{ c.color | accent }}">
+  {#- section nav: sticky rail on phones and tablets -#}
+  <nav class="cm-secnav" aria-label="{{ 'committees.on_this_page' | t(L) }}">
+    <div class="flex gap-1 overflow-x-auto py-2 no-scrollbar">
+      {%- for sec in sections %}<a href="#{{ sec.id }}" data-spy>{{ sec.key | t(L) }}</a>{% endfor %}
+    </div>
+  </nav>
+
+  <div class="grid grid-cols-1 gap-10 pt-8 lg:pt-10 xl:grid-cols-12 xl:grid-rows-[auto_1fr] xl:gap-x-12 xl:gap-y-5 2xl:gap-x-16">
+    {#- contact + next meeting: first on phones and tablets, top of the right column on desktop -#}
+    <aside class="xl:col-span-4 xl:col-start-9 xl:row-start-1 3xl:col-span-3 3xl:col-start-10" aria-label="{{ 'committees.contact_title' | t(L) }}">
+      {% include "partials/committee-contact.njk" %}
+    </aside>
+    <div class="min-w-0 space-y-16 xl:col-span-8 xl:col-start-1 xl:row-span-2 xl:row-start-1 2xl:space-y-20 3xl:col-span-9">
+
+      {%- if c.notice %}
+      <aside class="relative overflow-hidden rounded-3xl p-6 text-white shadow-lift sm:p-8" style="background: linear-gradient(120deg, var(--color-coral-800), var(--color-coral-700) 55%, var(--color-sun-800));" data-hide-after="{{ c.notice.end }}T23:59:59-08:00">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center">
+          <span class="grid size-14 shrink-0 place-items-center rounded-2xl bg-white/20 ring-1 ring-white/30">{% icon "megaphone", "size-7" %}</span>
+          <div class="flex-1 text-lg leading-relaxed [&_strong]:font-extrabold">{{ c.notice[L.code] | mdi | safe }}</div>
+          {%- if c.notice.url %}<a href="{{ c.notice.url }}" target="_blank" rel="noopener" class="btn btn-white shrink-0">{{ "ui.read_more" | t(L) }}{% icon "external-link", "size-4" %}</a>{% endif %}
+        </div>
+      </aside>
+      {%- endif %}
+
+      {#- ======================================================= about -#}
+      <section id="about" class="cm-section" aria-labelledby="about-title">
+        <h2 id="about-title" class="cm-h2"><span class="icon-tile-soft">{% icon "info", "size-5" %}</span>{{ ("committees.purpose_title_event" if c.category == "service-event" else "committees.purpose_title") | t(L) }}</h2>
+        <div class="mt-5 grid grid-cols-1 gap-8 2xl:grid-cols-[minmax(0,1fr)_19rem] 2xl:items-start 3xl:grid-cols-[minmax(0,1fr)_22rem]">
+          <div class="prose-msca max-w-4xl text-ink-700 max-sm:prose-base [&>*:first-child]:mt-0">{{ c | loc("purpose", L) | md | safe }}</div>
+          {#- at a glance (wide screens) -#}
+          <dl class="hidden space-y-4 rounded-3xl p-6 text-sm ring-1 ring-ink-900/5 2xl:block" style="background: linear-gradient(160deg, var(--a-50), white);">
+            <div><dt class="text-xs font-bold tracking-wide text-[var(--a-700)] uppercase">{{ "committees.glance_type" | t(L) }}</dt><dd class="mt-1 font-semibold text-ink-900">{{ catLabel }}</dd></div>
+            <div><dt class="text-xs font-bold tracking-wide text-[var(--a-700)] uppercase">{{ "committees.when_we_meet" | t(L) }}</dt><dd class="mt-1 font-semibold text-ink-900">{% if meetings.length == 1 %}{{ meetings[0] | loc("pattern", L) }}{% else %}{{ c | loc("meets", L) }}{% endif %}</dd></div>
+            {%- if c.chairs.length %}
+            <div><dt class="text-xs font-bold tracking-wide text-[var(--a-700)] uppercase">{{ "committees.sec_people" | t(L) }}</dt>
+              <dd class="mt-1 space-y-1">{% for s in c.chairs %}<p class="{{ 'font-semibold text-coral-700' if s.open else 'font-semibold text-ink-900' }}">{{ s.name if s.name else ("committees.open_seat" | t(L)) }}<span class="font-normal text-ink-500"> · {{ ("language.spanish" if (s.language | cmLangKey) == "es" else "language.english") | t(L) }}</span></p>{% endfor %}</dd></div>
+            {%- endif %}
+            {%- set g0 = lib.guidelines[0] %}
+            {%- if g0 and g0.approved %}<div><dt class="text-xs font-bold tracking-wide text-[var(--a-700)] uppercase">{{ "committees.guidelines_title" | t(L) }}</dt><dd class="mt-1 text-ink-700">{{ "committees.approved" | t(L, { date: g0.approved | cmApproved(L) }) }}</dd></div>{% endif %}
+          </dl>
+        </div>
+
+        {%- if activities %}
+        <h3 class="mt-10 font-display text-xl font-bold text-ink-950 sm:text-2xl">{{ ("committees.duties_title" if c.category == "officer" else "committees.activities_title") | t(L) }}</h3>
+        <div class="cm-checklist mt-5">{{ activities | md | safe }}</div>
+        {%- endif %}
+
+        {%- if involve %}
+        <div class="mt-10 grid grid-cols-1 gap-6 overflow-hidden rounded-3xl p-6 ring-1 ring-ink-900/5 sm:p-8 lg:grid-cols-[auto_minmax(0,1fr)] lg:items-start" style="background: radial-gradient(40rem 20rem at 100% 0%, var(--a-100), transparent 70%), linear-gradient(160deg, var(--a-50), white);">
+          <span class="icon-tile size-14 rounded-2xl">{% icon "hand-heart", "size-7" %}</span>
+          <div>
+            <h3 class="font-display text-xl font-bold text-ink-950 sm:text-2xl">{{ "committees.involve_title" | t(L) }}</h3>
+            <div class="prose-msca mt-3 max-w-3xl text-ink-700 max-sm:prose-base">{{ involve | md | safe }}</div>
+            <div class="mt-5 flex flex-wrap gap-3">
+              {%- if c.email %}<a href="mailto:{{ c.email }}" class="btn btn-accent">{% icon "mail", "size-4" %}{{ "committees.write_us" | t(L) }}</a>{% endif %}
+              {%- if c.vacancies.length %}<a href="#people" class="btn btn-primary">{% icon "hand-heart", "size-4" %}{{ ("committees.help_wanted_one" if c.vacancies.length == 1 else "committees.help_wanted_n") | t(L, { n: c.vacancies.length }) }}</a>{% endif %}
+              <a href="#meetings" class="btn btn-ghost bg-white">{% icon "calendar-days", "size-4" %}{{ "committees.when_we_meet" | t(L) }}</a>
+            </div>
+          </div>
+        </div>
+        {%- endif %}
+
+        {%- if structure or history %}
+        <div class="mt-10 grid grid-cols-1 gap-6 {{ 'lg:grid-cols-2' if structure and history }}">
+          {%- if structure %}
+          <div class="rounded-3xl bg-white p-6 shadow-soft ring-1 ring-ink-900/5">
+            <h3 class="flex items-center gap-2 font-display text-lg font-bold text-ink-950">{% icon "network", "size-5 text-[var(--a-600)]" %}{{ ("committees.term_title" if c.category == "officer" else "committees.structure_title") | t(L) }}</h3>
+            <div class="prose-msca prose-base mt-3 text-ink-700">{{ structure | md | safe }}</div>
+          </div>
+          {%- endif %}
+          {%- if history %}
+          <div class="rounded-3xl bg-white p-6 shadow-soft ring-1 ring-ink-900/5">
+            <h3 class="flex items-center gap-2 font-display text-lg font-bold text-ink-950">{% icon "history", "size-5 text-[var(--a-600)]" %}{{ "committees.history_title" | t(L) }}</h3>
+            <div class="prose-msca prose-base mt-3 text-ink-700">{{ history | md | safe }}</div>
+          </div>
+          {%- endif %}
+        </div>
+        {%- endif %}
+      </section>
+
+      {#- ======================================================= meetings -#}
+      <section id="meetings" class="cm-section" aria-labelledby="meetings-title">
+        <h2 id="meetings-title" class="cm-h2"><span class="icon-tile-soft">{% icon "calendar-days", "size-5" %}</span>{{ "committees.when_we_meet" | t(L) }}</h2>
+
+        {%- if meetings.length and meetings.length <= 3 %}
+        <div class="mt-6 grid grid-cols-1 gap-5">
+          {%- for s in meetings %}
+          {%- if meetings.length > 1 %}<h3 class="-mb-2 flex items-center gap-2 font-display text-lg font-bold text-ink-950">{% icon "repeat", "size-5 text-[var(--a-600)]" %}{{ s | loc("title", L) or s.title }}</h3>{% endif %}
+          {%- if hasEv %}{% include "partials/committee-ev-meeting.njk" %}{% else %}{% include "partials/committee-series.njk" %}{% endif %}
+          {%- endfor %}
+        </div>
+        {%- elif meetings.length > 3 %}
+        <p class="mt-3 max-w-3xl text-ink-600">{{ c | loc("meets", L) }}. {{ "committees.many_meetings" | t(L) }}</p>
+        <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {%- for s in meetings %}{{ seriesMini({ s: s, lang: L, index: loop.index0 }) }}{% endfor %}
+        </div>
+        {%- endif %}
+
+        {%- if c.meets_at_area_meeting %}
+        {%- set areaOcc = calendar.nextAreaMeeting if calendar else null %}
+        {%- set areaSeries = calendar.bySlug[areaOcc.slug] if (areaOcc and calendar.bySlug) else null %}
+        {%- set areaOnline = areaSeries.online if (areaSeries and areaSeries.online and (areaSeries.online.zoomId or areaSeries.online.joinUrl)) else null %}
+        <div class="mt-6 grid grid-cols-1 gap-5 rounded-3xl bg-white p-6 shadow-soft ring-1 ring-ink-900/5 sm:p-7 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] lg:items-start 2xl:grid-cols-[minmax(0,1fr)_minmax(0,26rem)]">
+          <div class="flex min-w-0 items-start gap-4">
+            <span class="icon-tile">{% icon "calendar-range", "size-6" %}</span>
+            <div class="min-w-0">
+              <h3 class="font-display text-lg font-bold text-ink-950">{{ ("committees.breakout_title_also" if meetings.length else "committees.breakout_title") | t(L) }}</h3>
+              <p class="mt-1.5 text-ink-600">{{ "committees.breakout_body" | t(L) }}</p>
+              <a href="{{ '/service/area-meetings/' | lurl(L) }}" class="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-ocean-700 hover:underline">{{ "committees.area_meetings_link" | t(L) }}{% icon "arrow-right", "size-4" %}</a>
+            </div>
+          </div>
+          {%- if areaOcc %}
+          <div class="min-w-0 rounded-2xl p-3" style="background: var(--a-50);">
+            <p class="mb-2 px-1 text-xs font-bold tracking-wide text-[var(--a-700)] uppercase">{{ "committees.next_area_meeting" | t(L) }}</p>
+            {{ nextCard({ occ: areaOcc, lang: L, kind: "area" }) }}
+          </div>
+          {%- endif %}
+          {%- if areaOnline %}
+          {#- the Area meeting's own Zoom (from the calendar): online members join their committee from there -#}
+          <div class="min-w-0 rounded-2xl bg-[var(--a-50)] p-4 ring-1 ring-[var(--a-100)] sm:p-5 lg:col-span-2">
+            <p class="flex items-start gap-2 text-sm font-semibold text-ink-800">{% icon "video", "size-4 mt-0.5 shrink-0 text-[var(--a-600)]" %}<span>{{ "committees.breakout_zoom" | t(L) }}</span></p>
+            <div class="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 3xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] 3xl:items-center">
+              {%- if areaOnline.zoomId %}{{ copyable({ label: "committees.zoom_id" | t(L), value: areaOnline.zoomId, lang: L }) }}{% endif %}
+              {%- if areaOnline.passcode %}{{ copyable({ label: "committees.passcode" | t(L), value: areaOnline.passcode, lang: L }) }}{% endif %}
+              {%- if areaOnline.joinUrl %}<a href="{{ areaOnline.joinUrl }}" target="_blank" rel="noopener" class="btn btn-accent max-w-full justify-self-start whitespace-normal text-left sm:col-span-2 3xl:col-span-1">{% icon "video", "size-4 shrink-0" %}{{ "committees.join_area_zoom" | t(L) }}</a>{% endif %}
+            </div>
+          </div>
+          {%- endif %}
+        </div>
+        {%- endif %}
+
+        {%- if not meetings.length and not c.meets_at_area_meeting %}
+        <div class="mt-6 flex items-start gap-4 rounded-3xl bg-white p-6 shadow-soft ring-1 ring-ink-900/5">
+          <span class="icon-tile">{% icon "clock", "size-6" %}</span>
+          <div class="min-w-0">
+            <p class="font-display text-lg font-bold text-ink-950">{{ c | loc("meets", L) or ("committees.ask_schedule" | t(L)) }}</p>
+            <p class="mt-1 text-ink-600">{%- if c.category == "service-event" %}{{ "committees.event_schedule_body" | t(L) }}{% elif c.category in ["ad-hoc", "subcommittee"] %}{{ "committees.contact_for_details" | t(L) }}{% else %}{{ "committees.ask_schedule_body" | t(L) }}{% endif %}</p>
+            {%- if c.email %}<p class="mt-1">{{ cmEmail({ email: c.email, lang: L }) }}</p>{% endif %}
+          </div>
+        </div>
+        {%- set lastEv = (calendar | cmCal(c.slug)).past[0] %}
+        {%- if c.category == "service-event" and lastEv and not events.length %}
+        {#- date and place are separate items, so a wrapped line never starts with a stray "·" -#}
+        <div class="mt-4 flex flex-wrap items-baseline gap-x-4 gap-y-1 rounded-2xl bg-ink-50 px-5 py-4 text-sm text-ink-700">
+          <span class="font-semibold text-ink-500">{{ "committees.last_time" | t(L) }}</span>
+          <a href="{{ lastEv.url | lurl(L) }}" class="font-semibold text-ocean-700 hover:underline">{{ lastEv | loc("title", L) or lastEv.title }}</a>
+          <span class="inline-flex items-center gap-1.5">{% icon "calendar", "size-4 shrink-0 text-ink-400" %}{{ lastEv.start | dt("full", L) }}</span>
+          {%- if lastEv.location and lastEv.location.city %}<span class="inline-flex items-center gap-1.5">{% icon "map-pin", "size-4 shrink-0 text-ink-400" %}{{ lastEv.location.city }}</span>{% endif %}
+        </div>
+        {%- endif %}
+        {%- endif %}
+
+        {%- if events.length %}
+        <h3 class="mt-10 mb-4 flex items-center gap-2 font-display text-xl font-bold text-ink-950">{% icon "sparkles", "size-5 text-[var(--a-600)]" %}{{ "committees.coming_up" | t(L) }}</h3>
+        {%- if hasEv %}
+        {% include "partials/committee-ev-upcoming.njk" %}
+        {%- else %}
+        <ul class="grid grid-cols-1 gap-3 sm:grid-cols-2" data-limit="6">
+          {%- for x in events | limit(12) %}<li data-hide-after="{{ x.end }}">{{ nextCard({ occ: x, lang: L, kind: "event" }) }}</li>{% endfor %}
+        </ul>
+        {%- endif %}
+        {%- endif %}
+      </section>
+
+      {#- ======================================================= people -#}
+      {%- if thin %}<div class="grid grid-cols-1 gap-16 2xl:grid-cols-2 2xl:gap-10">{% endif %}
+      {%- if hasPeople %}
+      <section id="people" class="cm-section" aria-labelledby="people-title">
+        <div class="flex flex-wrap items-end justify-between gap-3">
+          <h2 id="people-title" class="cm-h2"><span class="icon-tile-soft">{% icon "users", "size-5" %}</span>{{ "committees.people_title" | t(L) }}</h2>
+          <span class="chip chip-soft">{{ "committees.panel_n" | t(L, { n: site.panel }) }}</span>
+        </div>
+        <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 {{ '2xl:grid-cols-1' if thin else '2xl:grid-cols-3' }}">
+          {%- for s in people %}{{ personCardCm({ s: s, lang: L, color: c.color, index: loop.index0, ctaEmail: ("chair@msca09aa.org" if s in c.chairs else (c.email or "chair@msca09aa.org")) }) }}{% endfor %}
+          {%- if c.category == "service-event" %}{% set lkey = "committees.organizer" %}{% elif c.category == "coordinate" %}{% set lkey = "committees.area_liaison" %}{% else %}{% set lkey = "committees.appointed_by" %}{% endif %}
+          {%- for s in c.liaisons %}{{ personCardCm({ s: s, lang: L, color: "iris", role: (lkey | t(L)) + " · " + (s | loc("position", L)), index: loop.index0 }) }}{% endfor %}
+        </div>
+        {%- if c.members.length %}
+        <h3 class="mt-8 font-display text-lg font-bold text-ink-950">{{ "committees.members_title" | t(L) }}</h3>
+        <ul class="mt-3 flex flex-wrap gap-2">
+          {%- for m in c.members %}<li class="inline-flex items-center gap-2 rounded-full bg-white py-1 pr-3.5 pl-1 text-sm font-semibold text-ink-800 shadow-soft ring-1 ring-ink-900/5"><span class="cm-avatar size-7 text-[11px]" aria-hidden="true">{{ m.name | initials }}</span>{{ m.name }}</li>{% endfor %}
+        </ul>
+        {%- endif %}
+
+        {%- if c.vacancies.length %}
+        <div class="mt-8 flex flex-col gap-5 rounded-3xl bg-coral-50 p-6 ring-1 ring-coral-200 sm:flex-row sm:items-center sm:p-8">
+          <span class="grid size-14 shrink-0 place-items-center rounded-2xl bg-coral-600 text-white shadow-soft">{% icon "hand-heart", "size-7" %}</span>
+          <div class="flex-1">
+            <h3 class="font-display text-xl font-bold text-ink-950">{{ "committees.vacancy_title" | t(L) }}</h3>
+            <p class="mt-1 text-ink-700">{{ "committees.vacancy_body" | t(L) }}</p>
+          </div>
+          {%- set openChairs = c.chairs | where("open", true) %}
+          <a href="{{ ('chair@msca09aa.org' if openChairs.length else (c.email or 'chair@msca09aa.org')) | cmMailto(('committees.vacancy_subject' | t(L, { name: c | loc('name', L) }))) }}" class="btn btn-primary btn-lg shrink-0">{% icon "mail", "size-5" %}{{ "committees.vacancy_cta" | t(L) }}</a>
+        </div>
+        {%- endif %}
+
+        {%- if c.previous.length %}
+        <details class="cm-fold mt-6">
+          <summary>{% icon "history", "size-4" %}{{ "committees.previous_panel" | t(L, { n: site.previous_panel }) }}<span class="cm-fold-chev transition">{% icon "chevron-down", "size-4" %}</span></summary>
+          <ul class="mt-3 flex flex-wrap gap-2 text-sm">
+            {%- for s in c.previous %}<li class="rounded-full bg-ink-50 px-3 py-1.5 text-ink-700"><span class="font-semibold text-ink-900">{{ s.name or ("people.open_position" | t(L)) }}</span> · {{ s | loc("position", L) }}</li>{% endfor %}
+          </ul>
+        </details>
+        {%- endif %}
+        <p class="mt-6 flex items-start gap-2 text-sm text-ink-500">{% icon "shield-check", "size-4 mt-0.5 shrink-0 text-sage-600" %}{{ "committees.anonymity_note" | t(L) }}</p>
+      </section>
+      {%- endif %}
+
+      {#- ======================================================= guidelines & documents -#}
+      {%- if hasGuides or hasReports %}
+      <section id="documents" class="cm-section" aria-labelledby="documents-title">
+        <h2 id="documents-title" class="cm-h2"><span class="icon-tile-soft">{% icon "book-marked", "size-5" %}</span>{{ "committees.docs_title" | t(L) }}</h2>
+        <div class="mt-6 grid grid-cols-1 gap-6 {{ '' if thin else '2xl:grid-cols-2' }}">
+          {%- if hasGuides %}
+          <div class="rounded-3xl bg-white p-4 shadow-soft ring-1 ring-ink-900/5 sm:p-6">
+            <h3 class="px-3 font-display text-lg font-bold text-ink-950">{{ "committees.guidelines_title" | t(L) }}</h3>
+            <p class="px-3 pt-1 text-sm text-ink-500">{{ "committees.guidelines_lead" | t(L) }}</p>
+            <div class="mt-3 space-y-1">
+              {%- for r in lib.guidelines %}{{ resRow({ r: r, lang: L }) }}{% endfor %}
+              {%- for r in lib.pendingGuidelines %}{{ resRow({ r: r, lang: L, contact: askEmail }) }}{% endfor %}
+            </div>
+            {%- if lib.older.length %}
+            <details class="cm-fold mt-4 px-3">
+              <summary>{% icon "archive", "size-4" %}{{ "committees.older_versions" | t(L, { n: lib.older.length }) }}<span class="cm-fold-chev transition">{% icon "chevron-down", "size-4" %}</span></summary>
+              <div class="-mx-3 mt-3 space-y-1">{% for r in lib.older %}{{ resRow({ r: r, lang: L }) }}{% endfor %}</div>
+            </details>
+            {%- endif %}
+            {%- if lib.extraGuidelines.length %}
+            <details class="cm-fold mt-3 px-3">
+              <summary>{% icon "files", "size-4" %}{{ "committees.library_copies" | t(L, { n: lib.extraGuidelines.length }) }}<span class="cm-fold-chev transition">{% icon "chevron-down", "size-4" %}</span></summary>
+              <div class="-mx-3 mt-3 space-y-1">
+                {%- for d in lib.extraGuidelines %}{{ resRow({ r: { kind: "guideline", title_en: d.title, title_es: d.title_es or d.title, url: d.url, language: (d.language | cmLangKey), approved: d.year if d.year else "" }, lang: L }) }}{% endfor %}
+              </div>
+            </details>
+            {%- endif %}
+            <a href="{{ '/documents/guidelines/' | lurl(L) }}" class="mt-4 inline-flex items-center gap-1.5 px-3 text-sm font-semibold text-ocean-700 hover:underline">{{ "committees.all_guidelines" | t(L) }}{% icon "arrow-right", "size-4" %}</a>
+          </div>
+          {%- endif %}
+
+          {%- if hasReports %}
+          <div class="rounded-3xl bg-white p-4 shadow-soft ring-1 ring-ink-900/5 sm:p-6">
+            <h3 class="px-3 font-display text-lg font-bold text-ink-950">{{ "committees.reports_title" | t(L) }}</h3>
+            <p class="px-3 pt-1 text-sm text-ink-500">{{ "committees.reports_lead" | t(L) }}</p>
+            <div class="mt-3">
+              {%- if lib.reports.length and hasDocs %}
+              {% include "partials/committee-docs.njk" %}
+              {%- else %}
+              <div class="space-y-1">
+                {%- for d in lib.reports | limit(12) %}{{ resRow({ r: { kind: "report", title_en: d.title, title_es: d.title_es or d.title, url: d.url, language: (d.language | cmLangKey), approved: (d.date or d.year) }, lang: L }) }}{% endfor %}
+              </div>
+              {%- endif %}
+              {%- if c.reports.length or lib.pendingReports.length %}<div class="mt-2 space-y-1">{% for r in c.reports %}{{ resRow({ r: r, lang: L }) }}{% endfor %}{% for r in lib.pendingReports %}{{ resRow({ r: r, lang: L, contact: askEmail }) }}{% endfor %}</div>{% endif %}
+            </div>
+          </div>
+          {%- endif %}
+        </div>
+      </section>
+      {%- endif %}
+      {%- if thin %}</div>{% endif %}
+
+      {#- ======================================================= aa.org literature & links -#}
+      {%- if hasAa or c.links.length or lib.pendingLinks.length %}
+      <section id="literature" class="cm-section" aria-labelledby="literature-title">
+        <div class="flex flex-wrap items-end justify-between gap-3">
+          <h2 id="literature-title" class="cm-h2"><span class="icon-tile-soft">{% icon "library", "size-5" %}</span>{{ "committees.literature_title" | t(L) }}</h2>
+          {%- if c.aa_url %}<a href="{{ c.aa_url_es if isEs and c.aa_url_es else c.aa_url }}" target="_blank" rel="noopener" class="btn btn-ghost">{{ "committees.on_aaorg" | t(L) }}{% icon "external-link", "size-4" %}</a>{% endif %}
+        </div>
+        <p class="mt-2 max-w-3xl text-ink-600">{{ "committees.literature_lead" | t(L) }}</p>
+        {%- set kinds = c.aaResources | cmByKind(["aa-page", "aa-guideline", "aa-workbook", "aa-kit", "aa-material", "pamphlet"]) %}
+        {%- if kinds.length %}
+        <div class="mt-6 columns-1 gap-6 lg:columns-2 3xl:columns-3">
+          {%- for k in kinds %}
+          <div class="mb-6 break-inside-avoid rounded-3xl bg-white p-3 shadow-soft ring-1 ring-ink-900/5 sm:p-4">
+            <h3 class="flex items-center gap-2 px-3 pt-2 pb-1 font-display text-base font-bold text-ink-950">{{ ("committees.kind." + k.kind) | t(L) }}<span class="chip chip-soft">{{ k.items.length }}</span></h3>
+            <ul>{% for r in k.items %}{{ aaRow({ r: r, lang: L }) }}{% endfor %}</ul>
+          </div>
+          {%- endfor %}
+        </div>
+        {%- endif %}
+        {%- if c.links.length or lib.pendingLinks.length %}
+        <div class="mt-2 rounded-3xl bg-white p-3 shadow-soft ring-1 ring-ink-900/5 sm:p-4">
+          <h3 class="px-3 pt-2 pb-1 font-display text-base font-bold text-ink-950">{{ "committees.links_title" | t(L) }}</h3>
+          <div class="grid grid-cols-1 gap-1 lg:grid-cols-2">{% for r in c.links %}{{ resRow({ r: { kind: r.kind, title_en: r.title_en, title_es: r.title_es, url: (r | cmAaLink(L)) if r.notes == "aa.org" else r.url, code: r.code }, lang: L }) }}{% endfor %}{% for r in lib.pendingLinks %}{{ resRow({ r: r, lang: L, contact: askEmail }) }}{% endfor %}</div>
+        </div>
+        {%- endif %}
+      </section>
+      {%- endif %}
+
+      {#- ======================================================= FAQ -#}
+      {%- if c.faqs.length %}
+      <section id="faq" class="cm-section" aria-labelledby="faq-title">
+        <h2 id="faq-title" class="cm-h2"><span class="icon-tile-soft">{% icon "circle-help", "size-5" %}</span>{{ "committees.faq_title" | t(L) }}</h2>
+        <div class="mt-6 grid grid-cols-1 gap-3 2xl:grid-cols-2 2xl:items-start">
+          {%- for f in c.faqs %}
+          <details class="cm-faq" {% if loop.first %}open{% endif %}>
+            <summary>{{ f | loc("q", L) }}<span class="cm-faq-chev transition">{% icon "chevron-down", "size-4" %}</span></summary>
+            <div class="prose-msca prose-base px-5 pb-5 text-ink-700">{{ f | loc("a", L) | md | safe }}</div>
+          </details>
+          {%- endfor %}
+        </div>
+      </section>
+      {%- endif %}
+
+      {#- ======================================================= share / correct -#}
+      <div class="flex flex-col gap-4 rounded-3xl bg-ink-50 p-6 sm:flex-row sm:items-center sm:justify-between">
+        <p class="flex items-start gap-3 text-sm text-ink-600">{% icon "pencil-line", "size-5 shrink-0 text-ink-400" %}<span>{{ "committees.correction" | t(L) }} <a class="font-semibold text-ocean-700 hover:underline" href="{{ site.email_webmaster | cmMailto(('committees.correction_subject' | t(L, { name: c | loc('name', L) }))) }}">{{ site.email_webmaster }}</a>{% if site.repo %} · <a class="font-semibold text-ocean-700 hover:underline" href="https://github.com/{{ site.repo }}/blob/main/data/committees.csv" rel="noopener">{{ "committees.edit_csv" | t(L) }}</a>{% endif %}</span></p>
+        <span x-data="shareLink({{ (c | loc('name', L)) | json }})" class="shrink-0">
+          <button type="button" class="btn btn-white" @click="share()"><span x-show="!done" class="inline-flex items-center gap-2">{% icon "share-2", "size-4" %}{{ "ui.share" | t(L) }}</span><span x-cloak x-show="done" class="inline-flex items-center gap-2 text-sage-700">{% icon "check", "size-4" %}{{ "ui.link_copied" | t(L) }}</span></button>
+        </span>
+      </div>
+    </div>
+
+    {#- ======================================================= aside -#}
+    <aside class="xl:col-span-4 xl:col-start-9 xl:row-start-2 3xl:col-span-3 3xl:col-start-10" aria-label="{{ 'committees.aside_label' | t(L) }}">
+      {% include "partials/committee-aside.njk" %}
+    </aside>
+  </div>
+</div>
+
+{#- ======================================================= related -#}
+{%- set rel = c.relatedItems or [] -%}
+{%- if rel.length %}
+{%- if rel.length >= 5 %}{% set relCols = "lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5" %}{% elif rel.length == 4 %}{% set relCols = "lg:grid-cols-2 xl:grid-cols-4" %}{% elif rel.length == 3 %}{% set relCols = "lg:grid-cols-3" %}{% else %}{% set relCols = "lg:grid-cols-2 xl:grid-cols-3" %}{% endif %}
+<section class="mt-12 bg-ring-soft py-14 lg:py-16" aria-labelledby="related-title">
+  <div class="wrap">
+    <h2 id="related-title" class="h-section text-balance">{{ "committees.related_title" | t(L) }}</h2>
+    <div class="rail mt-8 scroll-px-4 sm:scroll-px-6 lg:mx-0 lg:grid lg:overflow-visible lg:px-0 {{ relCols }}">
+      {%- for r in rel %}
+      {{ committeeCard({ c: r, lang: L, index: loop.index0, calendar: calendar, cls: "w-[82vw] max-w-[21rem] shrink-0 lg:w-auto lg:max-w-none" }) }}
+      {%- endfor %}
+    </div>
+  </div>
+</section>
+{%- endif %}

@@ -1,0 +1,42 @@
+{#- Area 09 in numbers — every number is counted from the data at build time. A swipe row on phones. -#}
+{%- set L = lang -%}
+{%- set dl = (districts.list if districts else []) or [] -%}
+{%- set cgroups = (committees.groups if committees else []) or [] -%}
+{#- the same count as the Committees page (category "standing"); the service schools are named under it -#}
+{%- set nStanding = cgroups | homeGroupCount(["standing"]) -%}
+{%- set nSchools = cgroups | homeGroupCount(["school"]) -%}
+{%- set founded = "home.stats.founded_year" | t(L) -%}
+{%- set years = founded | homeYearsSince(site.build.year) -%}
+{%- set monthCount = (calendar.occurrences if calendar else []) | homeMonthCount(calendar.typeMap if calendar else {}, site.build.iso) -%}
+{#- the same count as the calendar page: each upcoming event once, however many days it runs -#}
+{%- set eventsCount = (calendar.stats.eventsUpcoming if (calendar and calendar.stats and calendar.stats.eventsUpcoming != null) else ((calendar.upcomingEvents if calendar else []) | homeOncePerSeries).length) -%}
+{%- set stats = [] -%}
+{%- if dl.length %}{% set _ = stats.push({ value: dl.length, key: "districts", icon: "map", color: "sage", url: "/districts/" }) %}{% endif -%}
+{%- if dl.length %}{% set _ = stats.push({ value: (dl | where("kind", "linguistic")).length, key: "spanish", icon: "languages", color: "coral", url: "/districts/" }) %}{% endif -%}
+{%- if nStanding %}{% set _ = stats.push({ value: nStanding, key: "committees", icon: "users", color: "iris", url: "/committees/", sub: (("home.stats.school" if nSchools == 1 else "home.stats.schools") | t(L, { n: nSchools })) if nSchools else "" }) %}{% endif -%}
+{%- if monthCount %}{% set _ = stats.push({ value: monthCount, key: "meetings", icon: "calendar-days", color: "ocean", url: "/calendar/", vars: { month: site.build.iso | dt("month", L) } }) %}{% endif -%}
+{%- if eventsCount %}{% set _ = stats.push({ value: eventsCount, key: "events", icon: "party-popper", color: "sun", url: "/calendar/" }) %}{% endif -%}
+{%- if years %}{% set _ = stats.push({ value: years, key: "years", icon: "history", color: "copper", url: "/about/", vars: { year: founded } }) %}{% endif -%}
+{%- if stats.length %}
+<section class="home-stats relative isolate overflow-hidden py-10 sm:py-16 lg:py-20" aria-labelledby="home-stats-title">
+  <div class="bg-ring-soft absolute inset-0 -z-10" aria-hidden="true"></div>
+  <div class="bg-confetti absolute inset-0 -z-10 opacity-50" aria-hidden="true"></div>
+  <div class="wrap">
+    <div class="mb-6 text-center sm:mb-8 lg:mb-10" style="{{ 'ocean' | accent }}">
+      <p class="eyebrow mb-2 justify-center">{{ "home.stats.eyebrow" | t(L) }}</p>
+      <h2 id="home-stats-title" class="h-section text-balance">{{ "home.stats.title" | t(L) }}</h2>
+    </div>
+    <ul class="hm-stat-grid" role="list" style="--n: {{ stats.length }}">
+      {%- for s in stats %}
+      <li class="reveal" style="{{ s.color | accent }}; --reveal-delay: {{ loop.index0 * 80 }}ms">
+        <a href="{{ s.url | lurl(L) }}" class="hm-stat-card group">
+          <span class="icon-tile transition duration-300 group-hover:scale-110 group-hover:rotate-[-6deg]">{% icon s.icon, "size-6" %}</span>
+          <span class="hm-stat-num"><span x-data="countUp({{ s.value }})" x-intersect.once="start()" x-text="display">{{ s.value }}</span></span>
+          <span class="hm-stat-label">{{ ("home.stats." + s.key) | t(L, s.vars) }}{% if s.sub %}<span class="hm-stat-sub">{{ s.sub }}</span>{% endif %}</span>
+        </a>
+      </li>
+      {%- endfor %}
+    </ul>
+  </div>
+</section>
+{%- endif %}

@@ -1,0 +1,124 @@
+---
+pagination:
+  data: langs
+  size: 1
+  alias: lang
+  addAllPagesToCollections: true
+permalink: "{{ lang.prefix }}/calendar/"
+layout: base.njk
+title_key: calendar.title
+description_key: calendar.description
+accent: ocean
+scripts: ["/assets/js/calendar.js"]
+---
+{#-
+  /calendar/ — the Area calendar. A slim header (so the calendar starts on the first screen), then:
+    phones / tablets:  toolbar + calendar, rail below, filters in a drawer
+    1280–1919px:       filters | calendar, the rail as a band under the calendar
+    1920px and up:     filters | calendar | rail
+  The calendar comes before the filters in the page (keyboard and screen-reader order); CSS grid areas
+  put the filters on the left.
+-#}
+{%- from "macros/events.njk" import upcomingList -%}
+{%- from "macros/ui.njk" import sectionHead -%}
+{%- set L = lang -%}
+{%- set C = calendar -%}
+<script type="application/json" id="cal-config">{{ C | calConfig(L) | json | safe }}</script>
+
+{#- ---------------------------------------------------------- slim page header -#}
+<section class="cal-hero relative isolate overflow-hidden" style="{{ 'ocean' | accent }}">
+  <div class="cal-hero__bg absolute inset-0 -z-10" aria-hidden="true"></div>
+  <div class="bg-confetti absolute inset-0 -z-10 opacity-60" aria-hidden="true"></div>
+  <img src="/assets/img/logo/logo-{{ L.code }}-256.webp" alt="" aria-hidden="true" width="256" height="256" loading="lazy"
+       class="pointer-events-none absolute -top-10 right-6 -z-10 hidden size-56 rotate-12 opacity-[0.07] lg:block 2xl:right-16">
+  <div class="wrap pt-4 pb-5 sm:pt-5 lg:pt-6 lg:pb-7">
+    <a href="#cal-title" class="cal-skip">{% icon "arrow-down", "size-4" %}{{ "calendar.skip" | t(L) }}</a>
+    <nav aria-label="{{ 'nav.breadcrumb' | t(L) }}" class="mb-3 text-sm max-sm:hidden">
+      <ol class="flex flex-wrap items-center gap-1.5 text-ink-500">
+        <li><a href="{{ '/' | lurl(L) }}" class="inline-flex items-center gap-1 hover:text-ink-900">{% icon "house", "size-4" %}<span class="sr-only">{{ "nav.home" | t(L) }}</span></a></li>
+        <li class="flex items-center gap-1.5">{% icon "chevron-right", "size-3.5 text-ink-300" %}<span class="font-medium text-ink-800" aria-current="page">{{ "calendar.title" | t(L) }}</span></li>
+      </ol>
+    </nav>
+    <div class="flex flex-wrap items-center justify-between gap-x-10 gap-y-3 lg:flex-nowrap">
+      <div class="flex min-w-0 flex-1 items-center gap-4">
+        <span class="icon-tile hidden size-12 shrink-0 rounded-2xl sm:grid lg:size-14">{% icon "calendar-days", "size-6 lg:size-7" %}</span>
+        <div class="min-w-0">
+          <h1 class="font-display text-3xl font-extrabold tracking-tight text-balance text-ink-950 sm:text-4xl 2xl:text-5xl" data-pagefind-weight="10">{{ "calendar.title" | t(L) }}</h1>
+          <p class="mt-1 text-[15px] leading-snug text-pretty text-ink-600 sm:text-base">{{ "calendar.lead" | t(L) }}</p>
+        </div>
+      </div>
+      <dl class="cal-stats" aria-label="{{ 'calendar.stats.label' | t(L) }}">
+        <div class="cal-stat" style="{{ 'ocean' | accent }}"><dt>{{ "calendar.stats.next30" | t(L) }}</dt><dd>{{ C.stats.occurrencesNext30Days }}</dd></div>
+        <div class="cal-stat" style="{{ 'sea' | accent }}"><dt>{{ "calendar.stats.regular" | t(L) }}</dt><dd>{{ C.stats.series }}</dd></div>
+        <div class="cal-stat" style="{{ 'coral' | accent }}"><dt>{{ "calendar.stats.events" | t(L) }}</dt><dd>{{ C.stats.eventsUpcoming }}</dd></div>
+      </dl>
+    </div>
+  </div>
+</section>
+
+<div x-data="areaCalendar" @keydown.escape.window="closeAll()" class="cal-page" :class="tbOut && 'tb-out'">
+  {#- ---------------------------------------------------------- calendar · filters · rail -#}
+  <div class="wrap">
+    <div class="cal-layout">
+      {#- the calendar (first in the page: keyboard users reach it before the filters) -#}
+      <section class="cal-main min-w-0" aria-labelledby="cal-title">
+        {% include "partials/calendar-toolbar.njk" %}
+        {% include "partials/calendar-views.njk" %}
+      </section>
+
+      {#- filters: sticky sidebar from 1280px, a drawer below -#}
+      <div x-cloak x-show="drawer" x-transition.opacity class="fixed inset-0 z-[60] bg-ink-950/45 backdrop-blur-sm xl:hidden" @click="closeDrawer()" aria-hidden="true"></div>
+      <aside id="cal-filters" class="cal-filters" :class="drawer && 'is-open'" aria-label="{{ 'ui.filters' | t(L) }}"
+             x-trap.inert.noscroll="drawer && !xl" :aria-modal="(drawer && !xl) ? 'true' : null" :role="(!xl) ? 'dialog' : null">
+        {% include "partials/calendar-filters.njk" %}
+      </aside>
+
+      {#- next Area meeting, this week, subscribe, find a meeting -#}
+      <div class="cal-rail">
+        {% include "partials/calendar-rail.njk" %}
+      </div>
+    </div>
+  </div>
+
+  {% include "partials/calendar-detail.njk" %}
+</div>
+
+{#- ---------------------------------------------------------- featured events with flyers -#}
+{%- set featured = (C.featuredEvents or []) | limit(15) -%}
+{%- if featured.length %}
+<section class="relative isolate mt-20 overflow-hidden py-16 lg:mt-28 lg:py-20" aria-labelledby="featured-title" style="{{ 'coral' | accent }}">
+  <div class="absolute inset-0 -z-10 bg-ring-soft" aria-hidden="true"></div>
+  <div class="wrap">
+    {{ sectionHead({ eyebrow: "calendar.featured.eyebrow" | t(L), title: "calendar.featured.title" | t(L), lead: "calendar.featured.lead" | t(L), id: "featured-title", action: { label: "calendar.featured.all" | t(L), url: "/events/" | lurl(L), icon: "arrow-right" } }) }}
+    {#- phones and tablets: one swipeable row of flyers (calendar.css .ev-grid--rail); a grid from 1024px -#}
+    {{ upcomingList({ items: featured, lang: L, limit: 10, variant: "flyer", id: "featured-events", class: "ev-grid ev-grid--flyer ev-grid--rail" }) }}
+  </div>
+</section>
+{%- endif %}
+
+{#- ---------------------------------------------------------- browse more -#}
+<section class="wrap py-16 lg:py-20" aria-labelledby="browse-title">
+  <h2 id="browse-title" class="sr-only">{{ "calendar.browse.title" | t(L) }}</h2>
+  <div class="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+    <a href="{{ '/events/' | lurl(L) }}#meetings" class="browse-card group" style="{{ 'sea' | accent }}">
+      <span class="icon-tile">{% icon "repeat", "size-6" %}</span>
+      <span class="min-w-0"><span class="browse-card__title">{{ "calendar.browse.meetings" | t(L) }}</span><span class="browse-card__body">{{ "calendar.browse.meetings_body" | t(L, { n: C.stats.series }) }}</span></span>
+    </a>
+    <a href="{{ '/events/' | lurl(L) }}#archive" class="browse-card group" style="{{ 'copper' | accent }}">
+      <span class="icon-tile">{% icon "history", "size-6" %}</span>
+      <span class="min-w-0"><span class="browse-card__title">{{ "calendar.browse.archive" | t(L) }}</span><span class="browse-card__body">{{ "calendar.browse.archive_body" | t(L, { n: C.stats.pastEvents }) }}</span></span>
+    </a>
+    <a href="{{ (C.embedUrlEs if L.code == 'es' else C.embedUrl) }}" target="_blank" rel="noopener" class="browse-card group" style="{{ 'iris' | accent }}">
+      <span class="icon-tile">{% icon "calendar-check", "size-6" %}</span>
+      <span class="min-w-0"><span class="browse-card__title">{{ "calendar.browse.google" | t(L) }}</span><span class="browse-card__body">{{ "calendar.browse.google_body" | t(L) }}</span></span>
+    </a>
+    <a href="{{ '/service/area-meetings/' | lurl(L) }}" class="browse-card group" style="{{ 'coral' | accent }}">
+      <span class="icon-tile">{% icon "landmark", "size-6" %}</span>
+      <span class="min-w-0"><span class="browse-card__title">{{ "calendar.browse.area" | t(L) }}</span><span class="browse-card__body">{{ "calendar.browse.area_body" | t(L) }}</span></span>
+    </a>
+  </div>
+  <p class="mt-10 flex items-start gap-3 rounded-3xl bg-ink-50 p-5 text-sm leading-relaxed text-ink-600 sm:items-center">
+    {% icon "info", "size-5 shrink-0 text-ocean-600" %}
+    <span>{{ "calendar.footnote" | t(L, { date: C.generated | dt("date", L), time: C.generated | dt("time", L) }) }} <a href="mailto:{{ site.email_webmaster }}" class="font-semibold text-ocean-700 hover:underline">{{ site.email_webmaster }}</a></span>
+  </p>
+</section>

@@ -1,0 +1,335 @@
+/* ==================================================================
+   Service pages — /service/, /service/area-meetings/, /service/delegate/,
+   /service/motions/, /about/structure/ and the Delegate's Corner posts.
+   Colours come from the accent variables (--a-50 … --a-900) set inline.
+   ================================================================== */
+
+/* ---------------------------------------------------------------- next Area meeting */
+/* White text sits everywhere on this card, so the glows are kept deep (accent 500 / sun 600 at low strength)
+   over a 700–800 base: every label keeps 4.5:1 or better, and the card still glows in its meeting colour. */
+.svc-next__bg {
+  background:
+    radial-gradient(42rem 26rem at 105% -10%, color-mix(in oklab, var(--a-500) 45%, transparent), transparent 62%),
+    radial-gradient(36rem 24rem at -10% 110%, color-mix(in oklab, var(--color-sun-600) 30%, transparent), transparent 60%),
+    linear-gradient(125deg, var(--a-800), var(--color-iris-700) 58%, var(--color-ocean-800));
+}
+/* smoked glass: a dark tint instead of .btn-glass's white one, so white labels keep 4.5:1 on any part of a hero gradient */
+.svc-glass {
+  @apply bg-ink-950/25 text-white ring-1 ring-white/45 backdrop-blur-md hover:bg-ink-950/40;
+}
+.svc-next__waves {
+  background:
+    radial-gradient(60% 120% at 20% 120%, white 0 38%, transparent 39%),
+    radial-gradient(55% 110% at 70% 130%, white 0 36%, transparent 37%);
+  mask-image: linear-gradient(to top, black, transparent);
+}
+.svc-count {
+  @apply flex min-w-[4.25rem] flex-col items-center rounded-2xl bg-white/12 px-3 py-2.5 ring-1 ring-white/25 backdrop-blur sm:min-w-[5rem] sm:px-4;
+}
+.svc-count__n {
+  @apply font-display text-3xl font-extrabold tabular-nums leading-none sm:text-4xl 2xl:text-5xl;
+}
+.svc-count__l {
+  @apply mt-1.5 text-[10px] font-bold tracking-[0.16em] text-white/90 uppercase sm:text-[11px];
+}
+.svc-next__flyers {
+  @apply relative h-full min-h-[22rem] w-[17rem] 2xl:w-[20rem];
+}
+.svc-next__flyer {
+  @apply absolute block w-[13rem] overflow-hidden rounded-2xl bg-white p-1.5 shadow-2xl transition duration-500 2xl:w-[15.5rem];
+}
+.svc-next__flyer img { @apply block h-auto w-full rounded-xl; }
+.svc-next__flyer--1 { top: 0; right: 0; transform: rotate(4deg); z-index: 2; }
+.svc-next__flyer--2 { top: 3.5rem; left: 0; transform: rotate(-6deg); z-index: 1; }
+.svc-next__flyer:hover { transform: rotate(0deg) scale(1.04); z-index: 3; }
+
+/* ---------------------------------------------------------------- panel timeline */
+.svc-tl {
+  @apply relative grid grid-cols-2 gap-2.5 sm:grid-cols-3 sm:gap-3 md:grid-cols-4 lg:grid-cols-6;
+}
+@media (min-width: 80rem) {
+  .svc-tl { grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); grid-template-columns: none; gap: 0.75rem; }
+  .svc-tl::before {
+    content: ""; position: absolute; left: 0; right: 0; top: 2.6rem; height: 4px; border-radius: 9999px;
+    background: linear-gradient(90deg, var(--color-ocean-300), var(--color-iris-300), var(--color-coral-300), var(--color-sun-300), var(--color-sage-300));
+  }
+}
+.svc-tl__item { @apply relative; }
+.svc-tl__card {
+  @apply relative flex h-full items-center gap-x-2.5 rounded-2xl bg-white p-2.5 shadow-soft ring-1 ring-ink-900/5 transition duration-300 hover:-translate-y-1 hover:shadow-lift sm:gap-x-3 sm:p-3;
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  grid-template-areas: "dot mon day" "dot kind kind" "dot host host";
+  align-items: center;
+  row-gap: 0.15rem;
+}
+@media (min-width: 80rem) {
+  .svc-tl__card {
+    grid-template-columns: 1fr; grid-template-areas: "dot" "mon" "day" "kind" "host";
+    justify-items: center; text-align: center; padding: 0 0.5rem 1rem; gap: 0; background: transparent; box-shadow: none; --tw-ring-shadow: 0 0 #0000;
+  }
+  .svc-tl__card:hover { background: white; box-shadow: var(--shadow-lift); }
+}
+.svc-tl__dot {
+  grid-area: dot;
+  @apply grid size-10 place-items-center self-start rounded-full text-white ring-4 ring-white;
+  background: linear-gradient(135deg, var(--a-400), var(--a-600));
+}
+@media (min-width: 80rem) { .svc-tl__dot { @apply mt-5 mb-3 size-11; } }
+.svc-tl__mon { grid-area: mon; @apply text-xs font-bold tracking-[0.14em] text-(--a-700) uppercase; }
+.svc-tl__day { grid-area: day; @apply font-display text-xl font-extrabold leading-none text-ink-950 xl:text-2xl 2xl:text-3xl; }
+.svc-tl__kind { grid-area: kind; @apply text-[13px] leading-tight font-bold text-ink-800 sm:text-sm; }
+.svc-tl__host { grid-area: host; @apply truncate text-xs text-ink-500; }
+@media (min-width: 80rem) {
+  .svc-tl__kind { @apply mt-2 max-w-full text-[13px] leading-tight whitespace-normal; }
+  .svc-tl__host { @apply mt-1 text-[12px]; }
+}
+.svc-tl__flag {
+  @apply absolute -top-2 right-2 rounded-full bg-coral-700 px-2 py-0.5 text-[10px] font-extrabold tracking-wider text-white uppercase shadow-md;
+}
+@media (min-width: 80rem) { .svc-tl__flag { top: -0.25rem; right: 50%; transform: translateX(50%); } }
+.svc-tl__done {
+  @apply absolute right-2 bottom-2 grid size-5 place-items-center rounded-full bg-sage-100 text-sage-700;
+}
+@media (min-width: 80rem) { .svc-tl__done { top: 1.1rem; bottom: auto; right: calc(50% - 1.9rem); } }
+.svc-tl__item.is-past .svc-tl__dot { filter: saturate(0.35); opacity: 0.75; }
+.svc-tl__item.is-past .svc-tl__day, .svc-tl__item.is-past .svc-tl__kind { @apply text-ink-500; }
+.svc-tl__item.is-next .svc-tl__dot { animation: var(--animate-pulse-ring); color: white; box-shadow: 0 0 0 0 var(--a-400); }
+.svc-tl__item.is-next .svc-tl__card { @apply ring-2 ring-(--a-400); }
+@media (min-width: 80rem) { .svc-tl__item.is-next .svc-tl__card { background: var(--a-50); } }
+
+/* ---------------------------------------------------------------- GSR preamble */
+.svc-preamble__card {
+  @apply relative rounded-[2rem] bg-white p-6 shadow-lift ring-1 ring-ink-900/5 sm:p-8 2xl:p-10;
+}
+.svc-preamble__card::before {
+  content: "“"; position: absolute; right: 1.5rem; top: -1.25rem;
+  font: 800 9rem/1 var(--font-display); color: var(--color-coral-200); pointer-events: none;
+}
+/* the decorative quote mark sits behind the text (positioned children paint above ::before) */
+.svc-preamble__card > * { position: relative; }
+@media (max-width: 39.999rem) {
+  .svc-preamble__card::before { right: 0.75rem; top: -1.9rem; font-size: 6.5rem; opacity: 0.75; }
+}
+@media (min-width: 80rem) { .svc-preamble { position: sticky; top: 7rem; align-self: start; } }
+
+/* ---------------------------------------------------------------- area-meetings table */
+.svc-mt { @apply w-full border-separate border-spacing-0 text-left text-[15px]; }
+.svc-mt th { @apply sticky top-[4.5rem] z-10 bg-ink-50/95 px-4 py-3 text-xs font-bold tracking-wider text-ink-500 uppercase backdrop-blur first:rounded-l-2xl last:rounded-r-2xl; }
+.svc-mt td { @apply border-b border-ink-100 px-4 py-4 align-top; }
+.svc-mt tr.is-past td { @apply text-ink-500; }
+.svc-mt tr.is-next td { background: color-mix(in oklab, var(--color-sun-100) 60%, white); }
+.svc-mt tr:hover td { @apply bg-ink-50/70; }
+.svc-mt__date { @apply flex items-center gap-3; }
+/* Upcoming: the meeting's colour at its 700–800 shades (white text 4.9:1 or better for every accent, sun included),
+   with a lighter accent stripe along the top edge, clear of the text. */
+.svc-mt__dbadge {
+  @apply grid size-14 shrink-0 place-items-center rounded-2xl text-center leading-none text-white shadow-soft;
+  background: linear-gradient(135deg, var(--a-700), var(--a-800));
+  box-shadow: inset 0 4px 0 var(--a-400), var(--shadow-soft);
+}
+.svc-mt__dbadge b { @apply block font-display text-xl font-extrabold; }
+.svc-mt__dbadge small { @apply block text-[10px] font-bold tracking-wider uppercase; }
+/* Past: a quiet grey-blue tile with dark text (no opacity or filter, so the date stays readable) + a "Held" tag */
+tr.is-past .svc-mt__dbadge, .svc-mcard.is-past .svc-mt__dbadge {
+  @apply bg-ink-100 text-ink-700 ring-1 ring-ink-200;
+  background-image: none;
+  box-shadow: none;
+}
+.svc-mt__held { @apply hidden; }
+tr.is-past .svc-mt__held, .svc-mcard.is-past .svc-mt__held {
+  @apply mt-1 inline-flex w-fit items-center gap-1 rounded-full bg-ink-100 px-2 py-0.5 text-[11px] font-bold tracking-wide text-ink-700 uppercase;
+}
+
+.svc-mcard { @apply relative flex flex-col gap-3 rounded-3xl bg-white p-4 shadow-soft ring-1 ring-ink-900/5; }
+.svc-mcard.is-next { @apply ring-2 ring-coral-400; }
+
+/* ---------------------------------------------------------------- filter chips (meetings, motions, posts) */
+.svc-chip {
+  @apply inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-ink-700 shadow-sm ring-1 ring-ink-200 transition hover:ring-ink-300;
+}
+/* chosen chip: accent 700→800 behind white text (4.9:1 or better for every accent); its count is a white pill */
+.svc-chip[aria-pressed="true"] {
+  @apply text-white ring-transparent;
+  background: linear-gradient(135deg, var(--a-700, var(--color-iris-700)), var(--a-800, var(--color-iris-800)));
+}
+.svc-chip__n { @apply grid min-w-6 place-items-center rounded-full bg-ink-100 px-1.5 text-xs font-bold text-ink-700; }
+.svc-chip[aria-pressed="true"] .svc-chip__n { @apply bg-white; color: var(--a-800, var(--color-iris-800)); }
+
+/* ---------------------------------------------------------------- motions: status tiles */
+.svc-tile { @apply flex min-h-11 w-full cursor-pointer flex-col justify-between gap-3 p-4 text-left sm:p-5; }
+.svc-tile--wide { @apply flex-row items-center gap-4 py-3.5 sm:py-4; background: color-mix(in oklab, var(--a-50) 70%, white); }
+.svc-tile:focus-visible { @apply outline-2 outline-offset-2 outline-(--a-500); }
+
+/* ---------------------------------------------------------------- motions board */
+/* as many columns as fit; hidden columns take no track, so 3 visible columns share the width */
+.svc-board { @apply grid items-start gap-5; grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)); }
+.svc-col { @apply flex min-w-0 flex-col gap-3 rounded-3xl p-3 sm:p-4; background: var(--a-50); }
+.svc-col--archive { @apply ring-1 ring-(--a-200); background: repeating-linear-gradient(135deg, var(--a-50) 0 14px, color-mix(in oklab, var(--a-100) 55%, var(--a-50)) 14px 28px); }
+.svc-col--archive .svc-motion { @apply opacity-95; }
+/* one status chosen: its column fills the board, so lay its cards out side by side */
+.svc-board.is-single .svc-col { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr)); align-items: start; }
+.svc-board.is-single .svc-col > :not(.svc-motion) { grid-column: 1 / -1; }
+.svc-col[hidden], .svc-motion[hidden], .svc-post[hidden] { display: none; }
+.svc-col__head { @apply flex items-center justify-between gap-2 px-1; }
+.svc-col__title { @apply flex items-center gap-2 font-display text-lg font-bold text-ink-950; }
+.svc-col__title .icon-tile { @apply size-9 rounded-xl; }
+.svc-col__count { @apply grid min-w-8 place-items-center rounded-full bg-white px-2 py-0.5 text-sm font-extrabold text-(--a-700) shadow-sm; }
+.svc-motion { @apply p-4 sm:p-5; }
+.svc-motion__id {
+  @apply inline-flex items-center rounded-lg bg-ink-950 px-2 py-1 font-mono text-xs font-bold tracking-wide text-white;
+}
+
+/* ---------------------------------------------------------------- delegate posts list */
+.svc-post__link {
+  @apply flex items-start gap-4 rounded-3xl bg-white p-4 shadow-soft ring-1 ring-ink-900/5 transition duration-300 hover:-translate-y-0.5 hover:shadow-lift sm:p-5;
+}
+/* white text on the panel colour's 700–800 shades; a lighter accent stripe on top, clear of the month label */
+.svc-post__date {
+  @apply grid w-16 shrink-0 place-items-center rounded-2xl pt-2.5 pb-2 text-center leading-none text-white;
+  background: linear-gradient(160deg, var(--a-700), var(--a-800));
+  box-shadow: inset 0 4px 0 var(--a-400), var(--shadow-soft);
+}
+.svc-post__mon { @apply text-[11px] font-bold tracking-widest uppercase; }
+.svc-post__day { @apply font-display text-2xl font-extrabold; }
+.svc-post__yr { @apply text-[11px] font-semibold; }
+
+/* ---------------------------------------------------------------- GSC cycle stepper */
+.svc-cycle { @apply relative grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4; }
+.svc-cycle__step {
+  @apply relative flex flex-col gap-2 rounded-3xl bg-white p-5 shadow-soft ring-1 ring-ink-900/5 transition;
+}
+.svc-cycle__step.is-now { @apply ring-2 ring-(--a-500); background: linear-gradient(180deg, var(--a-50), white 70%); }
+.svc-cycle__step.is-now .svc-cycle__now { display: inline-flex; }
+.svc-cycle__now { @apply hidden w-fit items-center gap-1 rounded-full bg-(--a-700) px-2 py-0.5 text-[10px] font-extrabold tracking-wider text-white uppercase; }
+.svc-cycle__when { @apply text-xs font-bold tracking-wider text-(--a-700) uppercase; }
+
+/* ---------------------------------------------------------------- inverted triangle */
+.svc-tri { @apply relative isolate mx-auto w-[86%] max-w-[36rem] sm:w-full; }
+.svc-tri::before {
+  content: ""; position: absolute; z-index: -1; left: 50%; top: 40%; width: 104%; aspect-ratio: 1;
+  transform: translate(-50%, -50%); border-radius: 9999px;
+  background:
+    radial-gradient(closest-side, white calc(100% - 14px), transparent calc(100% - 13px)),
+    conic-gradient(from 200deg, var(--color-ocean-400), var(--color-iris-500), var(--color-blush-400), var(--color-sun-400), var(--color-sage-400), var(--color-ocean-400));
+  opacity: 0.55;
+}
+.svc-tri__shape {
+  @apply relative flex flex-col;
+  aspect-ratio: 1.12 / 1;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  filter: drop-shadow(0 18px 30px rgb(237 28 36 / 0.25));
+}
+.svc-tri__band {
+  @apply relative flex flex-1 cursor-pointer items-start justify-center border-0 pt-[3%] font-display leading-none font-extrabold tracking-wide text-white transition duration-300 outline-none;
+  font-size: clamp(0.8rem, 2.6vw, 1.45rem);
+  background: var(--band);
+  box-shadow: inset 0 -2px 0 rgb(255 255 255 / 0.85);
+}
+.svc-tri__band:last-child { box-shadow: none; }
+.svc-tri__band--tip { padding-top: 1.2%; font-size: clamp(0.7rem, 1.9vw, 1.05rem); }
+.svc-tri__band span { @apply relative z-10 transition duration-300; text-shadow: 0 1px 2px rgb(0 0 0 / 0.25); }
+.svc-tri__band:hover { filter: brightness(1.1) saturate(1.1); }
+.svc-tri__band:focus-visible { background: var(--color-sun-500); color: var(--color-ink-950); }
+.svc-tri__band[aria-selected="true"] {
+  background: linear-gradient(180deg, var(--color-sun-300), var(--color-sun-500));
+  color: var(--color-ink-950);
+}
+.svc-tri__band[aria-selected="true"] span { text-shadow: none; transform: scale(1.06); }
+.svc-tri__flow {
+  @apply pointer-events-none absolute top-[8%] bottom-[22%] hidden w-10 flex-col items-center justify-between text-[11px] font-bold tracking-wider uppercase sm:flex;
+}
+.svc-tri__flow--down { left: -0.5rem; color: var(--color-ocean-700); }
+.svc-tri__flow--up { right: -0.5rem; color: var(--color-iris-700); }
+.svc-tri__flow .svc-tri__line {
+  @apply my-2 w-1 flex-1 rounded-full;
+  background: repeating-linear-gradient(180deg, currentColor 0 10px, transparent 10px 18px);
+  background-size: 100% 36px;
+  animation: svc-flow 1.6s linear infinite;
+}
+.svc-tri__flow--up .svc-tri__line { animation-direction: reverse; }
+/* the labels cross the colour ring behind the triangle: a white pill keeps them readable */
+.svc-tri__flow small { writing-mode: vertical-rl; transform: rotate(180deg); @apply rounded-full bg-white px-0.5 py-1.5 shadow-sm; }
+.svc-tri__flow--up small { transform: none; }
+@keyframes svc-flow { from { background-position: 0 0; } to { background-position: 0 36px; } }
+.svc-tri__shape.is-intro .svc-tri__band { animation: svc-band-in 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.svc-tri__shape.is-intro .svc-tri__band:nth-child(2) { animation-delay: 0.08s; }
+.svc-tri__shape.is-intro .svc-tri__band:nth-child(3) { animation-delay: 0.16s; }
+.svc-tri__shape.is-intro .svc-tri__band:nth-child(4) { animation-delay: 0.24s; }
+.svc-tri__shape.is-intro .svc-tri__band:nth-child(5) { animation-delay: 0.32s; }
+.svc-tri__shape.is-intro .svc-tri__band:nth-child(6) { animation-delay: 0.4s; }
+@keyframes svc-band-in { from { opacity: 0; transform: translateY(-14px); } to { opacity: 1; transform: none; } }
+
+/* phones/tablets: full-size step buttons under the triangle (the tip bands are too narrow to tap) */
+.svc-tri-steps { @apply mx-auto grid max-w-[36rem] grid-cols-2 gap-2 sm:grid-cols-6; }
+@media (min-width: 64rem) { .svc-tri-steps { display: none; } } /* desktop: the bands are wide enough to click */
+.svc-tri-step {
+  @apply flex min-h-11 w-full items-center gap-2 rounded-2xl bg-white px-2.5 py-2 text-left text-[11px] font-extrabold tracking-wide text-ink-700 shadow-sm ring-1 ring-ink-200 transition sm:flex-col sm:gap-1 sm:px-1.5 sm:text-center;
+}
+.svc-tri-step__n {
+  @apply grid size-6 shrink-0 place-items-center rounded-full text-[11px] font-extrabold text-white;
+  background: linear-gradient(135deg, var(--a-700), var(--a-800));
+}
+.svc-tri-step.is-on { @apply text-ink-950 ring-2 ring-(--a-500); background: var(--a-50); }
+
+.svc-level { @apply relative overflow-hidden rounded-[2rem] bg-white p-6 shadow-lift ring-1 ring-ink-900/5 sm:p-8 2xl:p-10; }
+.svc-level::before {
+  content: ""; position: absolute; inset: 0 0 auto 0; height: 6px;
+  background: linear-gradient(90deg, var(--a-400), var(--a-600));
+}
+
+/* ---------------------------------------------------------------- Third Legacy steps */
+.svc-ballot { @apply relative flex gap-4 rounded-3xl bg-white p-5 shadow-soft ring-1 ring-ink-900/5; }
+/* step numbers: white on the step's colour at 700–800 (4.9:1 or better, sun included); a lighter accent
+   stripe on the top edge keeps them bright without sitting under the number */
+.svc-ballot__n {
+  @apply grid size-11 shrink-0 place-items-center rounded-2xl font-display text-lg font-extrabold text-white;
+  background: linear-gradient(135deg, var(--a-700), var(--a-800));
+  box-shadow: inset 0 4px 0 var(--a-400), var(--shadow-soft);
+}
+.svc-bar { @apply h-2.5 overflow-hidden rounded-full bg-ink-100; }
+.svc-bar > span { @apply block h-full rounded-full; background: linear-gradient(90deg, var(--a-400), var(--a-600)); }
+
+/* ---------------------------------------------------------------- glossary */
+.svc-gl-letter { @apply grid size-9 place-items-center rounded-xl text-sm font-bold text-ink-500 transition hover:bg-ink-100 hover:text-ink-900; }
+.svc-gl-letter[aria-disabled="true"] { @apply pointer-events-none opacity-30; }
+.svc-term { @apply relative flex flex-col gap-1.5 rounded-3xl bg-white p-4 shadow-soft ring-1 ring-ink-900/5 sm:p-5; }
+.svc-term[hidden] { display: none; }
+.svc-term__abbr { @apply rounded-lg bg-(--a-100) px-2 py-0.5 font-mono text-xs font-bold text-(--a-800); }
+
+/* ---------------------------------------------------------------- delegate post page */
+.svc-article :where(h1, h2, h3) { scroll-margin-top: 7rem; }
+.svc-article :where(ul) > li::marker { color: var(--color-coral-500); }
+.svc-article :where(img) { display: none; }
+/* long URLs and unbroken strings in old posts wrap instead of widening the page on phones */
+.svc-article { overflow-wrap: anywhere; min-width: 0; }
+.svc-article :where(a) { word-break: break-word; }
+.svc-article :where(pre) { white-space: pre-wrap; }
+.svc-article :where(table) { display: block; max-width: 100%; overflow-x: auto; }
+.svc-article :where(iframe, video, embed, object) { max-width: 100%; }
+/* the author line can be long ("Kathi F., Pacific Regional Trustee (shared by …)"): let it wrap */
+.svc-byline { @apply max-w-full items-start whitespace-normal rounded-2xl py-1.5 text-left leading-snug; }
+.svc-byline > svg { margin-top: 0.1rem; }
+
+/* ---------------------------------------------------------------- phone card rails: visible keyboard focus */
+.svc-rail:focus-visible { outline: 2px solid var(--color-ocean-600); outline-offset: 4px; border-radius: 1.5rem; }
+
+/* ---------------------------------------------------------------- flyer thumbnails (meetings table) */
+.svc-thumb {
+  @apply block h-[4.5rem] w-14 overflow-hidden rounded-lg bg-ink-100 shadow-soft ring-1 ring-ink-900/10 transition duration-300 hover:-translate-y-0.5 hover:rotate-[-3deg] hover:shadow-lift;
+}
+.svc-thumb img { @apply size-full object-cover object-top; }
+.svc-thumb__n {
+  @apply absolute right-1 bottom-1 inline-flex items-center gap-0.5 rounded-full bg-ink-950/80 px-1.5 py-0.5 text-[10px] font-bold text-white backdrop-blur;
+}
+/* agenda chips and the "minutes not posted yet" link in the meetings table / cards */
+.svc-paper {
+  @apply inline-flex min-h-8 items-center gap-1.5 rounded-full bg-(--a-50) px-2.5 py-1 text-xs font-semibold whitespace-nowrap text-(--a-800) ring-1 ring-(--a-200) transition hover:bg-(--a-100);
+}
+.svc-missing {
+  @apply inline-flex min-h-8 items-start gap-1.5 rounded-xl bg-sun-50 px-2.5 py-1.5 text-xs leading-snug font-semibold text-sun-900 ring-1 ring-sun-200 transition hover:bg-sun-100;
+}
+.svc-missing > svg { margin-top: 0.1rem; }
+
+/* ---------------------------------------------------------------- auto-fitting card grid (as many columns as fit) */
+.svc-autogrid { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); }

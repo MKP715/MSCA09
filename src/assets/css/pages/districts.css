@@ -1,0 +1,273 @@
+/* District pages (/districts/ and /districts/<slug>/). Colours come from each district's
+   accent variables (--a-50 … --a-900), set with style="{{ color | accent }}". */
+
+/* ------------------------------------------------------------ number tile */
+.dx-num {
+  @apply grid shrink-0 place-items-center font-display leading-none font-extrabold tracking-tight text-white shadow-soft transition duration-300;
+  background:
+    radial-gradient(120% 90% at 20% 0%, color-mix(in oklab, white 14%, transparent), transparent 55%),
+    linear-gradient(140deg, var(--a-700), var(--a-900)); /* white digits, AA even for the lightest accents */
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.18);
+}
+a.dx-num:hover { @apply -translate-y-0.5 shadow-lift; }
+.dx-num-invert {
+  @apply bg-white text-(--a-800);
+  background: white;
+  text-shadow: none;
+  box-shadow: 0 20px 50px -18px rgb(0 0 0 / 0.55);
+}
+
+/* ------------------------------------------------------------ chips */
+.dx-chip {
+  @apply inline-flex min-h-9 items-center gap-2 rounded-full bg-(--a-50) py-1 pr-3.5 pl-1 text-sm font-semibold text-(--a-800) ring-1 ring-(--a-200) transition hover:bg-(--a-100) hover:ring-(--a-300);
+}
+.dx-chip-num {
+  @apply grid h-7 min-w-7 place-items-center rounded-full px-1.5 font-display text-xs font-extrabold text-white;
+  background: linear-gradient(140deg, var(--a-700), var(--a-900));
+}
+.dx-chip-short { @apply min-h-0 p-0 ring-0 bg-transparent hover:bg-transparent; }
+.dx-chip-short .dx-chip-num { @apply h-8 min-w-8 px-2 text-[13px] ring-2 ring-white transition hover:-translate-y-0.5 hover:shadow-soft; }
+.dx-kicker {
+  @apply text-[11px] font-bold tracking-[0.14em] text-(--a-800) uppercase;
+}
+
+/* ------------------------------------------------------------ index cards */
+.dx-card {
+  @apply relative flex h-full flex-col overflow-hidden rounded-3xl bg-white ring-1 ring-ink-900/5 shadow-soft transition duration-300;
+}
+.dx-card::before {
+  content: "";
+  @apply absolute inset-x-0 top-0 h-1.5;
+  background: linear-gradient(90deg, var(--a-400), var(--a-600));
+}
+.dx-card:hover { @apply -translate-y-1 shadow-lift; }
+.dx-card:hover .dx-num { transform: rotate(-4deg) scale(1.05); }
+.dx-card:focus-within { @apply ring-2 ring-(--a-400); }
+.dx-stretch::after {
+  content: "";
+  @apply absolute inset-0 z-[1];
+}
+.dx-card-arrow {
+  @apply grid size-9 shrink-0 place-items-center rounded-full bg-ink-50 text-ink-400 transition;
+}
+.dx-card:hover .dx-card-arrow { @apply bg-(--a-600) text-white; }
+.dx-card-meet {
+  @apply rounded-2xl px-3.5 py-3;
+  background: color-mix(in oklab, var(--a-50) 80%, white);
+}
+
+/* next-date lists (self-pruning, see app.js applyTime) */
+.dx-dates { @apply m-0 list-none p-0; }
+.dx-dates > li { @apply flex flex-wrap items-center gap-x-1.5 gap-y-1; }
+.dx-dates-label { @apply font-medium text-ink-500; }
+.dx-rel {
+  @apply inline-flex items-center rounded-full bg-(--a-100) px-2 py-0.5 text-[11px] font-bold text-(--a-800);
+}
+.dx-rel[data-tone="live"], .dx-rel[data-tone="today"] { @apply bg-coral-700 text-white; }
+.dx-rel[data-tone="soon"] { @apply bg-sun-200 text-sun-900; }
+
+/* ------------------------------------------------------------ hero (index) */
+.dx-hero {
+  background:
+    radial-gradient(48rem 26rem at 8% 110%, color-mix(in oklab, var(--color-coral-500) 40%, transparent), transparent 62%),
+    radial-gradient(40rem 24rem at 100% -10%, color-mix(in oklab, var(--color-sun-400) 30%, transparent), transparent 60%),
+    radial-gradient(60rem 30rem at 60% 50%, color-mix(in oklab, var(--color-iris-600) 40%, transparent), transparent 70%),
+    linear-gradient(125deg, var(--color-ocean-800), var(--color-ocean-700) 35%, var(--color-iris-800));
+}
+.dx-hero-dots {
+  background-image: radial-gradient(color-mix(in oklab, white 22%, transparent) 1px, transparent 1.5px);
+  background-size: 22px 22px;
+  mask-image: linear-gradient(180deg, black, transparent 85%);
+}
+.dx-search {
+  @apply w-full rounded-2xl border-0 bg-white py-4 pr-12 pl-12 text-base text-ink-900 shadow-lift ring-1 ring-white/60 placeholder:text-ink-500 focus:ring-4 focus:ring-sun-300 focus:outline-none sm:text-lg;
+}
+.dx-search::-webkit-search-cancel-button, .dx-search::-webkit-search-decoration { -webkit-appearance: none; appearance: none; display: none; }
+.dx-option {
+  @apply flex w-full cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-left text-ink-800;
+}
+.dx-option[aria-selected="true"] { @apply bg-ocean-50 text-ink-950; }
+.dx-answer {
+  @apply flex items-center gap-4 rounded-2xl bg-white p-3 pr-4 text-ink-900 shadow-soft ring-1 ring-ink-900/5 transition hover:-translate-y-0.5 hover:shadow-lift;
+}
+.dx-jump {
+  @apply grid size-11 shrink-0 snap-start place-items-center rounded-2xl font-display text-[15px] font-extrabold whitespace-nowrap text-white ring-2 ring-white/25 transition duration-200 hover:-translate-y-1 hover:ring-white focus-visible:ring-white;
+  background: linear-gradient(140deg, var(--a-700), var(--a-900)); /* white text, AA even for the lightest accents */
+}
+.dx-jump-long { @apply w-auto px-2.5 text-[13px]; }
+
+/* ------------------------------------------------------------ filter chips */
+.dx-filter {
+  @apply inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full bg-white px-4 text-sm font-semibold text-ink-700 ring-1 ring-ink-200 transition hover:bg-ink-50 hover:ring-ink-300;
+}
+.dx-filter[aria-pressed="true"], .dx-filter[aria-selected="true"] { @apply bg-ink-900 text-white ring-ink-900; }
+.dx-filter[aria-pressed="true"] span { @apply bg-white/20 text-white; }
+.dx-filter-dot { @apply size-2.5 rounded-full; }
+
+/* ------------------------------------------------------------ explainer: the upside-down triangle */
+.dx-tri { @apply flex flex-col items-center gap-1.5; }
+.dx-tri > li {
+  @apply flex min-h-11 items-center justify-center rounded-xl px-4 text-center text-sm leading-tight font-bold text-white shadow-soft;
+  background: linear-gradient(140deg, var(--a-600), var(--a-800));
+}
+.dx-tri > li.is-here {
+  @apply ring-4 ring-sun-300;
+  background: linear-gradient(140deg, var(--color-coral-500), var(--color-coral-700));
+}
+/* The two narrowest bars: short names (GSC / GSB, CSG / JSG) with a key below, until the panel is wide
+   enough for the full names on one roomy line. Screen readers always get the full name. */
+.dx-tri-fig { container-type: inline-size; }
+.dx-tri-abbr { @apply text-[15px] tracking-wider; }
+.dx-tri-full { @apply sr-only; }
+.dx-tri-key { @apply mx-auto mt-4 grid w-fit gap-1.5 text-[13px] leading-snug text-ink-600; }
+.dx-tri-key > div { @apply flex items-baseline gap-2; }
+.dx-tri-key dt { @apply shrink-0 rounded-md px-1.5 py-0.5 text-xs font-bold tracking-wider text-white; background: var(--a-700); }
+@container (min-width: 36rem) {
+  .dx-tri-abbr, .dx-tri-key { display: none; }
+  .dx-tri-full { @apply not-sr-only; }
+}
+
+/* history timeline */
+.dx-timeline { @apply relative space-y-5 border-l-2 border-ink-100 pl-6; }
+.dx-timeline > li { @apply relative; }
+.dx-timeline > li::before {
+  content: "";
+  @apply absolute top-1.5 -left-[31px] size-3.5 rounded-full ring-4 ring-white;
+  background: var(--a-500, var(--color-ocean-500));
+}
+
+/* ------------------------------------------------------------ detail page */
+.dx-band {
+  background:
+    radial-gradient(42rem 26rem at 100% 0%, color-mix(in oklab, white 16%, transparent), transparent 60%),
+    radial-gradient(36rem 22rem at 0% 120%, color-mix(in oklab, var(--a-500) 25%, transparent), transparent 65%),
+    linear-gradient(120deg, var(--a-900), var(--a-800) 45%, var(--a-700));
+}
+.dx-band .btn-glass, .dx-next-card .btn-glass { @apply bg-black/15 hover:bg-black/25; }
+.dx-band-watermark {
+  @apply pointer-events-none absolute -right-6 -bottom-16 font-display leading-none font-black text-white/[0.07] select-none sm:-bottom-24;
+  font-size: clamp(12rem, 30vw, 30rem);
+  letter-spacing: -0.06em;
+}
+.dx-fact-tile {
+  @apply flex items-center gap-3.5 rounded-3xl bg-white p-4 shadow-soft ring-1 ring-ink-900/5 2xl:p-5;
+}
+.dx-fact-tile .icon-tile { @apply size-11 rounded-2xl; }
+.dx-fact dt { @apply mb-1.5 flex items-center gap-1.5 text-xs font-bold tracking-wide text-(--a-800) uppercase; }
+.dx-fact dd { @apply leading-relaxed text-ink-800; }
+
+.dx-panel {
+  @apply rounded-3xl bg-white p-5 shadow-soft ring-1 ring-ink-900/5 sm:p-7 2xl:p-8;
+}
+.dx-h2 {
+  @apply flex items-center gap-3 font-display text-2xl font-bold tracking-tight text-ink-950 sm:text-3xl;
+}
+.dx-h2 .icon-tile { @apply size-11 rounded-2xl; }
+/* Where a section lands after a jump link. html already has scroll-padding-top (6.5rem) for the
+   sticky site header, so this is only the extra room needed below it: on the district pages the
+   sticky section bar (below 2xl, about 3.6rem tall) plus a little air; elsewhere just the air. */
+/* (+1rem covers the header shrinking by up to 1rem while a smooth scroll from the top runs) */
+.dx-section { scroll-margin-top: 0.75rem; }
+.dx-detail .dx-section { scroll-margin-top: 4.5rem; }
+@media (min-width: 96rem) {
+  .dx-detail .dx-section { scroll-margin-top: 1.25rem; }
+}
+
+/* sticky section navigation */
+.dx-secnav {
+  @apply sticky top-[100px] z-30 border-b border-ink-900/5 bg-white/90 backdrop-blur-xl;
+}
+.dx-secnav a {
+  @apply inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full px-3.5 text-sm font-semibold whitespace-nowrap text-ink-600 transition hover:bg-ink-50 hover:text-ink-950;
+}
+.dx-secnav a.is-active { @apply bg-(--a-100) text-(--a-800); }
+.dx-sidenav a {
+  @apply flex items-center gap-2.5 rounded-xl px-3 py-2 text-[15px] font-medium text-ink-600 transition hover:bg-ink-50 hover:text-ink-950;
+}
+.dx-sidenav a.is-active { @apply bg-(--a-100) font-semibold text-(--a-800); }
+
+.dx-mini {
+  @apply flex items-center gap-3.5 rounded-3xl bg-white p-3.5 pr-4 shadow-soft ring-1 ring-ink-900/5 transition duration-300 hover:-translate-y-0.5 hover:shadow-lift;
+}
+.dx-city {
+  @apply inline-flex min-h-9 items-center rounded-full bg-white px-3.5 text-sm font-medium text-ink-800 ring-1 ring-(--a-200) transition hover:bg-(--a-50);
+}
+.dx-city small { @apply ml-1 text-xs font-normal text-ink-500; }
+
+.dx-link-card {
+  @apply flex h-full items-start gap-3.5 rounded-3xl bg-white p-4 shadow-soft ring-1 ring-ink-900/5 transition duration-300 hover:-translate-y-0.5 hover:shadow-lift sm:p-5;
+}
+
+.dx-year > summary { list-style: none; }
+.dx-year > summary::-webkit-details-marker { display: none; }
+
+/* the meeting panel from the calendar macros sits inside our panel: no double card */
+.dx-meeting-cal > .card { @apply shadow-none ring-0; }
+
+/* ------------------------------------------------------------ index: phones and tablets */
+/* in-page links under the hero */
+.dx-toc { @apply border-b border-ink-900/5 bg-white; }
+.dx-toc a {
+  @apply inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full bg-ink-50 px-3.5 text-sm font-semibold whitespace-nowrap text-ink-700 ring-1 ring-ink-900/5 transition hover:bg-ink-100 hover:text-ink-950;
+}
+
+@media (min-width: 64rem) {
+  .dx-toc a.dx-toc-phone { display: none; } /* the map is in the hero on laptops */
+}
+
+/* "Coming up at the districts": a swipeable rail below lg, a grid in the laptop hero */
+.dx-soon {
+  @apply -mx-4 flex snap-x snap-mandatory scroll-px-4 gap-2.5 overflow-x-auto px-4 pb-1 sm:-mx-6 sm:scroll-px-6 sm:px-6 lg:mx-0 lg:grid lg:grid-cols-1 lg:gap-2 lg:overflow-visible lg:px-0 lg:pb-0 xl:grid-cols-2;
+}
+.dx-soon > li { @apply w-[80%] max-w-80 shrink-0 snap-start sm:w-[46%] md:w-[38%] lg:w-auto lg:max-w-none; }
+
+/* List | Map switch (below lg) */
+.dx-seg { @apply rounded-full bg-ink-100 p-1 ring-1 ring-ink-900/5; }
+.dx-seg button {
+  @apply inline-flex min-h-11 items-center gap-1.5 rounded-full px-5 text-sm font-semibold text-ink-600 transition hover:text-ink-950;
+}
+.dx-seg button[aria-pressed="true"] { @apply bg-white text-ink-950 shadow-soft; }
+@media (width < 64rem) {
+  [data-view="map"] .dx-listview { display: none; }
+  [data-view="list"] .dx-mapview { display: none; }
+}
+
+/* one district per row on phones; opens into the card */
+.dx-row {
+  @apply overflow-hidden rounded-2xl bg-white shadow-soft ring-1 ring-ink-900/5 transition;
+  border-left: 4px solid var(--a-500);
+}
+.dx-row[open] { @apply shadow-lift ring-(--a-300); }
+.dx-row-sum {
+  @apply flex min-h-16 cursor-pointer list-none items-center gap-3 p-2.5 pr-3 select-none;
+}
+.dx-row-sum::-webkit-details-marker { display: none; }
+.dx-row-sum::marker { content: ""; }
+.dx-row-sum:focus-visible { @apply rounded-2xl outline-2 -outline-offset-2 outline-(--a-600); }
+.dx-row-chev { @apply grid size-9 shrink-0 place-items-center rounded-full bg-ink-50 text-ink-500 transition duration-200; }
+.dx-row[open] .dx-row-chev { @apply rotate-180 bg-(--a-600) text-white; }
+.dx-row-meta { @apply mt-1 flex min-w-0 items-center gap-1.5 text-[13px] leading-snug whitespace-nowrap text-ink-500; }
+.dx-row-next { @apply shrink-0; }
+.dx-row-next > span { @apply inline-flex items-center gap-1.5; }
+.dx-row-body { @apply border-t border-ink-100 px-4 pt-3.5 pb-4; }
+
+/* ------------------------------------------------------------ detail: events the district hosted */
+.dx-past {
+  @apply flex h-full items-center gap-3.5 rounded-2xl bg-white p-2.5 pr-3 ring-1 ring-ink-900/5 transition hover:bg-(--a-50) hover:ring-(--a-200);
+}
+.dx-past-date {
+  @apply grid w-14 shrink-0 place-items-center gap-0.5 rounded-xl bg-ink-100 py-1.5 text-ink-700;
+}
+.dx-area-next .ev-empty { @apply hidden; }
+
+/* "Show more" clamp (macro clamp): phones only, and only once Alpine has started */
+@media (width < 48rem) {
+  .dx-clamp.is-clamped > .dx-clamp-body {
+    max-height: var(--clamp, 14rem);
+    overflow: hidden;
+    mask-image: linear-gradient(to bottom, black calc(100% - 4.5rem), transparent);
+  }
+}
+.dx-clamp-btn {
+  @apply mt-2 inline-flex min-h-11 items-center gap-1.5 rounded-full px-1 text-sm font-semibold text-ocean-700 hover:text-iris-700 md:hidden;
+}

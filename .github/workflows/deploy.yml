@@ -1,0 +1,170 @@
+name: Build and publish the website
+
+# The site rebuilds itself:
+#  - whenever anything is committed to main (e.g. a CSV edited on github.com)
+#  - every three hours, to pick up Google Calendar changes and new Drive files,
+#    and so "upcoming" lists roll forward on their own
+#  - on demand: Actions tab → "Build and publish the website" → Run workflow
+#
+# One-time setup: Settings → Pages → Build and deployment → Source: GitHub Actions.
+# Optional: Settings → Secrets and variables → Actions → New secret GOOGLE_API_KEY
+# (lets the site list new files dropped into the Drive folder automatically —
+# see README "Documents appear automatically"), together with
+# Settings → Secrets and variables → Actions → Variables → DRIVE_FOLDER_ID
+# (the id of that Drive folder; it is kept out of the repository on purpose).
+# Optional: Settings → Secrets and variables → Actions → Variables → SITE_URL
+# (the public address, e.g. https://msca09aa.org, once the domain points here).
+#
+# Staying switched on: GitHub pauses scheduled workflows in a public repository after
+# 60 days without a commit. Once a day the build below re-enables this workflow and the
+# weekly media check (GitHub's API resets the 60-day clock), so a quiet summer cannot
+# stop the calendar updates. If it ever does stop: Actions → the workflow → "Enable workflow".
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "11 */3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+  actions: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci --no-audit --no-fund
+
+      - name: Pages settings
+        id: pages
+        uses: actions/configure-pages@v6
+
+      - name: Export the path prefix
+        # "/" on a custom domain; "/<repository>/" on https://<user>.github.io/<repository>/.
+        # Exported for every later step, so the build and the check agree on it.
+        run: echo "ELEVENTY_PATH_PREFIX=${{ steps.pages.outputs.base_path }}/" >> "$GITHUB_ENV"
+
+      - name: Fetch the Area calendar and Drive file list
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          DRIVE_FOLDER_ID: ${{ vars.DRIVE_FOLDER_ID }}
+        run: npm run fetch
+
+      - name: Report calendar entries that need fixing in Google Calendar (never blocks)
+        run: node scripts/check-calendar.mjs || true
+
+      - name: Reuse resized banner photos from the last run
+        uses: actions/cache@v6
+        with:
+          path: _site/assets/img/gen
+          key: hero-images-${{ hashFiles('src/assets/img/hero/**') }}
+
+      - name: Keep a copy of the calendar in the repository (only when it passes the anonymity check)
+        # So the site still builds if Google is unreachable one day. [skip ci] stops a rebuild loop.
+        # The copy becomes permanent public history, so it is committed only when
+        # scripts/check-calendar.mjs --all passes its anonymity check (no personal e-mail address anywhere
+        # in any entry, past or upcoming) and reports no phone number in any entry (W_PHONE_BODY /
+        # W_PHONE_ENTRY) other than the public lines in data/contact-allowlist.csv, central-offices.csv
+        # and resources.csv. Otherwise the repository keeps its last clean copy until the entry is fixed in
+        # Google Calendar, and the site is still built from today's download (the site leaves personal
+        # e-mail addresses out by itself). The log names the entries only (title and date), never the details.
+        run: |
+          if git diff --quiet -- data/calendar.ics; then
+            echo "The calendar has not changed."
+            exit 0
+          fi
+          status=0
+          node scripts/check-calendar.mjs --all --json > "$RUNNER_TEMP/calendar-check.json" || status=$?
+          verdict=$(node --input-type=module -e '
+            import fs from "node:fs";
+            import { readCsv } from "./src/_lib/csv.js";
+            try {
+              const { findings } = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
+              const digits = (s) => String(s || "").replace(/\D/g, "").replace(/^1(?=\d{10}$)/, "");
+              const PHONE = /\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}/g;
+              const allowed = new Set(readCsv("contact-allowlist.csv").filter((r) => r.kind === "phone").map((r) => digits(r.value)));
+              for (const f of ["central-offices.csv", "resources.csv"])
+                for (const row of readCsv(f)) for (const v of Object.values(row)) for (const m of String(v).matchAll(PHONE)) allowed.add(digits(m[0]));
+              const bad = findings.filter((f) =>
+                f.severity === "anonymity" ||
+                (/^W_PHONE_(BODY|ENTRY)$/.test(f.code) && !allowed.has(digits((String(f.message).match(PHONE) || [""])[0]))));
+              if (!bad.length) { console.log("ok"); process.exit(0); }
+              console.log(bad.length + " problem(s) in: " + [...new Set(bad.map((f) => `${f.summary} (${f.when})`))].join("; "));
+            } catch (e) {
+              console.log("the check gave no result");
+            }
+          ' "$RUNNER_TEMP/calendar-check.json" || echo "the check could not run")
+          if [ "$status" -ne 0 ] || [ "$verdict" != "ok" ]; then
+            echo "::warning::The calendar copy was NOT committed: personal contact details in Google Calendar (check-calendar exit $status: $verdict). Fix those entries in Google Calendar (role e-mails and public office numbers only); the next run commits the copy. Details: npm run check:calendar -- --all"
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/calendar.ics
+          git commit -m "Refresh calendar mirror from Google Calendar [skip ci]"
+          git push || echo "Could not push the calendar mirror (not fatal)."
+
+      - uses: actions/setup-python@v7
+        # Only for the link-preview picture below, which is optional: never fails the build.
+        continue-on-error: true
+        with:
+          python-version: "3.12"
+
+      - name: Draw the link-preview picture (current panel from data/settings.csv)
+        # Never blocks: if it fails, the picture already in the repository is used.
+        run: |
+          pip install --quiet pillow \
+            && python scripts/build-social-card.py \
+            || echo "::warning::Could not redraw the link-preview picture; using the one in the repository."
+
+      - name: Build
+        env:
+          SITE_URL: ${{ vars.SITE_URL || steps.pages.outputs.base_url }}
+        run: npm run build
+
+      - name: Check the built site (anonymity, links, data files, missing text)
+        run: npm run check
+
+      # upload-pages-artifact v4+ leaves out dot files (_site/.nojekyll): a GitHub Actions deployment does not need it.
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+
+      - name: Keep the scheduled runs switched on
+        # Once a day (the first run after midnight UTC), even when an earlier step failed; never fatal.
+        # See "Staying switched on" at the top of this file.
+        if: always() && github.event_name == 'schedule'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ $((10#$(date -u +%H))) -lt 3 ]; then
+            gh workflow enable deploy.yml --repo "$GITHUB_REPOSITORY" || true
+            gh workflow enable media-check.yml --repo "$GITHUB_REPOSITORY" || true
+          fi
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

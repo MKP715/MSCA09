@@ -1,0 +1,232 @@
+{#-
+  Building blocks for the informational pages (About, Policy, Newcomers, Resources, Contribute, 404).
+  Import with: {% from "macros/content.njk" import officeCard, faqList, resourceCard, quoteCard, pageNav, langTag, factTile with context %}
+  Every macro takes one object. Wording comes from data/text/content.csv.
+-#}
+
+{#- Small language tag. o: { language ("en"|"es"|"both"|"English"|"Spanish"|"Multilingual"), lang } -#}
+{% macro langTag(o) %}
+{%- set g = (o.language or "") | lower -%}
+{%- if "span" in g or g == "es" -%}
+<span class="chip chip-accent" style="{{ 'coral' | accent }}" lang="es">{% icon "languages", "size-3.5" %}Español</span>
+{%- elif "multi" in g -%}
+<span class="chip chip-accent" style="{{ 'iris' | accent }}">{% icon "languages", "size-3.5" %}{{ "content.lang_multi" | t(o.lang) }}</span>
+{%- elif g == "both" -%}
+<span class="chip chip-soft">{% icon "languages", "size-3.5" %}EN · ES</span>
+{%- elif "eng" in g or g == "en" -%}
+<span class="chip chip-accent" style="{{ 'sea' | accent }}" lang="en">{% icon "languages", "size-3.5" %}English</span>
+{%- endif -%}
+{% endmacro %}
+
+{#- A central office / intergroup with tap-to-call buttons. o: { office, lang, compact, headingLevel } -#}
+{% macro officeCard(o) %}
+{%- set f = o.office -%}{%- set L = o.lang -%}
+{%- set h = o.headingLevel or 3 -%}
+<article class="office-card card card-hover flex h-full flex-col overflow-hidden" style="{{ f.color | accent }}"
+         data-office data-lang="{{ 'es' if f.spanish else ('multi' if f.online else 'en') }}" data-region="{{ f.region }}"
+         data-districts="{{ f.district_slugs | join(' ') }}" data-search="{{ (f.name + ' ' + (f.name_es or '') + ' ' + (f.serves_en or '') + ' ' + (f.address or '')) | lower }}">
+  <div class="h-1.5 w-full shrink-0" style="background: linear-gradient(90deg, var(--a-400), var(--a-600));"></div>
+  <div class="flex flex-1 flex-col gap-4 p-5 sm:p-6">
+    <div class="flex items-start gap-3">
+      {%- set officeIcon = "globe" if f.online else ("languages" if f.spanish else "building-2") %}
+      <span class="icon-tile size-11 rounded-2xl">{% icon officeIcon, "size-5" %}</span>
+      <div class="min-w-0 flex-1">
+        {%- if o.showRegion %}<p class="mb-0.5 text-[11px] font-bold tracking-[0.14em] text-[var(--a-700)] uppercase">{{ ("offices.region." + f.region) | t(L) }}</p>{% endif %}
+        <h{{ h }} class="font-display text-lg leading-snug font-bold text-ink-950 text-balance">{{ f | loc("name", L) }}</h{{ h }}>
+        {%- set sv = f | loc("serves", L) %}{% if sv %}<p class="mt-1 text-sm leading-snug text-ink-500">{{ sv }}</p>{% endif %}
+      </div>
+    </div>
+    <div class="flex flex-wrap items-center gap-1.5">
+      {{ langTag({ language: f.language, lang: L }) }}
+      {%- if f.always_open %}<span class="chip chip-accent" style="{{ 'sage' | accent }}">{% icon "clock", "size-3.5" %}{{ "offices.always_open" | t(L) }}</span>{% endif %}
+      {%- for d in f.districts %}{% if d.slug %}<a href="{{ ('/districts/' + d.slug + '/') | lurl(L) }}" class="chip chip-soft hover:bg-ink-200">{{ "offices.district" | t(L, { n: d.label }) }}</a>{% endif %}{% endfor %}
+    </div>
+
+    {%- if f.phone %}
+    <div class="space-y-2">
+      {#- the spoken name starts with "Call <office>:" and still contains the visible number and label (WCAG 2.5.3) -#}
+      <a href="{{ f.phone | telUs }}" class="call-btn group">
+        <span class="call-btn-icon">{% icon "phone", "size-5" %}</span>
+        <span class="min-w-0 flex-1">
+          <span class="block font-display text-xl font-extrabold tracking-tight tabular-nums"><span class="sr-only">{{ 'offices.call' | t(L) }} {{ f | loc('name', L) }}: </span>{{ f.phone }}</span>
+          {%- set pl = f | loc("phone_label", L) %}{% if pl %}<span class="block text-xs leading-snug font-semibold text-white">{{ pl }}</span>{% endif %}
+        </span>
+        {% icon "chevron-right", "size-5 opacity-70 transition group-hover:translate-x-0.5" %}
+      </a>
+      {%- if f.phone_2 %}
+      <a href="{{ f.phone_2 | telUs }}" class="flex items-center gap-3 rounded-2xl bg-[var(--a-50)] px-4 py-2.5 text-ink-800 ring-1 ring-[var(--a-200)] transition hover:bg-[var(--a-100)]">
+        {% icon "phone-call", "size-4 text-[var(--a-700)]" %}
+        <span class="min-w-0 flex-1"><span class="font-semibold tabular-nums">{{ f.phone_2 }}</span>{% set pl2 = f | loc("phone_2_label", L) %}{% if pl2 %} <span class="text-sm text-ink-500">· {{ pl2 }}</span>{% endif %}</span>
+      </a>
+      {%- endif %}
+      {%- if f.tty %}<p class="flex items-center gap-2 px-1 text-sm text-ink-600">{% icon "ear-off", "size-4 text-ink-400" %}TTY <a class="font-semibold tabular-nums hover:underline" href="{{ f.tty | telUs }}">{{ f.tty }}</a></p>{% endif %}
+      {%- if f.confirm %}<p class="flex items-start gap-2 rounded-xl bg-sun-50 px-3 py-2 text-xs leading-snug text-sun-900">{% icon "info", "mt-0.5 size-3.5 shrink-0" %}{{ "offices.confirm_note" | t(L) }}</p>{% endif %}
+    </div>
+    {%- endif %}
+
+    {%- set web = (f.website_es if (L.code == 'es' and f.website_es) else f.website) %}
+    {%- if not f.phone and web %}
+    <a href="{{ web }}" target="_blank" rel="noopener" class="call-btn group" style="background: linear-gradient(120deg, var(--color-iris-700), var(--color-ocean-700)); box-shadow: 0 12px 28px -14px var(--color-iris-600);">
+      <span class="call-btn-icon">{% icon "video", "size-5" %}</span>
+      <span class="min-w-0 flex-1">
+        <span class="block font-display text-lg leading-tight font-extrabold">{{ "offices.online_cta" | t(L) }}</span>
+        <span class="block text-xs font-semibold text-white">{{ web | hostname }}</span>
+      </span>
+      {% icon "external-link", "size-4 opacity-80" %}
+    </a>
+    {%- endif %}
+    {%- if not o.compact and (f.hours_en or f.hours_es or f.address) %}
+    <dl class="space-y-2 border-t border-ink-100 pt-4 text-sm text-ink-600">
+      {%- set hrs = f | loc("hours", L) %}{% if hrs %}
+      <div class="flex gap-2.5"><dt class="shrink-0 text-ink-400">{% icon "clock-3", "size-4" %}<span class="sr-only">{{ "offices.hours" | t(L) }}</span></dt><dd>{{ hrs }}</dd></div>
+      {%- endif %}
+      {%- if f.address %}
+      <div class="flex gap-2.5"><dt class="shrink-0 text-ink-400">{% icon "map-pin", "size-4" %}<span class="sr-only">{{ "offices.address" | t(L) }}</span></dt><dd><a class="hover:text-ink-900 hover:underline" href="{{ f.address | mapsSearch }}" target="_blank" rel="noopener">{{ f.address }}</a></dd></div>
+      {%- endif %}
+    </dl>
+    {%- endif %}
+    {%- if web and f.phone %}
+    <a href="{{ web }}" target="_blank" rel="noopener" class="btn btn-ghost mt-auto w-full justify-between">
+      <span class="inline-flex min-w-0 items-center gap-2">{% icon "globe", "size-4 shrink-0" %}<span class="truncate">{{ web | hostname }}</span></span>{% icon "external-link", "size-3.5 opacity-60" %}
+    </a>
+    {%- endif %}
+  </div>
+</article>
+{% endmacro %}
+
+{#- Accordion of questions from data/faq.csv. o: { items, lang, id } — uses <details>, so it works without JavaScript. -#}
+{% macro faqList(o) %}
+{%- set L = o.lang -%}
+<div class="faq-list space-y-3" {% if o.id %}id="{{ o.id }}"{% endif %}>
+  {%- for q in o.items or [] %}
+  <details class="faq-item group card overflow-hidden" style="{{ ['ocean','coral','sage','iris','sun','sea','copper','blush'][loop.index0 % 8] | accent }}">
+    <summary class="flex cursor-pointer list-none items-start gap-4 p-5 sm:p-6">
+      <span class="grid size-9 shrink-0 place-items-center rounded-xl bg-[var(--a-100)] font-display text-sm font-bold text-[var(--a-800)]">{{ loop.index }}</span>
+      <span class="flex-1 pt-1 font-display text-lg font-bold leading-snug text-ink-950">{{ q | loc("q", L) }}</span>
+      <span class="faq-chevron mt-1 grid size-8 shrink-0 place-items-center rounded-full bg-ink-50 text-ink-500 transition">{% icon "plus", "size-4" %}</span>
+    </summary>
+    <div class="prose-msca prose-base px-5 pb-6 sm:pl-[4.75rem] sm:pr-8">{{ (q | loc("a", L)) | md | safe }}</div>
+  </details>
+  {%- endfor %}
+</div>
+{% endmacro %}
+
+{#- Colourful outbound link card for a data/resources.csv row. o: { r, lang, index, compact } -#}
+{% macro resourceCard(o) %}
+{%- set r = o.r -%}{%- set L = o.lang -%}
+{%- set url = r | loc("url", L) -%}{%- set iconSize = "size-5" if o.compact else "size-6" -%}
+<a href="{{ url }}" target="_blank" rel="noopener" data-resource data-search="{{ ((r.title_en or '') + ' ' + (r.title_es or '') + ' ' + (r.description_en or '') + ' ' + (r.description_es or '') + ' ' + (url | hostname)) | lower }}"
+   class="resource-card card card-hover group flex h-full {{ 'items-center gap-4 p-4' if o.compact else 'flex-col gap-4 p-5 2xl:p-6' }}" style="{{ r.color | accent(o.index or 0) }}">
+  <div class="flex items-start justify-between gap-3 {{ 'shrink-0' if o.compact }}">
+    <span class="icon-tile {{ 'size-11' if o.compact }} transition duration-300 group-hover:scale-110 group-hover:-rotate-3">{% icon r.icon or "link", iconSize %}</span>
+    {%- if not o.compact %}<span class="grid size-8 place-items-center rounded-full bg-ink-50 text-ink-400 transition group-hover:bg-[var(--a-500)] group-hover:text-white">{% icon "arrow-up-right", "size-4" %}</span>{% endif %}
+  </div>
+  <div class="min-w-0 flex-1">
+    <h3 class="font-display {{ 'text-base' if o.compact else 'text-lg' }} leading-snug font-bold text-ink-950 group-hover:text-[var(--a-800)]">{{ r | loc("title", L) }}</h3>
+    {%- set d = r | loc("description", L) %}{% if d and not o.compact %}<p class="mt-1.5 text-[15px] leading-relaxed text-ink-600">{{ d }}</p>{% endif %}
+    {%- if o.compact %}<p class="mt-0.5 truncate text-sm text-ink-500">{{ url | hostname }}</p>{% endif %}
+  </div>
+  {%- if not o.compact %}
+  <div class="flex items-center justify-between gap-2 text-sm">
+    <span class="truncate font-semibold text-[var(--a-700)]">{{ url | hostname }}</span>
+    {%- if r.language == "es" or (r.language == "en" and L.code == "es") %}{{ langTag({ language: r.language, lang: L }) }}{% endif %}
+  </div>
+  {%- else %}
+  {% icon "external-link", "size-4 shrink-0 text-ink-300 group-hover:text-[var(--a-600)]" %}
+  {%- endif %}
+</a>
+{% endmacro %}
+
+{#- A quotation with its source. o: { text, cite, url, lang, color, size ("lg"), quoteLang } -#}
+{% macro quoteCard(o) %}
+<figure class="quote-card relative overflow-hidden rounded-3xl p-6 pt-10 ring-1 ring-[var(--a-100)] sm:p-8 sm:pt-12" style="{{ (o.color or 'iris') | accent }}; background: linear-gradient(150deg, var(--a-50), white 75%);">
+  <span class="pointer-events-none absolute top-0 left-5 font-display text-[7rem] leading-[0.9] text-[var(--a-300)] select-none" aria-hidden="true">“</span>
+  <blockquote class="relative {{ 'text-xl sm:text-2xl' if o.size == 'lg' else 'text-lg' }} font-medium leading-relaxed text-pretty text-ink-900" {% if o.quoteLang %}lang="{{ o.quoteLang }}"{% endif %}>
+    {{ o.text }}
+  </blockquote>
+  {%- if o.cite %}
+  <figcaption class="relative mt-4 text-sm font-semibold text-[var(--a-700)]">
+    — {% if o.url %}<a href="{{ o.url }}" target="_blank" rel="noopener" class="hover:underline">{{ o.cite }}</a>{% else %}{{ o.cite }}{% endif %}
+  </figcaption>
+  {%- endif %}
+</figure>
+{% endmacro %}
+
+{#- In-page section navigation: chips on phones/tablets, sticky list on wide screens.
+    o: { items: [{ id, label, icon, color }], lang, label, variant ("rail"|"side") } -#}
+{% macro pageNav(o) %}
+{%- if o.variant == "side" %}
+<nav aria-label="{{ o.label }}" class="page-nav-side" x-data="sectionNav" data-sections="{{ o.items | pluck('id') | join(',') }}">
+  <p class="mb-3 px-3 text-xs font-bold tracking-[0.18em] text-ink-500 uppercase">{{ "content.on_this_page" | t(o.lang) }}</p>
+  <ul class="space-y-0.5">
+    {%- for it in o.items %}
+    <li style="{{ it.color | accent(loop.index0) }}">
+      <a href="#{{ it.id }}" class="page-nav-link" :class="active === '{{ it.id }}' && 'is-active'" :aria-current="active === '{{ it.id }}' ? 'true' : null">
+        <span class="page-nav-dot">{% icon it.icon or "circle", "size-4" %}</span><span>{{ it.label }}</span>
+      </a>
+    </li>
+    {%- endfor %}
+  </ul>
+</nav>
+{%- else %}
+<nav aria-label="{{ o.label }}" class="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:-mx-6 sm:px-6">
+  {%- for it in o.items %}
+  <a href="#{{ it.id }}" class="chip-link" style="{{ it.color | accent(loop.index0) }}">{% icon it.icon or "circle", "size-4" %}{{ it.label }}</a>
+  {%- endfor %}
+</nav>
+{%- endif %}
+{% endmacro %}
+
+{#- A fact tile (no count-up). o: { value, label, icon, color, sub, count } -#}
+{% macro factTile(o) %}
+<div class="fact-tile card relative overflow-hidden p-5 2xl:p-6" style="{{ o.color | accent }}">
+  <div class="pointer-events-none absolute -top-10 -right-10 size-32 rounded-full bg-[var(--a-100)] opacity-70" aria-hidden="true"></div>
+  <span class="icon-tile relative size-11">{% icon o.icon or "sparkles", "size-5" %}</span>
+  {#- figure, label and note share one <p>: they read as one fact and none of them is taken for a heading -#}
+  <p class="relative mt-4">
+    <span class="block font-display text-3xl leading-none font-extrabold tracking-tight text-ink-950 2xl:text-4xl">
+      {%- if o.count %}<span x-data="countUp({{ o.value }})" x-intersect.once="start()" x-text="display">{{ o.value }}</span>{% else %}{{ o.value }}{% endif %}{{ o.suffix }}
+    </span>
+    <span class="mt-2 block text-sm leading-snug font-semibold text-ink-700">{{ o.label }}</span>
+    {%- if o.sub %}<span class="mt-0.5 block text-xs leading-snug text-ink-500">{{ o.sub }}</span>{% endif %}
+  </p>
+</div>
+{% endmacro %}
+
+{#- The next Area meeting, from calendar.nextAreaMeeting (Occ). o: { occ, lang } -#}
+{% macro nextMeetingCard(o) %}
+{%- set m = o.occ -%}{%- set L = o.lang -%}
+{%- if m and m.start %}
+<a href="{{ m.url | lurl(L) }}" class="group flex items-center gap-4 rounded-3xl bg-white/90 p-4 shadow-soft ring-1 ring-ink-900/5 transition hover:-translate-y-0.5 hover:shadow-lift" data-hide-after="{{ m.end or m.start }}" data-when="{{ m.start }}" data-until="{{ m.end }}">
+  <span class="grid w-16 shrink-0 overflow-hidden rounded-2xl text-center shadow-soft ring-1 ring-ink-900/5">
+    <span class="bg-coral-700 py-1 text-[11px] font-bold tracking-widest text-white uppercase">{{ m.start | dt("mon", L) }}</span>
+    <span class="bg-white py-1.5 font-display text-2xl leading-none font-extrabold text-ink-950">{{ m.start | dt("day", L) }}</span>
+  </span>
+  <span class="min-w-0 flex-1">
+    <span class="flex items-center gap-2 text-xs font-bold tracking-wide text-coral-700 uppercase">{{ "content.next_area_meeting" | t(L) }}<span data-rel hidden class="chip chip-accent" style="{{ 'sun' | accent }}"></span></span>
+    <span class="mt-0.5 block font-display text-lg leading-snug font-bold text-ink-950 group-hover:text-iris-700">{{ m | loc("title", L) }}</span>
+    <span class="mt-0.5 block text-sm text-ink-500">{{ m.start | dt("long", L) }}{% if not m.allDay %} · {{ m.start | dt("time", L) }}{% endif %}{% if m.city %} · {{ m.city }}{% endif %}</span>
+  </span>
+  {% icon "arrow-right", "size-5 shrink-0 text-ink-300 transition group-hover:translate-x-1 group-hover:text-iris-600" %}
+</a>
+{%- endif %}
+{% endmacro %}
+
+{#- A value to copy (wraps instead of truncating; an e-mail breaks only after the "@").
+    o: { label, value, lang, mono, big } — big = larger value text (the main thing to type) -#}
+{% macro copyRow(o) %}
+{%- if o.value %}
+{%- set valueClass = ('font-mono text-[15px] sm:text-lg' if o.big else 'font-mono text-[13px] sm:text-[15px]') if o.mono else 'text-base' %}
+<div class="flex items-center justify-between gap-3 rounded-2xl px-4 {{ 'bg-iris-50 py-4 ring-1 ring-iris-200' if o.big else 'bg-ink-50 py-3' }}" x-data="copyText({{ o.value | json }})">
+  <div class="min-w-0">
+    <p class="text-xs font-semibold tracking-wide {{ 'text-iris-800' if o.big else 'text-ink-500' }} uppercase">{{ o.label }}</p>
+    <p class="{{ valueClass }} font-semibold break-words text-ink-950">{{ (o.value | escape) | replace("@", "@<wbr>") | safe }}</p>
+  </div>
+  {#- named after the thing it copies ("Copy Zelle e-mail"), so two Copy buttons are told apart; app.js announces "Copied!" -#}
+  <button type="button" @click="copy()" class="btn btn-white btn-sm min-h-11 shrink-0" aria-label="{{ 'ui.copy_x' | t(o.lang, { what: o.label }) }}">
+    <span x-show="!copied" class="inline-flex items-center gap-1.5" aria-hidden="true">{% icon "copy", "size-3.5" %}{{ "ui.copy" | t(o.lang) }}</span>
+    <span x-cloak x-show="copied" class="inline-flex items-center gap-1.5 text-sage-700" aria-hidden="true">{% icon "check", "size-3.5" %}{{ "ui.copied" | t(o.lang) }}</span>
+  </button>
+</div>
+{%- endif %}
+{% endmacro %}

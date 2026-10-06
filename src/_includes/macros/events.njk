@@ -1,0 +1,369 @@
+{#-
+  Calendar building blocks (owner: calendar). Every macro takes one object argument.
+    {% from "macros/events.njk" import eventCard, upcomingList, meetingInfo, flyerGallery, addToCalendar, dateBadge %}
+
+    eventCard({ occ, lang, variant, tag })        variant: "flyer" | "compact" | "default"; tag: "article" (default) | "li"
+    upcomingList({ items, lang, limit, emptyText, variant, id, class })
+    meetingInfo({ series, lang, heading, addId, noteOverride })  when / where / how to join panel for a Series.
+                                                   Spanish pages show the calendar's Nota: lines; without them
+                                                   noteOverride (text or list, e.g. districts.csv meeting_note_es),
+                                                   else the English Note lines marked "(en inglés)".
+    flyerGallery({ flyers, lang, title })          PhotoSwipe gallery of Drive flyers
+    addToCalendar({ series, occ, lang, compact })  Google · .ics download · Outlook
+    dateBadge({ iso, lang, color, size })          stacked month / day / weekday badge (size: "sm" | "md" | "lg")
+
+  Occ and Series objects come from src/_data/calendar.js (BUILD-SPEC §9.1). Everything
+  time-sensitive carries data-hide-after / data-when so it updates itself in the browser.
+  The macros only use their arguments, so they work with or without "with context".
+-#}
+{%- from "macros/ui.njk" import formatBadge, langBadge, copyable, emailLink -%}
+
+{#- ---------------------------------------------------------------- dateBadge -#}
+{% macro dateBadge(o) %}
+{%- if o.iso -%}
+<span class="date-badge date-badge--{{ o.size or 'md' }}" style="{{ (o.color or 'ocean') | accent }}" aria-hidden="true">
+  <span class="date-badge__mon">{{ o.iso | dt("mon", o.lang) | replace(".", "") }}</span>
+  <span class="date-badge__day">{{ o.iso | dt("day", o.lang) }}</span>
+  <span class="date-badge__wkd">{{ o.iso | dt("wkd", o.lang) | replace(".", "") }}</span>
+</span>
+{%- endif -%}
+{% endmacro %}
+
+{#- ---------------------------------------------------------------- shared bits -#}
+{% macro _when(occ, L, long) %}
+{%- if occ.multiDay -%}
+{{ occ.start | dt("short", L) }} – {{ occ.endDate | dt("short", L) }}{% if not occ.allDay %} · {{ occ | calLoc("timeLabel", L) }}{% endif %}
+{%- elif long -%}
+{{ occ.start | dt("date", L) }} · {{ occ | calLoc("timeLabel", L) }}
+{%- else -%}
+<span class="capitalize">{{ occ.start | dt("wkd", L) | replace(".", "") }}</span> · {{ occ | calLoc("timeLabel", L) }}
+{%- endif -%}
+{% endmacro %}
+
+{% macro _place(occ, L) %}
+{%- set f = (occ.format or "") | lower -%}
+{%- if "virtual" in f -%}
+{{ "format.virtual" | t(L) }} · Zoom
+{%- elif occ.venue and occ.city -%}
+{{ occ.venue }}, {{ occ.city }}{% if "hybrid" in f %} · + Zoom{% endif %}
+{%- elif occ.venue or occ.city -%}
+{{ occ.venue or occ.city }}{% if "hybrid" in f %} · + Zoom{% endif %}
+{%- elif "hybrid" in f -%}
+{{ "format.hybrid" | t(L) }} · Zoom
+{%- else -%}
+{{ "calendar.place_tba" | t(L) }}
+{%- endif -%}
+{% endmacro %}
+
+
+{% macro _status(occ, L) %}
+{%- if occ.status == "cancelled" %}<span class="chip chip-accent" style="{{ 'red' | accent }}">{% icon "ban", "size-3.5" %}{{ "calendar.cancelled" | t(L) }}</span>
+{%- elif occ.status == "postponed" %}<span class="chip chip-accent" style="{{ 'amber' | accent }}">{% icon "hourglass", "size-3.5" %}{{ "calendar.postponed" | t(L) }}</span>
+{%- endif -%}
+{% endmacro %}
+
+{#- a value people type somewhere (Zoom ID, passcode) with a named copy button and a spoken confirmation -#}
+{% macro _copyRow(label, value, copyLabel, copiedLabel, L) %}
+{%- if value %}
+<div class="mi-copy" x-data="copyText({{ value | json }})">
+  <div class="min-w-0">
+    <p class="text-xs font-semibold tracking-wide text-ink-500 uppercase">{{ label }}</p>
+    <p class="truncate font-mono text-[15px] font-semibold text-ink-900">{{ value }}</p>
+  </div>
+  <button type="button" @click="copy()" class="btn btn-white btn-sm shrink-0" aria-label="{{ copyLabel }}">
+    <span x-show="!copied" class="inline-flex items-center gap-1.5">{% icon "copy", "size-3.5" %}{{ "ui.copy" | t(L) }}</span>
+    <span x-cloak x-show="copied" class="inline-flex items-center gap-1.5 text-sage-700">{% icon "check", "size-3.5" %}{{ "ui.copied" | t(L) }}</span>
+  </button>
+  <span class="sr-only" role="status" x-text="copied ? {{ copiedLabel | json }} : ''"></span>
+</div>
+{%- endif %}
+{%- endmacro %}
+
+{% macro _flyerImg(src, alt, cls, sizes) %}
+{%- set id = src | driveId -%}
+<img src="{{ src | driveImg(640) }}" srcset="{{ src | driveImg(400) }} 400w, {{ src | driveImg(640) }} 640w, {{ src | driveImg(960) }} 960w"
+     sizes="{{ sizes or '(min-width: 1536px) 22vw, (min-width: 1024px) 30vw, (min-width: 640px) 45vw, 92vw' }}" alt="{{ alt }}" class="{{ cls }}" loading="lazy" decoding="async"
+     onerror="this.onerror=null;this.removeAttribute('srcset');this.src='https://drive.google.com/thumbnail?id={{ id }}&amp;sz=w800'">
+{%- endmacro %}
+
+{#- ---------------------------------------------------------------- eventCard -#}
+{% macro eventCard(o) %}
+{%- set occ = o.occ -%}
+{%- if occ -%}
+{%- set L = o.lang -%}
+{%- set v = o.variant or "default" -%}
+{%- set tag = o.tag or "article" -%}
+{%- set title = occ | calTitle(L) -%}
+{%- set cancelled = occ.status == "cancelled" -%}
+{%- set pIcon = "video" if ("virtual" in ((occ.format or "") | lower)) else "map-pin" -%}
+<{{ tag }} class="ev ev--{{ v }}{{ ' is-cancelled' if cancelled }}" style="{{ occ.color | accent }}" data-hide-after="{{ occ.end }}" data-when="{{ occ.start }}" data-until="{{ occ.end }}">
+{%- if v == "flyer" %}
+  <a href="{{ occ.url | lurl(L) }}" class="ev-flyer group">
+    <div class="relative">
+      <div class="ev-flyer__media">
+        {%- if occ.flyer %}
+        <img src="{{ occ.flyer | driveImg(160) }}" alt="" aria-hidden="true" class="ev-flyer__blur" loading="lazy" decoding="async">
+        {{ _flyerImg(occ.flyer, "calendar.flyer_alt" | t(L, { title: title }), "ev-flyer__img") }}
+        {%- else %}
+        {#- no flyer (or the flyer is on hold): a typographic poster in the type's colours -#}
+        <div class="ev-poster" aria-hidden="true">
+          <img src="/assets/img/logo/logo-{{ L.code or L }}-160.webp" alt="" class="ev-poster__logo" loading="lazy" decoding="async" width="160" height="160">
+          <span class="ev-poster__icon">{% icon occ.icon or "calendar", "size-40" %}</span>
+          <span class="ev-poster__type">{% icon occ.icon or "calendar", "size-3.5" %}{{ occ | calTypeLabel(L) }}</span>
+          <span class="ev-poster__title">{{ title }}</span>
+          <span class="ev-poster__when"><span class="capitalize">{{ occ.start | dt("wkd", L) | replace(".", "") }}</span> {{ occ.start | dt("short", L) | replace(".", "") }}{% if occ.city %} · {{ occ.city }}{% endif %}</span>
+        </div>
+        {%- endif %}
+      </div>
+      <div class="ev-flyer__badge">{{ dateBadge({ iso: occ.start, lang: L, color: occ.color }) }}</div>
+    </div>
+    <div class="ev-flyer__body">
+      <div class="flex min-h-7 flex-wrap items-center justify-end gap-1.5">
+        <span data-rel hidden class="rel-badge"></span>{{ _status(occ, L) }}
+      </div>
+      <div class="flex flex-wrap items-center gap-1.5">
+        <span class="ev-type">{% icon occ.icon or "calendar", "size-3.5" %}{{ occ | calTypeLabel(L) }}</span>
+      </div>
+      <h3 class="ev-title">{{ title }}</h3>
+      <p class="ev-meta">{% icon "clock", "size-4 shrink-0" %}<span>{{ _when(occ, L) }}</span></p>
+      <p class="ev-meta">{% icon pIcon, "size-4 shrink-0" %}<span class="line-clamp-1">{{ _place(occ, L) }}</span></p>
+    </div>
+  </a>
+{%- elif v == "compact" %}
+  <a href="{{ occ.url | lurl(L) }}" class="ev-row group">
+    {{ dateBadge({ iso: occ.start, lang: L, color: occ.color, size: "sm" }) }}
+    <span class="min-w-0 flex-1">
+      <span class="flex items-center gap-2">
+        <span class="ev-row__title">{{ title }}</span>
+      </span>
+      <span class="ev-row__meta">{{ _when(occ, L) }}</span>
+      <span class="ev-row__place">{{ _place(occ, L) }}</span>
+      <span class="mt-1 flex flex-wrap items-center gap-1.5"><span class="ev-type ev-type--sm">{{ occ | calTypeLabel(L) }}</span><span data-rel hidden class="rel-badge"></span>{{ _status(occ, L) }}</span>
+    </span>
+    {% icon "chevron-right", "size-4 shrink-0 text-ink-300 transition group-hover:translate-x-0.5 group-hover:text-(--a-600)" %}
+  </a>
+{%- else %}
+  <a href="{{ occ.url | lurl(L) }}" class="ev-card card-accent group">
+    <div class="flex gap-4">
+      {{ dateBadge({ iso: occ.start, lang: L, color: occ.color }) }}
+      <div class="min-w-0 flex-1">
+        <div class="flex flex-wrap items-center gap-1.5">
+          <span class="ev-type">{% icon occ.icon or "calendar", "size-3.5" %}{{ occ | calTypeLabel(L) }}</span>
+          <span data-rel hidden class="rel-badge"></span>{{ _status(occ, L) }}
+        </div>
+        <h3 class="ev-title mt-2">{{ title }}</h3>
+        <p class="ev-meta">{% icon "clock", "size-4 shrink-0" %}<span>{{ _when(occ, L) }}</span></p>
+        {%- if occ.recurring and (occ | calLoc("pattern", L)) %}
+        <p class="ev-meta">{% icon "repeat", "size-4 shrink-0" %}<span>{{ occ | calLoc("pattern", L) }}</span></p>
+        {%- endif %}
+        <p class="ev-meta">{% icon pIcon, "size-4 shrink-0" %}<span class="line-clamp-1">{{ _place(occ, L) }}</span></p>
+      </div>
+      {%- if occ.flyer %}
+      <img src="{{ occ.flyer | driveImg(240) }}" alt="" aria-hidden="true" class="ev-card__thumb" loading="lazy" decoding="async" onerror="this.remove()">
+      {%- endif %}
+    </div>
+    <div class="mt-4 flex flex-wrap gap-1.5">{{ formatBadge({ format: occ.format, lang: L }) }}{% if occ.language and occ.language != "English" %}{{ langBadge({ language: occ.language, lang: L }) }}{% endif %}</div>
+  </a>
+{%- endif %}
+</{{ tag }}>
+{%- endif -%}
+{% endmacro %}
+
+{#- ---------------------------------------------------------------- upcomingList -#}
+{% macro upcomingList(o) %}
+{%- set L = o.lang -%}
+{%- set lim = o.limit or 6 -%}
+{%- set v = o.variant or "default" -%}
+{%- set items = (o.items or []) | limit(lim + 12) -%}
+{%- set listId = o.id or ("upcoming" | calUid) -%}
+{%- set classes = o.class or ("ev-grid ev-grid--flyer" if v == "flyer" else ("ev-list" if v == "compact" else "ev-grid")) -%}
+<ul id="{{ listId }}" role="list" class="{{ classes }}" data-limit="{{ lim }}" data-empty="#{{ listId }}-empty"{% if not items.length %} hidden{% endif %}>
+  {%- for occ in items %}
+  {{ eventCard({ occ: occ, lang: L, variant: v, tag: "li" }) }}
+  {%- endfor %}
+</ul>
+<div id="{{ listId }}-empty" class="ev-empty" {% if items.length %}hidden{% endif %}>
+  <span class="icon-tile-soft size-11">{% icon "calendar-search", "size-5" %}</span>
+  <p>{{ o.emptyText or ("calendar.upcoming_empty" | t(L)) }}</p>
+  <a href="{{ '/calendar/' | lurl(L) }}" class="btn btn-ghost btn-sm">{% icon "calendar-days", "size-4" %}{{ "calendar.open_calendar" | t(L) }}</a>
+</div>
+{% endmacro %}
+
+{#- ---------------------------------------------------------------- addToCalendar -#}
+{% macro addToCalendar(o) %}
+{%- set s = o.series -%}
+{%- if s -%}
+{%- set L = o.lang -%}
+<div class="add-cal{{ ' add-cal--compact' if o.compact }}">
+  {%- if not o.compact %}<p class="add-cal__label">{% icon "calendar-plus", "size-4" %}{{ "calendar.add.title" | t(L) }}</p>{% endif %}
+  <div class="flex flex-wrap gap-2">
+    <a href="{{ s | calGoogle(o.occ, L) }}" target="_blank" rel="noopener" class="btn btn-white btn-sm">{% icon "calendar-plus", "size-4 text-ocean-600" %}{{ "calendar.add.google" | t(L) }}</a>
+    <a href="{{ s.icsPath or ('/events/' + s.slug + '.ics') }}" download="{{ s.slug }}.ics" class="btn btn-white btn-sm">{% icon "download", "size-4 text-iris-600" %}{{ "calendar.add.ics" | t(L) }}</a>
+    <a href="{{ s | calOutlook(o.occ, L) }}" target="_blank" rel="noopener" class="btn btn-white btn-sm">{% icon "mail", "size-4 text-sea-600" %}{{ "calendar.add.outlook" | t(L) }}</a>
+  </div>
+  {%- if s.recurring and not o.occ and not o.compact %}<p class="add-cal__hint">{{ "calendar.add.series_hint" | t(L) }}</p>{% endif %}
+</div>
+{%- endif -%}
+{% endmacro %}
+
+{#- ---------------------------------------------------------------- meetingInfo -#}
+{% macro meetingInfo(o) %}
+{%- set s = o.series -%}
+{%- if s -%}
+{%- set L = o.lang -%}
+{%- set title = s | calTitle(L) -%}
+<section class="meeting-info" style="{{ s.color | accent }}" aria-label="{{ o.heading or ('calendar.info.label' | t(L, { title: title })) }}">
+  {%- if o.heading %}<h3 class="meeting-info__heading">{{ o.heading }}</h3>{% endif %}
+  <div class="flex flex-wrap items-center gap-1.5">
+    <span class="ev-type">{% icon s.icon or "calendar", "size-3.5" %}{{ s | calTypeLabel(L) }}</span>
+    {{ formatBadge({ format: s.format, lang: L }) }}{{ langBadge({ language: s.language, lang: L }) }}
+    {%- if s.status == "cancelled" %}<span class="chip chip-accent" style="{{ 'red' | accent }}">{{ "calendar.cancelled" | t(L) }}</span>{% endif %}
+  </div>
+
+  <div class="meeting-info__grid">
+    {#- WHEN -#}
+    <div class="mi-block">
+      <span class="mi-icon">{% icon "calendar-clock", "size-5" %}</span>
+      <div class="min-w-0">
+        <p class="mi-label">{{ "calendar.info.when" | t(L) }}</p>
+        {%- if s.recurring %}
+        <div class="mi-value">{{ s | calLoc("rule", L) }}</div>
+        <p class="mi-sub">{{ s | calLoc("timeLabel", L) }} · {{ "time.pacific" | t(L) }}</p>
+        {%- else %}
+        <div class="mi-value first-letter:uppercase">{% if s.multiDay %}{{ s | calLoc("dateLabel", L) }}{% else %}{{ s.start | dt("long", L) }}{% endif %}</div>
+        <p class="mi-sub">{{ s | calLoc("timeLabel", L) }}{% if not s.allDay %} · {{ "time.pacific" | t(L) }}{% endif %}</p>
+        {%- endif %}
+        {%- if s | calLoc("registration", L) %}
+        <p class="mi-reg">{% icon "door-open", "size-4 shrink-0" %}<span>{{ s | calLoc("registration", L) }}</span></p>
+        {%- endif %}
+        {%- set nexts = (s.upcomingDates or []) | where("status", "confirmed") | limit(4) %}
+        {%- if s.recurring and nexts.length %}
+        <ul class="mt-2" data-limit="1" role="list">
+          {%- for n in nexts %}
+          <li class="mi-next" data-hide-after="{{ n.end }}" data-when="{{ n.start }}" data-until="{{ n.end }}">
+            <span class="inline-flex items-center gap-1.5 whitespace-nowrap">{% icon "arrow-right", "size-3.5 shrink-0" %}{{ "calendar.info.next" | t(L) }}:</span>
+            <strong class="text-ink-900">{{ n.start | dt("date", L) }}</strong>
+            <span data-rel hidden class="rel-badge"></span>
+          </li>
+          {%- endfor %}
+        </ul>
+        {%- elif s.recurring and s.ended %}
+        <p class="mi-sub mt-2">{{ "calendar.info.ended_series" | t(L, { date: s.lastDate | dt("full", L) }) }}</p>
+        {%- elif not s.recurring and not s.ended %}
+        <p class="mt-2" data-when="{{ s.start }}" data-until="{{ s.end }}" data-hide-after="{{ s.end }}"><span data-rel hidden class="rel-badge"></span></p>
+        {%- endif %}
+      </div>
+    </div>
+
+    {#- WHERE -#}
+    {%- if s.location %}
+    <div class="mi-block">
+      <span class="mi-icon">{% icon "map-pin", "size-5" %}</span>
+      <div class="min-w-0">
+        <p class="mi-label">{{ "calendar.info.where" | t(L) }}</p>
+        {%- if s.location.tba %}
+        <div class="mi-value">{{ "calendar.place_tba" | t(L) }}</div>
+        {%- else %}
+        {%- if s.location.name %}<div class="mi-value">{{ s.location.name }}</div>{% endif %}
+        {%- if s.location.address %}<div class="{{ 'mi-sub' if s.location.name else 'mi-value' }}">{{ s.location.address }}</div>{% endif %}
+        {%- if s.location.mapsUrl %}
+        <a href="{{ s.location.mapsUrl }}" target="_blank" rel="noopener" class="mi-link">{% icon "navigation", "size-4" %}{{ "calendar.directions" | t(L) }}</a>
+        {%- endif %}
+        {%- endif %}
+      </div>
+    </div>
+    {%- elif s.format == "In person" or s.format == "Hybrid" %}
+    <div class="mi-block">
+      <span class="mi-icon">{% icon "map-pin", "size-5" %}</span>
+      <div class="min-w-0">
+        <p class="mi-label">{{ "calendar.info.where" | t(L) }}</p>
+        <div class="mi-value">{{ "calendar.place_tba" | t(L) }}</div>
+        {%- if s.web %}<p class="mi-sub">{{ "calendar.info.see_website" | t(L) }}</p>{% endif %}
+      </div>
+    </div>
+    {%- endif %}
+
+    {#- ONLINE -#}
+    {%- if s.online %}
+    <div class="mi-block mi-block--wide">
+      <span class="mi-icon">{% icon "video", "size-5" %}</span>
+      <div class="min-w-0 flex-1">
+        <p class="mi-label">{{ "calendar.info.online" | t(L) }}</p>
+        <div class="mt-2 grid gap-2 sm:grid-cols-2">
+          {{ _copyRow("calendar.meeting_id" | t(L), s.online.zoomId, "calendar.copy_id" | t(L), "calendar.copied_id" | t(L), L) }}
+          {{ _copyRow("calendar.passcode" | t(L), s.online.passcode, "calendar.copy_passcode" | t(L), "calendar.copied_passcode" | t(L), L) }}
+        </div>
+        {%- if s.online.joinUrl %}
+        <a href="{{ s.online.joinUrl }}" target="_blank" rel="noopener" class="btn btn-ocean mt-3">{% icon "video", "size-4" %}{{ "calendar.join_zoom" | t(L) }}</a>
+        {%- endif %}
+      </div>
+    </div>
+    {%- endif %}
+
+    {#- CONTACT -#}
+    {%- if s.email or s.web %}
+    <div class="mi-block">
+      <span class="mi-icon">{% icon "send", "size-5" %}</span>
+      <div class="min-w-0 space-y-1.5">
+        <p class="mi-label">{{ "calendar.info.contact" | t(L) }}</p>
+        {%- if s.email %}<div class="text-sm">{{ emailLink({ email: s.email, lang: L }) }}</div>{% endif %}
+        {%- if s.web %}<a href="{{ s.web }}" target="_blank" rel="noopener" class="mi-link">{% icon "globe", "size-4" %}{{ s.web | calHost }}</a>{% endif %}
+      </div>
+    </div>
+    {%- endif %}
+
+    {#- COST -#}
+    {%- if s.cost %}
+    <div class="mi-block">
+      <span class="mi-icon">{% icon "ticket", "size-5" %}</span>
+      <div class="min-w-0">
+        <p class="mi-label">{{ "calendar.info.cost" | t(L) }}</p>
+        <div class="mi-value">{{ s.cost }}</div>
+      </div>
+    </div>
+    {%- endif %}
+  </div>
+
+  {#- Note lines: Spanish pages show the Nota: lines, else noteOverride, else the English ones marked as such -#}
+  {%- set lc = L.code or L %}
+  {%- set notes = s | calNotes(L, o.noteOverride) %}
+  {%- if notes.length %}
+  <ul class="mi-notes" role="list">
+    {%- for n in notes %}
+    <li>{% icon "info", "size-4 mt-0.5 shrink-0" %}<span>{% if n.lang != lc %}<span lang="{{ n.lang }}">{{ n.text }}</span> <span class="mi-notes__tag">{{ "calendar.note_in_english" | t(L) }}</span>{% else %}{{ n.text }}{% endif %}</span></li>
+    {%- endfor %}
+  </ul>
+  {%- endif %}
+
+  {%- if not s.ended %}
+  <div {% if o.addId %}id="{{ o.addId }}" {% endif %}class="mt-5 scroll-mt-32 border-t border-ink-100 pt-5" data-hide-after="{{ s.end if not s.recurring else '' }}">
+    {{ addToCalendar({ series: s, lang: L }) }}
+  </div>
+  {%- endif %}
+</section>
+{%- endif -%}
+{% endmacro %}
+
+{#- ---------------------------------------------------------------- flyerGallery -#}
+{% macro flyerGallery(o) %}
+{%- set fl = o.flyers or [] -%}
+{%- if fl.length -%}
+{%- set L = o.lang -%}
+<figure class="flyer-gallery">
+  {%- if o.title %}<figcaption class="flyer-gallery__title">{% icon "image", "size-4" %}{{ o.title }}</figcaption>{% endif %}
+  <div class="flyer-gallery__grid flyer-gallery__grid--{{ fl.length if fl.length < 3 else 'many' }}" data-gallery>
+    {%- for f in fl %}
+    {%- set fid = f.id or (f | driveId) or f %}
+    <a href="{{ fid | driveImg(1600) }}" data-pswp data-pswp-width="0" data-pswp-height="0" class="flyer-gallery__item group" aria-label="{{ 'calendar.flyer_open' | t(L, { n: loop.index }) }}">
+      {#- the whole page stays visible (object-contain) over a blurred copy of itself -#}
+      <img src="{{ fid | driveImg(120) }}" alt="" aria-hidden="true" class="flyer-gallery__blur" loading="lazy" decoding="async" onerror="this.remove()">
+      <img src="{{ fid | driveImg(800) }}" srcset="{{ fid | driveImg(480) }} 480w, {{ fid | driveImg(800) }} 800w, {{ fid | driveImg(1200) }} 1200w"
+           sizes="(min-width: 1280px) 30vw, (min-width: 640px) 45vw, 90vw" alt="{{ (o.alt or ('calendar.flyer_alt' | t(L, { title: o.title or '' }))) }} ({{ loop.index }})" loading="lazy" decoding="async" class="flyer-gallery__img"
+           onerror="this.onerror=null;this.removeAttribute('srcset');this.src='https://drive.google.com/thumbnail?id={{ fid }}&amp;sz=w800'">
+      <span class="flyer-gallery__zoom">{% icon "zoom-in", "size-5" %}</span>
+    </a>
+    {%- endfor %}
+  </div>
+</figure>
+{%- endif -%}
+{% endmacro %}

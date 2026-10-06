@@ -1,0 +1,222 @@
+---
+pagination: { data: langs, size: 1, alias: lang, addAllPagesToCollections: true }
+permalink: "{{ lang.prefix }}/about/policy/"
+layout: page.njk
+title_key: policy.title
+description_key: policy.description
+eyebrow_key: policy.eyebrow
+lead_key: policy.lead
+heroIcon: shield-check
+accent: iris
+bare: true
+crumbs: [{ label_key: "about.crumb", url: "/about/" }]
+scripts: ["/assets/js/content.js"]
+---
+{%- from "macros/content.njk" import quoteCard, pageNav, resourceCard with context -%}
+{%- from "macros/ui.njk" import emailLink with context -%}
+{%- set L = lang -%}
+{%- set R = resources.byKey or {} -%}
+{%- set software = (resources.groups | find("key", "software")) if resources and resources.groups else null -%}
+{%- set photos = heroCredits or [] -%}
+{%- set webmaster = site.email_webmaster or "webmaster@msca09aa.org" -%}
+{%- set navItems = [
+  { id: "tradition", label: "policy.nav_tradition" | t(L), icon: "eye-off", color: "iris" },
+  { id: "publish", label: "policy.nav_publish" | t(L), icon: "list-checks", color: "sage" },
+  { id: "report", label: "policy.nav_report" | t(L), icon: "flag", color: "coral" },
+  { id: "submit", label: "policy.nav_submit" | t(L), icon: "send", color: "ocean" },
+  { id: "maintained", label: "policy.nav_maintained" | t(L), icon: "refresh-cw", color: "sea" },
+  { id: "privacy", label: "policy.nav_privacy" | t(L), icon: "fingerprint", color: "lilac" },
+  { id: "credits", label: "policy.nav_credits" | t(L), icon: "copyright", color: "copper" }
+] -%}
+
+<div class="wrap py-10 lg:py-14">
+  <div class="grid grid-cols-1 gap-10 xl:grid-cols-[16rem_minmax(0,1fr)] 2xl:grid-cols-[18rem_minmax(0,1fr)] 2xl:gap-14">
+    <aside class="hidden xl:block">{{ pageNav({ lang: L, label: "content.on_this_page" | t(L), items: navItems, variant: "side" }) }}</aside>
+
+    <div class="min-w-0 space-y-16 lg:space-y-20">
+      <div class="xl:hidden">{{ pageNav({ lang: L, label: "content.on_this_page" | t(L), items: navItems }) }}</div>
+
+      {#- ------------------------------------------------ Traditions -#}
+      <section id="tradition" aria-labelledby="tradition-title" class="scroll-mt-28">
+        <p class="eyebrow mb-2">{% icon "eye-off", "size-4" %}{{ "policy.tradition_eyebrow" | t(L) }}</p>
+        <h2 id="tradition-title" class="h-section max-w-4xl text-balance">{{ "policy.tradition_title" | t(L) }}</h2>
+        <p class="lead mt-3 max-w-4xl text-pretty">{{ "policy.tradition_lead" | t(L) }}</p>
+        <div class="mt-8 grid grid-cols-1 gap-5 2xl:grid-cols-2">
+          {{ quoteCard({ text: "policy.t11" | t(L), cite: "policy.t11_cite" | t(L), url: R['twelve-traditions'] | loc('url', L), color: "iris", size: "lg" }) }}
+          {{ quoteCard({ text: "policy.t12" | t(L), cite: "policy.t12_cite" | t(L), url: R['twelve-traditions'] | loc('url', L), color: "ocean", size: "lg" }) }}
+        </div>
+      </section>
+
+      {#- ------------------------------------------------ What we publish -#}
+      <section id="publish" aria-labelledby="publish-title" class="scroll-mt-28">
+        <p class="eyebrow mb-2" style="{{ 'sage' | accent }}">{% icon "list-checks", "size-4" %}{{ "policy.publish_eyebrow" | t(L) }}</p>
+        <h2 id="publish-title" class="h-section max-w-4xl text-balance">{{ "policy.publish_title" | t(L) }}</h2>
+        <div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <div class="card overflow-hidden" style="{{ 'sage' | accent }}">
+            <h3 class="flex items-center gap-3 border-b border-sage-100 bg-sage-50 px-6 py-4 font-display text-lg font-bold text-ink-950"><span class="grid size-9 place-items-center rounded-full bg-sage-600 text-white">{% icon "check", "size-5" %}</span>{{ "policy.yes_title" | t(L) }}</h3>
+            <ul class="divide-y divide-ink-100">
+              {%- for it in "policy.yes" | tlist(L) %}
+              <li class="flex gap-4 px-6 py-4">
+                <span class="mt-0.5 text-sage-600">{% icon it.icon or "check", "size-5" %}</span>
+                <div><p class="font-semibold text-ink-900">{{ it.title }}</p><p class="mt-0.5 text-[15px] leading-relaxed text-ink-600">{{ it.body }}</p></div>
+              </li>
+              {%- endfor %}
+            </ul>
+          </div>
+          <div class="card overflow-hidden" style="{{ 'coral' | accent }}">
+            <h3 class="flex items-center gap-3 border-b border-coral-100 bg-coral-50 px-6 py-4 font-display text-lg font-bold text-ink-950"><span class="grid size-9 place-items-center rounded-full bg-coral-600 text-white">{% icon "x", "size-5" %}</span>{{ "policy.no_title" | t(L) }}</h3>
+            <ul class="divide-y divide-ink-100">
+              {%- for it in "policy.no" | tlist(L) %}
+              <li class="flex gap-4 px-6 py-4">
+                <span class="mt-0.5 text-coral-600">{% icon it.icon or "ban", "size-5" %}</span>
+                <div><p class="font-semibold text-ink-900">{{ it.title }}</p><p class="mt-0.5 text-[15px] leading-relaxed text-ink-600">{{ it.body }}</p></div>
+              </li>
+              {%- endfor %}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {#- ------------------------------------------------ Report a problem -#}
+      <section id="report" aria-labelledby="report-title" class="scroll-mt-28">
+        <div class="relative isolate overflow-hidden rounded-[2rem] px-6 py-10 text-white shadow-lift sm:px-10 lg:px-12" style="background: linear-gradient(125deg, var(--color-iris-700), var(--color-coral-700));">
+          <div class="bg-confetti absolute inset-0 -z-10 opacity-25" aria-hidden="true"></div>
+          <div class="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:items-center">
+            <div class="lg:col-span-8">
+              <p class="inline-flex items-center gap-2 text-xs font-bold tracking-[0.18em] uppercase opacity-90">{% icon "flag", "size-4" %}{{ "policy.report_eyebrow" | t(L) }}</p>
+              <h2 id="report-title" class="mt-2 font-display text-3xl font-extrabold text-balance sm:text-4xl">{{ "policy.report_title" | t(L) }}</h2>
+              <p class="mt-3 max-w-3xl text-lg leading-relaxed text-white/95">{{ "policy.report_body" | t(L) }}</p>
+            </div>
+            <div class="flex flex-col gap-3 lg:col-span-4">
+              <a href="mailto:{{ webmaster }}?subject={{ ('policy.report_subject' | t(L)) | urlencode }}" class="btn btn-white btn-lg justify-center">{% icon "mail", "size-5" %}{{ "policy.report_cta" | t(L) }}</a>
+              <p class="text-center text-sm text-white/95">{{ webmaster }}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {#- ------------------------------------------------ Submissions -#}
+      <section id="submit" aria-labelledby="submit-title" class="scroll-mt-28">
+        <div class="grid grid-cols-1 gap-8 2xl:grid-cols-12">
+          <div class="2xl:col-span-4">
+            <p class="eyebrow mb-2" style="{{ 'ocean' | accent }}">{% icon "send", "size-4" %}{{ "policy.submit_eyebrow" | t(L) }}</p>
+            <h2 id="submit-title" class="h-section text-balance">{{ "policy.submit_title" | t(L) }}</h2>
+            <p class="lead mt-3 text-pretty">{{ "policy.submit_lead" | t(L) }}</p>
+            <div class="mt-5 inline-flex rounded-2xl bg-ocean-50 px-4 py-3 ring-1 ring-ocean-100">{{ emailLink({ email: webmaster, lang: L }) }}</div>
+          </div>
+          <ol class="grid grid-cols-1 gap-4 sm:grid-cols-2 2xl:col-span-8">
+            {%- set submitItems = "policy.submit" | tlist(L) %}
+            {%- for it in submitItems %}
+            <li class="card flex gap-4 p-5 {{ 'sm:col-span-2' if (loop.last and submitItems.length % 2 == 1) }}" style="{{ it.color | accent(loop.index0) }}">
+              <span class="grid size-10 shrink-0 place-items-center rounded-2xl bg-[var(--a-100)] font-display text-lg font-extrabold text-[var(--a-800)]">{{ loop.index }}</span>
+              <div><p class="font-display font-bold text-ink-950">{{ it.title }}</p><p class="mt-1 text-[15px] leading-relaxed text-ink-600">{{ it.body }}</p></div>
+            </li>
+            {%- endfor %}
+          </ol>
+        </div>
+      </section>
+
+      {#- ------------------------------------------------ How the site is maintained -#}
+      <section id="maintained" aria-labelledby="maintained-title" class="scroll-mt-28">
+        <p class="eyebrow mb-2" style="{{ 'sea' | accent }}">{% icon "refresh-cw", "size-4" %}{{ "policy.maint_eyebrow" | t(L) }}</p>
+        <h2 id="maintained-title" class="h-section max-w-4xl text-balance">{{ "policy.maint_title" | t(L) }}</h2>
+        <p class="lead mt-3 max-w-4xl text-pretty">{{ "policy.maint_lead" | t(L) }}</p>
+        <div class="mt-8 grid grid-cols-1 gap-5 md:grid-cols-3">
+          {%- for it in "policy.source" | tlist(L) %}
+          <article class="card card-accent flex flex-col gap-3 p-6 pt-7" style="{{ it.color | accent(loop.index0) }}">
+            <span class="icon-tile">{% icon it.icon or "database", "size-6" %}</span>
+            <h3 class="font-display text-xl font-bold text-ink-950">{{ it.title }}</h3>
+            <p class="flex-1 leading-relaxed text-ink-600">{{ it.body }}</p>
+          </article>
+          {%- endfor %}
+        </div>
+        <div class="mt-8 card p-6 sm:p-8" style="{{ 'sea' | accent }}">
+          <h3 class="font-display text-xl font-bold text-ink-950">{{ "policy.workflow_title" | t(L) }}</h3>
+          <ol class="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 2xl:grid-cols-4">
+            {%- for it in "policy.workflow" | tlist(L) %}
+            <li class="relative">
+              <span class="grid size-11 place-items-center rounded-full bg-gradient-to-br from-sea-700 to-ocean-800 font-display text-lg font-extrabold text-white shadow-soft ring-4 ring-sea-100">{{ loop.index }}</span>
+              <p class="mt-3 font-display font-bold text-ink-950">{{ it.title }}</p>
+              <p class="mt-1 text-[15px] leading-relaxed text-ink-600">{{ it.body }}</p>
+            </li>
+            {%- endfor %}
+          </ol>
+          <div class="mt-8 flex flex-wrap items-center gap-3 border-t border-ink-100 pt-6">
+            {%- if site.repo %}<a href="https://github.com/{{ site.repo }}/tree/main/data" target="_blank" rel="noopener" class="btn btn-ocean">{% icon "folder-git-2", "size-4" %}{{ "policy.repo_cta" | t(L) }}</a>{% endif %}
+            <span class="text-sm text-ink-500">{{ "footer.updated" | t(L, { date: site.build.iso | dt("date", L) }) }}</span>
+          </div>
+        </div>
+      </section>
+
+      {#- ------------------------------------------------ Privacy -#}
+      <section id="privacy" aria-labelledby="privacy-title" class="scroll-mt-28">
+        <div class="grid grid-cols-1 gap-8 lg:grid-cols-12">
+          <div class="lg:col-span-4">
+            <p class="eyebrow mb-2" style="{{ 'lilac' | accent }}">{% icon "fingerprint", "size-4" %}{{ "policy.privacy_eyebrow" | t(L) }}</p>
+            <h2 id="privacy-title" class="h-section text-balance">{{ "policy.privacy_title" | t(L) }}</h2>
+          </div>
+          <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:col-span-8">
+            {%- for it in "policy.privacy" | tlist(L) %}
+            <li class="card flex gap-4 p-5" style="{{ it.color | accent(loop.index0) }}">
+              <span class="icon-tile-soft">{% icon it.icon or "shield", "size-5" %}</span>
+              <div><p class="font-semibold text-ink-900">{{ it.title }}</p><p class="mt-1 text-[15px] leading-relaxed text-ink-600">{{ it.body }}</p></div>
+            </li>
+            {%- endfor %}
+          </ul>
+        </div>
+      </section>
+
+      {#- ------------------------------------------------ Credits -#}
+      <section id="credits" aria-labelledby="credits-title" class="scroll-mt-28">
+        <p class="eyebrow mb-2" style="{{ 'copper' | accent }}">{% icon "copyright", "size-4" %}{{ "policy.credits_eyebrow" | t(L) }}</p>
+        <h2 id="credits-title" class="h-section max-w-4xl text-balance">{{ "policy.credits_title" | t(L) }}</h2>
+        <p class="lead mt-3 max-w-4xl text-pretty">{{ "policy.credits_lead" | t(L) }}</p>
+
+        {%- if photos.length %}
+        <h3 class="mt-10 mb-4 flex items-center gap-2 font-display text-xl font-bold text-ink-950">{% icon "camera", "size-5 text-copper-600" %}{{ "policy.photos_title" | t(L) }}</h3>
+        <ul class="grid grid-cols-1 gap-4 md:grid-cols-2 2xl:grid-cols-3">
+          {%- asyncEach p in photos %}
+          <li class="card flex gap-4 overflow-hidden p-3 pr-5">
+            {%- set img = "src/assets/img/hero/" + p.file %}
+            {%- if p.file and (img | fileExists) %}<span class="credit-thumb block h-24 w-32 shrink-0 overflow-hidden rounded-2xl bg-ink-100">{% image img, "", "128px", "h-full w-full object-cover", "lazy", [256] %}</span>{% endif %}
+            <div class="min-w-0 self-center text-sm leading-relaxed">
+              <p class="font-semibold text-ink-900">{{ p | loc('alt', L) }}</p>
+              <p class="mt-1 text-ink-600">{% if p.source_url %}<a class="hover:underline" href="{{ p.source_url }}" target="_blank" rel="noopener">{{ p | loc('credit', L) }}</a>{% else %}{{ p | loc('credit', L) }}{% endif %}</p>
+              {%- if p.license %}<p class="mt-1">{% if p.license_url %}<a href="{{ p.license_url }}" target="_blank" rel="noopener" class="chip chip-accent" style="{{ 'copper' | accent }}">{{ p.license }}</a>{% else %}<span class="chip chip-soft">{{ p.license }}</span>{% endif %}</p>{% endif %}
+            </div>
+          </li>
+          {%- endeach %}
+        </ul>
+        {%- endif %}
+
+        {%- if software and software.items.length %}
+        <h3 class="mt-10 mb-4 flex items-center gap-2 font-display text-xl font-bold text-ink-950">{% icon "code-xml", "size-5 text-copper-600" %}{{ "policy.software_title" | t(L) }}</h3>
+        <ul class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {%- for s in software.items %}
+          <li>
+            <a href="{{ s.url }}" target="_blank" rel="noopener" class="group flex h-full items-start gap-3 rounded-2xl bg-white p-4 shadow-soft ring-1 ring-ink-900/5 transition hover:-translate-y-0.5 hover:shadow-lift" style="{{ ['ocean','coral','sage','iris','sun','sea','copper','blush','lilac'][loop.index0 % 9] | accent }}">
+              <span class="grid size-10 shrink-0 place-items-center rounded-xl bg-[var(--a-100)] font-display text-sm font-extrabold text-[var(--a-800)]">{{ (s.title_en | first | upper) or "•" }}</span>
+              <span class="min-w-0 flex-1">
+                <span class="flex flex-wrap items-center gap-2"><span class="font-semibold text-ink-900 group-hover:text-[var(--a-700)]">{{ s | loc("title", L) }}</span><span class="chip chip-soft">{{ s.license }}</span></span>
+                <span class="mt-1 block text-sm leading-snug text-ink-500">{{ s | loc("description", L) }}</span>
+              </span>
+            </a>
+          </li>
+          {%- endfor %}
+        </ul>
+        {%- endif %}
+        <p class="mt-6 max-w-5xl text-sm leading-relaxed text-ink-500">{{ "policy.credits_note" | t(L) }}</p>
+      </section>
+
+      {#- ------------------------------------------------ Further reading -#}
+      <section aria-labelledby="reading-title">
+        <h2 id="reading-title" class="mb-6 font-display text-2xl font-bold text-ink-950">{{ "policy.reading_title" | t(L) }}</h2>
+        <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {%- for r in resources.byPage.policy or [] %}{% if r.group != "software" %}
+          <li>{{ resourceCard({ r: r, lang: L, index: loop.index0, compact: true }) }}</li>
+          {%- endif %}{% endfor %}
+        </ul>
+      </section>
+    </div>
+  </div>
+</div>

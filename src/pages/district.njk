@@ -1,0 +1,575 @@
+---
+pagination:
+  addAllPagesToCollections: true
+  data: districts.pages
+  size: 1
+  alias: entry
+permalink: "{{ entry.lang.prefix }}/districts/{{ entry.item.slug }}/"
+layout: base.njk
+scripts: ["/assets/js/districts.js"]
+eleventyComputed:
+  title: "{{ entry.item | loc('name', entry.lang) }}"
+  description: "{{ entry.item | loc('region', entry.lang) }}"
+  accent: "{{ entry.item.color }}"
+---
+{#-
+  /districts/<slug>/ — one page per active district, in English and Spanish.
+  Data: districts (data/districts.csv) + calendar (business meeting, hosted events) +
+  servants (trusted servants) + documents (newsletters, guidelines, minutes).
+  Each of those may be missing: the page then falls back to the CSV columns.
+-#}
+{%- from "macros/ui.njk" import personCard, emailLink, mapBlock, docLink, emptyState, formatBadge, langBadge with context -%}
+{%- from "macros/districts.njk" import numTile, districtChip, miniDistrict, nextDates, meetingFallback, occRow, pastRow with context -%}
+{%- set d = entry.item -%}
+{%- set L = lang -%}
+{%- set D = districts -%}
+{%- set name = d | loc("name", L) -%}
+{#- the calendar series, corrected from data/districts.csv where the calendar is known to be wrong (see src/_lib/plugins/districts.js) -#}
+{%- set series = calendar | dxSeries(d) -%}
+{%- set events = calendar | dxEvents(d, series) -%}
+{%- set recent = calendar | dxRecent(d, series) -%}
+{%- set dates = series | dxNextMeetings(d) -%}
+{%- set hasEventMacros = "macros/events.njk" | dxTemplateExists -%}
+{%- set fromRoster = servants.byDistrict[d.slug] if (servants and servants.byDistrict and servants.byDistrict[d.slug]) else [] -%}
+{%- set people = (fromRoster if fromRoster | length else d.servants) | dxServantOrder -%}
+{%- set docs = (documents.byDistrict[d.slug] if (documents and documents.byDistrict and documents.byDistrict[d.slug]) else []) -%}
+{%- set subdistricts = d.subdistricts_es if (L.code == "es" and d.subdistricts_es | length) else d.subdistricts -%}
+{%- set fmt = series.format if (series and series.format) else d.meeting.format -%}
+{%- set cityList = d.cities_es if L.code == "es" else d.cities -%}
+{%- set joinUrl = series.online.joinUrl if (series and series.online and series.online.joinUrl) else d.meeting.joinUrl -%}
+{%- set calPlace = series and series.location -%}
+{#- a calendar place wins as a whole (its venue name and ZIP are already filled in from the CSV when the street matches); no calendar place → the CSV columns -#}
+{%- set mapsUrl = (series.location.mapsUrl or "") if calPlace else d.meeting.mapsUrl -%}
+{%- set placeName = (series.location.name or "") if calPlace else d.meeting.venue -%}
+{%- set placeAddr = (series.location.address or "") if calPlace else (d.meeting.addressLine or d.meeting.city) -%}
+{%- set fmtLower = (fmt or "") | lower -%}
+{#- Online only = the (corrected) series is virtual and has no place. A Virtual calendar entry for a district whose CSV lists a venue is corrected in dxSeries. -#}
+{%- set onlineOnly = series and not series.location and ("virtual" in fmtLower or "online" in fmtLower) -%}
+{%- if onlineOnly %}{% set mapsUrl = "" %}{% set placeName = "" %}{% set placeAddr = "" %}{% endif -%}
+{%- set kindKey = "districts.kind.spanish" if d.linguistic else "districts.kind.english" -%}
+{%- set url = ('/districts/' + d.slug + '/') | lurl(L) -%}
+
+{#- ============================================================== HEADER BAND -#}
+<section class="dx-band relative isolate overflow-hidden text-white" style="{{ d.color | accent }}" aria-labelledby="dx-name">
+  <div class="bg-confetti absolute inset-0 -z-10 opacity-20" aria-hidden="true"></div>
+  <span class="dx-band-watermark" aria-hidden="true" data-pagefind-ignore>{{ d | dxNum(L) }}</span>
+  <div class="wrap relative pt-6 pb-24 sm:pt-8 lg:pt-10 lg:pb-28">
+    <nav aria-label="{{ 'nav.breadcrumb' | t(L) }}" class="mb-6 text-sm">
+      {#- 44px tap targets below lg (same pattern as pageHero in macros/ui.njk) -#}
+      <ol class="-my-3 flex flex-wrap items-center gap-x-1.5 text-white/90 lg:my-0 lg:gap-y-1.5">
+        <li><a href="{{ '/' | lurl(L) }}" class="-ml-3.5 inline-flex size-11 items-center justify-center hover:text-white lg:ml-0 lg:size-auto">{% icon "house", "size-4" %}<span class="sr-only">{{ "nav.home" | t(L) }}</span></a></li>
+        <li class="flex items-center gap-1.5">{% icon "chevron-right", "size-3.5 text-white/50" %}<a href="{{ '/districts/' | lurl(L) }}" class="inline-flex min-h-11 min-w-11 items-center justify-center hover:text-white hover:underline lg:min-h-0 lg:min-w-0">{{ "districts.title" | t(L) }}</a></li>
+        <li class="flex min-h-11 min-w-0 items-center gap-1.5 lg:min-h-0">{% icon "chevron-right", "size-3.5 text-white/50" %}<span class="truncate font-medium text-white" aria-current="page">{{ name }}</span></li>
+      </ol>
+    </nav>
+    <div class="flex flex-col gap-6 sm:flex-row sm:items-center sm:gap-8 2xl:gap-10">
+      {{ numTile({ d: d, lang: L, size: "xl", invert: true }) }}
+      <div class="min-w-0 max-w-4xl">
+        <p class="mb-2 text-xs font-bold tracking-[0.18em] text-white/90 uppercase">{{ kindKey | t(L) }} · {{ "districts.detail.area" | t(L) }}</p>
+        <h1 id="dx-name" class="font-display text-4xl font-extrabold tracking-tight text-balance sm:text-5xl 2xl:text-6xl">{{ name }}</h1>
+        <p class="mt-3 max-w-3xl text-lg leading-relaxed text-pretty text-white/90 2xl:text-xl">{{ d | loc("region", L) }}</p>
+        <div class="mt-6 flex flex-wrap gap-2.5">
+          <a href="#meeting" class="btn btn-white">{% icon "calendar-clock", "size-4" %}{{ "districts.detail.next_meeting" | t(L) }}</a>
+          {%- if d.email %}<a href="mailto:{{ d.email }}" class="btn btn-glass">{% icon "mail", "size-4" %}{{ "districts.detail.write" | t(L) }}</a>{% endif %}
+          {%- if d.website %}<a href="{{ d.website }}" target="_blank" rel="noopener" class="btn btn-glass">{% icon "globe", "size-4" %}{{ d.website | hostname }}{% icon "external-link", "size-3.5 opacity-70" %}</a>{% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{#- quick facts, overlapping the band -#}
+<div class="wrap relative z-10 -mt-14 lg:-mt-16">
+  <ul class="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+    <li class="dx-fact-tile" style="{{ d.color | accent }}">
+      <span class="icon-tile">{% icon "map-pin", "size-5" %}</span>
+      <span class="min-w-0"><span class="block font-display text-2xl leading-none font-extrabold text-ink-950">{{ cityList | length }}</span><span class="mt-1 block text-sm leading-snug text-ink-500">{{ "districts.fact.cities" | t(L) }}</span></span>
+    </li>
+    <li class="dx-fact-tile" style="{{ 'sea' | accent }}">
+      <span class="icon-tile">{% icon "map", "size-5" %}</span>
+      <span class="min-w-0"><span class="block font-display text-base leading-tight font-bold text-ink-950 sm:text-lg">{% for c in d.counties %}{{ ("districts.county." + (c | slugify)) | t(L) }}{% if not loop.last %}, {% endif %}{% endfor %}</span><span class="mt-1 block text-sm text-ink-500">{{ "districts.fact.territory" | t(L) }}</span></span>
+    </li>
+    <li class="dx-fact-tile" style="{{ ('iris' if 'hybrid' in fmtLower else ('ocean' if ('virtual' in fmtLower or 'online' in fmtLower) else 'sage')) | accent }}">
+      {%- set fmtIcon = "monitor-smartphone" if "hybrid" in fmtLower else ("video" if ("virtual" in fmtLower or "online" in fmtLower) else "users") %}
+      <span class="icon-tile">{% icon fmtIcon, "size-5" %}</span>
+      <span class="min-w-0"><span class="block font-display text-base leading-tight font-bold text-ink-950 sm:text-lg">{{ ("districts.fact.hybrid" if "hybrid" in fmtLower else ("districts.fact.online" if ("virtual" in fmtLower or "online" in fmtLower) else "districts.fact.in_person")) | t(L) }}</span><span class="mt-1 block text-sm text-ink-500">{{ "districts.fact.format" | t(L) }}</span></span>
+    </li>
+    <li class="dx-fact-tile" style="{{ 'sun' | accent }}">
+      {%- if d.established %}
+      <span class="icon-tile">{% icon "history", "size-5" %}</span>
+      <span class="min-w-0"><span class="block font-display text-2xl leading-none font-extrabold text-ink-950">{{ d.established }}</span><span class="mt-1 block text-sm leading-snug text-ink-500">{{ "districts.fact.since" | t(L) }}</span></span>
+      {%- else %}
+      <span class="icon-tile">{% icon "repeat", "size-5" %}</span>
+      <span class="min-w-0"><span class="block font-display text-base leading-tight font-bold text-ink-950 sm:text-lg">{{ (series.next | loc("pattern", L)) if (series and series.next and series.next.pattern_en) else (d.meeting | loc("pattern", L)) }}</span><span class="mt-1 block text-sm text-ink-500">{{ "districts.fact.meets" | t(L) }}</span></span>
+      {%- endif %}
+    </li>
+  </ul>
+</div>
+
+{#- ============================================================== BODY -#}
+{#- sections that would be empty are left out (and so are their links) -#}
+{%- set hasDocs = (docs | length > 0) or d.website -%}
+{%- set navItems = [
+  { id: "meeting", icon: "calendar-clock", key: "districts.nav.meeting", show: true },
+  { id: "about", icon: "info", key: "districts.nav.about", show: true },
+  { id: "cities", icon: "map-pin", key: "districts.nav.cities", show: true },
+  { id: "people", icon: "users", key: "districts.nav.people", show: true },
+  { id: "find", icon: "search", key: "districts.nav.find", show: true },
+  { id: "events", icon: "calendar-days", key: "districts.nav.events", show: true },
+  { id: "documents", icon: "file-text", key: "districts.nav.documents", show: hasDocs },
+  { id: "neighbors", icon: "compass", key: "districts.nav.neighbors", show: d.neighbors | length > 0 }
+] -%}
+<div x-data="sectionNav" class="dx-detail relative" style="{{ d.color | accent }}">
+  <nav data-secnav aria-label="{{ 'districts.nav.label' | t(L) }}" class="dx-secnav mt-6 2xl:hidden">
+    <div data-secnav-bar class="wrap no-scrollbar flex gap-1 overflow-x-auto py-1.5">
+      {%- for n in navItems %}{% if n.show %}<a href="#{{ n.id }}">{% icon n.icon, "size-4" %}{{ n.key | t(L) }}</a>{% endif %}{% endfor %}
+    </div>
+  </nav>
+
+  <div class="wrap grid grid-cols-1 gap-8 py-8 lg:py-10 xl:grid-cols-12 xl:gap-10 2xl:gap-12">
+    {#- side navigation on very wide screens -#}
+    <nav data-secnav aria-label="{{ 'districts.nav.label' | t(L) }}" class="dx-sidenav hidden 2xl:col-span-2 2xl:row-span-2 2xl:block">
+      <div class="sticky top-28">
+        <p class="mb-2 px-3 text-xs font-bold tracking-[0.16em] text-ink-500 uppercase">{{ "districts.nav.label" | t(L) }}</p>
+        {%- for n in navItems %}{% if n.show %}<a href="#{{ n.id }}">{% icon n.icon, "size-4" %}{{ n.key | t(L) }}</a>{% endif %}{% endfor %}
+        <a href="{{ '/districts/' | lurl(L) }}" class="mt-4 border-t border-ink-100 pt-4">{% icon "arrow-left", "size-4" %}{{ "districts.detail.all" | t(L) }}</a>
+      </div>
+    </nav>
+
+    {#- ---------------------------------------------------------- business meeting -#}
+    <div class="min-w-0 xl:col-span-8 2xl:col-span-7">
+      <section id="meeting" class="dx-section dx-panel" aria-labelledby="h-meeting">
+        <h2 id="h-meeting" class="dx-h2"><span class="icon-tile">{% icon "calendar-clock", "size-5" %}</span>{{ "districts.meeting.title" | t(L) }}</h2>
+        <p class="mt-3 max-w-3xl text-ink-600">{{ ("districts.meeting.lead_es" if d.linguistic else "districts.meeting.lead") | t(L) }}</p>
+        <div class="mt-6">
+          {%- if series and hasEventMacros %}
+            {% include "partials/district-meeting-cal.njk" %}
+          {%- else %}
+            {{ meetingFallback({ d: d, lang: L }) }}
+          {%- endif %}
+          {%- if series and series.dxOverride %}
+          {%- set source = ("districts.as_listed_web" | t(L, { site: d.website | hostname })) if d.website else ("districts.as_listed_district" | t(L)) %}
+          <p class="mt-5 flex items-start gap-3 rounded-2xl bg-sage-50 px-4 py-3.5 text-[15px] text-ink-800 ring-1 ring-sage-200">
+            <span class="mt-0.5 text-sage-700">{% icon "badge-check", "size-5" %}</span>
+            <span><strong class="font-semibold text-ink-950">{{ "districts.as_listed" | t(L) }}.</strong> {{ "districts.as_listed_body" | t(L, { source: source }) }}</span>
+          </p>
+          {%- endif %}
+          {%- set extra = d | dxExtraNote(series, L) if (series and hasEventMacros and not onlineOnly) else "" %}
+          {%- if extra %}
+          <p class="mt-5 flex items-start gap-3 rounded-2xl bg-sun-50 px-4 py-3.5 text-[15px] text-ink-800">
+            <span class="mt-0.5 text-sun-700">{% icon "info", "size-5" %}</span>
+            <span><strong class="font-semibold text-ink-950">{{ "districts.meeting.good_to_know" | t(L) }}</strong> {{ extra }}</span>
+          </p>
+          {%- endif %}
+          {%- set gsr = (d | dxGsrNote(series, L)) if (series and hasEventMacros) else (d.meeting | loc("gsr", L)) %}
+          {%- if gsr %}
+          <p class="mt-3 flex items-start gap-3 rounded-2xl bg-(--a-50) px-4 py-3.5 text-[15px] text-ink-800">
+            <span class="mt-0.5 text-(--a-800)">{% icon "graduation-cap", "size-5" %}</span>
+            <span><strong class="font-semibold text-ink-950">{{ "districts.meeting.gsr" | t(L) }}</strong> {{ gsr }}</span>
+          </p>
+          {%- endif %}
+        </div>
+        <div class="mt-7">
+          <h3 class="mb-3 text-xs font-bold tracking-[0.14em] text-ink-500 uppercase">{{ "districts.meeting.upcoming" | t(L) }}</h3>
+          {%- if dates | length %}
+          <ol class="grid grid-cols-1 gap-2.5 max-sm:[&_li:nth-child(n+3)]:hidden sm:grid-cols-2 2xl:grid-cols-4" data-limit="4" data-empty="#dx-nodates">
+            {%- for x in dates | limit(8) %}
+            <li class="flex items-center gap-3.5 rounded-2xl bg-white p-2.5 pr-3 ring-1 ring-ink-900/5 2xl:flex-col 2xl:items-start 2xl:gap-2.5 2xl:p-3" data-hide-after="{{ x.end or x.start }}" data-when="{{ x.start }}" data-until="{{ x.end or x.start }}">
+              <span class="grid w-14 shrink-0 place-items-center rounded-xl py-1.5 text-white" style="background: linear-gradient(140deg, var(--a-700), var(--a-900));">
+                <span class="text-[11px] font-bold uppercase">{{ x.start | dt("mon", L) }}</span>
+                <span class="font-display text-2xl leading-none font-extrabold">{{ x.start | dt("day", L) }}</span>
+              </span>
+              <span class="min-w-0 flex-1">
+                <span class="block font-semibold text-ink-900">{{ x.start | dt("weekday", L) | capitalize }}</span>
+                <span class="block text-sm text-ink-500">{{ x.start | dt("time", L) }}{% if x.end and x.end != x.start %} – {{ x.end | dt("time", L) }}{% endif %}</span>
+                <span data-rel hidden class="dx-rel mt-1"></span>
+              </span>
+            </li>
+            {%- endfor %}
+          </ol>
+          <p id="dx-nodates" hidden class="text-ink-600">{{ "districts.meeting.no_dates" | t(L) }}</p>
+          {%- else %}
+          <p class="text-ink-600">{{ "districts.meeting.no_dates" | t(L) }}</p>
+          {%- endif %}
+          <p class="mt-3 text-xs text-ink-500">{{ ("districts.meeting.source_mixed" if (series and "time" in series.dxFixed) else ("districts.meeting.source_cal" if series else "districts.meeting.source_csv")) | t(L) }}</p>
+        </div>
+      </section>
+    </div>
+
+    {#- ---------------------------------------------------------- aside (contact, next meeting, map) -#}
+    <aside class="min-w-0 xl:col-span-4 xl:row-span-2 2xl:col-span-3" aria-label="{{ 'districts.aside.label' | t(L) }}">
+      <div class="space-y-5 xl:h-full">
+        {%- if onlineOnly %}
+        <div class="dx-panel">
+          <span class="icon-tile">{% icon "video", "size-6" %}</span>
+          <p class="mt-4 font-display text-xl font-bold text-ink-950">{{ "districts.aside.online_title" | t(L) }}</p>
+          <p class="mt-1 text-[15px] text-ink-600">{{ "districts.aside.online_body" | t(L) }}</p>
+          {%- if joinUrl %}<a href="{{ joinUrl }}" target="_blank" rel="noopener" class="btn btn-accent mt-4">{% icon "video", "size-4" %}{{ "districts.meeting.join" | t(L) }}</a>{% endif %}
+        </div>
+        {%- elif d.lat != null and d.lng != null %}
+        <div class="dx-panel p-3! sm:p-3!">
+          {%- set popup = '<strong>' + ((placeName or name) | escape) + '</strong><br>' + ((placeAddr or '') | escape) + (('<br><a href="' + (mapsUrl | escape) + '" target="_blank" rel="noopener">' + ('districts.meeting.directions' | t(L)) + ' →</a>') if mapsUrl else '') -%}
+          {{ mapBlock({ id: "dx-place", points: [{ lat: d.lat, lng: d.lng, label: placeName or name, color: d.color, num: d | dxNum(L), html: popup }], zoom: (12 if d.map_approx else 15), height: "h-64 xl:h-72", lang: L }) }}
+          <div class="px-2 pt-3 pb-1">
+            <p class="font-semibold text-ink-900">{{ placeName or d.meeting.city }}</p>
+            {%- if placeAddr and placeAddr != (placeName or d.meeting.city) %}<p class="text-sm text-ink-600">{{ placeAddr }}</p>{% endif %}
+            {%- if d.map_approx %}<p class="mt-1 flex items-start gap-1.5 text-xs text-ink-500">{% icon "info", "size-3.5 mt-0.5 shrink-0" %}{{ "districts.aside.approx" | t(L) }}</p>{% endif %}
+            {%- if mapsUrl %}<a href="{{ mapsUrl }}" target="_blank" rel="noopener" class="mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-(--a-800) hover:underline">{% icon "navigation", "size-4" %}{{ "districts.meeting.directions" | t(L) }}</a>{% endif %}
+          </div>
+        </div>
+        {%- endif %}
+
+        <div class="space-y-5 xl:sticky xl:top-44 2xl:top-28">
+          {#- next business meeting (phones see the dates in the meeting section) -#}
+          {%- if dates | length %}
+          <div class="dx-next-card relative hidden overflow-hidden rounded-3xl p-5 text-white shadow-lift xl:block" style="background: linear-gradient(140deg, var(--a-700), var(--a-900));">
+            <p class="text-xs font-bold tracking-[0.16em] text-white uppercase">{{ "districts.aside.next" | t(L) }}</p>
+            <ol data-limit="1">
+              {%- for x in dates | limit(6) %}
+              <li data-hide-after="{{ x.end or x.start }}" data-when="{{ x.start }}" data-until="{{ x.end or x.start }}">
+                <div class="mt-2 font-display text-2xl leading-tight font-extrabold">{{ x.start | dt("long", L) }}</div>
+                <p class="mt-1 text-white">{{ x.start | dt("time", L) }}{% if x.end and x.end != x.start %} – {{ x.end | dt("time", L) }}{% endif %} <span data-rel hidden class="ml-1 rounded-full bg-black/20 px-2 py-0.5 text-xs font-bold"></span></p>
+              </li>
+              {%- endfor %}
+            </ol>
+            <div class="mt-4 flex flex-wrap gap-2">
+              {%- if joinUrl %}<a href="{{ joinUrl }}" target="_blank" rel="noopener" class="btn btn-white btn-sm">{% icon "video", "size-3.5" %}{{ "districts.meeting.join" | t(L) }}</a>{% endif %}
+              {%- if mapsUrl %}<a href="{{ mapsUrl }}" target="_blank" rel="noopener" class="btn btn-glass btn-sm">{% icon "navigation", "size-3.5" %}{{ "districts.meeting.directions" | t(L) }}</a>{% endif %}
+              <a href="#meeting" class="btn btn-glass btn-sm">{% icon "info", "size-3.5" %}{{ "districts.aside.details" | t(L) }}</a>
+            </div>
+          </div>
+          {%- endif %}
+
+          {#- contact -#}
+          <div class="dx-panel">
+            <h2 class="flex items-center gap-2 font-display text-lg font-bold text-ink-950">{% icon "send", "size-5 text-(--a-600)" %}{{ "districts.aside.contact" | t(L) }}</h2>
+            <dl class="mt-4 space-y-4 text-[15px]">
+              {%- if d.email %}
+              <div>
+                <dt class="text-xs font-bold tracking-wide text-ink-500 uppercase">{{ ("districts.aside.email_es" if d.linguistic else "districts.aside.email") | t(L) }}</dt>
+                <dd class="mt-1">{{ emailLink({ email: d.email, lang: L }) }}</dd>
+                {%- if d.email_alt %}<dd class="mt-1">{{ emailLink({ email: d.email_alt, lang: L }) }}</dd>{% endif %}
+              </div>
+              {%- endif %}
+              {%- if d.website %}
+              <div>
+                <dt class="text-xs font-bold tracking-wide text-ink-500 uppercase">{{ "districts.aside.website" | t(L) }}</dt>
+                <dd class="mt-1"><a href="{{ d.website }}" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 font-semibold text-ocean-700 hover:text-iris-700 hover:underline">{% icon "globe", "size-4" %}{{ d.website | hostname }}{% icon "external-link", "size-3.5 opacity-60" %}</a></dd>
+              </div>
+              {%- endif %}
+              {%- if d.po_box %}
+              <div>
+                <dt class="text-xs font-bold tracking-wide text-ink-500 uppercase">{{ "districts.aside.mail" | t(L) }}</dt>
+                <dd class="mt-1 flex items-start gap-2 text-ink-800">{% icon "mailbox", "size-4 mt-1 shrink-0 text-ink-400" %}<span>{{ d.po_box }}</span></dd>
+              </div>
+              {%- endif %}
+              <div>
+                <dt class="text-xs font-bold tracking-wide text-ink-500 uppercase">{{ "districts.aside.contribute" | t(L) }}</dt>
+                <dd class="mt-1 text-sm leading-relaxed text-ink-600">
+                  {%- if d.contribute_url %}{{ "districts.aside.contribute_web" | t(L) }} <a href="{{ d.contribute_url }}" target="_blank" rel="noopener" class="font-semibold text-ocean-700 hover:underline">{{ d.contribute_url | hostname }}</a>{% if d.po_box %} {{ "districts.aside.contribute_mail" | t(L) }}{% endif %}
+                  {%- elif d.po_box %}{{ "districts.aside.contribute_mail_only" | t(L) }}
+                  {%- else %}{{ "districts.aside.contribute_ask" | t(L) }}{% endif %}
+                  <a href="{{ '/contribute/' | lurl(L) }}" class="mt-1 block font-semibold text-ocean-700 hover:underline">{{ "districts.aside.contribute_area" | t(L) }}</a>
+                </dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    {#- ---------------------------------------------------------- the rest of the page -#}
+    <div class="min-w-0 space-y-8 xl:col-span-8 2xl:col-span-7">
+
+      {#- about -#}
+      <section id="about" class="dx-section dx-panel" aria-labelledby="h-about">
+        <h2 id="h-about" class="dx-h2"><span class="icon-tile">{% icon "info", "size-5" %}</span>{{ "districts.about.title" | t(L) }}</h2>
+        <div class="prose-msca mt-5 max-w-[72ch] prose-p:text-ink-700 max-sm:prose-base">{{ d | loc("about", L) | md | safe }}</div>
+        <div class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+          {%- set origin = d | loc("origin", L) %}
+          {%- if origin %}
+          <div class="rounded-2xl bg-sun-50 p-4">
+            <p class="flex items-center gap-2 text-xs font-bold tracking-wide text-sun-800 uppercase">{% icon "history", "size-4" %}{{ "districts.about.history" | t(L) }}</p>
+            <p class="mt-1.5 text-[15px] text-ink-700">{{ origin }}</p>
+          </div>
+          {%- endif %}
+          {%- if d.mergedHere | length %}
+          <div class="rounded-2xl bg-iris-50 p-4">
+            <p class="flex items-center gap-2 text-xs font-bold tracking-wide text-iris-800 uppercase">{% icon "merge", "size-4" %}{{ "districts.about.merged" | t(L) }}</p>
+            {%- for m in d.mergedHere %}{% set md_ = D.bySlug[m] %}
+            <p class="mt-1.5 text-[15px] text-ink-700">{{ md_ | loc("about", L) }}</p>
+            {%- endfor %}
+          </div>
+          {%- endif %}
+          {%- if subdistricts | length %}
+          <div class="rounded-2xl bg-(--a-50) p-4 md:col-span-2">
+            <p class="flex items-center gap-2 text-xs font-bold tracking-wide text-(--a-800) uppercase">{% icon "split", "size-4" %}{{ "districts.about.subdistricts" | t(L, { n: subdistricts | length }) }}</p>
+            <ul class="mt-2.5 flex flex-wrap gap-2">
+              {%- for s in subdistricts %}<li class="rounded-full bg-white px-3 py-1.5 text-sm font-medium text-ink-800 ring-1 ring-(--a-200)">{{ s }}</li>{% endfor %}
+            </ul>
+          </div>
+          {%- endif %}
+          {%- set tbl = d | loc("interdistrict_table", L) %}
+          {%- if d.linguistic %}
+          <div class="rounded-2xl bg-coral-50 p-4 md:col-span-2">
+            <p class="flex items-center gap-2 text-xs font-bold tracking-wide text-coral-800 uppercase">{% icon "handshake", "size-4" %}{{ "districts.inter.eyebrow" | t(L) }}</p>
+            <p class="mt-1.5 text-[15px] text-ink-700">{{ "districts.about.inter" | t(L) }}{% if tbl %} {{ "districts.about.inter_table" | t(L, { topic: tbl }) }}{% endif %} <a href="{{ '/districts/' | lurl(L) }}#interdistrict" class="font-semibold text-coral-700 hover:underline">{{ "ui.read_more" | t(L) }}</a></p>
+          </div>
+          {%- endif %}
+        </div>
+        {%- if d.website %}
+        <a href="{{ d.website }}" target="_blank" rel="noopener" class="group mt-6 flex items-start gap-4 rounded-3xl bg-gradient-to-br from-(--a-50) to-white p-5 ring-1 ring-(--a-200) transition hover:shadow-soft">
+          <span class="icon-tile">{% icon "globe", "size-6" %}</span>
+          <span class="min-w-0 flex-1">
+            <span class="block text-xs font-bold tracking-wide text-(--a-800) uppercase">{{ "districts.about.website" | t(L) }}</span>
+            <span class="block font-display text-lg font-bold text-ink-950 group-hover:text-(--a-800)">{{ d.website | hostname }}</span>
+            {%- set wn = d | loc("website_note", L) %}{% if wn %}<span class="mt-1 block text-[15px] leading-relaxed text-ink-600">{{ wn }}</span>{% endif %}
+          </span>
+          <span class="text-ink-300 group-hover:text-(--a-600)">{% icon "external-link", "size-5" %}</span>
+        </a>
+        {%- endif %}
+      </section>
+
+      {#- cities -#}
+      <section id="cities" class="dx-section dx-panel" aria-labelledby="h-cities">
+        <h2 id="h-cities" class="dx-h2"><span class="icon-tile">{% icon "map-pin", "size-5" %}</span>{{ "districts.cities.title" | t(L) }}<span class="ml-1 rounded-full bg-(--a-100) px-2.5 py-0.5 font-sans text-sm font-bold text-(--a-800)">{{ cityList | length }}</span></h2>
+        <p class="mt-3 text-ink-600">{{ ("districts.cities.lead_es" if d.linguistic else "districts.cities.lead") | t(L) }}</p>
+        <ul class="mt-5 flex flex-wrap gap-2">
+          {%- for c in cityList %}
+          {%- set parts = c.split(" (") %}
+          <li class="dx-city">{{ parts[0] }}{% if parts.length > 1 %}<small>({{ parts[1] }}</small>{% endif %}</li>
+          {%- endfor %}
+        </ul>
+
+        {%- if d.linguistic and d.covers | length %}
+        <h3 class="mt-8 font-display text-lg font-bold text-ink-950">{{ "districts.cities.covers" | t(L) }}</h3>
+        <p class="mt-1 text-sm text-ink-600">{{ "districts.cities.covers_lead" | t(L) }}</p>
+        <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 2xl:grid-cols-3">
+          {%- for c in d.covers | dxFor(D.bySlug) %}{{ miniDistrict({ d: c, lang: L, icon: "arrow-up-right" }) }}{% endfor %}
+        </div>
+        {%- elif d.spanish | length %}
+        <h3 class="mt-8 font-display text-lg font-bold text-ink-950">{{ "districts.cities.spanish" | t(L) }}</h3>
+        <p class="mt-1 text-sm text-ink-600">{{ "districts.cities.spanish_lead" | t(L) }}</p>
+        <div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 2xl:grid-cols-3">
+          {%- for s in d.spanish | dxFor(D.bySlug) %}{{ miniDistrict({ d: s, lang: L, icon: "arrow-up-right", label: ("districts.kind.spanish" | t(L)) }) }}{% endfor %}
+        </div>
+        {%- endif %}
+      </section>
+
+      {#- trusted servants -#}
+      <section id="people" class="dx-section" aria-labelledby="h-people">
+        <div class="flex flex-wrap items-end justify-between gap-3">
+          <h2 id="h-people" class="dx-h2"><span class="icon-tile">{% icon "users", "size-5" %}</span>{{ "districts.people.title" | t(L) }}</h2>
+          <span class="chip chip-accent">{{ "districts.people.panel" | t(L, { panel: site.panel, years: site.panel_years }) }}</span>
+        </div>
+        <p class="mt-3 max-w-3xl text-ink-600">{{ "districts.people.lead" | t(L) }}</p>
+        {%- if people | length %}
+        <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 2xl:grid-cols-3">
+          {%- for s in people %}
+          {{ personCard({ name: s.name, role: ((s | loc("position", L)) or (s | loc("role", L))), email: s.email, color: (d.color if loop.first else ""), index: loop.index, lang: L }) }}
+          {%- endfor %}
+        </div>
+        {%- else %}
+        <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {{ personCard({ name: "", role: (("districts.people.dcmc_es" if d.linguistic else "districts.people.dcmc") | t(L)), email: d.email, color: d.color, lang: L, note: ("districts.people.none" | t(L)) }) }}
+        </div>
+        {%- endif %}
+        <p class="mt-4 flex items-start gap-2 text-sm text-ink-500">{% icon "shield-check", "size-4 mt-0.5 shrink-0 text-sage-600" %}<span>{{ "districts.people.anonymity" | t(L) }}</span></p>
+      </section>
+
+      {#- find a meeting -#}
+      <section id="find" class="dx-section dx-panel" aria-labelledby="h-find">
+        <h2 id="h-find" class="dx-h2"><span class="icon-tile">{% icon "search", "size-5" %}</span>{{ "districts.find.title" | t(L) }}</h2>
+        <p class="mt-3 max-w-3xl text-ink-600">{{ "districts.find.lead" | t(L) }}</p>
+        {%- set officeUrls = d.offices | pluck("url") %}
+        <ul class="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2">
+          {%- for o in d.offices %}
+          <li>
+            <div class="dx-link-card" style="{{ ('coral' if (o.language or '') | lower == 'spanish' else 'sea') | accent }}">
+              <span class="icon-tile-soft">{% icon "building-2", "size-5" %}</span>
+              <span class="min-w-0 flex-1">
+                <span class="block font-display text-lg leading-snug font-bold text-ink-950">{{ o | loc("name", L) }}</span>
+                {%- if o.phone %}<a href="{{ o.phone | telHref }}" class="mt-1.5 inline-flex items-center gap-1.5 text-[15px] font-bold text-(--a-800) hover:underline">{% icon "phone", "size-4" %}{{ o.phone }}</a>{% set pl = o | loc("phone_label", L) %}{% if pl %} <span class="text-sm text-ink-500">· {{ pl }}</span>{% endif %}{% endif %}
+                {%- if o.url %}<a href="{{ o.url }}" target="_blank" rel="noopener" class="mt-1 flex items-center gap-1.5 text-sm font-semibold text-ocean-700 hover:underline">{% icon "globe", "size-4" %}{{ o.url | hostname }}</a>{% endif %}
+              </span>
+            </div>
+          </li>
+          {%- endfor %}
+          {%- if d.meetings_link and not (officeUrls | includes(d.meetings_link)) %}
+          <li>
+            <a href="{{ d.meetings_link }}" target="_blank" rel="noopener" class="dx-link-card group" style="{{ d.color | accent }}">
+              <span class="icon-tile-soft">{% icon "list-checks", "size-5" %}</span>
+              <span class="min-w-0 flex-1">
+                <span class="block font-display text-lg leading-snug font-bold text-ink-950 group-hover:text-(--a-800)">{{ d | loc("meetings_label", L) }}</span>
+                <span class="mt-1 block text-sm text-ink-500">{{ d.meetings_link | hostname }}</span>
+              </span>
+              {% icon "external-link", "size-4 text-ink-300" %}
+            </a>
+          </li>
+          {%- endif %}
+          <li>
+            <a href="{{ 'districts.find.guide_url' | t(L) }}" target="_blank" rel="noopener" class="dx-link-card group" style="{{ 'iris' | accent }}">
+              <span class="icon-tile-soft">{% icon "smartphone", "size-5" %}</span>
+              <span class="min-w-0 flex-1">
+                <span class="block font-display text-lg font-bold text-ink-950 group-hover:text-(--a-800)">{{ "districts.find.guide" | t(L) }}</span>
+                <span class="mt-1 block text-sm text-ink-500">{{ "districts.find.guide_body" | t(L) }}</span>
+              </span>
+              {% icon "external-link", "size-4 text-ink-300" %}
+            </a>
+          </li>
+          <li>
+            <a href="{{ 'districts.find.aa_url' | t(L) }}" target="_blank" rel="noopener" class="dx-link-card group" style="{{ 'ocean' | accent }}">
+              <span class="icon-tile-soft">{% icon "map-pinned", "size-5" %}</span>
+              <span class="min-w-0 flex-1">
+                <span class="block font-display text-lg font-bold text-ink-950 group-hover:text-(--a-800)">{{ "districts.find.aa" | t(L) }}</span>
+                <span class="mt-1 block text-sm text-ink-500">{{ "districts.find.aa_body" | t(L) }}</span>
+              </span>
+              {% icon "external-link", "size-4 text-ink-300" %}
+            </a>
+          </li>
+          <li>
+            <a href="{{ 'districts.find.online_url' | t(L) }}" target="_blank" rel="noopener" class="dx-link-card group" style="{{ 'sage' | accent }}">
+              <span class="icon-tile-soft">{% icon "video", "size-5" %}</span>
+              <span class="min-w-0 flex-1">
+                <span class="block font-display text-lg font-bold text-ink-950 group-hover:text-(--a-800)">{{ "districts.find.online" | t(L) }}</span>
+                <span class="mt-1 block text-sm text-ink-500">{{ "districts.find.online_body" | t(L) }}</span>
+              </span>
+              {% icon "external-link", "size-4 text-ink-300" %}
+            </a>
+          </li>
+          <li>
+            <a href="{{ '/newcomers/' | lurl(L) }}" class="dx-link-card group" style="{{ 'coral' | accent }}">
+              <span class="icon-tile-soft">{% icon "heart-handshake", "size-5" %}</span>
+              <span class="min-w-0 flex-1">
+                <span class="block font-display text-lg font-bold text-ink-950 group-hover:text-(--a-800)">{{ "districts.find.new" | t(L) }}</span>
+                <span class="mt-1 block text-sm text-ink-500">{{ "districts.find.new_body" | t(L) }}</span>
+              </span>
+              {% icon "arrow-right", "size-4 text-ink-300" %}
+            </a>
+          </li>
+        </ul>
+      </section>
+
+      {#- district events: what is coming up; when nothing is, what the district hosted lately,
+          the next Area meetings and how to get an event on the calendar - never an empty box -#}
+      {%- set hasUpcoming = events | length > 0 %}
+      <section id="events" class="dx-section dx-panel" aria-labelledby="h-events">
+        <h2 id="h-events" class="dx-h2"><span class="icon-tile">{% icon "calendar-days", "size-5" %}</span>{{ ("districts.events.title" if hasUpcoming else "districts.events.title_all") | t(L) }}</h2>
+        <p class="mt-3 max-w-3xl text-ink-600">{{ ("districts.events.lead" if hasUpcoming else "districts.events.lead_none") | t(L) }}</p>
+        {%- if hasUpcoming %}
+        <div class="mt-5">
+          {%- if hasEventMacros %}
+            {%- set upItems = events %}{% set upLimit = 6 %}{% set upEmpty = "districts.events.none" | t(L) %}{% set upId = "dx-events" %}{% set upVariant = "default" %}
+            {% include "partials/district-upcoming.njk" %}
+          {%- else %}
+            <ul class="-mx-3 divide-y divide-ink-100" data-limit="6" data-empty="#dx-noevents">{% for e in events %}{{ occRow({ occ: e, lang: L }) }}{% endfor %}</ul>
+            <p id="dx-noevents" hidden class="text-ink-600">{{ "districts.events.none" | t(L) }}</p>
+          {%- endif %}
+        </div>
+        {%- endif %}
+
+        {%- if recent | length %}
+        <h3 class="mt-7 mb-3 text-xs font-bold tracking-[0.14em] text-ink-500 uppercase">{{ "districts.recent_title" | t(L) }}</h3>
+        <ul class="grid grid-cols-1 gap-2.5 lg:grid-cols-2 2xl:grid-cols-3">
+          {%- for e in recent %}{{ pastRow({ occ: e, lang: L }) }}{% endfor %}
+        </ul>
+        {%- endif %}
+
+        {%- if not hasUpcoming %}
+        {%- set areaNext = calendar.nextAreaMeetings or [] %}
+        {%- if areaNext | length %}
+        <h3 class="mt-7 mb-3 text-xs font-bold tracking-[0.14em] text-ink-500 uppercase">{{ "districts.events.area" | t(L) }}</h3>
+        {%- if hasEventMacros %}
+          {%- set upItems = areaNext %}{% set upLimit = 2 %}{% set upEmpty = "districts.events.none" | t(L) %}{% set upId = "dx-area-next" %}{% set upVariant = "compact" %}
+          <div class="dx-area-next">{% include "partials/district-upcoming.njk" %}</div>
+        {%- else %}
+          <ul class="-mx-3" data-limit="2">{% for e in areaNext %}{{ occRow({ occ: e, lang: L }) }}{% endfor %}</ul>
+        {%- endif %}
+        {%- endif %}
+        <div class="mt-6 flex items-start gap-3.5 rounded-2xl bg-(--a-50) p-4 ring-1 ring-(--a-100) sm:p-5">
+          <span class="icon-tile-soft shrink-0">{% icon "megaphone", "size-5" %}</span>
+          <div class="min-w-0">
+            <h3 class="font-display text-lg font-bold text-ink-950">{{ "districts.events.host_title" | t(L) }}</h3>
+            <p class="mt-1 text-[15px] text-ink-700">{{ "districts.events.host_body" | t(L) }}</p>
+            <div class="mt-2.5 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-[15px]">
+              {{ emailLink({ email: site.email_webmaster or "webmaster@msca09aa.org", lang: L }) }}
+              <a href="{{ '/about/policy/' | lurl(L) }}#submit" class="inline-flex items-center gap-1.5 font-semibold text-ocean-700 hover:underline">{% icon "list-checks", "size-4" %}{{ "districts.events.host_rules" | t(L) }}</a>
+            </div>
+          </div>
+        </div>
+        {%- endif %}
+
+        <div class="mt-5 flex flex-wrap gap-2.5">
+          <a href="{{ '/calendar/' | lurl(L) }}" class="btn btn-ghost">{% icon "calendar-range", "size-4" %}{{ "districts.events.calendar" | t(L) }}</a>
+          {%- if d.website %}<a href="{{ d.website }}" target="_blank" rel="noopener" class="btn btn-ghost">{% icon "globe", "size-4" %}{{ "districts.events.website" | t(L, { site: d.website | hostname }) }}{% icon "external-link", "size-3.5 opacity-60" %}</a>{% endif %}
+        </div>
+      </section>
+
+      {#- documents (from the Area's document library; otherwise a pointer to the district's own website) -#}
+      {%- if hasDocs %}
+      <section id="documents" class="dx-section dx-panel" aria-labelledby="h-docs">
+        <h2 id="h-docs" class="dx-h2"><span class="icon-tile">{% icon "file-text", "size-5" %}</span>{{ "districts.docs.title" | t(L) }}{% if docs | length %}<span class="ml-1 rounded-full bg-(--a-100) px-2.5 py-0.5 font-sans text-sm font-bold text-(--a-800)">{{ docs | length }}</span>{% endif %}</h2>
+        {%- if docs | length %}<p class="mt-3 max-w-3xl text-ink-600">{{ "districts.docs.lead" | t(L) }}</p>{% endif %}
+        {%- if docs | length %}
+        {%- set groups = docs | dxDocsByYear %}
+        <div class="mt-5" x-data="{ y: {{ groups[0].year | json }} }">
+          <div role="group" aria-label="{{ 'districts.docs.year_label' | t(L) }}" class="no-scrollbar -mx-1 flex gap-2 overflow-x-auto px-1 pt-1 pb-2">
+            {%- for g in groups %}
+            <button type="button" id="dy-tab-{{ loop.index }}" aria-controls="dy-panel-{{ loop.index }}" class="dx-filter"
+                    :aria-pressed="(y === {{ g.year | json }}).toString()" aria-pressed="{{ 'true' if loop.first else 'false' }}" @click="y = {{ g.year | json }}">
+              {{ ("districts.docs.undated" | t(L)) if g.year == "—" else g.year }}<span class="rounded-full bg-ink-100 px-1.5 py-0.5 text-[11px] font-bold text-ink-600">{{ g.items | length }}</span>
+            </button>
+            {%- endfor %}
+          </div>
+          {%- for g in groups %}
+          <div role="region" id="dy-panel-{{ loop.index }}" aria-labelledby="dy-tab-{{ loop.index }}" x-show="y === {{ g.year | json }}" class="mt-2 grid grid-cols-1 gap-x-4 rounded-2xl ring-1 ring-ink-900/5 p-1.5 2xl:grid-cols-2">
+            {%- for doc in g.items %}
+            {%- set cat = (documents.categories or []) | find("key", doc.category) %}
+            {{ docLink({ title: (doc | loc("title", L)), url: doc.url, date: doc.date, language: doc.language, lang: L, meta: (cat | loc("label", L)) if cat else "" }) }}
+            {%- endfor %}
+          </div>
+          {%- endfor %}
+        </div>
+        {%- else %}
+        <a href="{{ d.website }}" target="_blank" rel="noopener" class="group mt-5 flex items-start gap-4 rounded-3xl bg-gradient-to-br from-(--a-50) to-white p-5 ring-1 ring-(--a-200) transition hover:shadow-soft">
+          <span class="icon-tile">{% icon "folder-open", "size-6" %}</span>
+          <span class="min-w-0 flex-1">
+            <span class="block text-xs font-bold tracking-wide text-(--a-800) uppercase">{{ "districts.docs.on_site" | t(L) }}</span>
+            <span class="block font-display text-lg font-bold text-ink-950 group-hover:text-(--a-800)">{{ d.website | hostname }}</span>
+            <span class="mt-1 block text-[15px] leading-relaxed text-ink-600">{{ "districts.docs.on_site_body" | t(L) }}</span>
+          </span>
+          <span class="text-ink-300 group-hover:text-(--a-600)">{% icon "external-link", "size-5" %}</span>
+        </a>
+        {%- endif %}
+        <a href="{{ '/documents/' | lurl(L) }}" class="btn btn-ghost mt-5">{% icon "library", "size-4" %}{{ "districts.docs.all" | t(L) }}</a>
+      </section>
+      {%- endif %}
+
+      {#- neighbours -#}
+      {%- if d.neighbors | length %}
+      <section id="neighbors" class="dx-section" aria-labelledby="h-neighbors">
+        <h2 id="h-neighbors" class="dx-h2"><span class="icon-tile">{% icon "compass", "size-5" %}</span>{{ "districts.neighbors.title" | t(L) }}</h2>
+        <div class="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 2xl:grid-cols-3">
+          {%- for n in d.neighbors | dxFor(D.bySlug) %}{{ miniDistrict({ d: n, lang: L, icon: "arrow-up-right" }) }}{% endfor %}
+        </div>
+      </section>
+      {%- endif %}
+
+      {#- out of date? + previous / next -#}
+      <section class="rounded-3xl bg-gradient-to-br from-(--a-50) via-white to-sun-50 p-5 ring-1 ring-(--a-200) sm:p-7" aria-labelledby="h-fix">
+        <h2 id="h-fix" class="flex items-center gap-2 font-display text-xl font-bold text-ink-950">{% icon "pencil-line", "size-5 text-(--a-600)" %}{{ "districts.fix.title" | t(L) }}</h2>
+        <p class="mt-2 text-ink-700">{{ "districts.fix.body" | t(L) }}</p>
+        <div class="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-[15px]">
+          {{ emailLink({ email: d.email, lang: L }) }}
+          {{ emailLink({ email: site.email_webmaster or "webmaster@msca09aa.org", lang: L }) }}
+        </div>
+      </section>
+
+      <nav aria-label="{{ 'districts.pager.label' | t(L) }}" class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        {%- if d.prev %}{{ miniDistrict({ d: D.bySlug[d.prev], lang: L, label: ("districts.pager.prev" | t(L)), icon: "arrow-left" }) }}{% else %}<span></span>{% endif %}
+        {%- if d.next %}{{ miniDistrict({ d: D.bySlug[d.next], lang: L, label: ("districts.pager.next" | t(L)), icon: "arrow-right", align: "right" }) }}{% endif %}
+      </nav>
+      <p class="text-center"><a href="{{ '/districts/' | lurl(L) }}" class="btn btn-ghost">{% icon "layout-grid", "size-4" %}{{ "districts.detail.all" | t(L) }}</a></p>
+    </div>
+  </div>
+</div>

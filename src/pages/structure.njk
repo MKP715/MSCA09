@@ -1,0 +1,285 @@
+---
+pagination: { data: langs, size: 1, alias: lang, addAllPagesToCollections: true }
+permalink: "{{ lang.prefix }}/about/structure/"
+layout: page.njk
+title_key: service.structure.title
+description_key: service.structure.description
+eyebrow_key: service.structure.eyebrow
+lead_key: service.structure.lead
+heroIcon: triangle
+accent: coral
+crumbs: [{ label_key: "service.structure.crumb_about", url: "/about/" }]
+bare: true
+scripts: ["/assets/js/service.js"]
+---
+{%- from "macros/ui.njk" import sectionHead with context -%}
+{%- from "macros/service.njk" import svcStat with context -%}
+{%- set L = lang -%}
+{%- set es = L.code == "es" -%}
+{%- set dAll = (districts.list or []) | length or 22 -%}
+{%- set dEn = (districts.english or []) | length or 16 -%}
+{%- set dEs = (districts.spanish or []) | length or 6 -%}
+{#- the same count as the Committees and home pages: standing committees, with the two service schools named beside them -#}
+{%- set standing = ((committees.list or []) | svcMatch("category", "^standing$") | length) or 17 -%}
+{%- set schools = ((committees.list or []) | svcMatch("category", "^school$") | length) or 2 -%}
+{%- set coordinate = ((committees.list or []) | svcMatch("category", "^coordinate$") | length) or 2 -%}
+{%- set officers = servants.officers or [] -%}
+{%- set nOfficers = officers.length or 7 -%}
+{%- set levels = [
+  { key: "groups", color: "sage", icon: "users-round", band: "color-mix(in oklab, var(--color-coral-600) 80%, var(--color-coral-700))", links: [["service.structure.l_find", "/newcomers/", false], ["service.structure.l_register", "mailto:registrar@msca09aa.org", false], ["service.structure.l_group", "https://www.aa.org/es/the-aa-group" if es else "https://www.aa.org/the-aa-group", true]] },
+  { key: "gsrs", color: "lime", icon: "user-round-check", band: "color-mix(in oklab, var(--color-coral-600) 50%, var(--color-coral-700))", links: [["service.structure.l_newgsr", "/service/#new-gsr", false], ["service.structure.l_gsrschool", "/committees/gsr-school/", false], ["service.structure.l_gsrpamphlet", "https://www.aa.org/es/rsg-representante-de-servicios-generales" if es else "https://www.aa.org/gsr-general-service-representative", true]] },
+  { key: "districts", color: "copper", icon: "map", band: "var(--color-coral-700)", links: [["service.structure.l_districts", "/districts/", false], ["service.structure.l_dcmschool", "/committees/dcm-school/", false]] },
+  { key: "areas", color: "ocean", icon: "landmark", band: "color-mix(in oklab, var(--color-coral-700) 50%, var(--color-coral-800))", links: [["service.structure.l_business", "/service/", false], ["service.structure.l_committees", "/committees/", false], ["service.structure.l_panel", "/about/panel/", false]] },
+  { key: "gsc", color: "coral", icon: "building-2", band: "var(--color-coral-800)", links: [["service.structure.l_delegate", "/service/delegate/", false], ["service.structure.l_gscaa", "https://www.aa.org/general-service-conference-structure-us-and-canada", true]] },
+  { key: "gsb", color: "iris", icon: "shield-check", band: "color-mix(in oklab, var(--color-coral-800) 50%, var(--color-coral-900))", links: [["service.structure.l_gso", "https://www.aa.org/es/aa-gso" if es else "https://www.aa.org/aa-gso", true], ["service.structure.l_grapevine", "https://www.aagrapevine.org/", true], ["service.structure.l_lavina", "https://www.aalavina.org/", true]] }
+] -%}
+{%- set facts = {
+  groups: "service.structure.groups_fact" | t(L),
+  gsrs: "service.structure.gsrs_fact" | t(L),
+  districts: "service.structure.districts_fact" | t(L, { n: dAll, en: dEn, es: dEs }),
+  areas: "service.structure.areas_fact" | t(L, { committees: standing, schools: schools, officers: nOfficers }),
+  gsc: "service.structure.gsc_fact" | t(L),
+  gsb: "service.structure.gsb_fact" | t(L)
+} -%}
+
+<div class="wrap space-y-20 py-12 lg:space-y-24 lg:py-16 2xl:py-20">
+
+  {#- ============================================================ the triangle -#}
+  <section aria-labelledby="tri-title" x-data="svcTriangle({{ levels.length }}, 0)">
+    <h2 id="tri-title" class="sr-only">{{ "service.structure.tri_title" | t(L) }}</h2>
+    <div class="grid grid-cols-1 items-start gap-10 lg:grid-cols-12 lg:gap-12 2xl:gap-16">
+      <div class="lg:col-span-5 2xl:col-span-5">
+        
+        <div class="svc-tri mt-10 sm:mt-14">
+          <div class="svc-tri__flow svc-tri__flow--down" aria-hidden="true"><small>{{ "service.structure.flow_down" | t(L) }}</small><span class="svc-tri__line"></span>{% icon "arrow-down", "size-5" %}</div>
+          <div class="svc-tri__flow svc-tri__flow--up" aria-hidden="true">{% icon "arrow-up", "size-5" %}<span class="svc-tri__line"></span><small>{{ "service.structure.flow_up" | t(L) }}</small></div>
+          <div class="svc-tri__shape" :class="intro && 'is-intro'" role="tablist" aria-orientation="vertical" aria-label="{{ 'service.structure.tri_title' | t(L) }}" @keydown="key($event)">
+            {%- for lv in levels %}
+            <button type="button" role="tab" id="band-{{ lv.key }}" data-band="{{ loop.index0 }}" class="svc-tri__band{{ ' svc-tri__band--tip' if loop.last }}" style="--band: {{ lv.band }}"
+                    :aria-selected="(sel === {{ loop.index0 }}).toString()" :tabindex="sel === {{ loop.index0 }} ? 0 : -1" {% if not loop.first %}tabindex="-1"{% endif %}
+                    aria-controls="level-panel-{{ loop.index }}" @click="pick({{ loop.index0 }})">
+              <span>{{ ("service.structure.band_" + lv.key) | t(L) }}</span>
+            </button>
+            {%- endfor %}
+          </div>
+        </div>
+        {#- phones & tablets: the tip of the triangle is too narrow to tap, so every level also gets a full-size
+            step button (touch only — keyboard and screen-reader users use the tabs above, so these stay out of the tab order) -#}
+        <ol class="svc-tri-steps mt-8 lg:hidden" role="list" aria-hidden="true">
+          {%- for lv in levels %}
+          <li>
+            <button type="button" tabindex="-1" class="svc-tri-step" style="{{ lv.color | accent }}" :class="sel === {{ loop.index0 }} && 'is-on'" @click="pick({{ loop.index0 }})">
+              <span class="svc-tri-step__n">{{ loop.index }}</span><span class="min-w-0 leading-tight">{{ ("service.structure.band_" + lv.key) | t(L) }}</span>
+            </button>
+          </li>
+          {%- endfor %}
+        </ol>
+        <p class="mt-6 flex items-center justify-center gap-2 text-sm font-semibold text-ink-500 lg:mt-10">{% icon "pointer", "size-4 text-coral-600" %}{{ "service.structure.tap" | t(L) }}</p>
+        <blockquote class="mx-auto mt-8 hidden max-w-md lg:mx-0 lg:block lg:text-left">
+          <p class="font-display text-lg leading-relaxed text-ink-700 italic">“{{ "service.structure.manual_quote" | t(L) }}”</p>
+          <footer class="mt-2 text-sm font-semibold text-ink-500">— {{ "service.structure.manual_cite" | t(L) }}</footer>
+        </blockquote>
+      </div>
+
+      <div class="lg:col-span-7 2xl:col-span-7 lg:sticky lg:top-28" data-level-panel>
+        {%- for lv in levels %}
+        <div id="level-panel-{{ loop.index }}" role="tabpanel" aria-labelledby="band-{{ lv.key }}" class="svc-level" style="{{ lv.color | accent }}"
+                 x-show="sel === {{ loop.index0 }}" {% if not loop.first %}x-cloak{% endif %}
+                 x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-3" x-transition:enter-end="opacity-100 translate-y-0">
+          <div class="flex flex-wrap items-center gap-4">
+            <span class="icon-tile size-16 rounded-3xl">{% icon lv.icon, "size-8" %}</span>
+            <div class="min-w-0">
+              <p class="eyebrow">{{ "service.structure.level_n" | t(L, { n: loop.index, total: levels.length }) }}</p>
+              <h3 class="font-display text-3xl font-extrabold text-ink-950 2xl:text-4xl">{{ ("service.structure." + lv.key + "_name") | t(L) }}</h3>
+            </div>
+          </div>
+          <p class="mt-6 text-lg leading-relaxed text-ink-700 2xl:text-xl">{{ ("service.structure." + lv.key + "_what") | t(L) }}</p>
+          <h4 class="mt-7 text-xs font-bold tracking-[0.16em] text-(--a-700) uppercase">{{ "service.structure.what_they_do" | t(L) }}</h4>
+          <ul class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-3" role="list">
+            {%- for i in [1, 2, 3] %}
+            <li class="rounded-2xl bg-(--a-50) p-4 text-[15px] leading-relaxed text-ink-700 ring-1 ring-(--a-100)">{{ ("service.structure." + lv.key + "_do" + i) | t(L) }}</li>
+            {%- endfor %}
+          </ul>
+          <p class="mt-6 flex items-start gap-3 rounded-2xl bg-ink-950 p-4 text-[15px] leading-relaxed text-white">{% icon "map-pin", "mt-0.5 size-5 shrink-0 text-sun-300" %}<span><strong class="text-sun-300">{{ "service.structure.in_area" | t(L) }}</strong> {{ facts[lv.key] }}</span></p>
+          <div class="mt-6 flex flex-wrap gap-2.5">
+            {%- for ln in lv.links %}
+            <a href="{{ ln[1] if ln[2] or ln[1].startsWith('mailto') else (ln[1] | lurl(L)) }}" {% if ln[2] %}target="_blank" rel="noopener"{% endif %} class="btn {{ 'btn-accent' if loop.first else 'btn-ghost' }}">{{ ln[0] | t(L) }}{% if ln[2] %}{% icon "external-link", "size-3.5 opacity-80" %}{% else %}{% icon "arrow-right", "size-4" %}{% endif %}</a>
+            {%- endfor %}
+          </div>
+          <div class="mt-8 flex items-center justify-between border-t border-ink-100 pt-5">
+            <button type="button" class="btn btn-ghost btn-sm" @click="pick(sel - 1)" {% if loop.first %}disabled{% endif %}>{% icon "arrow-up", "size-4" %}{{ "service.structure.prev" | t(L) }}</button>
+            <span class="flex gap-1.5" aria-hidden="true">{% for d in levels %}<span class="h-2 rounded-full transition-all duration-300" :class="sel === {{ loop.index0 }} ? 'w-6 bg-(--a-500)' : 'w-2 bg-ink-200'"></span>{% endfor %}</span>
+            <button type="button" class="btn btn-ghost btn-sm" @click="pick(sel + 1)" {% if loop.last %}disabled{% endif %}>{{ "service.structure.next" | t(L) }}{% icon "arrow-down", "size-4" %}</button>
+          </div>
+        </div>
+        {%- endfor %}
+      </div>
+      <blockquote class="mx-auto max-w-md text-center lg:hidden">
+        <p class="font-display text-lg leading-relaxed text-ink-700 italic">“{{ "service.structure.manual_quote" | t(L) }}”</p>
+        <footer class="mt-2 text-sm font-semibold text-ink-500">— {{ "service.structure.manual_cite" | t(L) }}</footer>
+      </blockquote>
+    </div>
+  </section>
+
+  {#- ============================================================ Three Legacies -#}
+  <section aria-labelledby="legacies-title">
+    {{ sectionHead({ eyebrow: "service.structure.legacies_eyebrow" | t(L), title: "service.structure.legacies_title" | t(L), lead: "service.structure.legacies_lead" | t(L), id: "legacies-title", accent: "iris", align: "center" }) }}
+    {%- set legs = [
+      ["recovery", "sprout", "sage", "https://www.aa.org/es/the-twelve-steps" if es else "https://www.aa.org/the-twelve-steps"],
+      ["unity", "handshake", "ocean", "https://www.aa.org/es/the-twelve-traditions" if es else "https://www.aa.org/the-twelve-traditions"],
+      ["service", "heart-handshake", "coral", "https://www.aa.org/es/the-twelve-concepts" if es else "https://www.aa.org/the-twelve-concepts"]
+    ] -%}
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+      {%- for g in legs %}
+      <a href="{{ g[3] }}" target="_blank" rel="noopener" class="card-accent card-hover reveal group flex flex-col items-center p-8 text-center 2xl:p-10" style="{{ g[2] | accent }}; --reveal-delay: {{ loop.index0 * 100 }}ms">
+        <span class="relative grid size-24 place-items-center rounded-full bg-(--a-100) text-(--a-700) transition duration-500 group-hover:rotate-6 group-hover:scale-105">
+          {% icon g[1], "size-11" %}
+          <span class="absolute -right-1 -bottom-1 grid size-9 place-items-center rounded-full bg-(--a-700) font-display text-sm font-extrabold text-white ring-4 ring-white">12</span>
+        </span>
+        <p class="eyebrow mt-6">{{ ("service.structure.leg_" + g[0] + "_kicker") | t(L) }}</p>
+        <h3 class="mt-1 font-display text-2xl font-extrabold text-ink-950">{{ ("service.structure.leg_" + g[0]) | t(L) }}</h3>
+        <p class="mt-3 leading-relaxed text-ink-600">{{ ("service.structure.leg_" + g[0] + "_body") | t(L) }}</p>
+        <span class="mt-5 inline-flex items-center gap-1.5 font-semibold text-(--a-700)">{{ ("service.structure.leg_" + g[0] + "_link") | t(L) }}{% icon "external-link", "size-4" %}</span>
+      </a>
+      {%- endfor %}
+    </div>
+    <figure class="mx-auto mt-10 max-w-4xl rounded-[2rem] bg-iris-50 p-6 text-center ring-1 ring-iris-100 sm:p-10">
+      <blockquote class="font-display text-xl leading-relaxed text-ink-800 sm:text-2xl">“{{ "service.structure.legacy_quote" | t(L) }}”</blockquote>
+      <figcaption class="mt-4 text-sm font-semibold text-iris-700">— {{ "service.structure.legacy_cite" | t(L) }}</figcaption>
+    </figure>
+  </section>
+
+  {#- ============================================================ Third Legacy Procedure -#}
+  <section id="third-legacy" aria-labelledby="tlp-title" class="scroll-mt-28">
+    <div class="grid grid-cols-1 gap-8 xl:grid-cols-12 xl:gap-12">
+      <div class="xl:col-span-4">
+        <p class="eyebrow" style="{{ 'sun' | accent }}">{% icon "vote", "size-4" %}{{ "service.structure.tlp_eyebrow" | t(L) }}</p>
+        <h2 id="tlp-title" class="h-section mt-2">{{ "service.structure.tlp_title" | t(L) }}</h2>
+        <p class="lead mt-4">{{ "service.structure.tlp_lead" | t(L) }}</p>
+        <p class="mt-4 leading-relaxed text-ink-600">{{ "service.structure.tlp_why" | t(L) }}</p>
+        <p class="mt-6 flex items-start gap-3 rounded-2xl bg-sun-100 p-4 text-[15px] leading-relaxed text-ink-800">{% icon "calendar-check", "mt-0.5 size-5 shrink-0 text-sun-700" %}{{ "service.structure.tlp_area" | t(L) }}</p>
+      </div>
+      {%- set ballots = [
+        ["1", "sun", 66.7, "two_thirds"],
+        ["2", "copper", 20, "fifth"],
+        ["3", "coral", 33.3, "third"],
+        ["4", "blush", 0, "lowest"],
+        ["5", "iris", 66.7, "final"],
+        ["6", "ocean", 0, "hat"]
+      ] -%}
+      <ol class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:col-span-8" role="list">
+        {%- for b in ballots %}
+        <li class="svc-ballot reveal flex-col" style="{{ b[1] | accent }}; --reveal-delay: {{ loop.index0 * 70 }}ms">
+          <div class="flex items-center gap-3">
+            <span class="svc-ballot__n">{% if b[3] == "hat" %}{% icon "dices", "size-5" %}{% else %}{{ b[0] }}{% endif %}</span>
+            <div>
+              <p class="text-xs font-bold tracking-wider text-(--a-700) uppercase">{{ ("service.structure.tlp_" + b[3] + "_when") | t(L) }}</p>
+              <h3 class="font-display text-lg font-bold leading-snug text-ink-950">{{ ("service.structure.tlp_" + b[3]) | t(L) }}</h3>
+            </div>
+          </div>
+          <p class="mt-1 text-[15px] leading-relaxed text-ink-600">{{ ("service.structure.tlp_" + b[3] + "_body") | t(L) }}</p>
+          {%- if b[2] %}
+          <div class="mt-auto pt-3" aria-hidden="true">
+            <div class="relative">
+              <div class="svc-bar"><span style="width: {{ b[2] }}%"></span></div>
+              <span class="absolute -top-1 h-[1.1rem] w-0.5 -translate-x-1/2 rounded-full bg-ink-900" style="left: {{ b[2] }}%"></span>
+            </div>
+            <div class="relative mt-1 h-4 text-[11px] font-semibold text-ink-500">
+              <span class="absolute left-0">0</span>
+              <span class="absolute -translate-x-1/2 rounded-full bg-(--a-100) px-1.5 font-bold text-(--a-800)" style="left: {{ b[2] }}%">{{ ("service.structure.tlp_" + b[3] + "_mark") | t(L) }}</span>
+              <span class="absolute right-0">100%</span>
+            </div>
+          </div>
+          {%- endif %}
+        </li>
+        {%- endfor %}
+      </ol>
+    </div>
+  </section>
+
+  {#- ============================================================ the Area's structure -#}
+  <section aria-labelledby="area-title">
+    {{ sectionHead({ eyebrow: "service.structure.area_eyebrow" | t(L), title: "service.structure.area_title" | t(L), lead: "service.structure.area_lead" | t(L), id: "area-title", accent: "ocean" }) }}
+    <div class="grid grid-cols-1 gap-8 xl:grid-cols-12">
+      <div class="xl:col-span-7">
+        <div class="relative rounded-[2rem] bg-coral-50 p-4 ring-1 ring-coral-100 sm:p-6 2xl:p-8" style="{{ 'coral' | accent }}">
+          <div class="flex flex-wrap items-baseline justify-between gap-2"><h3 class="font-display text-xl font-extrabold text-coral-800">{{ "service.kind_title.asa" | t(L) }}</h3><span class="text-sm font-semibold text-coral-700">{{ "service.structure.ring_asa" | t(L) }}</span></div>
+          <div class="mt-4 rounded-[1.6rem] bg-ocean-50 p-4 ring-1 ring-ocean-100 sm:p-6" style="{{ 'ocean' | accent }}">
+            <div class="flex flex-wrap items-baseline justify-between gap-2"><h3 class="font-display text-xl font-extrabold text-ocean-800">{{ "service.kind_title.asc" | t(L) }}</h3><span class="text-sm font-semibold text-ocean-700">{{ "service.structure.ring_asc" | t(L) }}</span></div>
+            <div class="mt-4 rounded-[1.3rem] bg-white p-4 shadow-soft ring-1 ring-ink-900/5 sm:p-6" style="{{ 'iris' | accent }}">
+              <div class="flex flex-wrap items-baseline justify-between gap-2"><h3 class="font-display text-xl font-extrabold text-iris-800">{{ "service.structure.exec" | t(L) }}</h3><span class="text-sm font-semibold text-iris-700">{{ "service.structure.ring_exec" | t(L, { n: nOfficers }) }}</span></div>
+              <ul class="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2" role="list">
+                {%- if officers.length %}
+                {%- for o in officers %}
+                <li class="flex items-center gap-3 rounded-2xl bg-iris-50 px-3 py-2.5">
+                  <span class="grid size-9 shrink-0 place-items-center rounded-full bg-gradient-to-br from-iris-600 to-iris-800 text-sm font-bold text-white">{{ o.name | initials }}</span>
+                  <span class="min-w-0"><span class="block text-xs leading-snug font-bold tracking-wide text-balance text-iris-700 uppercase">{{ o | loc("position", L) }}</span>
+                    {#- a name the Area still has to confirm (status Unconfirmed in trusted-servants.csv) carries the same mark as on the committee and panel pages -#}
+                    <span class="flex min-w-0 flex-wrap items-center gap-x-1.5 font-semibold text-ink-900">{% if o.name %}<span class="truncate">{{ o.name }}</span>{% if o.unconfirmed %}<span class="chip chip-soft text-[11px] font-semibold">{{ "people.to_confirm" | t(L) }}</span>{% endif %}{% elif o.unconfirmed %}<span class="font-medium text-ink-500">{{ "people.name_tbc" | t(L) }}</span>{% else %}{{ "people.open_position" | t(L) }}{% endif %}</span></span>
+                </li>
+                {%- endfor %}
+                {%- else %}
+                {%- for k in ["delegate", "alt", "chair", "secretary", "ap", "ar", "registrar"] %}<li class="rounded-2xl bg-iris-50 px-3 py-2.5 font-semibold text-ink-800">{{ ("service.structure.off_" + k) | t(L) }}</li>{% endfor %}
+                {%- endif %}
+              </ul>
+              <a href="{{ '/about/panel/' | lurl(L) }}" class="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-iris-700 hover:underline">{{ "service.structure.see_panel" | t(L, { panel: site.panel }) }}{% icon "arrow-right", "size-4" %}</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 content-start gap-4 sm:grid-cols-2 xl:col-span-5 xl:grid-cols-1 2xl:grid-cols-2">
+        {{ svcStat({ value: dAll, label: "service.structure.stat_districts" | t(L, { en: dEn, es: dEs }), icon: "map", color: "copper" }) }}
+        {{ svcStat({ value: standing, label: "service.stat.committees" | t(L), sub: ("service.stat.schools" | t(L, { n: schools })), icon: "users", color: "sage" }) }}
+        {{ svcStat({ value: nOfficers, label: "service.structure.stat_officers" | t(L), icon: "contact", color: "iris" }) }}
+        {{ svcStat({ value: coordinate, label: "service.structure.stat_coordinate" | t(L), icon: "handshake", color: "sea" }) }}
+        <a href="{{ '/committees/' | lurl(L) }}" class="card card-hover flex items-center gap-4 p-5 sm:col-span-2 xl:col-span-1 2xl:col-span-2" style="{{ 'sun' | accent }}">
+          <span class="icon-tile">{% icon "layout-grid", "size-6" %}</span>
+          <span class="flex-1"><span class="block font-display text-lg font-bold text-ink-950">{{ "service.structure.see_committees" | t(L) }}</span><span class="block text-sm text-ink-500">{{ "service.structure.see_committees_body" | t(L) }}</span></span>
+          {% icon "arrow-right", "size-5 text-ink-300" %}
+        </a>
+      </div>
+    </div>
+  </section>
+
+  {#- ============================================================ glossary -#}
+  {%- set terms = (glossary.es if es else glossary.en) or [] -%}
+  <section id="glossary" aria-labelledby="gl-title" class="scroll-mt-28" x-data="svcGlossary({{ terms.length }}, 16)">
+    {{ sectionHead({ eyebrow: "service.structure.gl_eyebrow" | t(L), title: "service.structure.gl_title" | t(L), lead: "service.structure.gl_lead" | t(L, { n: terms.length }), id: "gl-title", accent: "sage" }) }}
+    <div class="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center">
+      <label class="relative block w-full lg:max-w-sm">
+        <span class="sr-only">{{ "service.structure.gl_search" | t(L) }}</span>
+        {% icon "search", "pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-ink-400" %}
+        <input type="search" x-model.debounce.120ms="q" class="field pl-12" placeholder="{{ 'service.structure.gl_search' | t(L) }}" autocomplete="off">
+      </label>
+      <div class="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0" role="group" aria-label="{{ 'ui.filters' | t(L) }}">
+        <button type="button" class="svc-chip" style="{{ 'sage' | accent }}" :aria-pressed="(cat === 'all').toString()" @click="cat = 'all'">{{ "ui.all" | t(L) }}</button>
+        {%- for c in glossary.categories or [] %}
+        <button type="button" class="svc-chip" style="{{ c.color | accent }}" :aria-pressed="(cat === '{{ c.key }}').toString()" @click="cat = '{{ c.key }}'">{% icon c.icon, "size-4" %}{{ c | loc("label", L) }}</button>
+        {%- endfor %}
+      </div>
+      <p class="shrink-0 text-sm whitespace-nowrap text-ink-500 lg:ml-auto" aria-live="polite"><span x-text="count">{{ terms.length }}</span> {{ "service.structure.gl_terms" | t(L) }}</p>
+    </div>
+    <ul class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 3xl:grid-cols-5" role="list">
+      {%- for g in terms %}
+      {%- set other = "en" if es else "es" -%}
+      {%- set ext = g.url and g.url.startsWith("http") -%}
+      <li class="svc-term" style="{{ g.cat.color | accent }}" data-term data-search="{{ g.search }}" data-cat="{{ g.category }}">
+        <div class="flex items-start justify-between gap-2">
+          <h3 class="font-display text-[17px] font-bold leading-snug text-ink-950">{{ g | loc("term", L) }}{% set ab = g | loc("abbr", L) %}{% if ab %} <span class="svc-term__abbr align-[2px]">{{ ab }}</span>{% endif %}</h3>
+          {%- if g.url %}
+          <a href="{{ g.url if ext else (g.url | lurl(L)) }}" {% if ext %}target="_blank" rel="noopener"{% endif %} class="grid size-8 shrink-0 place-items-center rounded-full bg-(--a-50) text-(--a-700) transition hover:bg-(--a-600) hover:text-white" aria-label="{{ 'ui.read_more' | t(L) }}: {{ g | loc('term', L) }}">{% if ext %}{% icon "external-link", "size-3.5" %}{% else %}{% icon "arrow-right", "size-3.5" %}{% endif %}</a>
+          {%- endif %}
+        </div>
+        <p class="flex items-center gap-1.5 text-sm text-ink-500" lang="{{ other }}">{% icon "languages", "size-3.5 shrink-0 text-(--a-500)" %}<span><span class="font-semibold">{{ g["term_" + other] }}</span>{% if g["abbr_" + other] %} · {{ g["abbr_" + other] }}{% endif %}</span></p>
+        <p class="text-[14.5px] leading-relaxed text-ink-700">{{ g | loc("definition", L) }}</p>
+      </li>
+      {%- endfor %}
+    </ul>
+    <div class="mt-6 flex justify-center" x-show="hiddenCount > 0">
+      <button type="button" class="btn btn-ocean btn-lg" @click="all = true">{% icon "chevrons-down", "size-5" %}<span data-tpl="{{ 'service.structure.gl_more' | t(L) }}" x-text="$el.dataset.tpl.replace('{n}', hiddenCount)">{{ "service.structure.gl_more" | t(L, { n: terms.length - 16 }) }}</span></button>
+    </div>
+    <div x-cloak x-show="count === 0" class="card mt-4 p-10 text-center">
+      <p class="font-semibold text-ink-800">{{ "ui.no_results" | t(L) }}</p>
+    </div>
+  </section>
+</div>

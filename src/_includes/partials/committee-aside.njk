@@ -1,0 +1,27 @@
+{#- Sticky aside on committee pages: quick links and on-this-page. Expects: c, L, lib, sections. -#}
+<div class="space-y-5 xl:sticky xl:top-[7.5rem]">
+  {#- quick links -#}
+  <div class="rounded-3xl bg-white p-5 shadow-soft ring-1 ring-ink-900/5">
+    <h2 class="mb-2 font-display text-base font-bold text-ink-950">{{ "committees.quick_links" | t(L) }}</h2>
+    <ul class="space-y-0.5 text-sm">
+      {%- for g in lib.guidelines | limit(2) %}{% if g.url %}
+      <li><a href="{{ g.url }}" target="_blank" rel="noopener" class="flex items-center gap-2 rounded-xl px-2 py-2 font-medium text-ink-700 hover:bg-[var(--a-50)] hover:text-ink-950">{% icon "book-marked", "size-4 shrink-0 text-[var(--a-600)]" %}<span class="min-w-0">{{ g | loc("title", L) }}</span></a></li>
+      {%- endif %}{% endfor %}
+      {%- if c.aa_url %}
+      <li><a href="{{ (c.aa_url_es if (L | langCode) == 'es' and c.aa_url_es else c.aa_url) }}" target="_blank" rel="noopener" class="flex items-center gap-2 rounded-xl px-2 py-2 font-medium text-ink-700 hover:bg-[var(--a-50)] hover:text-ink-950">{% icon "external-link", "size-4 shrink-0 text-[var(--a-600)]" %}{{ "committees.on_aaorg" | t(L) }}</a></li>
+      {%- endif %}
+      <li><a href="{{ '/calendar/' | lurl(L) }}" class="flex items-center gap-2 rounded-xl px-2 py-2 font-medium text-ink-700 hover:bg-[var(--a-50)] hover:text-ink-950">{% icon "calendar-days", "size-4 shrink-0 text-[var(--a-600)]" %}{{ "committees.area_calendar" | t(L) }}</a></li>
+      <li><a href="{{ '/documents/' | lurl(L) }}" class="flex items-center gap-2 rounded-xl px-2 py-2 font-medium text-ink-700 hover:bg-[var(--a-50)] hover:text-ink-950">{% icon "files", "size-4 shrink-0 text-[var(--a-600)]" %}{{ "committees.doc_library" | t(L) }}</a></li>
+      <li><a href="{{ '/about/panel/' | lurl(L) }}" class="flex items-center gap-2 rounded-xl px-2 py-2 font-medium text-ink-700 hover:bg-[var(--a-50)] hover:text-ink-950">{% icon "contact", "size-4 shrink-0 text-[var(--a-600)]" %}{{ "committees.panel_directory" | t(L) }}</a></li>
+      <li><a href="{{ '/committees/' | lurl(L) }}" class="flex items-center gap-2 rounded-xl px-2 py-2 font-medium text-ink-700 hover:bg-[var(--a-50)] hover:text-ink-950">{% icon "layout-grid", "size-4 shrink-0 text-[var(--a-600)]" %}{{ "committees.all_committees" | t(L) }}</a></li>
+    </ul>
+  </div>
+
+  {#- on this page (desktop) -#}
+  <nav class="cm-toc hidden rounded-3xl bg-white p-3 shadow-soft ring-1 ring-ink-900/5 xl:block" aria-label="{{ 'committees.on_this_page' | t(L) }}">
+    <p class="px-3 pt-1 pb-2 text-xs font-bold tracking-wide text-ink-500 uppercase">{{ "committees.on_this_page" | t(L) }}</p>
+    {%- for sec in sections %}
+    <a href="#{{ sec.id }}" data-spy>{% icon sec.icon, "size-4 text-[var(--a-600)]" %}{{ sec.key | t(L) }}</a>
+    {%- endfor %}
+  </nav>
+</div>

@@ -1,0 +1,9 @@
+---
+permalink: /robots.txt
+eleventyExcludeFromCollections: true
+---
+User-agent: *
+Allow: /
+Disallow: {{ site.base }}pagefind/
+
+Sitemap: {{ "/sitemap.xml" | absUrl(site.url + "/") }}

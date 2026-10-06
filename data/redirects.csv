@@ -1,0 +1,122 @@
+old_path,new_path,note
+"# old_path = an address on the old msca09aa.org WordPress site (start and end with /). new_path = the page on this site that replaces it. Each row becomes a small page that forwards visitors (and Google) to the new address, so links on flyers, QR codes, district websites and aa.org keep working.",,
+"# An old_path ending in * matches every address that starts with it (e.g. /event/*); those are forwarded by the ""page not found"" page instead. Never use the address of a page that exists on this site (e.g. /calendar/): the site check stops with an error. Old Delegate's Corner posts are forwarded automatically from the old_url in src/content/delegate/*.md.",,
+/msca-officers/,/about/panel/,Officers page
+/contacts/,/contact/,Contacts page (trusted servants and DCMs)
+/contact-us/,/contact/,
+/dcmc-standing-committee/,/about/panel/,"Was password-protected; the DCMCs are listed with the trusted servants"
+/website-policy/,/about/policy/,
+/aa-meetings/,/resources/#offices,Meeting Guide page: pointed to the central offices
+/aa-service-manual/,/resources/,
+/gso/,/resources/,General Service Office page
+/third-legacy-procedure-2/,/about/structure/,Election procedure
+/registrar/,/contact/,Registrar: group registration
+/pai-proposed-agenda-item-information/,/service/delegate/,Proposed Conference agenda items
+/conference-agenda-item-response-form/,/service/delegate/,
+/area-calendar/,/calendar/,
+/my-calendar/,/calendar/,
+/my-calendar-business-meetings/,/service/area-meetings/,
+/area-09-business/,/service/,
+/services/,/service/,
+/agendas-and-motions/,/service/motions/,
+/motions-book/,/documents/motions/,
+/area-09-minutes/,/documents/minutes/,
+/committee-reports/,/documents/reports/,
+/district-reports/,/documents/districts/,
+/pacific-regional-trustee-reports/,/documents/reports/,
+/area-09-finances/,/documents/finances/,
+/bylaws/,/documents/guidelines/,
+/area-committee-guidelines/,/documents/guidelines/,
+/forms/,/documents/forms/,
+/workbooks/,/documents/workbooks/,
+/news/,/documents/newsletters/,Area newsletter archive
+/conference-materials/,/documents/conference/,
+/general-service-conference/,/documents/conference/,
+/general-service-conference-2/,/documents/conference/,
+/general-service-conference/gsc2024-74th-gsc-post-conference-report/,/documents/conference/,
+/general-service-conference-2/gsc2025-75th-gsc-materials/,/documents/conference/,
+/panel-76-delegate-page/,/service/delegate/,
+/alternate-delegate/,/service/delegate/,
+/panel-74-delegates-corner/,/service/delegate/,
+/gso-announcements/,/service/delegate/,
+/gso-announcements-copy/,/service/delegate/,
+/7th-tradition/,/contribute/,
+/donations/group-contributions/,/contribute/,
+/donation-confirmation/,/contribute/,
+/donation-failed/,/contribute/,
+/donation-history/,/contribute/,
+/donor-dashboard/,/contribute/,
+/foro/,/committees/foro/,
+/xxv-la-vina/,/committees/grapevine-la-vina/,
+/accessibilities/,/committees/accessibilities/,
+/archives/,/committees/archives/,
+/archives-2/,/committees/archives/,
+/communications/,/committees/communications/,
+/convention/,/committees/convention-liaison/,
+/cooperation-with-elder-community/,/committees/cec/,
+/cooperation-with-professional-community/,/committees/cpc/,
+/corrections/,/committees/corrections/,
+/district-committee-member-dcm-school/,/committees/dcm-school/,
+/finance-committee/,/committees/finance/,
+/general-service-representative-gsr-school/,/committees/gsr-school/,
+/grapevine-la-vina/,/committees/grapevine-la-vina/,
+/guidelines-and-policies/,/committees/guidelines-policies/,
+/hospitals-institutions/,/committees/hospitals-institutions/,
+/literature/,/committees/literature/,
+/public-information/,/committees/public-information/,
+/registration/,/committees/registration/,
+/remote-communities/,/committees/remote-communities/,
+/technology/,/committees/technology/,
+/treatment/,/committees/treatment/,
+/young-people-in-a-a/,/committees/ypaa/,
+/district-1-and-3/,/districts/d01-03/,
+/district-1/,/districts/d01-03/,
+/district-2-2/,/districts/d02/,
+/district-2/,/districts/d02/,
+/district-3/,/districts/d01-03/,District 3 merged into District 1 & 3
+/district-4/,/districts/d04/,
+/district-5/,/districts/d05/,
+/district-6/,/districts/d06/,
+/district-7/,/districts/d07/,
+/district-8/,/districts/d08/,
+/district-9/,/districts/d09/,
+/district-10/,/districts/d10/,
+/district-11/,/districts/d08/,District 11 (inactive) joined District 8
+/district-12/,/districts/d12/,
+/district-14/,/districts/d14/,
+/district-15/,/districts/d15/,
+/district-17/,/districts/d17/,
+/district-18/,/districts/d18/,
+/district-19/,/districts/d19/,
+/district-20/,/districts/d20/,
+/district-21/,/districts/d21/,
+/district-22/,/districts/d22/,
+/district-23/,/districts/d23/,
+/district-24/,/districts/d24/,
+/district-25/,/districts/d25/,
+/district-30/,/districts/d30/,
+/2024/02/plbb-english/,/service/delegate/,Alternate Delegate post (2024)
+/2024/04/aaws-highlights-2024-04-03/,/service/delegate/,Alternate Delegate post (2024)
+/2024/04/box-4-5-9-winter-2023/,/service/delegate/,Alternate Delegate post (2024)
+/2024/04/box-459-reader-survey/,/service/delegate/,Alternate Delegate post (2024)
+/2024/04/quarterly-report-from-gso/,/service/delegate/,Alternate Delegate post (2024)
+/2024/04/a-celebration-of-the-big-book-flash-sale-may-1-july-31-2024/,/service/delegate/,Alternate Delegate post (2024)
+/event/*,/calendar/,Old event pages (The Events Calendar plugin)
+/events/*,/calendar/,"Old event lists, categories and day views"
+/venue/*,/calendar/,
+/organizer/*,/calendar/,
+/donor-dashboard*,/contribute/,Old donation plugin pages
+/donations/*,/contribute/,
+/category/*,/service/delegate/,Old post categories
+/tag/*,/service/delegate/,Old post tags
+/2020/*,/service/delegate/,Old posts by date
+/2021/*,/service/delegate/,
+/2022/*,/service/delegate/,
+/2023/*,/service/delegate/,
+/2024/*,/service/delegate/,
+/2025/*,/service/delegate/,
+/2026/*,/service/delegate/,
+/panel-76-delegate-page/*,/service/delegate/,
+/general-service-conference-2/*,/documents/conference/,
+/general-service-conference/*,/documents/conference/,
+/wp-content/uploads/*,/documents/,"Old files: the visitor lands in the document library with the file name already searched"

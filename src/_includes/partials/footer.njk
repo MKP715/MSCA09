@@ -1,0 +1,100 @@
+{#- Site footer. Groups come from data/nav.csv; wording from data/text/common.csv. -#}
+{%- set L = lang -%}
+{%- set lc = L.code -%}
+{#- Bottom padding below lg: room for the fixed tab bar (partials/mobile-bar.njk), notch area included. -#}
+<footer role="contentinfo" class="relative mt-16 overflow-hidden bg-ink-950 pb-[calc(5rem+env(safe-area-inset-bottom))] text-ink-300 sm:mt-24 lg:pb-0">
+  {#- layered waves in the logo's colours (shallower on phones) -#}
+  <div class="pointer-events-none absolute inset-x-0 top-0 h-10 overflow-hidden sm:h-16" aria-hidden="true">
+    <svg class="absolute -top-px left-0 h-10 w-[200%] animate-wave [animation-iteration-count:3] text-white sm:h-16" viewBox="0 0 2880 64" preserveAspectRatio="none"><path fill="currentColor" d="M0 0h2880v24c-120 22-240 34-360 34S2280 22 2160 22 1920 58 1800 58 1560 22 1440 22 1200 58 1080 58 840 22 720 22 480 58 360 58 120 22 0 22z"/></svg>
+  </div>
+  <div class="h-1.5 w-full" style="background: linear-gradient(90deg, var(--color-ocean-500), var(--color-iris-600), var(--color-coral-600), var(--color-sun-400), var(--color-sage-500), var(--color-blush-400), var(--color-ocean-500));"></div>
+
+  {#- Phones (under 640px): a compact brand block, then the link groups fold into a short list of
+      open-and-close rows — the menu and the tab bar already offer every page. A closed group only
+      gets max-sm:hidden, so from 640px every group is always open (2 columns, 4 from 768px, beside
+      the brand from 1024px), and without JavaScript every group stays open. -#}
+  <div class="wrap relative grid gap-7 pt-12 pb-8 sm:gap-12 sm:py-16 lg:grid-cols-12 lg:gap-10 2xl:py-20">
+    {#- tablets: the address sits beside the blurb -#}
+    <div class="md:grid md:grid-cols-2 md:gap-x-10 lg:col-span-4 lg:block 2xl:col-span-4">
+      <a href="{{ '/' | lurl(L) }}" class="inline-flex items-center gap-3 sm:gap-4 md:col-span-2 md:justify-self-start">
+        <img src="/assets/img/logo/logo-{{ lc }}-160.webp" alt="{{ 'site.logo_alt' | t(L) }}" width="80" height="80" class="size-14 rounded-full bg-white p-1 shadow-glow sm:size-20" loading="lazy">
+        <span>
+          <span class="block font-display text-xl font-extrabold text-white sm:text-2xl">MSCA <span class="text-ocean-300">09</span></span>
+          <span class="block text-sm text-ink-400">{{ "site.of_aa" | t(L) }}</span>
+        </span>
+      </a>
+      <p class="mt-4 max-w-md text-sm leading-relaxed text-ink-400 sm:mt-6 sm:text-base">{{ "footer.blurb" | t(L) }}</p>
+      <div class="mt-4 grid gap-x-6 gap-y-1 sm:mt-6 sm:gap-y-3">
+        <address class="flex items-start gap-3 text-sm not-italic text-ink-300">
+          <span class="mt-0.5 text-ocean-300">{% icon "mail", "size-5" %}</span>
+          <span>{{ site.mailing_name }}<br>{{ site.mailing_po_box }}<br>{{ site.mailing_city }}</span>
+        </address>
+        <p class="flex items-center gap-3 text-sm">
+          <span class="text-ocean-300">{% icon "at-sign", "size-5" %}</span>
+          <a class="inline-flex min-h-11 items-center hover:text-white hover:underline lg:min-h-0" href="mailto:{{ site.email_webmaster }}">{{ site.email_webmaster }}</a>
+        </p>
+      </div>
+    </div>
+
+    {#- One group of links: a heading on wider screens, an open-and-close row on phones. -#}
+    {%- macro fgroup(id, label) %}
+      <div x-data="{ open: false }" class="border-b border-white/10 sm:border-0">
+        <h2 class="text-xs font-bold tracking-[0.18em] text-white uppercase">
+          <button type="button" class="flex min-h-12 w-full items-center justify-between gap-3 text-left uppercase sm:hidden" @click="open = !open"
+                  aria-expanded="true" :aria-expanded="open.toString()" aria-controls="foot-{{ id }}">
+            {{ label }}<span class="text-ink-400 transition duration-200" :class="open && 'rotate-180'">{% icon "chevron-down", "size-4" %}</span>
+          </button>
+          <span class="hidden sm:inline">{{ label }}</span>
+        </h2>
+        <ul id="foot-{{ id }}" :class="open ? '' : 'max-sm:hidden'" class="grid grid-cols-2 gap-x-4 pb-3 text-[15px] sm:mt-4 sm:block sm:space-y-2.5 sm:pb-0">
+          {{- caller() }}
+        </ul>
+      </div>
+    {%- endmacro %}
+    {%- set linkCls = "flex min-h-11 items-center text-ink-400 transition hover:text-white sm:inline sm:min-h-0" %}
+    <div class="border-t border-white/10 sm:grid sm:grid-cols-2 sm:gap-10 sm:border-0 md:grid-cols-4 lg:col-span-8">
+      {%- for item in nav.top %}{% if item.children.length %}
+      {%- call fgroup(item.key, item | loc("label", L)) %}
+          {%- for child in item.children %}
+          <li><a href="{{ child.url | lurl(L) }}" class="{{ linkCls }}">{{ child | loc("label", L) }}</a></li>
+          {%- endfor %}
+      {%- endcall %}
+      {%- endif %}{% endfor %}
+      {%- call fgroup("explore", "footer.explore" | t(L)) %}
+          {%- for item in nav.top %}{% if not item.children.length %}
+          <li><a href="{{ item.url | lurl(L) }}" class="{{ linkCls }}">{{ item | loc("label", L) }}</a></li>
+          {%- endif %}{% endfor %}
+          <li><a href="{{ (('/es/' if lc == 'en' else '/') if page.url == '/404.html' else (page.url | altUrl(L))) }}" hreflang="{{ L.other }}" lang="{{ L.other }}" class="{{ linkCls }}">{{ "header.other_language" | t(L) }}</a></li>
+      {%- endcall %}
+    </div>
+  </div>
+
+  <div class="border-t border-white/10">
+    <div class="wrap grid gap-3 py-6 text-xs leading-relaxed text-ink-300 sm:gap-4 sm:py-8 lg:grid-cols-12 lg:items-start">
+      <p class="lg:col-span-7 2xl:col-span-8">{{ "footer.legal" | t(L) }}</p>
+      <div class="flex flex-wrap items-center gap-x-5 gap-y-1 lg:col-span-5 lg:justify-end lg:gap-y-2 2xl:col-span-4">
+        <span>{{ "footer.updated" | t(L, { date: site.build.iso | dt("date", L) }) }}</span>
+        <a href="{{ '/about/policy/' | lurl(L) }}" class="inline-flex min-h-11 items-center hover:text-white lg:min-h-0">{{ "footer.policy" | t(L) }}</a>
+        {%- if site.repo %}
+        {#- "Edit" goes to the file that holds this page's information (editSource, from _data/eleventyComputed.js):
+            a CSV opens in GitHub's editor, a README section or the data/ folder opens for reading. -#}
+        {%- set src = editSource or "data/" %}
+        {%- set gh = "https://github.com/" + site.repo %}
+        {%- if "#" in src %}
+        {%- set editHref = gh + "/blob/" + site.branch + "/" + src %}{% set editText = "footer.edit_calendar" | t(L) %}
+        {%- elif src.endsWith("/") %}
+        {%- set editHref = gh + "/tree/" + site.branch + "/" + src %}{% set editText = "footer.edit" | t(L) %}
+        {%- else %}
+        {%- set editHref = gh + "/edit/" + site.branch + "/" + src %}{% set editText = "footer.edit_page" | t(L, { file: src }) %}
+        {%- endif %}
+        <a href="{{ editHref }}" class="inline-flex min-h-11 items-center gap-1.5 hover:text-white lg:min-h-0" rel="noopener">{% icon "pencil", "size-3.5 shrink-0" %}{{ editText }}</a>
+        {%- endif %}
+        {#- WCAG 2.2.2: stops the footer waves and every other endless animation (remembered on this device). -#}
+        <button type="button" x-data="motionToggle" x-cloak x-show="!reduced" @click="toggle()" aria-pressed="false" :aria-pressed="paused.toString()"
+                class="inline-flex min-h-11 items-center gap-1.5 hover:text-white lg:min-h-0">
+          <span x-show="!paused">{% icon "pause", "size-3.5" %}</span><span x-show="paused">{% icon "play", "size-3.5" %}</span>{{ "motion.pause" | t(L) }}
+        </button>
+      </div>
+    </div>
+  </div>
+</footer>

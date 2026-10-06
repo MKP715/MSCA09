@@ -1,0 +1,52 @@
+{#-
+  Simple event cards used by the home page only if macros/events.njk (the calendar's own
+  event cards) is not available. Same data (calendar Occ objects), same self-updating attributes.
+  Included by home-coming-up.njk with part = "slides" | "week".
+-#}
+{% macro fbFlyer(occ, L) %}
+{%- set type = calendar.typeMap[occ.type] if (calendar and calendar.typeMap) else null -%}
+<a href="{{ occ.url | lurl(L) }}" class="hm-fb-flyer group" style="{{ (occ.color or (type.color if type)) | accent }}"
+   data-when="{{ occ.start }}" data-until="{{ occ.end }}">
+  <span class="hm-fb-flyer-media">
+    {%- if occ.flyer %}
+    <img src="{{ occ.flyer }}" alt="" loading="lazy" decoding="async" class="size-full object-cover transition duration-500 group-hover:scale-105">
+    {%- else %}
+    <span class="grid size-full place-items-center text-white/90" style="background: linear-gradient(135deg, var(--a-400), var(--a-700));">{% icon occ.icon or (type.icon if type) or "calendar-days", "size-14" %}</span>
+    {%- endif %}
+    <span class="hm-fb-date"><span class="block text-[11px] font-bold tracking-wider uppercase">{{ occ.start | dt("mon", L) }}</span><span class="block font-display text-2xl leading-none font-extrabold">{{ occ.start | dt("day", L) }}</span></span>
+  </span>
+  <span class="flex flex-1 flex-col gap-2 p-5">
+    <span class="flex flex-wrap items-center gap-2">
+      {%- if type %}<span class="chip chip-accent">{{ type | loc("label", L) }}</span>{% endif %}
+      <span data-rel hidden class="chip chip-soft"></span>
+    </span>
+    <span class="font-display text-lg leading-snug font-bold text-ink-950 group-hover:text-(--a-700)">{{ occ | loc("title", L) }}</span>
+    <span class="mt-auto text-sm text-ink-500">{{ occ.start | dt("date", L) }}{% if not occ.allDay %} · {{ occ.start | dt("time", L) }}{% endif %}{% if occ.city %} · {{ occ.city }}{% endif %}</span>
+  </span>
+</a>
+{% endmacro %}
+
+{% macro fbRow(occ, L) %}
+{%- set type = calendar.typeMap[occ.type] if (calendar and calendar.typeMap) else null -%}
+<a href="{{ occ.url | lurl(L) }}" class="hm-fb-row group" style="{{ (occ.color or (type.color if type)) | accent }}" data-when="{{ occ.start }}" data-until="{{ occ.end }}">
+  <span class="hm-fb-row-date"><span class="block text-[10px] font-bold tracking-wider uppercase">{{ occ.start | dt("wkd", L) }}</span><span class="block font-display text-lg leading-none font-extrabold">{{ occ.start | dt("day", L) }}</span></span>
+  <span class="min-w-0 flex-1">
+    <span class="block truncate font-semibold text-ink-900 group-hover:text-(--a-700)">{{ occ | loc("title", L) }}</span>
+    <span class="block truncate text-sm text-ink-500">{% if not occ.allDay %}{{ occ.start | dt("time", L) }}{% endif %}{% if occ.city %} · {{ occ.city }}{% endif %}{% if type %} · {{ type | loc("label", L) }}{% endif %}</span>
+  </span>
+  <span data-rel hidden class="chip chip-soft shrink-0"></span>
+</a>
+{% endmacro %}
+
+{%- if part == "slides" -%}
+{%- for occ in events %}
+<div class="swiper-slide" data-hide-after="{{ occ.end }}">{{ fbFlyer(occ, L) }}</div>
+{%- endfor %}
+{%- elif part == "week" -%}
+<ul class="space-y-1" role="list" data-limit="7" data-empty="#home-week-empty">
+  {%- for occ in week %}
+  <li data-hide-after="{{ occ.end }}">{{ fbRow(occ, L) }}</li>
+  {%- endfor %}
+</ul>
+<p id="home-week-empty" class="rounded-2xl bg-ink-50 p-4 text-sm text-ink-600" {% if week.length %}hidden{% endif %}>{{ "home.week.empty" | t(L) }}</p>
+{%- endif -%}

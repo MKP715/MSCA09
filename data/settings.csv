@@ -1,0 +1,20 @@
+key,value,notes
+# One setting per row: key = its name (do not change it); value = what you may edit; notes = what it does.,,
+site_url,https://msca09aa.org,"The public web address, used for share links, the sitemap and link previews in local builds. On GitHub the address comes from the SITE_URL repository variable (Settings → Secrets and variables → Actions → Variables) or, if that is not set, from the GitHub Pages address."
+area_number,09,
+panel,76,"The current panel number. Change it (and panel_years and previous_panel) when the panel rotates: menus, headings and the link-preview picture follow."
+panel_years,2026–2027,The two years of the current panel.
+previous_panel,74,
+timezone,America/Los_Angeles,All times on the site are shown in this time zone.
+calendar_id,d750fd36f80cbdca09aefaa2310a3e2710790cd2f9c73d09d293bb23bbb052db@group.calendar.google.com,The Area's Google Calendar (MSCA09). Every meeting and event on the site comes from it.
+drive_folder_id,,"Leave empty: set the repository variable DRIVE_FOLDER_ID instead (Settings → Secrets and variables → Actions → Variables) — the folder id is not published. It is the id of the Area's shared Google Drive folder that holds documents and flyers; only the automatic Drive listing (with GOOGLE_API_KEY) uses it."
+mailing_name,MSCA09,
+mailing_po_box,P.O. Box 51446,
+mailing_city,"Irvine, CA 92619-1446",
+email_webmaster,webmaster@msca09aa.org,Where site problems and posting requests go.
+email_contributions,contributions@msca09aa.org,Zelle account e-mail ID.
+email_secretary,secretary@msca09aa.org,"Area Secretary: where requests for minutes go (motions and Area meetings pages, and the ""not posted yet"" lines)."
+zelle_name,Mid-Southern California Area Assembly of Alcoholics Anonymous,Business name to search for in Zelle.
+github_repo,MKP715/MSCA09,"Where the site's files live (owner/repository). The ""Edit this page"" links point here."
+aa_find_meeting,https://www.aa.org/find-aa,
+aa_meeting_guide,https://www.aa.org/meeting-guide-app,
