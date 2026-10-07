@@ -6,8 +6,8 @@
 // the site uses the document index (data/documents/*.csv) alone.
 //
 // The Drive folder to list comes from DRIVE_FOLDER_ID — on GitHub that is a repository
-// variable (Settings → Secrets and variables → Actions → Variables), so the folder id is
-// never published in the repository. drive_folder_id in data/settings.csv is used only
+// secret (Settings → Secrets and variables → Actions → Secrets), so the folder id is
+// never published in the repository or in the public build logs. drive_folder_id in data/settings.csv is used only
 // when the variable is not set (keep it empty in the public repository).
 //
 // Output: data/generated/drive-files.json  (not committed; rebuilt every run)
@@ -31,7 +31,7 @@ if (!key) {
 const settings = Object.fromEntries(readCsv("settings.csv").map((r) => [r.key, r.value]));
 const rootId = (process.env.DRIVE_FOLDER_ID || settings.drive_folder_id || "").trim();
 if (!rootId) {
-  console.warn("[drive] no Drive folder: set the DRIVE_FOLDER_ID repository variable (or drive_folder_id in data/settings.csv) — skipping");
+  console.warn("[drive] no Drive folder: set the DRIVE_FOLDER_ID repository secret (or drive_folder_id in data/settings.csv) — skipping");
   process.exit(0);
 }
 

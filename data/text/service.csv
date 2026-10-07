@@ -32,6 +32,7 @@ service.am.flyers_n,{n} flyers (English and Spanish),{n} volantes (inglés y esp
 service.am.col_minutes,Minutes,Actas,
 service.am.placeholder_row,"Type, host and place come with the new Area calendar","El tipo, el anfitrión y el lugar llegan con el nuevo calendario del Área",
 service.am.minutes_pending,Awaiting approval,Pendientes de aprobación,Minutes of the most recent meeting: approved at the next one
+service.am.minutes_draft,Draft,Borrador,"Added after the language on a minutes button when the document title says draft / not yet approved (approved minutes replace it after the next meeting)"
 service.am.minutes_missing,Not posted yet — ask the Secretary,Aún no se publican — pregúntale al Secretario(a),Shown (as an e-mail link to the Secretary) when a meeting ended more than 45 days ago and its minutes are not in data/documents.csv
 service.am.minutes_ask_subject,Minutes of the {date} Area meeting,Actas de la reunión del Área del {date},Subject of that e-mail. {date} = the meeting date
 service.am.none,No Area meetings are on the calendar for this panel yet.,Todavía no hay reuniones del Área en el calendario para este panel.,

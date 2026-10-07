@@ -275,7 +275,7 @@ using the address in its `gap_email` column.
 
 ### Documents appear automatically (optional)
 
-If the repository has a `GOOGLE_API_KEY` secret and a `DRIVE_FOLDER_ID` variable (see
+If the repository has `GOOGLE_API_KEY` and `DRIVE_FOLDER_ID` secrets (see
 [One-time setup](#one-time-setup-webmaster)), every build lists the Drive folder itself. A file dropped into `docs/` then appears on the site within three hours,
 with a title taken from its file name, without any CSV edit. A row in `data/documents/` still wins, for a
 better title or to hide a file (`publish` = `no`).
@@ -444,10 +444,10 @@ press **Enable workflow** if GitHub shows it. Then press **Run workflow** once.
    (console.cloud.google.com → APIs & Services → enable **Google Drive API** → Credentials → API key,
    restricted to the Drive API) and save it as the repository **secret** `GOOGLE_API_KEY`
    (*Settings → Secrets and variables → Actions → Secrets*). Then save the id of the Area's `MSCA09AA`
-   Drive folder (the long code at the end of the folder's address in Drive) as the repository **variable**
-   `DRIVE_FOLDER_ID` (*Settings → Secrets and variables → Actions → Variables*). The id is kept out of the
-   repository on purpose: the repository is public, and the folder is shared as "Anyone with the link", so
-   its id would open the whole folder. Leave `drive_folder_id` in `data/settings.csv` empty.
+   Drive folder (the long code at the end of the folder's address in Drive) as the repository **secret**
+   `DRIVE_FOLDER_ID` (*Settings → Secrets and variables → Actions → Secrets*). Use a secret, not a variable:
+   the repository and its build logs are public, a variable's value is printed in the logs while a secret is
+   masked, and the folder is shared as "Anyone with the link", so its id would open the whole folder. Leave `drive_folder_id` in `data/settings.csv` empty.
    The `MSCA09AA` folder must stay shared as "Anyone with the link".
 4. Give other trusted servants **write** access to the repository (*Settings → Collaborators*) so
    the site never depends on one person.

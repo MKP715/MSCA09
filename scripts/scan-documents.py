@@ -1074,6 +1074,7 @@ def redact_pdf(src, dst, rules=None):
                     hits += 1
             page.apply_redactions(images=fitz.PDF_REDACT_IMAGE_NONE)
         d.set_metadata({"title": "", "author": "", "subject": "", "keywords": "", "creator": "", "producer": ""})
+        d.del_xml_metadata()  # the XMP packet keeps its own copy of the author's name (dc:creator)
         d.save(dst, garbage=4, deflate=True)
     return hits, missing
 

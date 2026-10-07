@@ -168,7 +168,7 @@ scripts: ["/assets/js/service.js"]
             </td>
             <td>
               {%- if mins.length %}
-              <div class="flex flex-wrap gap-1.5">{% for d in mins | limit(2) %}<a href="{{ d.url }}" target="_blank" rel="noopener" class="btn btn-sm bg-sage-100 text-sage-800 hover:bg-sage-200">{% icon "notebook-pen", "size-3.5" %}{{ ("language.spanish" if d.language == "Spanish" else "language.english") | t(L) }}</a>{% endfor %}</div>
+              <div class="flex flex-wrap gap-1.5">{% for d in mins | limit(2) %}<a href="{{ d.url }}" target="_blank" rel="noopener" class="btn btn-sm bg-sage-100 text-sage-800 hover:bg-sage-200">{% icon "notebook-pen", "size-3.5" %}{{ ("language.spanish" if d.language == "Spanish" else "language.english") | t(L) }}{% if d | isDraftDoc %} · {{ "service.am.minutes_draft" | t(L) }}{% endif %}</a>{% endfor %}</div>
               {%- elif late %}<a href="mailto:{{ secretary }}?subject={{ 'service.am.minutes_ask_subject' | t(L, { date: (occ.start | dt('date', L)) }) | urlencode }}" class="svc-missing">{% icon "mail-question", "size-3.5 shrink-0" %}<span>{{ "service.am.minutes_missing" | t(L) }}</span></a>
               {%- elif past and hasMinutes %}<span class="text-sm whitespace-nowrap text-ink-500">{{ "service.am.minutes_pending" | t(L) }}</span>
               {%- else %}<span class="text-sm text-ink-300">—</span>{% endif %}
@@ -209,7 +209,7 @@ scripts: ["/assets/js/service.js"]
         <div class="flex flex-wrap gap-1.5">
           {%- for f in (s.flyers if s else []) | limit(1) %}<a href="{{ f.view }}" target="_blank" rel="noopener" class="btn btn-ghost btn-sm">{% icon "image", "size-3.5" %}{{ "service.next.flyer" | t(L) }}</a>{% endfor %}
           {%- for d in agendaDocs | limit(2) %}<a href="{{ d.url }}" target="_blank" rel="noopener" class="btn btn-ghost btn-sm">{% icon "list-ordered", "size-3.5" %}{{ "service.next.agenda" | t(L) }} · {{ ("language.spanish" if d.language == "Spanish" else ("language.bilingual" if "ilingual" in d.language else "language.english")) | t(L) }}</a>{% endfor %}
-          {%- for d in mins | limit(2) %}<a href="{{ d.url }}" target="_blank" rel="noopener" class="btn btn-sm bg-sage-100 text-sage-800">{% icon "notebook-pen", "size-3.5" %}{{ "service.am.col_minutes" | t(L) }} · {{ ("language.spanish" if d.language == "Spanish" else "language.english") | t(L) }}</a>{% endfor %}
+          {%- for d in mins | limit(2) %}<a href="{{ d.url }}" target="_blank" rel="noopener" class="btn btn-sm bg-sage-100 text-sage-800">{% icon "notebook-pen", "size-3.5" %}{{ "service.am.col_minutes" | t(L) }} · {{ ("language.spanish" if d.language == "Spanish" else "language.english") | t(L) }}{% if d | isDraftDoc %} · {{ "service.am.minutes_draft" | t(L) }}{% endif %}</a>{% endfor %}
           {%- if not mins.length and late %}<a href="mailto:{{ secretary }}?subject={{ 'service.am.minutes_ask_subject' | t(L, { date: (occ.start | dt('date', L)) }) | urlencode }}" class="svc-missing">{% icon "mail-question", "size-3.5 shrink-0" %}<span>{{ "service.am.col_minutes" | t(L) }}: {{ "service.am.minutes_missing" | t(L) }}</span></a>
           {%- elif not mins.length and past and hasMinutes %}<span class="inline-flex min-h-8 items-center text-sm text-ink-500">{{ "service.am.col_minutes" | t(L) }}: {{ "service.am.minutes_pending" | t(L) }}</span>{% endif %}
         </div>

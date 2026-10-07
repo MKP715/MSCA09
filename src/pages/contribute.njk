@@ -88,7 +88,7 @@ scripts: ["/assets/js/content.js"]
           <figure class="mx-auto w-full max-w-[14rem] text-center">
             <div class="qr-frame">
               <div class="rounded-[1.25rem] bg-white p-3">
-                <img src="{{ qr.url | driveImg(480) }}" alt="{{ 'contribute.qr_alt' | t(L) }}" width="384" height="508" loading="lazy" referrerpolicy="no-referrer" class="h-auto w-full rounded-lg"
+                <img src="{{ qr.url | driveImg(480) }}" alt="{{ 'contribute.qr_alt' | t(L) }}" width="668" height="653" loading="lazy" referrerpolicy="no-referrer" class="h-auto w-full rounded-lg"
                      onerror="this.onerror=null;this.src='https://drive.google.com/thumbnail?id={{ qr.url | driveId }}&sz=w480'">
               </div>
             </div>

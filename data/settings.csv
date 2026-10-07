@@ -7,7 +7,7 @@ panel_years,2026–2027,The two years of the current panel.
 previous_panel,74,
 timezone,America/Los_Angeles,All times on the site are shown in this time zone.
 calendar_id,d750fd36f80cbdca09aefaa2310a3e2710790cd2f9c73d09d293bb23bbb052db@group.calendar.google.com,The Area's Google Calendar (MSCA09). Every meeting and event on the site comes from it.
-drive_folder_id,,"Leave empty: set the repository variable DRIVE_FOLDER_ID instead (Settings → Secrets and variables → Actions → Variables) — the folder id is not published. It is the id of the Area's shared Google Drive folder that holds documents and flyers; only the automatic Drive listing (with GOOGLE_API_KEY) uses it."
+drive_folder_id,,"Leave empty: set the repository secret DRIVE_FOLDER_ID instead (Settings → Secrets and variables → Actions → Secrets) — the folder id is not published, and a secret is masked in the build logs. It is the id of the Area's shared Google Drive folder that holds documents and flyers; only the automatic Drive listing (with GOOGLE_API_KEY) uses it."
 mailing_name,MSCA09,
 mailing_po_box,P.O. Box 51446,
 mailing_city,"Irvine, CA 92619-1446",

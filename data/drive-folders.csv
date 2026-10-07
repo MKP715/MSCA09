@@ -2,6 +2,8 @@ path,category,collection,include,notes
 "# Used only by the optional automatic Drive listing (scripts/drive-index.mjs, needs GOOGLE_API_KEY): files in the Area's Drive folder that the document index (data/documents/*.csv) does not list yet. path = folder below MSCA09AA/ — the longest matching path wins.",,,,
 # category = the shelf for files found in that folder; collection = Current | Archive; include = no keeps the whole folder out of the listing (never switch archive folders to yes: they hold originals kept off the site). Rows in data/documents/held.csv always win.,,,,
 ,,,yes,The Area's shared Drive folder (MSCA09AA). Needed so the listing can start; files at the top level are ignored by the site.
+MSCA09AA-private,,,no,"Private working files (the crawl of the old msca09aa.org, held originals, research). Never listed by the site."
+TO-Organize,,,no,Drop box for new files before they are checked and filed under docs/. Never listed by the site.
 docs,Misc,Current,yes,Everything the public site may link to lives under docs/.
 docs/minutes,Minutes,Current,yes,"Approved Assembly (ASA), Area Service Committee (ASC) and Board minutes, one sub-folder per year."
 docs/agendas,Agendas,Current,yes,ASC / ASA agendas and meeting packets.

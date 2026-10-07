@@ -154,6 +154,11 @@ export default function (eleventyConfig) {
     });
   });
 
+  // A document that is still a draft (minutes not yet approved, a proposed budget): its title says so.
+  eleventyConfig.addFilter("isDraftDoc", (d) =>
+    /\b(draft|un-?approved|not yet approved|borrador|sin aprobar|no aprobad[oa]s?)\b/i.test(`${(d && d.title) || ""} ${(d && d.title_es) || ""}`),
+  );
+
   // Agendas for an Area meeting: documents whose title says "agenda" (never a Treasurer's report filed on
   // the same shelf), of the matching meeting type, dated that day — or that month when the file has no day.
   // One per language; an exact date wins over a month-only date.

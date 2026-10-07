@@ -10,8 +10,8 @@ name: Build and publish the website
 # Optional: Settings → Secrets and variables → Actions → New secret GOOGLE_API_KEY
 # (lets the site list new files dropped into the Drive folder automatically —
 # see README "Documents appear automatically"), together with
-# Settings → Secrets and variables → Actions → Variables → DRIVE_FOLDER_ID
-# (the id of that Drive folder; it is kept out of the repository on purpose).
+# Settings → Secrets and variables → Actions → New secret DRIVE_FOLDER_ID
+# (the id of that Drive folder; a secret, so it is kept out of the repository and masked in the public build logs).
 # Optional: Settings → Secrets and variables → Actions → Variables → SITE_URL
 # (the public address, e.g. https://msca09aa.org, once the domain points here).
 #
@@ -63,7 +63,7 @@ jobs:
       - name: Fetch the Area calendar and Drive file list
         env:
           GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
-          DRIVE_FOLDER_ID: ${{ vars.DRIVE_FOLDER_ID }}
+          DRIVE_FOLDER_ID: ${{ secrets.DRIVE_FOLDER_ID }}
         run: npm run fetch
 
       - name: Report calendar entries that need fixing in Google Calendar (never blocks)
