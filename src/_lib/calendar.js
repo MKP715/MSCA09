@@ -638,6 +638,16 @@ export function parseCalendar(icsText, opts = {}) {
     const norm = normaliseEvent(ve, ev, { types, topics, districts, committees, now, holds });
     if (dups.length) norm.problems.push(P('E_DUPLICATE_UID', 'error', `${dups.length} more VEVENT(s) share this UID without RECURRENCE-ID`));
     norm.overrides = myOverrides.map(o => normaliseOverride(o, norm, { types, topics, districts, committees, now, holds }));
+    // "Ended on" = the date of the last real meeting. The UNTIL bound itself is usually 23:59 Pacific
+    // stored in UTC, which would read as the next day.
+    if (norm.recurrence && norm.recurrence.untilLocal) {
+      const it = ev.iterator(); let next, last = null, guard = 0;
+      while ((next = it.next()) && guard++ < 5000) {
+        const st = icalTimeInfo(ev.getOccurrenceDetails(next).startDate);
+        last = st.allDay ? st.date : st.utc.setZone(AREA_TZ).toISODate();
+      }
+      if (last) norm.recurrence.lastDate = last;
+    }
     scanEntry([ve, ...dups, ...myOverrides], norm.problems);
     norm._ical = ev;   // non-enumerable below
     Object.defineProperty(norm, '_ical', { enumerable: false });

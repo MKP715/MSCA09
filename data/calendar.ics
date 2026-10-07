@@ -1218,22 +1218,25 @@ SUMMARY:June 8th Area Service Assembly Online Only
 TRANSP:OPAQUE
 END:VEVENT
 BEGIN:VEVENT
-DTSTART;VALUE=DATE:20261212
-DTEND;VALUE=DATE:20261213
+DTSTART:20261212T150000Z
+DTEND:20261212T230000Z
 UID:569fchpuniq47qq1g5vlif36lo@google.com
 CREATED:20261006T012618Z
-DESCRIPTION:MSCA09|Workshop|Hybrid\nLanguage: Spanish\nZoomID: 894 7483 454
- 2\nPasscode: Panel76\nIMG: https://drive.google.com/file/d/166P9lLiZIex3NBG
- PWJ82gxPVLeec5n9K/view?usp=sharing\nIMG: https://drive.google.com/file/d/1r
- SaI6S1cwsjWnamK65ux2o3UJHeoz1I9/view?usp=sharing\n--\n11th Hispanic Woman’s
-  Workshop Dec 12th\, 520 W South St Anaheim\, CA 92805\nZoom Id: 894 7483 4
- 542\nPasscode: Panel76
-LAST-MODIFIED:20261006T012619Z
-LOCATION:Anaheim First Christian Church\, 520 W South St\, Anaheim\, CA 928
- 05
-SEQUENCE:0
+DESCRIPTION:MSCA09|Workshop|Hybrid\nLanguage: Spanish\nTítulo: 11.º Taller 
+ de la Mujer Hispana\nZoomID: 894 7483 4542\nPasscode: Panel76\nCost: $20 vo
+ luntary contribution at registration\nIMG: https://drive.google.com/file/d/
+ 130CH8e_WccFF-fUvtMSTFeQdKczjTong/view?usp=sharing\nIMG: https://drive.goog
+ le.com/file/d/16-3xRI9LDR9RcuOIxkGRr03G3Sz62WW2/view?usp=sharing\nNote: The
+ me: "When you carried the light." Hosted by Area 09\, with Areas 03\, 05\, 
+ 06\, 07\, 08 and 93 taking part.\nNota: Tema: «De las tinieblas a la luz». 
+ Anfitrión: Área 09\; participan las Áreas 03\, 05\, 06\, 07\, 08 y 93.\n--\
+ n
+LAST-MODIFIED:20261007T184055Z
+LOCATION:My Safe Harbor (Anaheim First Christian Church)\, 520 W South St\,
+  Anaheim\, CA 92805
+SEQUENCE:1
 STATUS:CONFIRMED
-SUMMARY:11th Hispanic Woman’s Workshop
+SUMMARY:11th Hispanic Women's Workshop
 TRANSP:OPAQUE
 END:VEVENT
 BEGIN:VEVENT
@@ -1849,14 +1852,15 @@ DTEND;TZID=America/Los_Angeles:20261007T200000
 RRULE:FREQ=WEEKLY;UNTIL=20280101T075959Z;BYDAY=WE
 UID:7t9cfrsvvuh9rdh0l14hqkq4f4@google.com
 CREATED:20261006T004225Z
-DESCRIPTION:MSCA09|Service School|Virtual\nLanguage: English\nTopic: Group 
- service\nZoomID: 884 2975 1341\nPasscode: Panel76\nEmail: gsrschoolchair@ms
- ca09aa.org\nIMG: https://drive.google.com/file/d/1_MT7GomC4suFVrMoOoR5EvrUJ
- wghUNbP/view?usp=sharing\nNote: Service Manual study\, presented with Distr
- icts 1 & 3.\n--\nGSR School\nEvery Wednesday\, 7:00 PM to 8:00 PM (Pacific)
- \nOnline only\, on Zoom.\nSource: msca09aa.org/general-service-representati
- ve-gsr-school and the 2026 GSR School flyer (checked October 2026)
-LAST-MODIFIED:20261006T022821Z
+DESCRIPTION:MSCA09|Service School|Virtual\nLanguage: English\nHost: D1 & D3
+ \nTopic: Group service\nZoomID: 884 2975 1341\nPasscode: Panel76\nEmail: gs
+ rschoolchair@msca09aa.org\nIMG: https://drive.google.com/file/d/1_MT7GomC4s
+ uFVrMoOoR5EvrUJwghUNbP/view?usp=sharing\nNote: Service Manual study\, prese
+ nted with Districts 1 & 3.\n--\nGSR School\nEvery Wednesday\, 7:00 PM to 8:
+ 00 PM (Pacific)\nOnline only\, on Zoom.\nSource: msca09aa.org/general-servi
+ ce-representative-gsr-school and the 2026 GSR School flyer (checked October
+  2026)
+LAST-MODIFIED:20261007T184148Z
 LOCATION:https://zoom.us/j/88429751341
 SEQUENCE:0
 STATUS:CONFIRMED
@@ -2042,13 +2046,21 @@ DTSTART;VALUE=DATE:20261204
 DTEND;VALUE=DATE:20261207
 UID:9lga6qnvbdkfg7v4qha0i5ie8s@google.com
 CREATED:20261006T012613Z
-DESCRIPTION:MSCA09|Forum|In person\nLanguage: English\nIMG: https://drive.g
- oogle.com/file/d/1lwZy-J_pTTTxx8FW4LyVKxYJIN_OMyRi/view?usp=sharing\nIMG: h
- ttps://drive.google.com/file/d/1_uTJhJmsu_d3eK9T9wGJptvXnNgp4s_3/view?usp=s
- haring\n--\n2026 Pacific Regional Forum Dec-4-6 Wyndham San Diego 1355 Nort
- h Harbor Drive\, San Diego\, CA 92101
-LAST-MODIFIED:20261006T012614Z
-LOCATION:Wyndham San Diego\, 1355 North Harbor Drive\, San Diego\, CA 92101
+DESCRIPTION:MSCA09|Forum|In person\nLanguage: English\nTítulo: Foro Regiona
+ l del Pacífico 2026\nWeb: https://www.aa.org/event/2026-pacific-regional-fo
+ rum\nIMG: https://drive.google.com/file/d/1lwZy-J_pTTTxx8FW4LyVKxYJIN_OMyRi
+ /view?usp=sharing\nIMG: https://drive.google.com/file/d/1_uTJhJmsu_d3eK9T9w
+ GJptvXnNgp4s_3/view?usp=sharing\nNote: Free registration on aa.org (open si
+ nce October 2\, 2026). Hotel: Wyndham San Diego Bayside\, group rate $219 a
+  night until November 4\, 2026: https://book.passkey.com/go/2026AAWS\nNota:
+  Inscripción gratuita en aa.org (abierta desde el 2 de octubre de 2026). Ho
+ tel: Wyndham San Diego Bayside\, tarifa de grupo de $219 por noche hasta el
+  4 de noviembre de 2026: https://book.passkey.com/go/2026AAWS\n--\n2026 Pac
+ ific Regional Forum\, December 4–6\, Wyndham San Diego Bayside\, 1355 North
+  Harbor Drive\, San Diego\, CA 92101
+LAST-MODIFIED:20261007T184154Z
+LOCATION:Wyndham San Diego Bayside\, 1355 North Harbor Drive\, San Diego\, 
+ CA 92101
 SEQUENCE:0
 STATUS:CONFIRMED
 SUMMARY:2026 Pacific Regional Forum
@@ -3614,6 +3626,27 @@ SUMMARY:District 8 Heritage Day
 TRANSP:OPAQUE
 END:VEVENT
 BEGIN:VEVENT
+DTSTART;TZID=America/Los_Angeles:20261025T170000
+DTEND;TZID=America/Los_Angeles:20261025T190000
+RRULE:FREQ=MONTHLY;UNTIL=20271231T235959Z;BYDAY=4SU
+UID:hjlefdfun4l3ii5fk49do5evdk@google.com
+CREATED:20261007T184123Z
+DESCRIPTION:MSCA09|YPAA|In person\nLanguage: English\nTítulo: Reunión de tr
+ abajo de ROCYPAA\nIMG: https://drive.google.com/file/d/12qClq30WsLre40HCUWC
+ 1olRvfZtZprkA/view?usp=sharing\nNote: Recovering Orange County Young People
+  in A.A. – business meeting on the 4th Sunday of every month\, 5–7 PM. Get 
+ involved and be of service in YPAA.\nNota: Recovering Orange County Young P
+ eople in A.A. – reunión de trabajo el 4.º domingo de cada mes\, de 5 a 7 p.
+  m. Participa y sirve en YPAA.\n--\n
+LAST-MODIFIED:20261007T184123Z
+LOCATION:Irvine United Congregational Church\, 4915 Alton Pkwy\, Irvine\, C
+ A 92604
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:ROCYPAA Business Meeting
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
 DTSTART:20241018T010000Z
 DTEND:20241018T031500Z
 UID:hmgch4i8grum1mh6o4qtvh6s08@google.com
@@ -4319,6 +4352,27 @@ SUMMARY:MSCA 09 Pre-Conference
 TRANSP:OPAQUE
 END:VEVENT
 BEGIN:VEVENT
+DTSTART;TZID=America/Los_Angeles:20261018T150000
+DTEND;TZID=America/Los_Angeles:20261018T160000
+RRULE:FREQ=MONTHLY;UNTIL=20271231T235959Z;BYDAY=3SU
+UID:mgt65mc3mov30pafbq5hi7qdvo@google.com
+CREATED:20261007T184119Z
+DESCRIPTION:MSCA09|Service School|Virtual\nLanguage: English\nHost: D9\nTít
+ ulo: Escuela de RSG del Distrito 9 – Estudio del Manual de Servicio\nTopic:
+  Group service\nZoomID: 928 8170 4093\nPasscode: 642408\nIMG: https://drive
+ .google.com/file/d/1KtIbQWFs78mb4EuGwcKc-Quo6g-oFZF4/view?usp=sharing\nNote
+ : A two-year study of The A.A. Service Manual\, one chapter a month\, with 
+ time for questions and discussion. 3rd Sunday\, 3:00 PM.\nNota: Un estudio 
+ de dos años de El Manual de Servicio de A.A.\, un capítulo al mes\, con tie
+ mpo para preguntas y conversación. Tercer domingo\, 3:00 p. m.\n--\n
+LAST-MODIFIED:20261007T184119Z
+LOCATION:https://zoom.us/j/92881704093
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:D09 GSR School
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
 DTSTART;TZID=America/Los_Angeles:20261022T190000
 DTEND;TZID=America/Los_Angeles:20261022T200000
 RRULE:FREQ=MONTHLY;UNTIL=20280101T075959Z;BYDAY=4TH
@@ -4415,14 +4469,37 @@ RRULE:FREQ=MONTHLY;UNTIL=20280101T075959Z;BYDAY=3TH
 UID:msca09-area-service-study@msca09.local
 CREATED:20260902T160058Z
 DESCRIPTION:MSCA09|Service School|Virtual\nLanguage: English\nZoomID: 859 8
- 955 7002\nPasscode: Panel76\nIMG: https://drive.google.com/file/d/1FgFMqDJf
- XoOi35NiHqBr3u3TG5Px455e/view?usp=sharing\nLink: Flyer (PDF) https://drive.
- google.com/file/d/1lbk5-2kmhMW-lP8AqFcOXgtvgJRr8j6y/view?usp=sharing\nNote:
-  Followed by the Sharing Session at 6:30 PM in the same Zoom room.\n--\nSer
- vice Study\n3rd Thursday of the month\, 6:00 PM to 6:30 PM (Pacific)\nOnlin
- e only\, on Zoom.\nSource: msca09aa.org home page and the Monthly Service S
- tudy & Sharing Session flyer (checked October 2026)
-LAST-MODIFIED:20261006T022620Z
+ 955 7002\nPasscode: Panel76\nIMG: https://drive.google.com/file/d/1VuMh4DBc
+ 44bB8TnJwAsuXGTTwNqY33xd/view?usp=sharing\nNote: Followed by the Sharing Se
+ ssion at 6:30 PM in the same Zoom room.\n--\nService Study\n3rd Thursday of
+  the month\, 6:00 PM to 6:30 PM (Pacific)\nOnline only\, on Zoom.\nSource: 
+ msca09aa.org home page and the Monthly Service Study & Sharing Session flye
+ r (checked October 2026)
+LAST-MODIFIED:20261007T184231Z
+LOCATION:https://us06web.zoom.us/j/85989557002
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Service Study
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;TZID=America/Los_Angeles:20261015T180000
+DTEND;TZID=America/Los_Angeles:20261015T183000
+UID:msca09-area-service-study@msca09.local
+RECURRENCE-ID;TZID=America/Los_Angeles:20261015T180000
+CREATED:20260902T160058Z
+DESCRIPTION:MSCA09|Service School|Virtual\nLanguage: English\nZoomID: 859 8
+ 955 7002\nPasscode: Panel76\nIMG: https://drive.google.com/file/d/1VuMh4DBc
+ 44bB8TnJwAsuXGTTwNqY33xd/view?usp=sharing\nNote: October 15: Corey D. (Pane
+ l 74 Delegate\, Area 26) shares on Tradition 10 and Concept 10\; the Area c
+ ontinues its discussion of the 2025 inventory.\nNote: Followed by the Shari
+ ng Session at 6:30 PM in the same Zoom room.\nNota: 15 de octubre: Corey D.
+  (Delegado(a) del Panel 74\, Área 26) comparte sobre la Décima Tradición y 
+ el Décimo Concepto\; el Área continúa conversando sobre el inventario de 20
+ 25.\nNota: Sigue la Sesión de compartimiento a las 6:30 p. m. en la misma s
+ ala de Zoom.\n--\nService Study\n3rd Thursday of the month\, 6:00 PM to 6:3
+ 0 PM (Pacific)\nOnline only\, on Zoom.
+LAST-MODIFIED:20261007T184231Z
 LOCATION:https://us06web.zoom.us/j/85989557002
 SEQUENCE:0
 STATUS:CONFIRMED
@@ -4436,13 +4513,13 @@ RRULE:FREQ=MONTHLY;UNTIL=20280101T075959Z;BYDAY=3TH
 UID:msca09-area-sharing-session@msca09.local
 CREATED:20260902T160058Z
 DESCRIPTION:MSCA09|Service School|Virtual\nLanguage: English\nZoomID: 859 8
- 955 7002\nPasscode: Panel76\nIMG: https://drive.google.com/file/d/1FgFMqDJf
- XoOi35NiHqBr3u3TG5Px455e/view?usp=sharing\nNote: Follows the Service Study 
+ 955 7002\nPasscode: Panel76\nIMG: https://drive.google.com/file/d/1VuMh4DBc
+ 44bB8TnJwAsuXGTTwNqY33xd/view?usp=sharing\nNote: Follows the Service Study 
  (6:00 PM) in the same Zoom room.\n--\nSharing Session\n3rd Thursday of the 
  month\, 6:30 PM to 7:30 PM (Pacific)\nOnline only\, on Zoom.\nSource: msca0
  9aa.org home page and the Monthly Service Study & Sharing Session flyer (ch
  ecked October 2026)
-LAST-MODIFIED:20261006T022650Z
+LAST-MODIFIED:20261007T184223Z
 LOCATION:https://us06web.zoom.us/j/85989557002
 SEQUENCE:1
 STATUS:CONFIRMED
@@ -5417,6 +5494,32 @@ SUMMARY:Zoom PI CPC Working Group Meeting
 TRANSP:OPAQUE
 END:VEVENT
 BEGIN:VEVENT
+DTSTART:20261017T181500Z
+DTEND:20261017T201500Z
+UID:nskslfrpjtugvr4rg6qht9j1bk@google.com
+CREATED:20261007T184103Z
+DESCRIPTION:MSCA09|Convention|In person\nLanguage: English\nTítulo: Panel d
+ e Servicios Generales – 74.ª Convención de A.A. del Sur de California\nWeb:
+  https://www.aasocal.com\nIMG: https://drive.google.com/file/d/1MXoi2_h1BAI
+ sCW-Bq3et5PEYvXA1k40l/view?usp=sharing\nNote: Part of the 74th Southern Cal
+ ifornia A.A. Convention (Oct 16–18). Speakers: Candice C.\, new Pacific Reg
+ ional Trustee\; Adrian O.\, Area 08 Panel 76 Delegate\; Gola\, Area 05 Pane
+ l 75 Alternate Delegate\; Ed L.\, MSCA09 Panel 70 Past Delegate. Register f
+ or the convention at aasocal.com.\nNota: Parte de la 74.ª Convención de A.A
+ . del Sur de California (16 al 18 de octubre). Panelistas: Candice C.\, Cus
+ todio(a) Regional del Pacífico\; Adrian O.\, Delegado(a) del Área 08\, Pane
+ l 76\; Gola\, Delegado(a) Alterno(a) del Área 05\, Panel 75\; Ed L.\, Deleg
+ ado(a) pasado(a) del MSCA09\, Panel 70. Inscripción a la convención en aaso
+ cal.com.\n--\n
+LAST-MODIFIED:20261007T184116Z
+LOCATION:The Westin Rancho Mirage Golf Resort and Spa\, 71333 Dinah Shore D
+ r\, Rancho Mirage\, CA 92270
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:General Service Panel – 74th So-Cal AA Convention
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
 DTSTART:20230826T180000Z
 DTEND:20230826T230000Z
 UID:nsmdn774645mv585fcf68hct3k@google.com
@@ -5505,13 +5608,19 @@ DTSTART:20261114T180000Z
 DTEND:20261114T220000Z
 UID:ocs49scm4adhvdu08p9vdj6b58@google.com
 CREATED:20261006T012605Z
-DESCRIPTION:MSCA09|Servathon|In person\nLanguage: English\nHost: D25\nTitle
- -ES: Servathon del Panel 76\nIMG: https://drive.google.com/file/d/1XoCUX5ZA
- 6cqATCXJW21hKJUdhA-iDJdW/view?usp=sharing\nIMG: https://drive.google.com/fi
- le/d/15ZycRtzgKu5esJKLLm3KIJAM1V1I3T0Q/view?usp=sharing\n--\n
-LAST-MODIFIED:20261006T012605Z
-LOCATION:Knights of Columbus\, 1729 E Baseline St\, San Bernadino\, CA 9241
- 0
+DESCRIPTION:MSCA09|Servathon|In person\nLanguage: Bilingual\nHost: D25\nTít
+ ulo: Servathon del Panel 76\nTopic: Traditions\nIMG: https://drive.google.c
+ om/file/d/1XoCUX5ZA6cqATCXJW21hKJUdhA-iDJdW/view?usp=sharing\nIMG: https://
+ drive.google.com/file/d/15ZycRtzgKu5esJKLLm3KIJAM1V1I3T0Q/view?usp=sharing\
+ nNote: "Our Great Responsibility – Gratitude Through Traditions." Registrat
+ ion 10:00 AM\; committee booths\; speakers on Traditions 1–6 (11:40 AM) and
+  7–12 (1:00 PM)\; lunch 12:10 PM\; closing 1:50 PM.\nNota: «Nuestra gran re
+ sponsabilidad – Gratitud a través de las Tradiciones». Inscripción 10:00 a.
+  m.\; mesas de los comités\; oradores sobre las Tradiciones 1–6 (11:40 a. m
+ .) y 7–12 (1:00 p. m.)\; almuerzo 12:10 p. m.\; cierre 1:50 p. m.\n--\n
+LAST-MODIFIED:20261007T184159Z
+LOCATION:Knights of Columbus\, 1729 E Baseline St\, San Bernardino\, CA 924
+ 10
 SEQUENCE:0
 STATUS:CONFIRMED
 SUMMARY:MSCA Area 09 Panel 76 Servathon
@@ -6209,22 +6318,28 @@ SUMMARY:Area 09: Website Presentation
 TRANSP:OPAQUE
 END:VEVENT
 BEGIN:VEVENT
-DTSTART:20261011T150000Z
+DTSTART:20261011T160000Z
 DTEND:20261011T220000Z
 UID:t90enn8ef3e3u2kibbpfugm5lk@google.com
 CREATED:20261006T012543Z
-DESCRIPTION:MSCA09|Area Committee|Hybrid\nLanguage: English\nHost: D5\nTitl
- e-ES: Comite de Servicio de Area (CSA 1)\nZoomID: 896 6166 6203\nPasscode: 
- Panel76\nIMG: https://drive.google.com/file/d/1ys6keY33vqUM4P2M8-_FLdZh-XXg
- uAde/view?usp=sharing\nIMG: https://drive.google.com/file/d/1nOu-gjn7BHClPg
- V8LJRipbYJKGM8Ohg3/view?usp=sharing\n--\nDate: 10.11.2026\nLocation: Long B
- each Community College\, Liberal Arts Campus\nAddress: 4901 E Carson St\, L
- ong Beach\, CA 90808\nRegistration: 8am – 9am\nASC: 9am – 3pm\nZoom ID: 896
-  6166 6203\nPassword: Panel76\nHosted by: District 5
-LAST-MODIFIED:20261006T012543Z
-LOCATION:Long Beach Community College\, 4901 East Carson Street\, Long Beac
- h\, CA 90808
-SEQUENCE:0
+DESCRIPTION:MSCA09|Area Committee|Hybrid\nLanguage: Bilingual\nHost: D5\nTí
+ tulo: Comité de Servicio de Área (CSA 1)\nRegistration: 8:00 AM\nZoomID: 89
+ 6 6166 6203\nPasscode: Panel76\nIMG: https://drive.google.com/file/d/1ys6ke
+ Y33vqUM4P2M8-_FLdZh-XXguAde/view?usp=sharing\nIMG: https://drive.google.com
+ /file/d/1nOu-gjn7BHClPgV8LJRipbYJKGM8Ohg3/view?usp=sharing\nLink: Agenda (E
+ nglish) https://drive.google.com/file/d/12HxoYnubLRmN5eCujTBlaJJUPa-5x4wU/v
+ iew\nLink: Orden del día (español) https://drive.google.com/file/d/1Z9yYmb5
+ ZlbdiUOoZfHFNsHn1dUCskKS-/view\nLink: Delegate's report (slides) https://dr
+ ive.google.com/file/d/1oCNbSMKlP8E7m9riscM1Qwof8wMFKdVC/view\nNote: Registr
+ ation 8:00 AM · Delegate's report 9:05 · committees meet 9:45 · lunch 10:45
+  · ASC business 11:30 AM.\nNota: Inscripción 8:00 a. m. · informe de la Del
+ egada 9:05 · reunión de comités 9:45 · almuerzo 10:45 · CSA 11:30 a. m.\n--
+ \nHosted by District 5 at Long Beach City College\, Liberal Arts Campus. In
+  person and on Zoom.
+LAST-MODIFIED:20261007T184034Z
+LOCATION:Long Beach City College\, Liberal Arts Campus\, 4901 E Carson St\,
+  Long Beach\, CA 90808
+SEQUENCE:1
 STATUS:CONFIRMED
 SUMMARY:ASC Hosted by District 5
 TRANSP:OPAQUE
@@ -6234,50 +6349,17 @@ DTSTART:20220313T153000Z
 DTEND:20220313T213000Z
 UID:tdti976iam81n23mbce4pa2tqk@google.com
 CREATED:20261006T012341Z
-DESCRIPTION:MSCA09|Area Committee|Hybrid\nLanguage: Bilingual\nHost: D5\n--
- \nHYBRID MSCA Area 09 Area Service Committee\n(ASC-2)\nSunday\, March 13\, 
- 2022 – VENUE CHANGE\nHÍBRIDO Área 09 de MSCA Comité de Servicio de Área (AS
- C-2)\nDomingo\, 13 de Marzo 2022 – CAMBIO DE SEDE\n\nThis email is to infor
- m the Area 09 membership that the in-person location for the March 13\, 202
- 2 Area Service Committee (ASC-2) meeting has been changed. The new meeting 
- location information is below . (REMEMBER THAT IT IS DAYLIGHT SAVINGS TIME!
-  SET YOUR CLOCKS FORWARD!)\n\n——\n\nEste correo electrónico es para informa
- r a los miembros del Área 09 que se ha cambiado la ubicación en persona par
- a la reunión del Comité de Servicio de Área (ASC-2) del 13 de marzo de 2022
- . La nueva información sobre la ubicación de la reunión se encuentra a cont
- inuación. (¡RECUERDE QUE ES EL HORARIO DE VERANO! ¡ADELANTA TUS RELOJES!)\n
- \n1. HYBRID MSCA 09 Area Service Committee (ASC-2) Sunday\, March 13\, 2022
-  / Comité de Servicio de Área (ASC-2) HÍBRIDO MSCA 09 Domingo 13 de marzo d
- e 2022\n\nVENUE CHANGE: IN-PERSON LOCATION / CAMBIO DE SEDE UBICACIÓN EN PE
- RSONA\nHosted by District 5 / Anfitriona por el Distrito 5\nNewport Beach C
- ivic Center\n100 Civic Center Drive\nNewport Beach\, CA 92660\nTime / Hora 
- (REMEMBER IT IS DAYLIGHT SAVINGS TIME! SET YOUR CLOCKS FORWARD!)\n(¡RECUERD
- E QUE ES EL HORARIO DE VERANO! ¡ADELANTA TUS RELOJES!)\n8:00 AM In-Person R
- egistration / Registro en persona\n9:00 AM Meeting begins / Comienza la reu
- nión\nIMPORTANT: Please abide by mask and social distancing requirements.\n
- IMPORTANTE: Cumpla con los requisitos de máscara y distanciamiento social.\
- nVIRTUAL VIA ZOOM / VIRTUAL A TRAVÉS DEL ZOOM\nRegister in advance for this
-  meeting / Regístrese con anticipación para esta reunión:\n\nhttps://us06we
- b.zoom.us/meeting/register/tZIucOigrzovG9zPnaStFQPjj5su0R6NMrOt (https://ms
- ca09aa.us13.list-manage.com/track/click?u=72fdf9d98ccb74ba19da0f742&id=dde3
- bca48e&e=281caed23f)\n\nTime / Hora\n8:30 AM Waiting room opens\, Zoom visi
- ting / Se abre la sala de espera\, visitas con Zoom\n9:00 AM Meeting begins
-  / Comienza la reunión\n\nUPDATED March 2022 ASC Agenda (English) (https://
- msca09aa.us13.list-manage.com/track/click?u=72fdf9d98ccb74ba19da0f742&id=27
- 6f19129d&e=281caed23f)\n\nACTUALIZADO Agenda del ASC marzo 2022 (Español) (
- https://msca09aa.us13.list-manage.com/track/click?u=72fdf9d98ccb74ba19da0f7
- 42&id=638fd87f8a&e=281caed23f)\n\nOther Useful Links / Otros enlaces útiles
- \n\nPrevious Area 09 Email Attachments (https://msca09aa.us13.list-manage.c
- om/track/click?u=72fdf9d98ccb74ba19da0f742&id=d821bd0d6f&e=281caed23f) ( Ar
- chivos adjuntos de correo electrónico del Área anterior 09 )\n\nMSCA 09 Are
- a Website (https://msca09aa.us13.list-manage.com/track/click?u=72fdf9d98ccb
- 74ba19da0f742&id=0dbd7463bc&e=281caed23f) ( Sitio web del área MSCA 09 )\n\
- nAA Website (https://msca09aa.us13.list-manage.com/track/click?u=72fdf9d98c
- cb74ba19da0f742&id=407cb88fdf&e=281caed23f) ( Sitio web de AA )\n\nCONFIDEN
- TIAL: MAY CONTAIN FULL NAMES OF AA MEMBERS. DO NOT POST. FORWARD WITH CARE.
- \n\nCONFIDENCIAL: PUEDE CONTENER LOS NOMBRES COMPLETOS DE LOS MIEMBROS DE A
- A. NO PUBLICAR. ADELANTE CON CUIDADO.
-LAST-MODIFIED:20261006T022816Z
+DESCRIPTION:MSCA09|Area Committee|Hybrid\nLanguage: Bilingual\nHost: D5\nNo
+ te: Venue change: in person at the Newport Beach Civic Center. In-person re
+ gistration 8:00 AM\; Zoom waiting room 8:30 AM\; meeting 9:00 AM.\nNota: Ca
+ mbio de sede: en persona en el Newport Beach Civic Center. Registro en pers
+ ona 8:00 a. m.\; sala de espera de Zoom 8:30 a. m.\; reunión 9:00 a. m.\n--
+ \nHybrid Area Service Committee (ASC-2)\, Sunday\, March 13\, 2022 — venue 
+ change. Hosted by District 5 at the Newport Beach Civic Center\, 100 Civic 
+ Center Drive\, Newport Beach\, CA 92660.\nComité de Servicio de Área (ASC-2
+ ) híbrido\, domingo 13 de marzo de 2022 — cambio de sede. Anfitrión: Distri
+ to 5\, Newport Beach Civic Center.
+LAST-MODIFIED:20261007T184203Z
 LOCATION:Newport Beach Civic Center\, 100 Civic Center Drive\, Newport Beac
  h\, CA 92660
 SEQUENCE:0

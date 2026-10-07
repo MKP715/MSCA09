@@ -31,10 +31,12 @@ Shared items are counted once, under the role that leads.
 
 - [ ] **1.1 [Before Oct 11] Correct** — *Area Chair, with the Secretary and the Spanish translator.* Fix both Oct 11 agendas: minutes for approval are the **Aug 9, 2026 ASC-2** minutes (English says "September 2026", Spanish "Junio 2026"); add **District 2** to District Reports; Zoom link → `zoom.us/j/89661666203` (`zoom.us/meeting/…` is the host's page); lunch **10:45–11:30 AM**, ASC begins **11:30 AM** (printed PM); "Long Beach **City** College"; Spanish: "MOCIONES – **SOLO** PREGUNTAS Y RESPUESTAS" and "ÁREA" (not "ARE"). *Where:* `/service/area-meetings/` (both posted as received). *Why:* members would approve the wrong minutes; the Zoom link fails. *How:* send both PDFs; the webmaster replaces them. More in section 6.
 - [ ] **1.2 [Before Oct 11] Verify** — *Treasurer A/R.* Test the Zelle QR now on [/contribute/](https://mkp715.github.io/MSCA09/contribute/): scan it in your bank app and send $1, send $1 to the typed ID contributions@msca09aa.org, and check both reach the Area account. *Why:* the QR carries a Zelle token (as on the Treasurers' flyer), not the typed ID, and members may scan it at the ASC. *How:* reply "QR confirmed on <date>"; if anything is wrong, the QR comes off at once.
-- [ ] **1.3 [Before Oct 11] Correct** — *Calendar keeper; District 5 DCMC (room); Archives Chair / District 14 DCMC (host).* **Oct 11 ASC:** start 9:00 AM (end 3:00) + `Registration: 8:00 AM`; Location `Long Beach City College, Liberal Arts Campus, 4901 E Carson St, Long Beach, CA 90808`; `Language: Bilingual`; `Título: Comité de Servicio de Área (CSA 1)`; a `ZoomLink:` line; delete the repeated Zoom text under "--"; building and room as Note/Nota; optional `Link:` lines for the packet (addresses in [data/documents/current.csv](data/documents/current.csv)). **Oct 10 Heritage Day:** `Host: D14`, `Email: archiveschair@msca09aa.org`. *Why:* everyone sees the ASC starting at 8:00. *How:* then ask the webmaster to run the build.
+- [ ] **1.3 [Before Oct 11] Correct** — *Calendar keeper; District 5 DCMC (room); Archives Chair / District 14 DCMC (host).* The **Oct 11 ASC** entry was fixed on Oct 7 (9:00 AM start, `Registration: 8:00 AM`, Long Beach City College, bilingual, agenda and Delegate-report links, the day's schedule). Still open: the building and room as a Note/Nota (District 5), and **Oct 10 Heritage Day:** `Host: D14`, `Email: archiveschair@msca09aa.org`.
 - [ ] **1.4 [Before Oct 11] Confirm** — *Area Secretary, with the Area Chair and GAP Chair, before the Q&A on 76-7 and 76-8.* (a) **Sept 13 Assembly results** of 76-1 to 76-6 — whether 76-1 passed decides if 76-7 is a limit or conflicts with Bylaws 9.2; was the 2027 calendar (76-6) adopted? (b) **Which body decides 76-7** (ASC, Assembly, or Board resolution under Bylaws 9.2). (c) **Route of 76-8:** Bylaws/Guidelines changes need an Assembly vote with notice (2/3 for Guidelines), adopted by the Sept 12, 2027 Assembly to apply at the Oct 2027 elections — reword its closing paragraph. *Where:* `/service/motions/` still shows "old business". *How:* e-mail results, even "per unapproved minutes".
 - [ ] **1.5 [Before Oct 11] Do** — *Area Chair.* Use the ASC to collect quick answers and pass them to the webmaster: the **Registrar's initial (Charles A. or Charles R.?)**, the YPAA chair's initial, which Literature seat is vacant, which listed Area seats are still open, the Web Servant, the **Dec 13 ASC venue** (Districts 10 and 15), the District 8 Zoom meeting (2.7), the Spanish Convention Liaison seat, the Hispanic Women's flyers, the 2026 Grapevine & La Viña date.
 - [ ] **1.6 [Before Oct 11] Correct** — *Treasurer A/R.* Announce the two clear packet errors and send corrected copies if you can: the A/R Zelle total is **$2,814.49** (printed $2,784.49) and its date is **Oct 11** (printed Oct 13). All fixes: section 6.
+
+- [ ] **1.7 [Before Oct 11] Correct** — *Area Secretary.* Send a short correction to the Oct 5 ASC e-mail: the Monthly Service Study & Sharing Session is **Thursday, Oct 15** (the 3rd Thursday), not Oct 8 — the Delegate's report and the calendar agree on Oct 15; Oct 11 is an ASC, not an Assembly; the August minutes are **unapproved** in Spanish too ("Actas no aprobadas"); "Service Manual" (not "Manuel"). *Where:* the Area e-mail list. *Why:* members may join on the wrong Thursday.
 
 ## 2. Before msca09aa.org switches to the new site
 
@@ -81,6 +83,7 @@ Items in sections 1, 2, 5 and 6 are not repeated; each role starts with a pointe
 - [ ] **[Soon] Confirm** when 76-2 to 76-6 were first presented (June 14 ASC-1 or Aug 9; 76-6 may have been a Board item), and with the Treasurer A/P the first date of 76-B26 (recorded Jan 11, 2026, but its summary mentions the Feb and Mar ASCs). *Where:* `/service/motions/`.
 - [ ] **[Soon] Decide** how minutes awaiting approval appear: a draft marked "draft / borrador" (as for Aug 9) or the "Not posted yet" notice (Sept 13 shows it from about Oct 28). *Where:* `/service/area-meetings/`.
 - [ ] **[Soon] Confirm** for the calendar: Jun 8, 2025 was an ASC (calendar says Assembly), Apr 12, 2026's name, and that Aug 9, 2026 was hybrid. *Where:* `/calendar/` (section 4).
+- [ ] **[Soon] Do** in future Area e-mails: link documents to their page in the site's library (e.g. `/documents/`) rather than to Drive or Google Docs copies; use only flyers that show role contacts; link "Contributions link here" to `/contribute/`. Never paste an Area e-mail into a calendar entry — its links carry the recipient's subscriber code and its footer says "do not post". *Where:* the Mailchimp template.
 
 ### Registrar
 
@@ -111,6 +114,8 @@ Items in sections 1, 2, 5 and 6 are not repeated; each role starts with a pointe
 - [ ] **[Soon] Decide** which Seventh Tradition flyer `/contribute/` offers: the June 2026 bilingual flyer is not offered there for now; the August 2026 EN/ES flyers are ready — are they current? *Where:* `/contribute/`.
 - [ ] **[When possible] Decide** with the Treasurer A/P and Finance Chair what `/contribute/` says about tax status, receipts and any per-member limit. Send EN/ES wording. *Where:* `/contribute/`.
 
+- [ ] **[When possible] Verify** — *both Treasurers:* G.S.O. is launching a new online contributions platform in mid-October 2026 (Delegate's report). Check how it affects the Area's own contributions to G.S.O. and tell the webmaster if `/contribute/` ("Beyond the Area") should link it.
+
 ### Finance Committee
 
 *Also yours:* section 6 (2027 budget).
@@ -127,13 +132,15 @@ Items in sections 1, 2, 5 and 6 are not repeated; each role starts with a pointe
 
 - [ ] **[Soon] Supply** missing Panel 76 Delegate reports: clean copies (first name + initial, role contacts only) of the Sept 2026 Assembly report and June 2026 ASC handout, the 2026 Area-meeting reports, and Oct 11 afterwards. *Where:* `/service/delegate/`.
 - [ ] **[Soon] Supply** for the 2028 Pacific Regional Forum: approved wording on Area 09 hosting, and the "PRF 2028 Welcome Chair" (first name + initial, role e-mail). Send the 2028 Forum dates and venue when they are set. Also the Dec 4–6, 2026 Forum registration and hotel links (section 4). *Where:* `/service/delegate/`, the home page.
+- [ ] **[Soon] Do** for future report slides: put delegate@msca09aa.org on the contact slide instead of a phone number, and reuse only flyers that show role contacts (the posted Oct 11 slides had a phone number, the old recordings-page password and two personal phone numbers removed). Slide 7's link goes to the old site's 2025 (75th) materials page — the confidential Final Report must not be posted on the new site; link aa.org's public report page instead. *Where:* `/service/delegate/`.
+- [ ] **[When possible] Do** tell G.S.O. that the English Pacific Regional Forum flyer prints the hotel link with "go/go" (`book.passkey.com/go/go/2026AAWS`); the Spanish flyer and the calendar use the right link. Confirm the Spanish slides: Final Report digital date (slide 8), the signature (slide 26).
 - [ ] **[When possible] Confirm** the 76th GSC Spanish theme and send the 77th GSC dates and theme when announced; confirm the month of the "December 2025" highlights (file name says 2026). *Where:* `/service/delegate/`.
 - [ ] **[When possible] Decide** whether the Delegate's Corner continues (stops Dec 2023) and which personal Google files move to the Area Drive; supply PRAASA 2025/2026 reports and (with Archives) a past-Delegates list. *Where:* `/service/delegate/`.
 
 **Alternate Delegate**
 
 - [ ] **[Before switch-over] Supply** updated Panel 76 tool kits (Committee Chair and DCMC, EN and ES): fix the Registrar's initial once confirmed and update the page about the old website, which is being retired. The webmaster will mark the lines. *Where:* `/documents/workbooks/`.
-- [ ] **[Soon] Supply** a new Monthly Service Study & Sharing Session flyer (the current one is no longer shown on the site because it pointed to an old-site page): 3rd Thursday, 6:00 study / 6:30 sharing, the calendar's Zoom room (the DCMC tool kit gives another — confirm), delegate@ and delegatealt@, and **no link to the old website**. *Where:* `/committees/monthly-service-study/`, the calendar. *How:* upload as a new version of the same Drive files.
+- [ ] **[Soon] Supply** a new Monthly Service Study & Sharing Session flyer (since Oct 7 the site shows a copy with the old-site recordings box blanked out; an updated original is better): 3rd Thursday, 6:00 study / 6:30 sharing, the calendar's Zoom room (the DCMC tool kit gives another — confirm), delegate@ and delegatealt@, and **no link to the old website**. *Where:* `/committees/monthly-service-study/`, the calendar. *How:* upload as a new version of the same Drive files.
 - [ ] **[Soon] Supply** with the Grapevine & La Viña chairs the date, place, host and flyer of the 2026 event (Motion 76-2 says November; the 2026 calendar says "Oct (?)"). *Where:* `/committees/grapevine-la-vina/`, the calendar.
 - [ ] **[Soon] Supply** via the So-Cal H&I Intergroup a role-contacts-only flyer for the Oct 25 dinner, and confirm its e-mail is the intergroup's mailbox. Fix the Nov 14 Servathon entry and say whether a Servathon chair seat is listed. *Where:* the calendar (section 4), `/committees/servathon/`.
 - [ ] **[Soon] Confirm** whether Pre-Conference "meets during the Area meeting break-out" (its page points to the October ASC). *Where:* `/committees/pre-conference/`.
@@ -212,7 +219,7 @@ Items in sections 1, 2, 5 and 6 are not repeated; each role starts with a pointe
 
 #### Hispanic Women's Committee
 
-- [ ] **[Soon] Supply** role-contacts-only flyers for the Dec 12 workshop (the current flyers cannot be shown on the site); confirm venue name, 7:00 AM–3:00 PM, titles, who chairs it (the Sept 13 agenda and the site differ), whether Area 09 hosts or participates, and whether mujeresenaa.org is still its site. *Where:* `/committees/hispanic-womens/`, the calendar.
+- [ ] **[Soon] Supply** flyers for the Dec 12 workshop that show role contacts only (since Oct 7 the site shows copies of the e-mailed flyers with the two personal phone numbers blanked; the workshop's own mailbox is kept). **Correct the Spanish flyer's Zoom passcode: it says Panel74, the English flyer and the calendar say Panel76.** Confirm the venue name ("My Safe Harbor" at Anaheim First Christian Church?), who chairs it (the Sept 13 agenda and the site differ), and whether mujeresenaa.org is still its site; Spanish theme typo "Do las tinieblas". *Where:* `/committees/hispanic-womens/`, the calendar.
 
 #### Literature
 
@@ -224,6 +231,8 @@ Items in sections 1, 2, 5 and 6 are not repeated; each role starts with a pointe
 - [ ] **[Soon] Supply** the committee's guidelines (draft or approved), its meeting time and Zoom if it meets outside the break-out, and a review of the Spanish mission text. *Where:* `/committees/remote-communities/`.
 
 #### Young People (YPAA)
+
+- [ ] **[Soon] Supply** a ROCYPAA business-meeting flyer with a role contact (the site's copy has its contact phone number blanked), and say if the meeting stops so the series can end.
 
 - [ ] **[Soon] Confirm** the chair's initial — **Marissa S. or Marissa M.?** (same person as the District 17 DCMC and District 4 YPAA liaison?) — whether a Spanish-speaking chair serves, and whether the ACYPAA reporter is an Area liaison. *Where:* `/committees/ypaa/`, `/about/panel/`.
 - [ ] **[Soon] Correct** `/committees/ypaa/`: it shows the ACYPAA host committee's business meeting as the Area committee's. Send your own meeting, the ACYPAA entry fixes (section 4) and the revised guidelines when approved.
@@ -291,6 +300,8 @@ Reply to webmaster@msca09aa.org with **first name + last initial and role mailbo
 Your item is **2.7** (Zoom meeting). Note: your Nov 21 Heritage Day overlaps the Archives Committee meeting (the Archives Chair is asked).
 
 #### District 9 — DCMC
+
+- [ ] **[Soon] Confirm** the Service Manual study (3rd Sunday, 3 PM): the passcode is 642408 as on your flyer and the Secretary's e-mail (the old calendar entry said 634401), and that it continues through 2027. *Where:* `/events/` (D09 GSR School), `/districts/d09/`.
 
 - [ ] **[Soon] Confirm** when the Zoom room opens and when GSR School starts (site says 3:30 and 3:00; flyer 3–5 PM), the right passcode (district meeting and GSR School use one ID with two passcodes), whether the GSR School series (ended Aug 2026) continues, and the Registrar's name (is the Outlook address a role mailbox?). *Where:* `/districts/d09/`, the calendar.
 
@@ -380,13 +391,16 @@ For the calendar keeper; the role in brackets confirms. The site reads the Area 
 |---|---|---|
 | Oct 16 74th SCAA Convention | Expired hotel rate | Delete the booking text (Convention Liaison) |
 | Oct 25 So-Cal H&I Dinner | Flyer cannot be shown; first-name-only contact | New flyer as a new version of the same file; contact line → the intergroup's website (Alternate Delegate) |
-| Nov 14 Servathon | "San Bernadino"; starts 10:00 (registration); no contact | `Knights of Columbus, 1729 E Baseline St, San Bernardino, CA 92410`; 10:30 AM–2:00 PM; `Registration: 10:00 AM`; `Language: Bilingual`; `Email: delegatealt@msca09aa.org`; theme in Note/Nota |
-| Dec 4–6 Pacific Regional Forum | No registration link; hotel name short | `Wyndham San Diego Bayside, 1355 North Harbor Drive, San Diego, CA 92101`; `Web:` registration; `Link: Hotel reservations (group rate until Nov 4, 2026)` (Delegate) |
-| Dec 12 Hispanic Women's Workshop | All-day; flyers cannot be shown; title and venue differ from flyers | 7:00 AM–3:00 PM; "11th Hispanic Women's Workshop" / `Título: 11.º Taller de la Mujer Hispana`; confirmed venue, `520 W South St, Anaheim, CA 92805`; `ZoomLink:`; new flyers |
+| Nov 14 Servathon | Done Oct 7: spelling, theme and schedule. Still: start 10:30 with `Registration: 10:00 AM`? contact | `Email: delegatealt@msca09aa.org` if the Alternate Delegate agrees |
+| Dec 4–6 Pacific Regional Forum | Done Oct 7: hotel name, aa.org registration, group rate until Nov 4 | — |
+| Dec 12 Hispanic Women's Workshop | Done Oct 7: 7:00 AM–3:00 PM, title, venue, theme, cleaned flyers. Still: venue name to confirm; Spanish flyer passcode | As the committee confirms |
 | CEC and Treatment series | CEC time/ID; Nov 26, Dec 24 | As the chairs confirm |
-| Service Study / Sharing Session | Flyer; link labelled "Flyer" | New flyer as new version; `Link: Service Study & Sharing Session flyer (PDF)` |
+| Service Study / Sharing Session | Done Oct 7: cleaned flyer on both series; Oct 15 speaker note | Replace with the new flyer when it comes |
 | Archives Committee series | Ends Jan 31, 2028 | End 12/31/2027; Nov 21 if replaced |
-| ROCYPAA Business Meeting | Ended Sept 27; flyer cannot be shown | Extend if it continues (YPAA chair) |
+| ROCYPAA Business Meeting | Done Oct 7: new series from Oct 25 (4th Sunday, 5–7 PM, through 2027) with a cleaned flyer (contact phone blanked) | YPAA chair: a flyer with a role contact; end the series if it stops |
+| D09 GSR School (Service Manual study) | Done Oct 7: new series from Oct 18 (3rd Sunday, 3 PM, through 2027), passcode as on its flyer | District 9 DCMC confirms passcode 642408 (the old entry said 634401) |
+| GSR School (Districts 1 & 3) | Done Oct 7: `Host: D1 & D3`, so it shows on the District 1 & 3 page | — |
+| Oct 17 General Service Panel (So-Cal Convention) | Added Oct 7 with its flyer | Convention Liaison confirms |
 | ACYPAA LIV (Apr 15, 2027) and business meetings | Informal hotel name, no ZIP, "English"; street-only address; shown as the Area YPAA meeting | `Delta Hotels Ontario Airport, 2200 E Holt Blvd, Ontario, CA 91761` (check ZIP), `Language: Bilingual`; venue name; event type (YPAA chair) |
 | Seven intergroup series | Time only; Temecula no contact | Verify; add `Web:`/`Email:` (Alternate Delegate) |
 
@@ -484,6 +498,9 @@ For each author, for the next or approved version. All eight files are posted as
 - The Service Study & Sharing Session flyer is no longer shown (it pointed to an old-site page); a new one is asked for under Alternate Delegate.
 - Old-website login details that were printed in some published documents (including the Panel 76 tool kits) were removed; the same files and links stay in place.
 - Technical: the build settings and the document scanner were tightened (the scanner's redaction now also clears the hidden author field).
+- **Second batch (Oct 7, afternoon):** the Delegate's Oct 11 report (slides, with a phone number, an old page password and flyer phone numbers removed); G.S.O. updates (Self-Support & Finance, Treatment & Accessibilities, Public Information); the Grapevine & La Viña 2027 prices; the Fifth Edition Big Book FAQ; the Spanish plain-language Big Book survey letter (EN/ES); and a public copy of the Ad Hoc Website Committee's final report — all in the library under *Delegate & Conference* or *Reports*, and on the matching committee pages. The 2026–2028 Service Manual is the same file aa.org offers, so the site links aa.org instead of a second copy.
+- **Calendar (Oct 7):** Oct 11 ASC start and details; Oct 17 General Service Panel added; District 9 Service Manual study and ROCYPAA continued through 2027; Dec 12 Hispanic Women's Workshop time, venue and flyers; Service Study flyer replaced and Oct 15 speaker added; GSR School shown on District 1 & 3; Forum hotel details; Servathon spelling; an old 2022 entry that held a pasted Area e-mail cleaned. Flyers from the Secretary's e-mail are filed in Drive (`docs/events/2026/`, `docs/meetings/`) with personal phone numbers blanked.
+- **Home page and committee pages:** Spanish plain-language Big Book survey notice (until Dec 31); Oct 11 times added to the ASC notice; Service Study page notes Oct 15 (not Oct 8); Grapevine & La Viña page notes the 2027 prices; the revised anonymity pamphlet (P-47) is shown as published.
 
 ## How to send information to the webmaster
 

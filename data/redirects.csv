@@ -102,6 +102,7 @@ old_path,new_path,note
 /2024/04/quarterly-report-from-gso/,/service/delegate/,Alternate Delegate post (2024)
 /2024/04/a-celebration-of-the-big-book-flash-sale-may-1-july-31-2024/,/service/delegate/,Alternate Delegate post (2024)
 /event/*,/calendar/,Old event pages (The Events Calendar plugin)
+/events/11th-hispanic-woman-s-workshop-2026-12-12/,/events/11th-hispanic-women-s-workshop-2026-12-12/,"Event renamed on Oct 7, 2026 (Woman's → Women's)"
 /events/*,/calendar/,"Old event lists, categories and day views"
 /venue/*,/calendar/,
 /organizer/*,/calendar/,
