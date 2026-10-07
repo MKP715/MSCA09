@@ -4,6 +4,9 @@ The public website of Area 09, in English (`/`) and Spanish (`/es/`).
 
 **You can keep this site up to date without writing code.**
 
+> **Trusted servants:** what the Area still needs to check, confirm, supply or correct is in
+> [AREA-ACTION-LIST.md](AREA-ACTION-LIST.md).
+
 - **Meetings and events** come from the Area's **Google Calendar**.
 - **Documents** come from the Area's shared **Google Drive** folder.
 - **Everything else** (wording, trusted servants, districts, committees, announcements, the menu) lives in

@@ -17,3 +17,6 @@ __pycache__/
 .env
 .env.*
 ~$*
+
+# Owner-only notes (security-sensitive follow-ups). Kept on the owner's computer, never pushed.
+OWNER-PRIVATE-ACTIONS.md
