@@ -108,7 +108,7 @@ and CSV file and come from `data/settings.csv`, so nothing needs editing when th
 |---|---|
 | Announce something on the home page | Add a row to `data/announcements.csv` with a `start` and `end` date (YYYY-MM-DD). It appears on `start` and disappears by itself after `end`. Put the event's day (or the deadline) in `event_date`: the home page lists announcements in event order, soonest first. Set `pin` to `yes` to highlight it. |
 | Change a sentence or a button | Find the words in `data/text/*.csv` (GitHub's search, or press `t` on github.com and type the file name), then change the `en` and `es` columns. |
-| Record a new trusted servant | Edit their row in `data/trusted-servants.csv`: `name` must be first name + last initial (`Maria G.`), and set `status` to `Filled`. Other values of `status`: `Open` (vacant: leave `name` empty; the site shows a "help wanted" badge), `Unnamed` (the role mailbox is known but no name is published), `Unconfirmed` (someone serves but the name still has to be confirmed: the site marks it "to be confirmed"), `Completed` (an ad-hoc committee that has finished its work). |
+| Record a new trusted servant | Edit their row in `data/trusted-servants.csv`: `name` must be first name + last initial (`Maria G.`), and set `status` to `Filled`. Other values of `status`: `Open` (vacant: leave `name` empty; the site shows a "help wanted" badge), `Unknown` (not provided yet — the district has not reported who holds the seat or that it is open: leave `name` and `email` empty; the site shows "Not provided yet"), `Unnamed` (the role mailbox is known but no name is published), `Unconfirmed` (someone serves but the name still has to be confirmed: the site marks it "to be confirmed"), `Completed` (an ad-hoc committee that has finished its work). Districts have exactly five rows each (every active district): DCMC, Alternate DCMC, Secretary, Treasurer and Registrar, in that order (`position_sort` 1–5); Districts 20–25 label the first two `DCMC (MCD)` and `Alternate DCMC (Alt. MCD)`. |
 | Update a district's cities, website or about text | Edit its row in `data/districts.csv`. The meeting time and place come from the calendar, not from this file. Spanish names of sub-districts go in `subdistricts_es`. |
 | Fix a district meeting that is wrong in the calendar, for now | Put the right format, place and times in the `meeting_*`, `venue`, `address`, `city` and `zip` columns of `data/districts.csv`, set `meeting_override` to `yes` and say why in `notes`. The district page then shows the CSV. Correct the Google Calendar entry as soon as you can and clear `meeting_override`: the build log says when the calendar and the CSV agree. |
 | Change a committee's description | Edit its row in `data/committees.csv`. Markdown works: `**bold**`, `[link](https://…)`, and lines starting with `- ` for lists. |
@@ -293,17 +293,24 @@ one of those folders and files and how the site shows it:
   copies, with an "Area 09 Archives" tag. When the library already has the same meeting's minutes or
   agenda, the Area's copy is shown and the Archives' copy is not repeated.
 - `mode` = `link` — one entry in "The Archives' collections" on `/documents/archive/` that opens the folder
-  (large working collections: Conference material, PRAASA recordings, committee minutes …).
+  (large working collections: General Service Conference material, Servathons, FORO, Archives Committee
+  minutes …).
 - `mode` = `off` — not shown.
 
 Once a day the build re-reads those folders (`scripts/archives-index.mjs`, no key needed — it uses Drive's
 public folder view) and commits the list to `data/archives/files.json`, so new scans appear by themselves
 and the site still builds if Google does not answer. Run `npm run archives -- --force` to re-read everything.
+[`ARCHIVES-DRIVE-LINKS.md`](ARCHIVES-DRIVE-LINKS.md) lists every Drive folder and file the Archives site links
+to, grouped by its page, with file counts and how many of them the library lists; the same build step regenerates it
+(`npm run archives:links`; `npm run archives` runs it after the listing).
 
-The Area's Drive holds shortcuts to the same folders in `MSCA09AA/MSCA09AA-archives/` (never copies).
-`scripts/archives-shortcuts.gs` makes them: paste it into script.google.com while signed in as the
-owner of the MSCA09AA folder and run `syncArchivesShortcuts` (instructions at the top of the file);
-run it again after adding rows to `collections.csv`.
+Shortcuts to the same folders (never copies) go in the Area's Drive, in `MSCA09AA/MSCA09AA-archives/`,
+when the owner runs `scripts/archives-shortcuts.gs` (today 161 shortcuts in 12 section folders).
+Collections marked `off` — the 2025 International Convention and PRAASA recordings, a private folder and
+two duplicates — get none, because that Drive folder is shared with anyone who has the link. To make
+them, paste the script into script.google.com while signed in as the owner of the MSCA09AA folder and
+run `syncArchivesShortcuts` (instructions at the top of the file); run it again after adding rows to
+`collections.csv`.
 
 ---
 

@@ -327,7 +327,7 @@ eleventyComputed:
         {%- if c.links.length or lib.pendingLinks.length %}
         <div class="mt-2 rounded-3xl bg-white p-3 shadow-soft ring-1 ring-ink-900/5 sm:p-4">
           <h3 class="px-3 pt-2 pb-1 font-display text-base font-bold text-ink-950">{{ "committees.links_title" | t(L) }}</h3>
-          <div class="grid grid-cols-1 gap-1 lg:grid-cols-2">{% for r in c.links %}{{ resRow({ r: { kind: r.kind, title_en: r.title_en, title_es: r.title_es, url: (r | cmAaLink(L)) if r.notes == "aa.org" else r.url, code: r.code }, lang: L }) }}{% endfor %}{% for r in lib.pendingLinks %}{{ resRow({ r: r, lang: L, contact: askEmail }) }}{% endfor %}</div>
+          <div class="grid grid-cols-1 gap-1 lg:grid-cols-2">{% for r in c.links %}{{ resRow({ r: { kind: r.kind, title_en: r.title_en, title_es: r.title_es, body_en: r.body_en, body_es: r.body_es, url: (r | cmAaLink(L)) if r.notes == "aa.org" else r.url, code: r.code }, lang: L }) }}{% endfor %}{% for r in lib.pendingLinks %}{{ resRow({ r: r, lang: L, contact: askEmail }) }}{% endfor %}</div>
         </div>
         {%- endif %}
       </section>

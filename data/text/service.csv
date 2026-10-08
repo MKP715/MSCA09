@@ -607,3 +607,5 @@ service.structure.gl_lead,"{n} words you will hear at Area meetings, in both lan
 service.structure.gl_search,Search the glossary,Buscar en el glosario,
 service.structure.gl_terms,terms,términos,
 service.structure.gl_more,Show all terms ({n} more),Ver todos los términos ({n} más),
+service.motions.books_archives,The compilations for 1959–2024 on the Area 09 Archives website,Las recopilaciones de 1959 a 2024 en el sitio de los Archivos Históricos del Área 09,"The Area's own 1959–69, 1980–89 and 1990–99 compilations are held for anonymity review; the Archives publish theirs"
+service.motions.books_archives.url,https://msca09aa-archives.org/area-09-motions,https://msca09aa-archives.org/area-09-motions,

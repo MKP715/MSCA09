@@ -70,7 +70,10 @@ jobs:
         # Reads the Archives Committee's public Google Drive folders listed in data/archives/collections.csv
         # (no key needed), so files the Archives add appear in the document library by themselves.
         # A folder Google does not answer keeps its last list. See scripts/archives-index.mjs.
-        run: node scripts/archives-index.mjs || echo "::warning::Could not refresh the Area 09 Archives file list; the copy in the repository is used."
+        # ARCHIVES-DRIVE-LINKS.md (every Drive link of the Archives site, with file counts) is regenerated from the same data.
+        run: |
+          node scripts/archives-index.mjs || echo "::warning::Could not refresh the Area 09 Archives file list; the copy in the repository is used."
+          node scripts/archives-links-md.mjs || echo "::warning::Could not regenerate ARCHIVES-DRIVE-LINKS.md."
 
       - name: Report calendar entries that need fixing in Google Calendar (never blocks)
         run: node scripts/check-calendar.mjs || true
@@ -130,13 +133,13 @@ jobs:
         # So the library still lists the Archives' files if Google is unreachable one day. [skip ci] stops a
         # rebuild loop. The list holds file names and Drive links the Archives already publish on their own site.
         run: |
-          if git diff --quiet -- data/archives/files.json; then
+          if git diff --quiet -- data/archives/files.json ARCHIVES-DRIVE-LINKS.md; then
             echo "The Archives file list has not changed."
             exit 0
           fi
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/archives/files.json
+          git add data/archives/files.json ARCHIVES-DRIVE-LINKS.md
           git commit -m "Refresh the Area 09 Archives file list [skip ci]"
           git push || echo "Could not push the Archives file list (not fatal)."
 

@@ -174,3 +174,13 @@ documents.arch_coll_in_library,in the library,en la biblioteca,
 documents.arch_coll_open,Open the folder,Abrir la carpeta,
 documents.arch_coll_site,On msca09aa-archives.org,En msca09aa-archives.org,
 documents.arch_coll_note,"The Archives Committee keeps these folders. To donate material, record your group's history or visit the repository, see the Archives Committee page.","El Comité de Archivos Históricos mantiene estas carpetas. Para donar material, registrar la historia de tu grupo o visitar el depósito, consulta la página del Comité de Archivos Históricos.",
+documents.cat_archives_title,On the Area 09 Archives website,En el sitio de los Archivos Históricos del Área 09,"Card beside a shelf whose document-categories.csv row has an archives_url"
+documents.cat_archives_body,"The Archives Committee's own page for these records, with the collections it keeps.","La página del Comité de Archivos Históricos para estos registros, con las colecciones que guarda.",
+documents.arch_more_title,Also on the Archives website (not in Google Drive),También en el sitio de los Archivos (fuera de Google Drive),
+documents.arch_more_lead,"Some of the Archives' records are kept on their website itself, so they are not listed here file by file.","Algunos registros de los Archivos están en su propio sitio web, por eso no aparecen aquí archivo por archivo.",
+documents.arch_more_motions,"Area motion compilations, 1959–2024 (by decade to 2019, then by year)","Recopilaciones de mociones del Área, 1959–2024 (por década hasta 2019 y luego por año)","The Area's own copies of the 1959–69, 1980–89 and 1990–99 compilations are held for anonymity review"
+documents.arch_more_motions.url,https://msca09aa-archives.org/area-09-motions,https://msca09aa-archives.org/area-09-motions,
+documents.arch_more_pamphlets,History pamphlets and the Chronicles of Area 09,Folletos de historia y las Crónicas del Área 09,
+documents.arch_more_pamphlets.url,https://msca09aa-archives.org/archive-pamphlets,https://msca09aa-archives.org/archive-pamphlets,
+documents.arch_more_heritage,Heritage Day recordings (2020–2025),Grabaciones del Día de la Herencia (2020–2025),
+documents.arch_more_heritage.url,https://msca09aa-archives.org/heritage-day-recordings-1,https://msca09aa-archives.org/heritage-day-recordings-1,

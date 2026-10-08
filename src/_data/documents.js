@@ -242,20 +242,29 @@ function titleFromName(name) {
 const ARCHIVES_JSON = path.join(DATA_DIR, "archives", "files.json");
 
 function readArchives() {
-  const rows = readCsv("archives/collections.csv").filter((r) => r.key && !r.key.startsWith("#") && r.mode && r.mode !== "off");
+  const all = readCsv("archives/collections.csv").filter((r) => r.key && !r.key.startsWith("#"));
+  const rows = all.filter((r) => r.mode && r.mode !== "off");
+  // a file whose own row is switched off is not listed through a folder either ("Revision H (2024, Spanish)")
+  const offIds = new Set(all.filter((r) => r.mode === "off").map((r) => r.drive_id));
+  // data/archives/overrides.csv: drive_id → date / title for files whose name is wrong (a mistyped month …)
+  const overrides = new Map(readCsv("archives/overrides.csv").filter((r) => r.drive_id && !r.drive_id.startsWith("#")).map((r) => [r.drive_id.trim(), r]));
   let data = {};
   try {
     if (fs.existsSync(ARCHIVES_JSON)) data = JSON.parse(fs.readFileSync(ARCHIVES_JSON, "utf8")).collections || {};
   } catch (err) {
     console.warn(`[documents] could not read data/archives/files.json: ${err.message}`);
   }
-  return { rows, data };
+  return { rows, data, offIds, overrides };
 }
 
 /** A date from an Archives file name or folder ("…-1975.04.13 c.1.pdf", "…-05.17.2026-English.pdf",
- *  "Nov - Dec 1980 Newsletter.pdf", "Noticiero_Diciembre 2006.pdf", ".../2018/English/01-January 2018/…"). From 1940 on. */
+ *  "Nov - Dec 1980 Newsletter.pdf", "Noticiero_Diciembre 2006.pdf", ".../2018/English/01-January 2018/…",
+ *  "2014/Aug_ASC_Minutes.pdf", "Feb06ASCmin.doc"). From 1940 on. */
 function archiveDate(name, folderPath = "") {
   const ok = (y, mo, d) => y >= 1940 && y <= THIS_YEAR && mo >= 1 && mo <= 12 && (!d || (d >= 1 && d <= 31));
+  const twoDigit = (n) => (n <= THIS_YEAR % 100 ? 2000 + n : 1900 + n);
+  // → { date, year } when the text dates itself; otherwise { date: "", year, mo, yy }: mo = a month word with no
+  //   4-digit year next to it, yy = a 2-digit year just after that month word ("Feb06")
   const tryOne = (raw) => {
     const s = String(raw || "").replace(/\((19[4-9]\d|20\d{2})\)(?=[._-]\d)/g, "$1"); // "(2018).01.14"
     let m;
@@ -263,48 +272,83 @@ function archiveDate(name, folderPath = "") {
       return { date: `${m[1]}-${pad2(m[2])}-${pad2(m[3])}`, year: +m[1] };
     if ((m = s.match(/(?<!\d)(\d{1,2})[._-](\d{1,2})[._-](19[4-9]\d|20\d{2})(?!\d)/)) && ok(+m[3], +m[1], +m[2]))
       return { date: `${m[3]}-${pad2(m[1])}-${pad2(m[2])}`, year: +m[3] };
+    // "ASC Agenda 11.08.09 Eng", "…-fax-draft-10.22.99": month.day.2-digit year
+    if ((m = s.match(/(?<![\d.])(\d{1,2})\.(\d{1,2})\.(\d{2})(?![\d.])/)) && ok(twoDigit(+m[3]), +m[1], +m[2]))
+      return { date: `${twoDigit(+m[3])}-${pad2(m[1])}-${pad2(m[2])}`, year: twoDigit(+m[3]) };
     // Month words first: "June_11_2017" is June (not November), "Nov - Dec 1980" is November, "Sept2011Assembly"
-    const words = norm(s.replace(/\.[a-z0-9]{2,5}$/i, "").replace(/([a-z])(\d)/gi, "$1 $2").replace(/(\d)([a-z])/gi, "$1 $2")).split(" ");
+    const words = norm(
+      s.replace(/\.[a-z0-9]{2,5}$/i, "").replace(/([a-z])([A-Z])/g, "$1 $2").replace(/([a-z])(\d)/gi, "$1 $2").replace(/(\d)([a-z])/gi, "$1 $2"),
+    ).split(" ");
+    let mo0 = 0;
+    let yy = 0;
     for (let i = 0; i < words.length; i++) {
       const mo = MONTHS[words[i]];
       if (!mo) continue;
+      if (i > 0 && words[i - 1] === "by") continue; // "ByJulio": a person, not July
       for (let j = i + 1; j <= i + 4 && j < words.length; j++) {
         if (/^(19[4-9]\d|20\d{2})$/.test(words[j]) && +words[j] <= THIS_YEAR) return { date: `${words[j]}-${pad2(mo)}`, year: +words[j] };
       }
       for (let j = i - 1; j >= i - 2 && j >= 0; j--) {
         if (/^(19[4-9]\d|20\d{2})$/.test(words[j]) && +words[j] <= THIS_YEAR) return { date: `${words[j]}-${pad2(mo)}`, year: +words[j] };
       }
+      if (!mo0) {
+        mo0 = mo;
+        // a 2-digit year only when it is written into the same word ("Feb06ASCmin", "MayMin06"): "July 24" is a day
+        const glued = s.match(new RegExp(`(?<![a-z])${words[i]}[a-z]*?(\\d{2})(?!\\d)`, "i"));
+        if (glued) yy = twoDigit(+glued[1]);
+      }
     }
     if ((m = s.match(/(?<!\d)(19[4-9]\d|20\d{2})[._-](0[1-9]|1[0-2])(?!\d)/))) return { date: `${m[1]}-${m[2]}`, year: +m[1] };
     // "05_2014_asc_minutes" — but not the Area number in "MSCA09-2026" (a letter right before it)
     if ((m = s.match(/(?<![\dA-Za-z])(0[1-9]|1[0-2])[._ -](19[4-9]\d|20\d{2})(?!\d)/))) return { date: `${m[2]}-${m[1]}`, year: +m[2] };
-    if ((m = s.match(/(?<!\d)(19[4-9]\d|20\d{2})(?!\d)/)) && +m[1] <= THIS_YEAR) return { date: "", year: +m[1] };
-    return null;
+    if ((m = s.match(/(?<!\d)(19[4-9]\d|20\d{2})(?!\d)/)) && +m[1] <= THIS_YEAR) return { date: "", year: +m[1], mo: mo0, yy };
+    return mo0 ? { date: "", year: 0, mo: mo0, yy } : null;
   };
   let fromName = tryOne(name);
-  // "03-Minutes-…-02.08.2026": the leading number is the meeting's month; trust it over a mistyped month in the date.
+  // "03-Minutes-…-02.08.2026": the leading number is the meeting's month. Area meetings are on Sundays, so the
+  // number wins only when the date as written is not a Sunday ("05-Agenda-…-2005.06.12" stays June 12).
   const lead = String(name || "").match(/^(0[1-9]|1[0-2])[-_ ]/);
   if (lead && fromName && fromName.date.length === 10 && fromName.date.slice(5, 7) !== lead[1]) {
-    fromName = { date: `${fromName.date.slice(0, 4)}-${lead[1]}-${fromName.date.slice(8)}`, year: fromName.year };
+    const [y, mo, d] = fromName.date.split("-").map(Number);
+    if (new Date(Date.UTC(y, mo - 1, d)).getUTCDay() !== 0) fromName = { date: `${y}-${lead[1]}-${pad2(d)}`, year: y };
   }
-  if (fromName && fromName.date) return fromName;
+  if (fromName && fromName.date) return { date: fromName.date, year: fromName.year };
   // A folder like "2018/English/01-January 2018" can give the month the file name leaves out.
   const segs = String(folderPath || "").split("/").filter(Boolean).reverse();
   for (const seg of segs) {
     const f = tryOne(seg);
-    if (f && f.date && (!fromName || fromName.year === f.year)) return f;
+    if (f && f.date && (!fromName || !fromName.year || fromName.year === f.year)) return { date: f.date, year: f.year };
   }
-  if (fromName) return fromName;
-  for (const seg of segs) {
-    const f = tryOne(seg);
-    if (f) return { date: "", year: f.year };
+  let year = fromName && fromName.year;
+  if (!year) {
+    for (const seg of segs) {
+      const f = tryOne(seg);
+      if (f && f.year) {
+        year = f.year;
+        break;
+      }
+    }
   }
-  return { date: "", year: 0 };
+  // "2014/Aug_ASC_Minutes.pdf": the month from the name, the year from the name or the folder; "Feb06ASCmin": a 2-digit year
+  if (fromName && fromName.mo && year) return { date: `${year}-${pad2(fromName.mo)}`, year };
+  if (fromName && fromName.mo && fromName.yy && fromName.yy <= THIS_YEAR) return { date: `${fromName.yy}-${pad2(fromName.mo)}`, year: fromName.yy };
+  return { date: "", year: year || 0 };
 }
 
-/** A readable title from an Archives file name: copy numbers ("c.2"), dates (shown separately) and sequence numbers go. */
+/** A readable title from an Archives file name: copy numbers ("c.2"), dates (shown separately), sequence numbers,
+ *  version suffixes and language words (shown as a badge) go. */
 function archiveTitle(name, { dropDistrict = false } = {}) {
-  let s = String(name || "").replace(/(\.(docx?|pdf|xlsx?|pptx?|rtf|txt|html?|jpe?g|png|gif|tiff?|mp3|m4a|wav|mp4|mov))+$/i, "");
+  let s = String(name || "")
+    .replace(/(\.(docx?|pdf|xlsx?|pptx?|rtf|txt|html?|jpe?g|png|gif|tiff?|mp3|m4a|wav|mp4|mov))+$/i, "")
+    .replace(/%20/g, " ")
+    .replace(/\s*\[\d+\]/g, " ") // "MINUTES[1][1]"
+    .replace(/[\s_-]*(?:\b|(?<=\d))c\.\s?\d+\b/gi, " ") // copy numbers "c.2", "1972.04.09c.2" (before the version rule below)
+    .replace(/\s*\(\d+\)\s*$/, "") // a duplicate upload "… (1)"
+    .replace(/(?<![\d.])\d{1,2}\.\d{1,2}\.\d{2}(?![\d.])/g, " ") // a date "11.08.09" (shown separately; before the version rule)
+    .replace(/(?<=[A-Za-z]{2}|\d)(?<!(?:19|20)\d{2})(?<!\b(?:pt|no|vol|rev|p))\.\d{1,2}$|\s+\.\d{1,2}$/i, "") // version suffix "Comparison.01", "… .03" (not "2022.01", "pt.3", "p.15")
+    .replace(/^x[\s_-]+/i, "") // the Archives' "x" prefix ("x_Jan_08_Assembly", "xArea09 May minutes")
+    .replace(/^x(?=[A-Z])/, "")
+    .replace(/\s*\((english|spanish|ingl[eé]s|espa[nñ]ol|sp\.?|eng\.?|eng\s?span)\)/gi, " "); // "(Spanish)", "(Eng)", "(EngSpan)" — shown as a badge
   s = s
     .replace(/\((19[4-9]\d|20\d{2})\)(?=[._-]\d)/g, "$1") // "(2018).01.14"
     .replace(/([a-z])([A-Z])/g, "$1 $2") // "MayAgenda" → "May Agenda"
@@ -324,13 +368,25 @@ function archiveTitle(name, { dropDistrict = false } = {}) {
     .replace(/\.(pdf|docx?)\b/gi, " ") // "Pamphlet.pdf en Ingles"
     .replace(/\bGSO[\s_-]*0*x+\b/gi, " ")
     .replace(/\bn\.?\s?d\.?(?![a-z])/gi, " ")
+    // language phrases are shown as a badge: drop them whole, never leave "in" or "English and" behind
+    .replace(/[\s_-]+(in|en)[\s_-]+(english|spanish|ingl[eé]s|espa[nñ]ol)\b/gi, " ")
+    .replace(/[\s_-]+(english|ingl[eé]s)[\s_-]+(and|y|&)[\s_-]+(spanish|espa[nñ]ol)\b/gi, " ")
     .replace(/^\s*\d{1,2}[\s_-]+(?=[A-Za-z(])/, "")
-    .replace(/[\s_-]+(final|revised)\s*$/i, " ($1)");
-  if (dropDistrict) s = s.replace(/^\s*Dist(?:r)?i(?:r)?ct[\s_-]*\d+[\s_-]*/i, "").replace(/^\s*\d{2}[_\s-]+/, "").replace(/\bGSO[\s_-]*\d{6,}[\s_-]*/i, "").replace(/^\s*\d{6,}[\s_-]*/, "");
+    .replace(/[\s_.-]+(final|revised)\s*$/i, " ($1)");
+  if (dropDistrict)
+    s = s
+      .replace(/^\s*Dist(?:r)?i(?:r)?ct[\s_-]*\d+[\s_-]*/i, "")
+      .replace(/^\s*\d{2}[_\s-]+/, "")
+      .replace(/\bGSO[\s_-]*\d{6,}[\s_-]*/i, "")
+      .replace(/^\s*\d{6,}[A-Za-z]{0,2}[\s_-]*/, "")
+      .replace(/^\s*\d{2}[\s_-]+(?=group)/i, "");
   return titleFromName(s.replace(/[\s_-]+$/g, "").trim())
     .replace(/\s*\(\s*\)\s*/g, " ")
     .replace(/\s+\bpp\b\.?/gi, " ")
     .replace(/\s+X$/, "")
+    .replace(/\s+(in|and|y|en)$/i, "")
+    .replace(/(?<=\S)(?:\s+(?:english|spanish|eng|span|sp|ingl[eé]s|espa[nñ]ol)\.?)+$/i, "") // "… ASC Agenda English SP" — a badge
+    .replace(/\s+\.\d{1,2}$/, "") // what is left of a placeholder date "(xxxx).03"
     .replace(/\s{2,}/g, " ")
     .trim();
 }
@@ -348,6 +404,7 @@ function loadCategories() {
       sort: num(r.sort, 999),
       description_en: r.description_en || "",
       description_es: r.description_es || "",
+      archives_url: (r.archives_url || "").trim(),
       // expect_yearly = yes: a year with nothing on this shelf shows "not posted yet" + who to ask (gap_email).
       expect_yearly: yes(r.expect_yearly),
       gap_email: r.gap_email || "",
@@ -643,6 +700,7 @@ function loadDocuments() {
       meeting_type: mt,
       kind: (src.kind || mt || cat.key).toLowerCase(),
       source: src.source || (auto ? "Drive" : ""),
+      drive_path: src.drive_path || "",
       notes: src.notes || "",
       auto,
     };
@@ -776,7 +834,7 @@ function loadDocuments() {
       const t = norm(text);
       if (cat === "minutes") {
         if (mt) return String(mt).toLowerCase();
-        if (/\b(asa|assembly|asamblea|general service assembly)\b/.test(t)) return "asa";
+        if (/\b(asa|assembly\w*|assem\w*|asamblea|general service assembly|election)\b/.test(t)) return "asa";
         if (/\b(asc|csa|area service committee|area committee|committee meeting|committeemen s?|committeemens|comite de servicio)\b/.test(t)) return "asc";
         if (/\b(board|executive|junta)\b/.test(t)) return "board";
         return "";
@@ -786,62 +844,112 @@ function loadDocuments() {
       if (cat === "calendars") return "area";
       return "";
     };
-    const ourExact = new Set(); // shelf|kind|YYYY-MM(-DD)|language, as dated
+    const ourExact = new Set(); // shelf|kind|YYYY-MM(-DD)|language, as dated ("*" = kind not known)
     const ourMonth = new Set(); // shelf|kind|YYYY-MM|language
     const ourMonthOnly = new Set(); // the Area's documents dated only to the month
+    const ourDay = new Set(); // shelf|YYYY-MM-DD|language, whatever the kind
     for (const d of docs) {
       if (d.district || (d.committees && d.committees.length)) continue; // the Area's own records only
       if (!/^\d{4}-\d{2}(-\d{2})?$/.test(d.date || "")) continue;
-      const kind = kindOf(d.category, `${d.title} ${d.title_es}`, d.meeting_type);
-      if (!kind) continue;
+      if (!["minutes", "motions", "calendars", "newsletters"].includes(d.category)) continue;
+      const kind = kindOf(d.category, `${d.title} ${d.title_es}`, d.meeting_type) || "*";
+      if (d.category === "newsletters" && kind === "*") continue; // a district's or Grapevine's newsletter is not the Area's
       const langs = d.language === "Bilingual" ? ["English", "Spanish", "Bilingual"] : [d.language || ""];
       for (const l of langs) {
         ourExact.add(`${d.category}|${kind}|${d.date}|${l}`);
         ourMonth.add(`${d.category}|${kind}|${d.date.slice(0, 7)}|${l}`);
         if (d.date.length === 7) ourMonthOnly.add(`${d.category}|${kind}|${d.date}|${l}`);
+        if (d.date.length === 10) ourDay.add(`${d.category}|${d.date}|${l}`);
       }
     }
     /** Does the library already have this Area record? (a day-dated file matches the same day, or a month-dated copy of ours) */
     const alreadyOurs = (cat, kind, date, lang) => {
-      if (!kind || !/^\d{4}-\d{2}(-\d{2})?$/.test(date || "")) return false;
-      const langs = lang && lang !== "Bilingual" ? [lang, "Bilingual"] : ["English", "Spanish", "Bilingual", ""];
-      return langs.some((l) =>
-        date.length === 10
-          ? ourExact.has(`${cat}|${kind}|${date}|${l}`) || ourMonthOnly.has(`${cat}|${kind}|${date.slice(0, 7)}|${l}`)
-          : ourMonth.has(`${cat}|${kind}|${date}|${l}`),
+      if (!/^\d{4}-\d{2}(-\d{2})?$/.test(date || "")) return false;
+      // a blank language or kind on either side matches anything on the same exact day
+      const langs = lang === "Spanish" ? ["Spanish", "Bilingual", ""] : lang === "Bilingual" ? ["Bilingual", ""] : ["English", "Bilingual", ""];
+      if (!kind) return date.length === 10 && langs.some((l) => ourDay.has(`${cat}|${date}|${l}`));
+      return langs.some(
+        (l) =>
+          (date.length === 10
+            ? ourExact.has(`${cat}|${kind}|${date}|${l}`) || ourMonthOnly.has(`${cat}|${kind}|${date.slice(0, 7)}|${l}`)
+            : ourMonth.has(`${cat}|${kind}|${date}|${l}`)) ||
+          (date.length === 10 && ourExact.has(`${cat}|*|${date}|${l}`)),
       );
     };
+    // Records the Area holds back itself (data/documents/held.csv): an Archives copy of the same file is not listed
+    // when the Area held it for personal contact details or sobriety dates, or when the Area publishes its own
+    // redacted copy. (Copies held only because they name members in full are listed: the owner decided not to
+    // re-scrub what the Archives already publish.) Matched on the file name, the way the Area's copies were named.
+    const baseKey = (n) =>
+      String(n || "")
+        .split("/")
+        .pop()
+        .toLowerCase()
+        .replace(/\.[a-z0-9]{2,5}$/, "")
+        .replace(/[\s_-]*(?:\b|(?<=\d))c\.\s?\d+\b/g, "") // copy numbers "c.2"
+        .replace(/\s*\(\d+\)$/, "") // duplicate uploads "… (1)"
+        .replace(/-redacted$/, "")
+        .replace(/-(en|es|bi)$/, "")
+        .replace(/-\d$/, "") // "June 2016 English-1"
+        .replace(/[^a-z0-9]+/g, "");
+    const areaHeld = new Set();
+    const areaNames = new Set(); // shelf|file name of every published Area row (the Area's own copy of the same file)
+    for (const r of rows) {
+      if (!r.drive_path) continue;
+      if (yes(r.publish) && isRedactedCopy(r.drive_path)) areaHeld.add(baseKey(r.drive_path));
+      else if (!yes(r.publish) && /personal-contact|sobriety/i.test(r.anonymity_flag || "")) areaHeld.add(baseKey(r.drive_path));
+    }
+    for (const d of docs) if (d.drive_path || d.id) areaNames.add(`${d.category}|${baseKey(d.drive_path || "")}`);
     const reclass = (cat, rawName, folderPath) => {
       // "_" is a word character: "Aug_2017_ASC_Agenda" must read as words
       const name = String(rawName || "").replace(/[_.]+/g, " ");
       const t = `${String(folderPath || "").replace(/[_.]+/g, " ")} ${name}`;
       if (/(^|\/)GSC\b|general service conference/i.test(folderPath)) return "conference";
       if (!["minutes", "motions", "calendars", "newsletters"].includes(cat)) return cat;
+      const bare = name.replace(/\s+(pdf|docx?)$/i, "").replace(/\s*\(\d+\)\s*$/, "").trim();
+      if (cat === "minutes" && /^(january|february|march|april|may|june|july|august|september|october|november|december|enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)\s+\d{4}(\s+(english|spanish|espa[nñ]ol|ingl[eé]s))?$/i.test(bare))
+        return "newsletters"; // "May_2017_English.pdf" in a minutes folder is that month's newsletter
+      // a name that starts with what it is ("Flyer-MSCA-…", "Map-MSCA-…", "Letter-… to GSA", "Bylaws As of …")
+      const lead = bare.match(/^(flyers?|volantes?|programs?|programas?|maps?|mapas?|bylaws|estatutos|letters?|cartas?|memos?)\b/i);
+      if (lead) return /^(fl|vo|pr)/i.test(lead[1]) ? "flyers" : /^ma/i.test(lead[1]) ? "history" : /^(by|es)/i.test(lead[1]) ? "guidelines" : "misc";
       if (/\b(agenda|agendas|orden del d[ií]a)\b/i.test(name)) return "motions";
       if (/\b(minutes|actas?|minutas?)\b/i.test(name)) return "minutes";
       if (/\b(calendar|calendario|schedule)\b/i.test(name)) return "calendars";
       if (/\b(newsletter|noticiero|bolet[ií]n)\b/i.test(name)) return "newsletters";
       if (/\b(motions?|mociones|actions)\b/i.test(name)) return "motions";
+      if (/\b(flyers?|volantes?|programs?|programas?)\b/i.test(name)) return "flyers";
+      if (/\b(maps?|mapas?)\b/i.test(name)) return "history";
+      if (/\b(bylaws|estatutos)\b/i.test(name)) return "guidelines";
+      if (/\b(letters?|cartas?|memos?|questions|preguntas|proposals?)\b/i.test(name)) return "misc";
       if (/\b(report|informe)\b/i.test(t)) return "reports";
       if (/\b(budget|presupuesto|financial|treasurer|tesorer)/i.test(t)) return "finances";
       return cat;
     };
+    const langWords = (t) => {
+      const v = String(t || "");
+      const es = /spanish|espa[nñ]ol|calendario|noticiero|\(sp\.?|engspan|(^|[\/\s_.-])(span|sp)([\/\s_.-]|$)/i.test(v);
+      const en = /english|ingl[eé]s|\(eng\.?|(^|[\/\s_.-])eng([\/\s_.-]|$)/i.test(v);
+      return es && en ? "Bilingual" : es ? "Spanish" : en ? "English" : "";
+    };
+    // a language word in the file name ("…-Spanish.pdf" in an English folder) wins over the folder's
     const langOf = (row, name, folderPath) => {
-      const t = `${folderPath}/${name}`;
-      const en = /(^|[\/\s_.-])(english|ingl[eé]s|eng)([\/\s_.-]|$)/i.test(t);
-      const es = /(^|[\/\s_.-])(spanish|espa[nñ]ol|span)([\/\s_.-]|$)/i.test(t);
-      if (en && es) return "Bilingual";
-      if (es) return "Spanish";
-      if (en) return "English";
-      return row.language || "";
+      const n = langWords(name);
+      const f = langWords(folderPath);
+      // "…_Agenda_English_SP_….pdf" in a Spanish folder is the Spanish agenda
+      if (n === "Bilingual" && f && f !== "Bilingual" && /(^|[\s_.-])sp([\s_.-]|$)/i.test(name)) return f;
+      return n || f || row.language || "";
     };
     // AppleDouble "._x" files and Office "~$x" lock files (a real file may start with "." — ".Master Copy Code Sheet")
     const SKIP = /^(\._|~\$)|(^|\/)(desktop\.ini|thumbs\.db|\.ds_store)$|\.(lnk|url|ini|tmp)$/i;
     // Lists of people (sign-in sheets, directories, contact and phone lists) are never listed from the Archives,
     // whatever folder they are in; data/flyer-holds.csv holds other single files by id.
-    const PEOPLE_LIST = /(?<![a-z])(sign[\s_-]?in(?![a-z])|attendance|asistencia|director(y|io)|contact[\s_-]?info|phone[\s_-]?list|tel[eé]fonos|roster|mailing[\s_-]?list|address[\s_-]?list)/i;
+    const PEOPLE_LIST = /(?<![a-z])(sign[\s_-]?in(?![a-z])|attendance|asistencia|director(y|io)|contact[\s_-]?info|phone[\s_-]?list|tel[eé]fonos|roster|mailing[\s_-]?list|address[\s_-]?list|pending[\s_-]*groups?|groups?[\s_-]*pending|informaci[oó]n[\s_-]*del[\s_-]*grupo|with[\s_-]*last[\s_-]*names|people[\s_-]*to[\s_-]*interview)/i;
+    // G.S.O. group lists exported to a spreadsheet print each group's contact (name, address, phone, e-mail)
+    const GROUP_EXPORT = /\.(xlsx?|csv)$/i;
     const kept = new Map(); // de-duplication key → doc (within the Archives)
     for (const row of archives.rows) {
+      // a single file held by the media check (data/flyer-holds.csv …) gets no card and no link either
+      if (row.kind === "file" && (mediaHeld.has(row.drive_id) || heldIds.has(row.drive_id))) continue;
       const got = archives.data[row.key];
       const card = {
         key: row.key,
@@ -865,11 +973,26 @@ function loadDocuments() {
         const name = f.n || "";
         if (!f.i) continue;
         // a single file named in collections.csv was chosen on purpose; folder contents go through the filters
-        if (row.kind !== "file" && (SKIP.test(name) || NEVER_AUTO.test(name) || NEVER_AUTO.test(f.p || "") || PEOPLE_LIST.test(name))) continue;
+        const groupHistory = row.category === "districts";
+        if (
+          row.kind !== "file" &&
+          (SKIP.test(name) ||
+            NEVER_AUTO.test(name) ||
+            NEVER_AUTO.test(f.p || "") ||
+            PEOPLE_LIST.test(name) ||
+            PEOPLE_LIST.test(f.p || "") ||
+            (groupHistory && GROUP_EXPORT.test(name)))
+        )
+          continue;
+        if (areaHeld.has(baseKey(name))) continue; // the Area holds its own copy of this file back (see above)
+        if (archives.offIds.has(f.i)) continue; // its own row is switched off
+        if (/\.zip$/i.test(name)) continue;
         if (neverPublish({ title: name, id: f.p || "" })) continue;
         if (mediaHeld.has(f.i) || heldIds.has(f.i) || seenDrive.has(f.i)) continue;
         const folderPath = f.p || "";
         let when = archiveDate(name, folderPath);
+        const ov = archives.overrides.get(f.i);
+        if (ov && ov.date) when = { date: /^\d{4}-\d{2}/.test(ov.date) ? ov.date : "", year: +String(ov.date).slice(0, 4) };
         // A single file titled with its year in collections.csv ("Open House 2025 – …") belongs to that year.
         if (row.kind === "file") {
           const ty = +((String(row.title_en || "").match(/\b(19[4-9]\d|20\d{2})\b/) || [])[1] || 0);
@@ -884,10 +1007,11 @@ function loadDocuments() {
           (row.kind === "folder" && ["history", "districts", "guidelines"].includes(row.category) ? (name.match(/\bDistri(?:c)?t[oa]?[\s_-]*(\d{1,2})(?!\d)/i) || [])[1] : "") ||
           "";
         const dist = row.district || districtSlug(distNum);
-        const groupHistory = row.category === "districts";
         const districtMap = row.key === "maps-and-atlases-district-maps" && distNum && /\.pdf$/i.test(name);
         // A group's G.S.O. service number tells group histories apart ("22_000171647_09_Group_History.pdf").
-        const gso = groupHistory ? (name.match(/(?<!\d)(\d{6,9})(?!\d)/) || [])[1] || "" : ""; // 6–9 digits (a 10-digit run is not a G.S.O. number)
+        // 6–9 digits, maybe a part letter ("000178359A"); a 10-digit run is not a G.S.O. number
+        const gm = groupHistory ? name.match(/(?<!\d)(\d{6,9})([A-Za-z])?(?![\dA-Za-z])/) : null;
+        const gso = gm ? gm[1] + (gm[2] ? gm[2].toUpperCase() : "") : "";
         let title_en = districtMap
           ? `District ${+distNum} page, old Area website (2017)`
           : row.kind === "file" && row.title_en
@@ -895,18 +1019,32 @@ function loadDocuments() {
             : archiveTitle(name, { dropDistrict: groupHistory });
         let title_es = districtMap ? `Página del Distrito ${+distNum} del antiguo sitio del Área (2017)` : row.kind === "file" && row.title_es ? row.title_es : "";
         if (groupHistory && gso && /^(\d+\s*)*(group histor(y|ies)|history|historia(s)?( de(l)? grupo)?)$/i.test(title_en)) {
-          title_en = `Group history (G.S.O. no. ${gso})`;
-          title_es = `Historia de grupo (n.º de la OSG ${gso})`;
+          const part = /[A-Z]$/.test(gso) ? gso.slice(-1) : "";
+          const num6 = part ? gso.slice(0, -1) : gso;
+          title_en = `Group history (G.S.O. no. ${num6}${part ? `, part ${part}` : ""})`;
+          title_es = `Historia de grupo (n.º de la OSG ${num6}${part ? `, parte ${part}` : ""})`;
         } else if (groupHistory && !/group|grupo|history|historia/i.test(title_en)) {
           title_es = `${title_en} – historia de grupo`;
           title_en = `${title_en} – group history`;
+        }
+        // A group history from a folder that is not an Area 09 district (e.g. "District 49 (Area 05 – Southern California)"):
+        // say so in the title, since it gets no district page.
+        if (groupHistory && !dist && /^Group histories – /.test(row.title_en || "")) {
+          const baseEs = title_es || (/group histor/i.test(title_en) ? "Historia de grupo" : title_en);
+          title_en = `${title_en} – ${row.title_en.replace(/^Group histories – /, "")}`;
+          title_es = `${baseEs} – ${(row.title_es || "").replace(/^Historias de grupos – /, "")}`;
         }
         // Only a number or a camera name left ("IMG 1234"): use the collection's own title.
         if (!title_en || /^(img|dsc|dscn|image|scan|photo)?\s*[\d\s-]+$/i.test(title_en)) {
           title_en = row.title_en;
           title_es = row.title_es || "";
         }
+        if (ov && ov.title_en) {
+          title_en = ov.title_en;
+          title_es = ov.title_es || "";
+        }
         if (!title_en) continue;
+        if (areaNames.has(`${cat}|${baseKey(name)}`)) continue; // the Area lists its own copy of this very file
         // a file from the Archives' agendas folders is an agenda unless its name says it is a motion
         const recordKind = kindOf(cat, `${title_en} ${name}`, "", /^Area agendas/i.test(row.title_en || "") ? "agenda" : "motion");
         if (alreadyOurs(cat, recordKind, when.date, language)) continue; // the Area's own copy is already listed
@@ -938,14 +1076,29 @@ function loadDocuments() {
         if (d.title_es) d.title_es = shortenArchiveNames(d.title_es);
         if (archiveNameRisk(d.title)) nameRisk.push(`${row.key}: ${d.title}`);
         if (!d.url || seenUrl.has(d.url)) continue;
-        // Several scans or formats of one document in the same folder (c.1, c.2, Word and PDF): keep one (a PDF first).
-        const dk = [row.key, folderPath, d.category, d.date || d.year, d.language, norm(d.title), gso].join("|");
-        const prevDoc = kept.get(dk);
+        // Several copies of one document (c.1, c.2, Word and PDF, the same agenda in two folders): keep one —
+        // a PDF first, then a copy that is not in a "Drafts" folder.
+        d.archives_path = folderPath;
+        d.archives_name = name;
+        // (a group's G.S.O. number is already in a generic title; a named history in two scans — a PDF and its
+        // OCR'd Word copy — is one document)
+        const dk = [d.category, d.date || d.year, d.language, norm(d.title), d.district].join("|");
+        // the same file name in two folders ("Revision J (2012)/…" and "District 5 Guidelines/2012/…")
+        const nk = ["name", d.category, d.date || d.year, name.toLowerCase().replace(/\s*\(\d+\)(?=\.[a-z0-9]{2,5}$)/, "")].join("|");
+        const prevDoc = kept.get(dk) || kept.get(nk);
         if (prevDoc) {
-          if (prevDoc.fmt !== "pdf" && d.fmt === "pdf") Object.assign(prevDoc, d);
+          const draft = (x) => /(^|\/)drafts?(\/|$)/i.test(x.archives_path || "");
+          const dup = (x) => /\(\d+\)\s*$/.test(String(x.archives_name || "").replace(/\.[a-z0-9]{2,5}$/i, ""));
+          const better =
+            (prevDoc.fmt !== "pdf" && d.fmt === "pdf") ||
+            (prevDoc.fmt === d.fmt && draft(prevDoc) && !draft(d)) ||
+            (prevDoc.fmt === d.fmt && draft(prevDoc) === draft(d) && dup(prevDoc) && !dup(d)) ||
+            (prevDoc.fmt === d.fmt && draft(prevDoc) === draft(d) && prevDoc.district && !d.district); // the Area's folder over a district's copy
+          if (better) Object.assign(prevDoc, d);
           continue;
         }
         kept.set(dk, d);
+        kept.set(nk, d);
         seenUrl.add(d.url);
         seenDrive.add(f.i);
         docs.push(d);
@@ -1050,6 +1203,7 @@ function loadDocuments() {
       sort: c.sort,
       description_en: c.description_en,
       description_es: c.description_es,
+      archives_url: c.archives_url,
       expect_yearly: c.expect_yearly,
       gap_email: c.gap_email,
       url: `/documents/${c.key}/`,

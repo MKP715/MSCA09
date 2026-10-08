@@ -140,6 +140,16 @@ eleventyComputed:
           </ul>
         </section>
 
+        {%- if c.archives_url %}
+        <a href="{{ c.archives_url }}" target="_blank" rel="noopener" class="card card-hover group flex items-start gap-4 p-5" style="{{ 'amber' | accent }}">
+          <span class="icon-tile-soft">{% icon "landmark", "size-5" %}</span>
+          <span class="min-w-0">
+            <span class="block font-display font-bold text-ink-950">{{ "documents.cat_archives_title" | t(L) }}</span>
+            <span class="mt-1 block text-sm text-ink-600">{{ "documents.cat_archives_body" | t(L) }}</span>
+          </span>
+          <span class="sr-only">{{ "documents.new_tab" | t(L) }}</span>
+        </a>
+        {%- endif %}
         {%- if c.archive %}
         <a href="{{ '/documents/archive/' | lurl(L) }}" class="card card-hover group flex items-start gap-4 p-5" style="{{ 'iris' | accent }}">
           <span class="icon-tile-soft">{% icon "archive", "size-5" %}</span>

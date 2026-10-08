@@ -25,7 +25,7 @@ districts.stat.counties,{n} counties,{n} condados,
 districts.stat.cities,{n} cities & communities,{n} ciudades y comunidades,
 districts.map.title,Map of the districts,Mapa de los distritos,
 districts.map.hint,Tap a pin to see the district and its business meeting.,Toca un marcador para ver el distrito y su reunión de negocios.,
-districts.map.atlas,"Printable Area map (2024 atlas, PDF) — prints at 11 × 17 in or smaller","Mapa del Área para imprimir (atlas 2024, PDF): se imprime en 11 × 17 pulgadas o menos","Link text under the district map; the address is districts.map.atlas.url. Not shown yet: needs a line in src/pages/districts.njk. Atlas from the Area 09 Archives (Maps and Atlases): image only, no personal details."
+districts.map.atlas,"Printable Area map (2024 atlas, PDF) — prints at 11 × 17 in or smaller","Mapa del Área para imprimir (atlas 2024, PDF): se imprime en 11 × 17 pulgadas o menos","Link text under the district map (src/pages/districts.njk, hero and map card); the address is districts.map.atlas.url. Atlas from the Area 09 Archives (Maps and Atlases): image only, no personal details."
 districts.map.atlas.url,https://drive.google.com/file/d/1pz_xheaRlnbZi56sIDVDab6veSw1Y9Zr/view,https://drive.google.com/file/d/1pz_xheaRlnbZi56sIDVDab6veSw1Y9Zr/view,"MSCA-Area-09-Map-72x48-2024.pdf (Area 09 Atlas 2024, 72 x 48 in)"
 districts.soon.title,Coming up at the districts,Próximas reuniones de distrito,
 districts.jump,Go to a district,Ir a un distrito,
@@ -188,7 +188,7 @@ districts.cities.spanish_lead,Spanish-speaking A.A. groups in this district are 
 districts.people.title,Trusted servants,Servidores de confianza,
 districts.people.panel,Panel {panel} · {years},Panel {panel} · {years},
 districts.people.lead,"The district's five officers: DCMC, Alternate DCMC, Secretary, Treasurer and Registrar. Write to them at their service addresses.","Los cinco oficiales del distrito: CMCD, CMCD alterno(a), secretario(a), tesorero(a) y registrador(a). Puedes escribirles a sus direcciones de servicio.","District rosters list the five district officers only (data/trusted-servants.csv); a seat the district has not reported shows 'Not provided yet'."
-districts.people.lead_es,"The district's five officers: DCM (MCD), Alternate DCM, Secretary, Treasurer and Registrar. Write to them at their service addresses.","Los cinco oficiales del distrito: MCD, MCD alterno(a), secretario(a), tesorero(a) y registrador(a). Puedes escribirles a sus direcciones de servicio.",Used on the six Spanish-speaking district pages (Districts 20–25) instead of districts.people.lead.
+districts.people.lead_es,"The district's five officers: DCMC (MCD), Alternate DCMC (Alt. MCD), Secretary, Treasurer and Registrar. Write to them at their service addresses.","Los cinco oficiales del distrito: MCD, MCD alterno(a), secretario(a), tesorero(a) y registrador(a). Puedes escribirles a sus direcciones de servicio.",Used on the six Spanish-speaking district pages (Districts 20–25) instead of districts.people.lead.
 districts.people.dcmc,DCMC,CMCD,
 districts.people.dcmc_es,DCM (district chair),MCD (coordinador(a) del distrito),
 districts.people.none,The names for this panel have not reached the Area website yet.,Los nombres de este panel todavía no han llegado al sitio del Área.,

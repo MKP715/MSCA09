@@ -1,0 +1,4 @@
+drive_id,date,title_en,title_es,notes
+"# Corrections for single files in the Area 09 Archives' Drive folders (data/archives/collections.csv) whose file name gives the wrong date or a poor title. date = YYYY-MM-DD, YYYY-MM or YYYY; title_en / title_es replace the title made from the file name (leave blank to keep it). The Archives' own file is not changed.",,,,
+1-ZtHM4_45CQKVpO9ALHWfW4qhhV-ViRo,2026-03-08,,,"03-Minutes-…-Long-Beach-02.08.2026-English.pdf: the March 8, 2026 ASC in Long Beach (the agenda is 03.08.2026); the file name has 02 for the month"
+1e6wYoToHE1Udokjvcj47qGep74q0pho0,2026-03-08,,,"03-Minutes-…-Long-Beach-02.08.2026-Spanish.pdf: the March 8, 2026 ASC in Long Beach (the agenda is 03.08.2026); the file name has 02 for the month"
