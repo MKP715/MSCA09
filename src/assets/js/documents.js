@@ -235,6 +235,7 @@
                 lang ? lang.label_en + " " + lang.label_es : "",
                 maps.fmt[r.f] ? maps.fmt[r.f].label + " " + r.f : r.f,
                 r.a ? "archive archivo" : "",
+                r.s ? "area 09 archives archivos historicos" : "",
                 r.c === "minutes" ? "minutas" : "", // what many Spanish speakers call minutes
               ].join(" ")
             );
@@ -268,6 +269,7 @@
               dist: distLabel,
               comm: commLabel,
               archive: !!r.a,
+              arch: !!r.s,
               langShort: lang ? lang.short : "",
               langName: lang ? lang.label : "",
               fmt: maps.fmt[r.f] ? maps.fmt[r.f].label : (r.f || "").toUpperCase(),

@@ -307,7 +307,7 @@ scripts: ["/assets/js/content.js"]
       <p class="eyebrow mb-2" style="{{ 'lilac' | accent }}">{% icon "quote", "size-4" %}{{ "about.preambles_eyebrow" | t(L) }}</p>
       <h2 id="preambles-title" class="h-section text-balance">{{ "about.preambles_title" | t(L) }}</h2>
     </div>
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2 2xl:gap-8">
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2 2xl:grid-cols-3 2xl:gap-8">
       <figure class="preamble-card flex flex-col" style="background: linear-gradient(135deg, var(--color-ocean-700), var(--color-iris-700));">
         <span class="pointer-events-none absolute -top-4 right-6 font-display text-[10rem] leading-none text-white/10" aria-hidden="true">“</span>
         <p class="relative text-xs font-bold tracking-[0.18em] uppercase">{{ "about.preamble_kicker" | t(L) }}</p>
@@ -332,6 +332,13 @@ scripts: ["/assets/js/content.js"]
           {%- endfor %}
         </blockquote>
         <figcaption class="relative mt-6 text-sm text-white">{{ "about.gsr_credit" | t(L) }}</figcaption>
+      </figure>
+      {#- The Responsibility Declaration (1965 International Convention), read at many meetings -#}
+      <figure class="preamble-card flex flex-col lg:col-span-2 2xl:col-span-1" style="background: linear-gradient(135deg, var(--color-sage-800), var(--color-sea-700));">
+        <span class="pointer-events-none absolute -top-4 right-6 font-display text-[10rem] leading-none text-white/10" aria-hidden="true">“</span>
+        <h3 class="relative font-display text-2xl font-bold sm:text-3xl">{{ "about.responsibility_title" | t(L) }}</h3>
+        <blockquote class="relative mt-5 text-lg leading-relaxed 2xl:text-xl"><p>{{ "about.responsibility_text" | t(L) }}</p></blockquote>
+        <figcaption class="relative mt-auto pt-6 text-sm text-white/95">{{ "about.responsibility_credit" | t(L) }}</figcaption>
       </figure>
     </div>
   </div>

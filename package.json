@@ -23,6 +23,7 @@
     "clean": "node -e \"require('fs').rmSync('_site',{recursive:true,force:true})\"",
     "check:calendar": "node scripts/check-calendar.mjs",
     "drive:ids": "python scripts/drive_ids.py",
+    "archives": "node scripts/archives-index.mjs",
     "social-card": "python scripts/build-social-card.py"
   },
   "dependencies": {

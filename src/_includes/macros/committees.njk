@@ -29,6 +29,7 @@
 {%- set s = o.s -%}
 {%- if s.open %}<span class="text-coral-700">{{ "people.open_position" | t(o.lang) }}</span>
 {%- elif s.name %}{{ s.name }}{% if s.unconfirmed %} <span class="chip chip-soft align-middle text-[11px] font-semibold">{{ "people.to_confirm" | t(o.lang) }}</span>{% endif %}
+{%- elif s.unknown %}<span class="font-medium text-ink-500">{{ "people.not_provided" | t(o.lang) }}</span>
 {%- else %}<span class="font-medium text-ink-500">{{ ("people.name_tbc" if s.unconfirmed else "committees.unnamed") | t(o.lang) }}</span>{% endif %}
 {%- endmacro %}
 
@@ -126,7 +127,9 @@
   {%- if r.approved %}<span class="text-xs text-ink-500">{{ "committees.approved" | t(L, { date: r.approved | cmApproved(L) }) if r.kind in ["guideline", "pending"] and r.status != "reference" else (r.approved | cmApproved(L)) }}</span>{% endif -%}
 {%- endset -%}
 {%- if r.url %}
-<a href="{{ r.url }}" target="_blank" rel="noopener" class="cm-res group">
+{#- a page of this site ("/documents/archive/") gets the language and path prefix and opens in the same tab -#}
+{%- set internal = r.url.charAt(0) == "/" and r.url.charAt(1) != "/" %}
+<a href="{{ (r.url | lurl(L)) if internal else r.url }}" {% if not internal %}target="_blank" rel="noopener"{% endif %} class="cm-res group">
   <span class="cm-res-ico">{% icon ico, "size-5" %}</span>
   <span class="min-w-0 flex-1">
     <span class="block font-semibold text-ink-900 group-hover:text-[var(--a-800)]">{{ title }}</span>

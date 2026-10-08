@@ -14,7 +14,8 @@
 //               role_en, role_es (same as position_*), position_sort, name, email, email_alt,
 //               district, committee, language, status, open, filled, unnamed, unconfirmed, completed, notes }
 //   status: Filled | Open | Unnamed (role mailbox only) | Unconfirmed (pages mark the name "to be confirmed",
-//   or say "name to be confirmed" when the name column is empty) | Completed.
+//   or say "name to be confirmed" when the name column is empty) | Unknown (nobody has told the Area who holds
+//   the seat, or that it is open: pages say "not provided yet") | Completed.
 import { readCsv, num } from "../_lib/csv.js";
 
 const slugify = (s) =>
@@ -26,12 +27,13 @@ const slugify = (s) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 
-/** Normalise the status column: Filled | Open | Unnamed | Unconfirmed | Completed. */
+/** Normalise the status column: Filled | Open | Unnamed | Unconfirmed | Unknown | Completed. */
 function normStatus(row) {
   const s = String(row.status || "").trim().toLowerCase();
   if (/^(open|vacant|vacante|abierto)/.test(s)) return "Open";
   if (/^unnamed/.test(s)) return "Unnamed";
   if (/^(unconfirmed|to confirm|tbc|por confirmar)/.test(s)) return "Unconfirmed";
+  if (/^(unknown|not provided|pending|sin informaci)/.test(s)) return "Unknown";
   if (/^complet/.test(s)) return "Completed";
   if (!row.name && !s) return "Open";
   return "Filled";
@@ -74,7 +76,7 @@ function loadServants() {
 
   const all = rows.map((r) => {
     const status = normStatus(r);
-    const name = status === "Open" ? "" : safeName(r.name);
+    const name = status === "Open" || status === "Unknown" ? "" : safeName(r.name);
     return {
       panel: num(r.panel),
       level: (r.level || "").toLowerCase(),
@@ -99,6 +101,8 @@ function loadServants() {
       filled: status === "Filled" || status === "Unconfirmed",
       unnamed: status === "Unnamed",
       unconfirmed: status === "Unconfirmed",
+      // Unknown: an empty row that keeps every district's roster the same shape until the district sends the details
+      unknown: status === "Unknown",
       completed: status === "Completed",
       notes: r.notes || "",
     };

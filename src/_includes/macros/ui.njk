@@ -133,7 +133,7 @@
   <span class="grid size-12 shrink-0 place-items-center rounded-full font-display text-lg font-bold text-white" style="background: linear-gradient(135deg, var(--a-600), var(--a-800));" aria-hidden="true">{{ (o.name | initials) or "?" }}</span>
   <div class="min-w-0 flex-1">
     <p class="text-xs font-bold tracking-wide text-[var(--a-700)] uppercase">{{ o.role }}</p>
-    <p class="mt-0.5 font-display text-lg font-bold text-ink-950">{{ o.name or ("people.open_position" | t(o.lang)) }}</p>
+    <p class="mt-0.5 font-display text-lg font-bold {{ 'text-ink-950' if o.name else 'text-ink-500' }}">{{ o.name or o.placeholder or ("people.open_position" | t(o.lang)) }}</p>
     {%- if o.note %}<p class="mt-1 text-sm text-ink-500">{{ o.note }}</p>{% endif %}
     {%- if o.email %}<div class="mt-2 text-sm">{{ emailLink({ email: o.email, lang: o.lang }) }}</div>{% endif %}
   </div>

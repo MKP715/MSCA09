@@ -134,7 +134,9 @@ scripts: ["/assets/js/districts.js"]
         <div class="rounded-[2rem] bg-white/10 p-2 ring-1 ring-white/20 backdrop-blur-sm">
           {{ mapBlock({ id: "dx-map", points: points, height: "h-[32rem] xl:h-[36rem] 2xl:h-[40rem]", lang: L }) }}
         </div>
-        <p class="mt-3 flex items-center gap-2 text-sm text-white/90">{% icon "mouse-pointer-click", "size-4" %}{{ "districts.map.hint" | t(L) }}</p>
+        <p class="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-white/90"><span class="inline-flex items-center gap-2">{% icon "mouse-pointer-click", "size-4" %}{{ "districts.map.hint" | t(L) }}</span>
+          {#- the Area atlas kept by the Area 09 Archives (data/text/districts.csv: districts.map.atlas.url) -#}
+          <a href="{{ 'districts.map.atlas.url' | t(L) }}" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 font-semibold text-white underline-offset-2 hover:underline">{% icon "printer", "size-4" %}{{ "districts.map.atlas" | t(L) }}</a></p>
       </div>
     </div>
 
@@ -212,6 +214,7 @@ scripts: ["/assets/js/districts.js"]
       <h3 class="sr-only">{{ "districts.map.title" | t(L) }}</h3>
       {{ mapBlock({ id: "dx-map-m", points: points, height: "h-[68svh] min-h-[22rem] max-h-[40rem]", lang: L }) }}
       <p class="mt-3 flex items-center gap-2 text-sm text-ink-500">{% icon "hand", "size-4 shrink-0" %}{{ "districts.map.hint" | t(L) }}</p>
+      <a href="{{ 'districts.map.atlas.url' | t(L) }}" target="_blank" rel="noopener" class="mt-2 inline-flex items-center gap-2 text-sm font-semibold text-ocean-700 hover:underline">{% icon "printer", "size-4 shrink-0" %}{{ "districts.map.atlas" | t(L) }}</a>
     </div>
   </div>
 </section>

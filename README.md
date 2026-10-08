@@ -106,7 +106,7 @@ and CSV file and come from `data/settings.csv`, so nothing needs editing when th
 
 | I want to… | Do this |
 |---|---|
-| Announce something on the home page | Add a row to `data/announcements.csv` with a `start` and `end` date (YYYY-MM-DD). It appears on `start` and disappears by itself after `end`. Set `pin` to `yes` to keep it first. |
+| Announce something on the home page | Add a row to `data/announcements.csv` with a `start` and `end` date (YYYY-MM-DD). It appears on `start` and disappears by itself after `end`. Put the event's day (or the deadline) in `event_date`: the home page lists announcements in event order, soonest first. Set `pin` to `yes` to highlight it. |
 | Change a sentence or a button | Find the words in `data/text/*.csv` (GitHub's search, or press `t` on github.com and type the file name), then change the `en` and `es` columns. |
 | Record a new trusted servant | Edit their row in `data/trusted-servants.csv`: `name` must be first name + last initial (`Maria G.`), and set `status` to `Filled`. Other values of `status`: `Open` (vacant: leave `name` empty; the site shows a "help wanted" badge), `Unnamed` (the role mailbox is known but no name is published), `Unconfirmed` (someone serves but the name still has to be confirmed: the site marks it "to be confirmed"), `Completed` (an ad-hoc committee that has finished its work). |
 | Update a district's cities, website or about text | Edit its row in `data/districts.csv`. The meeting time and place come from the calendar, not from this file. Spanish names of sub-districts go in `subdistricts_es`. |
@@ -282,6 +282,28 @@ If the repository has `GOOGLE_API_KEY` and `DRIVE_FOLDER_ID` secrets (see
 [One-time setup](#one-time-setup-webmaster)), every build lists the Drive folder itself. A file dropped into `docs/` then appears on the site within three hours,
 with a title taken from its file name, without any CSV edit. A row in `data/documents/` still wins, for a
 better title or to hide a file (`publish` = `no`).
+
+### The Area 09 Archives' collections
+
+The Archives Committee keeps the Area's records since 1958 in its own public Google Drive folders, linked
+from [msca09aa-archives.org](https://msca09aa-archives.org/). `data/archives/collections.csv` lists every
+one of those folders and files and how the site shows it:
+
+- `mode` = `files` — every file in the folder joins its library shelf (`category`), next to the Area's own
+  copies, with an "Area 09 Archives" tag. When the library already has the same meeting's minutes or
+  agenda, the Area's copy is shown and the Archives' copy is not repeated.
+- `mode` = `link` — one entry in "The Archives' collections" on `/documents/archive/` that opens the folder
+  (large working collections: Conference material, PRAASA recordings, committee minutes …).
+- `mode` = `off` — not shown.
+
+Once a day the build re-reads those folders (`scripts/archives-index.mjs`, no key needed — it uses Drive's
+public folder view) and commits the list to `data/archives/files.json`, so new scans appear by themselves
+and the site still builds if Google does not answer. Run `npm run archives -- --force` to re-read everything.
+
+The Area's Drive holds shortcuts to the same folders in `MSCA09AA/MSCA09AA-archives/` (never copies).
+`scripts/archives-shortcuts.gs` makes them: paste it into script.google.com while signed in as the
+owner of the MSCA09AA folder and run `syncArchivesShortcuts` (instructions at the top of the file);
+run it again after adding rows to `collections.csv`.
 
 ---
 

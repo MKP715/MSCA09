@@ -1,6 +1,6 @@
 # Area 09 website — what the Area needs to do
 
-*As of October 7, 2026 · Panel 76*
+*As of October 8, 2026 · Panel 76*
 
 This list holds everything the Area still needs to **check, confirm, supply or correct** so the new website is complete and accurate. Each item says **who** acts, **what** to do, **where** it shows and **how**. Send information to **webmaster@msca09aa.org** — first name + last initial and role mailboxes only; never send personal details in a group e-mail. When an item is done, tick its box or tell the webmaster which item (its number, or the role and first words).
 
@@ -19,10 +19,10 @@ The site is live at **[mkp715.github.io/MSCA09](https://mkp715.github.io/MSCA09/
 | Delegate | 5 | Clean copy of the Sept 2026 report |
 | Alternate Delegate | 7 | Updated Panel 76 tool kits |
 | Technology Chair | 5 | 2.4 Test every role mailbox |
-| Webmaster | 11 | 2.9 Owner's private clean-up checklist |
-| Committee chairs | 25 | YPAA: Marissa S. or M.? · all: confirm your mailbox |
-| Districts (DCMCs / MCDs) | 32 | Districts 10 & 15: Dec 13 ASC venue · District 8: item 2.7 |
-| Calendar keeper | 1 + about 40 fixes (section 4) | 1.3 Oct 11 entry: start at 9:00 |
+| Webmaster | 12 | 2.9 Owner's private clean-up checklist |
+| Committee chairs | 32 | Archives: confirm the collections now on the site · YPAA: Marissa S. or M.? |
+| Districts (DCMCs / MCDs) | 34 | Your five officers (table) · Districts 10 & 15: Dec 13 ASC venue |
+| Calendar keeper | 1 + about 43 fixes (section 4) | 1.3 Oct 11 entry · new: 2027 Archives Workshop |
 | Everyone with an old-site login | 1 | 2.2 Stop editing the old site |
 
 Shared items are counted once, under the role that leads.
@@ -166,6 +166,7 @@ Items in sections 1, 2, 5 and 6 are not repeated; each role starts with a pointe
 - [ ] **[Soon] Do** review the 67 `-redacted` copies that are themselves still held (held.csv ids ending in `-redacted`, e.g. the 2018–2020 Area minutes, District 8 minutes 2020–2023, the 1980–1999 motions lists): release each one a person finds clean as a new current.csv row, or leave it held with a note. *Where:* [data/documents/held.csv](data/documents/held.csv); process in [scripts/README-documents.md](scripts/README-documents.md).
 - [ ] **[Soon] Correct** [data/motions.csv](data/motions.csv): use one Spanish name for the Archives Workshop in 76-3 (the summary says "Taller Nacional de Archivistas", the minutes "Taller Nacional de Archivos" — once Archives confirms); add notes — 76-2 "motion says November, 2026 calendar says Oct (?)", 76-3 "not in the 2027 Draft #1 budget", 76-4/76-5 "Rev. 9/26 budget shows $2,000 / $1,700 — Sept 13 result to be confirmed".
 - [ ] **[Soon] Do** plan the next home-page announcements (Servathon ends Nov 14, Forum Dec 6): Dec 12 workshop, Dec 13 ASC, the 2027 calendar, the Grapevine & La Viña event. Move the budget-notice end date when the vote is scheduled. *Where:* home page ([data/announcements.csv](data/announcements.csv)).
+- [ ] **[Soon] Do** re-redact the 1959–69 Assembly Actions copy (held since Oct 8: pages 1–2 still show about eight members' full names), check every page, then set publish back to yes. *Where:* [data/documents/archive-2021.csv](data/documents/archive-2021.csv), row `archive-misc-2021-assembly-actions-1959-69-en-redacted`.
 - [ ] **[When possible] Correct** document data: "2021 Jan Report District 13" is Districts 1 & 3; tag the eight 2011 District 7 agendas d07; the May 19, 2024 minutes are an Assembly; set meeting_type ASC on the English "Minutes – March 2019" and "Minutes – December 2019" archive rows if they are the ASC minutes; date and re-file undated or misfiled archive minutes (nine District 6 minutes on the Area shelf, two 2008 agendas filed as minutes); move the Sept 13, 2026 agendas and four Treasurer A/P files (Jan 11 and Feb 8 reports filed under docs/agendas/2026/; the Sept 13 report and the H1 statement at the root of reports/Treasurer AP/) into their docs/ folders; tag the 2021–2022 audit reports `audit`; add old district numbers (d02 "2; 13", d10 "10; 16", d09 "9; 31"). *Where:* `data/documents/*.csv`.
 - [ ] **[When possible] Do** replace the example name on `/about/policy/` with an invented one (it matches a current servant); add a short bilingual accessibility statement there; and, if Motion 76-8 passes, plan the officer changes before Panel 78.
 
@@ -184,9 +185,16 @@ Items in sections 1, 2, 5 and 6 are not repeated; each role starts with a pointe
 
 #### Archives
 
-- [ ] **[Soon] Confirm** the months of Open House and Heritage Day (site: March and October; recent ones differ), and whether the Nov 21 committee meeting is replaced by District 8's Heritage Day at the same place and time. Send the official web address and one name for the 2027 National Archives Workshop (Sept 23–26, San Bernardino). *Where:* `/committees/archives/`, the calendar.
+- [ ] **[Soon] Confirm** whether the Nov 21 committee meeting is replaced by District 8's Heritage Day at the same place and time. (Since Oct 8 the site follows msca09aa-archives.org: Open House *each spring*, Heritage Day *each fall*; the National Archives Workshop page is msca09aa-archives.org/naaaw2027.) *Where:* `/committees/archives/`, the calendar.
+- [ ] **[Soon] Confirm** what the site now shows from the Archives' Google Drive: under *The Archives' collections* on `/documents/archive/`, and about 3,100 scans (minutes and agendas since 1958, calendars, newsletters, guidelines and bylaws, maps, group histories, Open House 2025) on the library shelves with an **"Area 09 Archives"** tag, next to the Area's own copies. The site re-reads your folders once a day, so new scans appear by themselves — name them with the date (`1975.04.13`) and `English`/`Spanish`, as most already are, and avoid members' full names in file names. Tell the webmaster if a folder should be left out or listed file by file. Sign-in sheets, directories, contact and phone lists and rosters are never listed, and 20 single files that print members' home addresses, phone numbers or personal e-mails are held from the site's list (they stay in your Drive). *Where:* `/documents/archive/`, `/documents/minutes/` etc.
+- [ ] **[Soon] Do** share the **Area agendas 1960–1969** folder with "anyone with the link" (the link on your Agendas page asks for a sign-in); the site lists it as soon as it opens.
+- [ ] **[Soon] Decide** whether a public link is wanted for the **PRAASA speaker recordings** (on your site the button sits under "Log in to view content"), and whether the **2025 International Convention recordings** may be shared (A.A. World Services holds the rights to Convention recordings). **Both are off on the site** until you confirm; each then returns as one card under *The Archives' collections*. *Where:* `/documents/archive/`.
+- [ ] **[When possible] Correct** on msca09aa-archives.org (found while reading it on Oct 8): About page phone "(951) 783-0845" → 785-0845, and it also prints a member's personal cell number — the repository line and archives@msca09aa.org are enough; Terms of Use ZIP 95303 → 92503; Heritage Day page: the first "Download" under the 37th Día de la Herencia opens Carmen D.'s Sept 2025 recording (Antonia's is not linked), the 32nd heading lacks its year, and "October 19, 2023" (35th) was a Thursday — confirm; NAAAW page: logo "27th" vs forms "29th", "September 23th", "March Airfield Museum" → March Field Air Museum; Vancouver page "20205"; Timeline page still titled "test – March 28, 2020"; the Calendars page labels its links "Agendas"; Agendas/Calendars pages say the Area separated "October 1959" (your Chronicles: Sept 7, 1958); District 17 link aadistrict17.org is parked (use aadistrict17.info); Coordinate Committees page: All South Bay Central Office is now 3625 Del Amo Blvd, Suite 345, Torrance (asbco.org), and other office addresses there are older than the site's; USA/Canada list: Area 05 is area05aa.org, the Wyoming link is broken. In the District maps folder, the 2017 printout of the old District 6 page prints DCMs' personal e-mails; the 4-Area DCM Sharing folder has contact-information lists. *Where:* msca09aa-archives.org.
+- [ ] **[When possible] Confirm** the district founding dates where your own records disagree (the site follows *The Chronicles*, Dec 2023): District 22 1988 or 1990; 20 1985 or 1986; 21 1987 or 1986; 15/16 1975 or 1973; 11 Jan 1961, 1960 or 1962; 19 1980 or 1980–84; 31 formed from District 9 (1989) or District 30 (1990), merged 1996. *Where:* `/districts/`, `/about/`.
+- [ ] **[When possible] Confirm** whether Areas 05, 08 and 93 co-host the 2027 National Archives Workshop (your page heading names four Areas, the forms say "Hosted by Area 09"), and whether "Founders Day" is an Area 09 event. *Where:* `/committees/archives/`, the home-page notice.
 - [ ] **[When possible] Supply** approved versions, if they exist, of archive minutes that are posted as drafts: ASC Dec 2009, ASC Aug 2017 and Dec 2017 (EN/ES), District 8 Feb 2021. *Where:* `/documents/minutes/`. *Why:* a draft is shown as the record.
-- [ ] **[When possible] Verify** the history facts on `/about/`, `/districts/` and `/about/structure/`: "since 1959" vs the Sept 7, 1958 assembly; "GSR Preamble written here in 1986"; 1971 rename; Servathon since 1973; Foro since 1992. Supply the year District 13 merged into District 2 and when District 18 was formed. With the Delegate: confirm the neighboring Areas (05, 08, 93) and whether Needles and Baker are in Area 09.
+- [ ] **[When possible] Verify** the history facts on `/about/`, `/districts/` and `/about/structure/`: "since 1959" vs the Sept 7, 1958 assembly; "GSR Preamble written here in 1986"; 1971 rename (your Area minutes give Jan 17 and July 11, 1971, your Agendas page May and August — the site now gives no months); Servathon since 1973; Foro since 1992. With the Delegate: confirm the neighboring Areas (05, 08, 93) and whether Needles and Baker are in Area 09.
+- [ ] **[When possible] Verify** when District 13 merged into District 2. The site now says only "later": your records show District 13 active in 1970–1984 (Districts 1–4 re-districted in April 1970, "District 13 is new" in the 1971 minutes, eight groups in 1972, a district meeting it hosted in Dec 1984), and your group-history folder is labelled "District 13 (until 1996)". Also confirm when the Assembly approved District 18: the Area committee approved it tentatively on July 8, 1979, "pending approval of Assembly", and the site now says 1979. *Where:* `/districts/`, `/districts/d02/`, `/districts/d18/`, `/about/`.
 
 #### Accessibilities
 
@@ -243,22 +251,25 @@ Reply to webmaster@msca09aa.org with **first name + last initial and role mailbo
 
 #### All or several districts
 
-- [ ] **[Soon] Supply / Confirm** your officers: send names (or "vacant") for the middle column, and say whether the right-column seats are still open. *Where:* your district page (officers).
+- [ ] **[Soon] Supply / Confirm** your five district officers — **DCMC, Alternate DCMC, Secretary, Treasurer and Registrar** — each with first name + last initial and a role mailbox (or "vacant"). Since Oct 8 every district page lists exactly these five seats, in this order, and nothing else; a seat the Area has not been told about shows **"Not provided yet"**. DCMs, alternates of other seats and district committee chairs are no longer listed on the site (they stay in the district's own records). *Where:* your district page (Trusted servants) and `/about/panel/#districts`.
 
-  | District | Send names or "vacant" | Still open? |
+  | District | Not provided yet (send name + mailbox, or "vacant") | Listed without a service e-mail (send a role mailbox) |
   |---|---|---|
-  | 2 | Secretary | Convention Liaison |
-  | 4 | — | Literature, Grapevine/La Viña, Corrections, Archives, Accessibility, H&I, Harbor Area Liaison |
-  | 5 | — | six sub-district DCMs, Accessibilities, CPC, GSR School |
-  | 10, 14, 21 | Alt. DCMC, Secretary, Treasurer, Registrar | — |
-  | 12 | — | DCM Sub-Districts A and B, CEC, Guidelines Audit, Pacific Regional Events, Sponsorship Workshop |
-  | 15 | Alt. DCMC, Registrar, Archives (sources disagree) | H&I, Literature, Grapevine, PI, Accessibilities |
-  | 17 | — | DCM-D, CEC |
-  | 18 | — | DCM 18A, 18M, 18W, Public Information |
-  | 19 | Alt. DCMC, Registrar | — |
-  | 20 | Secretary, Treasurer, Registrar | — |
-  | 23 | Registrar | — |
-  | 24, 30 | Alt. DCMC / Alt. MCD | — |
+  | 2 | Secretary | Alternate DCMC, Treasurer, Registrar |
+  | 5 | — | Alternate DCMC, Secretary, Registrar |
+  | 7 | — | Alternate DCMC, Secretary, Treasurer, Registrar |
+  | 8 | — | Alternate DCMC |
+  | 9 | — | Alternate DCMC, Secretary, Treasurer |
+  | 10, 14 | Alternate DCMC, Secretary, Treasurer, Registrar | — |
+  | 15 | (Alternate DCMC and Registrar shown as open — still open?) | Secretary, Treasurer |
+  | 17 | — | Alternate DCMC, Secretary, Treasurer, Registrar |
+  | 19 | Alternate DCMC, Registrar | Secretary, Treasurer |
+  | 20 | Secretary, Treasurer, Registrar | Alternate DCMC (Alt. MCD) |
+  | 21 | Alternate DCMC (Alt. MCD), Secretary, Treasurer, Registrar | — |
+  | 22, 25 | — | Alternate DCMC (Alt. MCD), Secretary, Treasurer, Registrar |
+  | 23 | Registrar | Alternate DCMC (Alt. MCD), Secretary, Treasurer |
+  | 24 | Alternate DCMC (Alt. MCD) | Secretary, Treasurer, Registrar |
+  | 30 | Alternate DCMC | Treasurer |
 
 - [ ] **[Soon] Supply** the *name* of each meeting place listed only by street address, and confirm it is a public place, never a home: Districts 18, 19, 20, 21, 22 (the Spanish Coachella Valley intergroup's room?), 23, 24, 25. *Where:* your district page and calendar series.
 - [ ] **[Soon] Supply** date, place and flyer (role contacts only) of district events announced Aug 9: District 17 Unity Day (Oct 25 — urgent), 14 Ice Cream Social (Nov 14, same day as the Servathon), 12 Traditions Day (Nov), 22 local forum (Nov 22), 25 anniversary (Dec 12), 7 December event. *Where:* the calendar and `/events/`.
@@ -273,6 +284,7 @@ Reply to webmaster@msca09aa.org with **first name + last initial and role mailbo
 - [ ] **[Soon] Supply** the next Inter-District meeting, Hispanic Intradistrict session and 2027 Spanish Inter-District Pre-Conference (date, host, venue); the Aug 2, Aug 30 and Sept 27, 2026 meetings are missing too. Also District 21's workshop table, and whether the board's secretary and treasurer are listed. *Where:* `/committees/inter-district-hispanic/`, the calendar.
 - [ ] **[Soon] Confirm** where groups should mail contributions: for 20, 23, 24, 25 the page shows the meeting room; for 21 an event hall. Send a P.O. box, or "none". *Where:* those district pages.
 - [ ] **[Soon] Confirm** current phone numbers of the Oficina Intergrupal Hispana del Sur de Orange (20, 24) and del Valle de Coachella (22) (website and aa.org differ), and (23) whether the Spanish-speaking Riverside office exists. *Where:* those district pages, `/newcomers/`.
+- [ ] **[Soon] Confirm** three Spanish-speaking offices from the Archives' Coordinate Committees list, added to the site **hidden** until you confirm: Oficina Central Hispana Intergrupal de Riverside (10838 Hole Ave. — where District 23 meets), Oficina Intergrupal de Habla Hispana del Norte de Orange (330 N. State College Blvd., Anaheim) and Oficina Intergrupal de San Bernardino (2695 Del Rosa Ave.). For each: still open? current phone? which districts? (MCDs of 23, 24, 25.) *Where:* `/newcomers/` and those district pages.
 - [ ] **[When possible] Decide** (Area Chair and Technology Chair) a role mailbox for the Inter-District Hispanic Chair (mail now goes to chair@). *Where:* `/committees/inter-district-hispanic/`.
 
 #### District 1 & 3 — DCMC
@@ -329,6 +341,7 @@ Your item is **2.7** (Zoom meeting). Note: your Nov 21 Heritage Day overlaps the
 #### District 21 — MCD
 
 - [ ] **[When possible] Verify** "1st, 2nd & 4th Wednesday, 8:00–9:30 PM", and what happens on 3rd and 5th Wednesdays. *Where:* `/districts/d21/`.
+- [ ] **[When possible] Confirm** the mailing address 16407½ New Hampshire Ave, Gardena — the Sur de la Bahía intergroup on the same street has moved away from Gardena. *Where:* `/districts/d21/`.
 
 #### District 23 — MCD
 
@@ -390,6 +403,9 @@ For the calendar keeper; the role in brackets confirms. The site reads the Area 
 | Date / entry | What is wrong | Fix (field → text) |
 |---|---|---|
 | Oct 16 74th SCAA Convention | Expired hotel rate | Delete the booking text (Convention Liaison) |
+| *New* 29th National A.A. Archives Workshop, Sept 23–26, 2027 | Not in the calendar (it is a home-page notice) | All-day entry at DoubleTree by Hilton San Bernardino, 285 E Hospitality Lane; `MSCA09\|History\|In person`; `Web: https://msca09aa-archives.org/naaaw2027`; fees from the registration form (in the library) as `Cost:`; "Registration opens January 19, 2027" (Archives chair) |
+| *New, past* Archives Open House, Sat Apr 25, 2026, 10 AM–3 PM | Missing (2021, 2023, 2024 are there) | `MSCA09\|History\|In person` at 7111 Arlington Ave, Suite B, Riverside; theme "Slogans and Sayings in A.A."; flyer saved in Drive `docs/events/2026/` for an `IMG:` line (Calendar keeper) |
+| *New* Coachella Valley Hispanic Intergroup, every Thursday 7–9 PM | No Spanish-speaking intergroup in the calendar | Weekly series at 34116 Date Palm Dr., Suite 8, Cathedral City; `MSCA09\|Intergroup\|In person`, `Language: Spanish` (confirm with District 22's MCD first) |
 | Oct 25 So-Cal H&I Dinner | Flyer cannot be shown; first-name-only contact | New flyer as a new version of the same file; contact line → the intergroup's website (Alternate Delegate) |
 | Nov 14 Servathon | Done Oct 7: spelling, theme and schedule. Still: start 10:30 with `Registration: 10:00 AM`? contact | `Email: delegatealt@msca09aa.org` if the Alternate Delegate agrees |
 | Dec 4–6 Pacific Regional Forum | Done Oct 7: hotel name, aa.org registration, group rate until Nov 4 | — |
@@ -501,6 +517,14 @@ For each author, for the next or approved version. All eight files are posted as
 - **Second batch (Oct 7, afternoon):** the Delegate's Oct 11 report (slides, with a phone number, an old page password and flyer phone numbers removed); G.S.O. updates (Self-Support & Finance, Treatment & Accessibilities, Public Information); the Grapevine & La Viña 2027 prices; the Fifth Edition Big Book FAQ; the Spanish plain-language Big Book survey letter (EN/ES); and a public copy of the Ad Hoc Website Committee's final report — all in the library under *Delegate & Conference* or *Reports*, and on the matching committee pages. The 2026–2028 Service Manual is the same file aa.org offers, so the site links aa.org instead of a second copy.
 - **Calendar (Oct 7):** Oct 11 ASC start and details; Oct 17 General Service Panel added; District 9 Service Manual study and ROCYPAA continued through 2027; Dec 12 Hispanic Women's Workshop time, venue and flyers; Service Study flyer replaced and Oct 15 speaker added; GSR School shown on District 1 & 3; Forum hotel details; Servathon spelling; an old 2022 entry that held a pasted Area e-mail cleaned. Flyers from the Secretary's e-mail are filed in Drive (`docs/events/2026/`, `docs/meetings/`) with personal phone numbers blanked.
 - **Home page and committee pages:** Spanish plain-language Big Book survey notice (until Dec 31); Oct 11 times added to the ASC notice; Service Study page notes Oct 15 (not Oct 8); Grapevine & La Viña page notes the 2027 prices; the revised anonymity pamphlet (P-47) is shown as published.
+
+## 8. Done on October 8, 2026
+
+- **District pages:** every district now lists exactly its five officers — DCMC, Alternate DCMC, Secretary, Treasurer, Registrar — in that order; a seat without details shows "Not provided yet" (table under *Districts*). District committee chairs and DCMs are no longer listed.
+- **Home page:** announcements now appear in the order of their events (soonest first; general notices last); the upside-down triangle's tip now reads **AAWS · AA Grapevine**, with a seventh step explaining the Board's two operating companies.
+- **The Area 09 Archives in the library:** the Archives Committee's public Google Drive collections are listed with the Area's own documents (about 3,100 scans back to 1958, tagged "Area 09 Archives"; the Area's copy wins when both exist), group histories appear on each district's page, and `/documents/archive/` has a new *The Archives' collections* section. A new shelf, **Area history & maps**. The list refreshes itself daily.
+- **Saved from msca09aa-archives.org** to the Area's Drive (file properties cleared): The Chronicles of Area 09 History (Rev. U, 2023; Spanish Rev. D), the 45th-anniversary history (EN/ES), How A.A. Came to Los Angeles (1985/86), the court-cards history (EN/ES), the Hispanic districts' history, the first A.A. pamphlet, "What's It All About? – Welcome GSRs", "So You've Been Told to Go to A.A.", the 2027 National Archives Workshop registration forms (EN/ES), four repository photos and the April 2026 Open House flyer.
+- **Archives Committee page and others:** visiting hours, Open House / Heritage Day timing, FAQs, history and glossary terms updated from the Archives' own site; hidden rows for three Spanish-speaking offices (to confirm, above); Areas 06 and 07 and a Spanish-speaking H&I committee added to `/resources/`.
 
 ## How to send information to the webmaster
 

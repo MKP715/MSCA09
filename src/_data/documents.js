@@ -29,6 +29,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { readCsv, readCsvDir, yes, list, num, DATA_DIR } from "../_lib/csv.js";
 import { LANGS } from "../_lib/i18n.js";
+import { shortenArchiveNames, archiveNameRisk } from "../_lib/names.js";
 
 const DRIVE_JSON = path.join(DATA_DIR, "generated", "drive-files.json");
 const STATIC_DIR = path.join(process.cwd(), "src", "static");
@@ -234,6 +235,106 @@ function titleFromName(name) {
   );
 }
 
+// ------------------------------------------------------------------ the Area 09 Archives' collections
+// data/archives/collections.csv says which of the Archives Committee's Drive folders (msca09aa-archives.org)
+// go into the library file by file (mode = files) and which are shown as one card (mode = link);
+// data/archives/files.json is their file list, refreshed by scripts/archives-index.mjs.
+const ARCHIVES_JSON = path.join(DATA_DIR, "archives", "files.json");
+
+function readArchives() {
+  const rows = readCsv("archives/collections.csv").filter((r) => r.key && !r.key.startsWith("#") && r.mode && r.mode !== "off");
+  let data = {};
+  try {
+    if (fs.existsSync(ARCHIVES_JSON)) data = JSON.parse(fs.readFileSync(ARCHIVES_JSON, "utf8")).collections || {};
+  } catch (err) {
+    console.warn(`[documents] could not read data/archives/files.json: ${err.message}`);
+  }
+  return { rows, data };
+}
+
+/** A date from an Archives file name or folder ("…-1975.04.13 c.1.pdf", "…-05.17.2026-English.pdf",
+ *  "Nov - Dec 1980 Newsletter.pdf", "Noticiero_Diciembre 2006.pdf", ".../2018/English/01-January 2018/…"). From 1940 on. */
+function archiveDate(name, folderPath = "") {
+  const ok = (y, mo, d) => y >= 1940 && y <= THIS_YEAR && mo >= 1 && mo <= 12 && (!d || (d >= 1 && d <= 31));
+  const tryOne = (raw) => {
+    const s = String(raw || "").replace(/\((19[4-9]\d|20\d{2})\)(?=[._-]\d)/g, "$1"); // "(2018).01.14"
+    let m;
+    if ((m = s.match(/(?<!\d)(19[4-9]\d|20\d{2})[._-](\d{1,2})[._-](\d{1,2})(?!\d)/)) && ok(+m[1], +m[2], +m[3]))
+      return { date: `${m[1]}-${pad2(m[2])}-${pad2(m[3])}`, year: +m[1] };
+    if ((m = s.match(/(?<!\d)(\d{1,2})[._-](\d{1,2})[._-](19[4-9]\d|20\d{2})(?!\d)/)) && ok(+m[3], +m[1], +m[2]))
+      return { date: `${m[3]}-${pad2(m[1])}-${pad2(m[2])}`, year: +m[3] };
+    // Month words first: "June_11_2017" is June (not November), "Nov - Dec 1980" is November, "Sept2011Assembly"
+    const words = norm(s.replace(/\.[a-z0-9]{2,5}$/i, "").replace(/([a-z])(\d)/gi, "$1 $2").replace(/(\d)([a-z])/gi, "$1 $2")).split(" ");
+    for (let i = 0; i < words.length; i++) {
+      const mo = MONTHS[words[i]];
+      if (!mo) continue;
+      for (let j = i + 1; j <= i + 4 && j < words.length; j++) {
+        if (/^(19[4-9]\d|20\d{2})$/.test(words[j]) && +words[j] <= THIS_YEAR) return { date: `${words[j]}-${pad2(mo)}`, year: +words[j] };
+      }
+      for (let j = i - 1; j >= i - 2 && j >= 0; j--) {
+        if (/^(19[4-9]\d|20\d{2})$/.test(words[j]) && +words[j] <= THIS_YEAR) return { date: `${words[j]}-${pad2(mo)}`, year: +words[j] };
+      }
+    }
+    if ((m = s.match(/(?<!\d)(19[4-9]\d|20\d{2})[._-](0[1-9]|1[0-2])(?!\d)/))) return { date: `${m[1]}-${m[2]}`, year: +m[1] };
+    // "05_2014_asc_minutes" — but not the Area number in "MSCA09-2026" (a letter right before it)
+    if ((m = s.match(/(?<![\dA-Za-z])(0[1-9]|1[0-2])[._ -](19[4-9]\d|20\d{2})(?!\d)/))) return { date: `${m[2]}-${m[1]}`, year: +m[2] };
+    if ((m = s.match(/(?<!\d)(19[4-9]\d|20\d{2})(?!\d)/)) && +m[1] <= THIS_YEAR) return { date: "", year: +m[1] };
+    return null;
+  };
+  let fromName = tryOne(name);
+  // "03-Minutes-…-02.08.2026": the leading number is the meeting's month; trust it over a mistyped month in the date.
+  const lead = String(name || "").match(/^(0[1-9]|1[0-2])[-_ ]/);
+  if (lead && fromName && fromName.date.length === 10 && fromName.date.slice(5, 7) !== lead[1]) {
+    fromName = { date: `${fromName.date.slice(0, 4)}-${lead[1]}-${fromName.date.slice(8)}`, year: fromName.year };
+  }
+  if (fromName && fromName.date) return fromName;
+  // A folder like "2018/English/01-January 2018" can give the month the file name leaves out.
+  const segs = String(folderPath || "").split("/").filter(Boolean).reverse();
+  for (const seg of segs) {
+    const f = tryOne(seg);
+    if (f && f.date && (!fromName || fromName.year === f.year)) return f;
+  }
+  if (fromName) return fromName;
+  for (const seg of segs) {
+    const f = tryOne(seg);
+    if (f) return { date: "", year: f.year };
+  }
+  return { date: "", year: 0 };
+}
+
+/** A readable title from an Archives file name: copy numbers ("c.2"), dates (shown separately) and sequence numbers go. */
+function archiveTitle(name, { dropDistrict = false } = {}) {
+  let s = String(name || "").replace(/(\.(docx?|pdf|xlsx?|pptx?|rtf|txt|html?|jpe?g|png|gif|tiff?|mp3|m4a|wav|mp4|mov))+$/i, "");
+  s = s
+    .replace(/\((19[4-9]\d|20\d{2})\)(?=[._-]\d)/g, "$1") // "(2018).01.14"
+    .replace(/([a-z])([A-Z])/g, "$1 $2") // "MayAgenda" → "May Agenda"
+    .replace(/([A-Za-z])((?:19|20)\d{2})/g, "$1 $2") // "JANUARY2012" → "JANUARY 2012"
+    .replace(/((?:19|20)\d{2})([A-Za-z])/g, "$1 $2")
+    .replace(/([A-Za-z]{3,})(\d{2,})(?=[A-Za-z]{3,})/g, "$1 $2 ") // "Area09January" → "Area 09 January"
+    .replace(/(?<=[a-z])pdf$/i, "")
+    .replace(/[\s_-]*\bhandwr?i?t?ing\b/gi, " ")
+    .replace(/[\s_-]*\b\d{1,3}\s?pp\b\.?/gi, " ")
+    .replace(/[\s_-]+x$/i, "")
+    .replace(/\b[A-Z]{5,}\b/g, (w) => (/^(MSCA|PRAASA|AAWS)$/.test(w) ? w : w[0] + w.slice(1).toLowerCase())) // "ASSEMBLY" → "Assembly"
+    .replace(/[\s_-]*\bc\.\s?\d+\b/gi, " ")
+    .replace(/(?<!\d)(19[4-9]\d|20\d{2})[._-]\d{1,2}([._-](\d{1,2}|xx))?(?!\d)/gi, " ")
+    .replace(/(?<!\d)\d{1,2}[._-]\d{1,2}[._-](19[4-9]\d|20\d{2})(?!\d)/g, " ")
+    .replace(/(?<!\d)(19[4-9]\d|20\d{2})[._-]xx[._-]xx/gi, " ")
+    .replace(/\(?(?:\d{3}x|x{4})\)?(?:[._-](?:x{2}|\d{1,2})){0,2}/gi, " ") // "200x.xx.xx", "(xxxx).05.21"
+    .replace(/\.(pdf|docx?)\b/gi, " ") // "Pamphlet.pdf en Ingles"
+    .replace(/\bGSO[\s_-]*0*x+\b/gi, " ")
+    .replace(/\bn\.?\s?d\.?(?![a-z])/gi, " ")
+    .replace(/^\s*\d{1,2}[\s_-]+(?=[A-Za-z(])/, "")
+    .replace(/[\s_-]+(final|revised)\s*$/i, " ($1)");
+  if (dropDistrict) s = s.replace(/^\s*Dist(?:r)?i(?:r)?ct[\s_-]*\d+[\s_-]*/i, "").replace(/^\s*\d{2}[_\s-]+/, "").replace(/\bGSO[\s_-]*\d{6,}[\s_-]*/i, "").replace(/^\s*\d{6,}[\s_-]*/, "");
+  return titleFromName(s.replace(/[\s_-]+$/g, "").trim())
+    .replace(/\s*\(\s*\)\s*/g, " ")
+    .replace(/\s+\bpp\b\.?/gi, " ")
+    .replace(/\s+X$/, "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
 // ------------------------------------------------------------------ categories
 function loadCategories() {
   const rows = readCsv("document-categories.csv").filter((r) => r.key && !r.key.startsWith("#"));
@@ -298,7 +399,7 @@ const COMMITTEE_FALLBACK = {
   finance: ["Finance", "Finanzas"],
   technology: ["Technology", "Tecnología"],
   communications: ["Communications", "Comunicaciones"],
-  registration: ["Registration", "Inscripción"],
+  registration: ["Registration", "Registro"],
   "remote-communities": ["Remote Communities", "Comunidades Remotas"],
   "convention-liaison": ["Convention Liaison", "Enlace de Convenciones"],
   "special-needs": ["Special Needs", "Necesidades Especiales"],
@@ -660,11 +761,214 @@ function loadDocuments() {
     auto++;
   }
 
+  // 3. The Area 09 Archives' collections (msca09aa-archives.org): every file of a mode = files collection joins
+  //    its shelf, next to the Area's own copies. The Archives keep these folders; the site only links to them.
+  //    A document the library already has (same shelf, same meeting date, same language) is not listed twice —
+  //    the Area's own copy wins; of several scans of one document ("c.1", "c.2", Word and PDF) the first PDF wins.
+  const archives = readArchives();
+  const archiveCollections = [];
+  const nameRisk = [];
+  let fromArchives = 0;
+  {
+    // What kind of Area record a document is, so only the same kind of record counts as "the same document":
+    // ASC / Assembly / Board minutes, agenda / motion, the Area newsletter (not a district's or Grapevine's), the Area calendar.
+    const kindOf = (cat, text, mt, dflt = "motion") => {
+      const t = norm(text);
+      if (cat === "minutes") {
+        if (mt) return String(mt).toLowerCase();
+        if (/\b(asa|assembly|asamblea|general service assembly)\b/.test(t)) return "asa";
+        if (/\b(asc|csa|area service committee|area committee|committee meeting|committeemen s?|committeemens|comite de servicio)\b/.test(t)) return "asc";
+        if (/\b(board|executive|junta)\b/.test(t)) return "board";
+        return "";
+      }
+      if (cat === "motions") return /\b(agenda|agendas|orden del dia)\b/.test(t) ? "agenda" : /\b(motions?|mociones|mocion)\b/.test(t) ? "motion" : dflt;
+      if (cat === "newsletters") return /\b(district|distrito|grapevine|vina|about a a|intergroup|central office|professionals)\b/.test(t) ? "" : "area";
+      if (cat === "calendars") return "area";
+      return "";
+    };
+    const ourExact = new Set(); // shelf|kind|YYYY-MM(-DD)|language, as dated
+    const ourMonth = new Set(); // shelf|kind|YYYY-MM|language
+    const ourMonthOnly = new Set(); // the Area's documents dated only to the month
+    for (const d of docs) {
+      if (d.district || (d.committees && d.committees.length)) continue; // the Area's own records only
+      if (!/^\d{4}-\d{2}(-\d{2})?$/.test(d.date || "")) continue;
+      const kind = kindOf(d.category, `${d.title} ${d.title_es}`, d.meeting_type);
+      if (!kind) continue;
+      const langs = d.language === "Bilingual" ? ["English", "Spanish", "Bilingual"] : [d.language || ""];
+      for (const l of langs) {
+        ourExact.add(`${d.category}|${kind}|${d.date}|${l}`);
+        ourMonth.add(`${d.category}|${kind}|${d.date.slice(0, 7)}|${l}`);
+        if (d.date.length === 7) ourMonthOnly.add(`${d.category}|${kind}|${d.date}|${l}`);
+      }
+    }
+    /** Does the library already have this Area record? (a day-dated file matches the same day, or a month-dated copy of ours) */
+    const alreadyOurs = (cat, kind, date, lang) => {
+      if (!kind || !/^\d{4}-\d{2}(-\d{2})?$/.test(date || "")) return false;
+      const langs = lang && lang !== "Bilingual" ? [lang, "Bilingual"] : ["English", "Spanish", "Bilingual", ""];
+      return langs.some((l) =>
+        date.length === 10
+          ? ourExact.has(`${cat}|${kind}|${date}|${l}`) || ourMonthOnly.has(`${cat}|${kind}|${date.slice(0, 7)}|${l}`)
+          : ourMonth.has(`${cat}|${kind}|${date}|${l}`),
+      );
+    };
+    const reclass = (cat, rawName, folderPath) => {
+      // "_" is a word character: "Aug_2017_ASC_Agenda" must read as words
+      const name = String(rawName || "").replace(/[_.]+/g, " ");
+      const t = `${String(folderPath || "").replace(/[_.]+/g, " ")} ${name}`;
+      if (/(^|\/)GSC\b|general service conference/i.test(folderPath)) return "conference";
+      if (!["minutes", "motions", "calendars", "newsletters"].includes(cat)) return cat;
+      if (/\b(agenda|agendas|orden del d[ií]a)\b/i.test(name)) return "motions";
+      if (/\b(minutes|actas?|minutas?)\b/i.test(name)) return "minutes";
+      if (/\b(calendar|calendario|schedule)\b/i.test(name)) return "calendars";
+      if (/\b(newsletter|noticiero|bolet[ií]n)\b/i.test(name)) return "newsletters";
+      if (/\b(motions?|mociones|actions)\b/i.test(name)) return "motions";
+      if (/\b(report|informe)\b/i.test(t)) return "reports";
+      if (/\b(budget|presupuesto|financial|treasurer|tesorer)/i.test(t)) return "finances";
+      return cat;
+    };
+    const langOf = (row, name, folderPath) => {
+      const t = `${folderPath}/${name}`;
+      const en = /(^|[\/\s_.-])(english|ingl[eé]s|eng)([\/\s_.-]|$)/i.test(t);
+      const es = /(^|[\/\s_.-])(spanish|espa[nñ]ol|span)([\/\s_.-]|$)/i.test(t);
+      if (en && es) return "Bilingual";
+      if (es) return "Spanish";
+      if (en) return "English";
+      return row.language || "";
+    };
+    // AppleDouble "._x" files and Office "~$x" lock files (a real file may start with "." — ".Master Copy Code Sheet")
+    const SKIP = /^(\._|~\$)|(^|\/)(desktop\.ini|thumbs\.db|\.ds_store)$|\.(lnk|url|ini|tmp)$/i;
+    // Lists of people (sign-in sheets, directories, contact and phone lists) are never listed from the Archives,
+    // whatever folder they are in; data/flyer-holds.csv holds other single files by id.
+    const PEOPLE_LIST = /(?<![a-z])(sign[\s_-]?in(?![a-z])|attendance|asistencia|director(y|io)|contact[\s_-]?info|phone[\s_-]?list|tel[eé]fonos|roster|mailing[\s_-]?list|address[\s_-]?list)/i;
+    const kept = new Map(); // de-duplication key → doc (within the Archives)
+    for (const row of archives.rows) {
+      const got = archives.data[row.key];
+      const card = {
+        key: row.key,
+        section_en: row.section_en,
+        section_es: row.section_es || row.section_en,
+        title_en: row.title_en,
+        title_es: row.title_es || row.title_en,
+        kind: row.kind,
+        mode: row.mode,
+        category: row.category,
+        url: row.kind === "folder" ? `https://drive.google.com/drive/folders/${row.drive_id}` : `https://drive.google.com/file/d/${row.drive_id}/view`,
+        archives_url: row.archives_url || "https://msca09aa-archives.org/",
+        count: got ? got.count || 0 : 0,
+        listed: 0,
+        sort: num(row.sort, 999999),
+      };
+      archiveCollections.push(card);
+      if (row.mode !== "files" || !got) continue;
+      const files = row.kind === "file" ? [{ i: row.drive_id, n: got.name || row.title_en, p: "" }] : got.files || [];
+      for (const f of files) {
+        const name = f.n || "";
+        if (!f.i) continue;
+        // a single file named in collections.csv was chosen on purpose; folder contents go through the filters
+        if (row.kind !== "file" && (SKIP.test(name) || NEVER_AUTO.test(name) || NEVER_AUTO.test(f.p || "") || PEOPLE_LIST.test(name))) continue;
+        if (neverPublish({ title: name, id: f.p || "" })) continue;
+        if (mediaHeld.has(f.i) || heldIds.has(f.i) || seenDrive.has(f.i)) continue;
+        const folderPath = f.p || "";
+        let when = archiveDate(name, folderPath);
+        // A single file titled with its year in collections.csv ("Open House 2025 – …") belongs to that year.
+        if (row.kind === "file") {
+          const ty = +((String(row.title_en || "").match(/\b(19[4-9]\d|20\d{2})\b/) || [])[1] || 0);
+          if (ty && ty !== when.year) when = { date: "", year: ty };
+        }
+        const cat = reclass(row.category, name, folderPath);
+        const language = langOf(row, name, folderPath);
+        // District: the collection's own, else a "District 12 Guidelines" folder, else (maps, histories,
+        // guidelines) a file named "MSCA-District-05.pdf".
+        const distNum =
+          (folderPath.match(/(?:^|\/)Distri(?:c)?t[oa]?\s*(\d{1,2})\b/i) || [])[1] ||
+          (row.kind === "folder" && ["history", "districts", "guidelines"].includes(row.category) ? (name.match(/\bDistri(?:c)?t[oa]?[\s_-]*(\d{1,2})(?!\d)/i) || [])[1] : "") ||
+          "";
+        const dist = row.district || districtSlug(distNum);
+        const groupHistory = row.category === "districts";
+        const districtMap = row.key === "maps-and-atlases-district-maps" && distNum && /\.pdf$/i.test(name);
+        // A group's G.S.O. service number tells group histories apart ("22_000171647_09_Group_History.pdf").
+        const gso = groupHistory ? (name.match(/(?<!\d)(\d{6,9})(?!\d)/) || [])[1] || "" : ""; // 6–9 digits (a 10-digit run is not a G.S.O. number)
+        let title_en = districtMap
+          ? `District ${+distNum} page, old Area website (2017)`
+          : row.kind === "file" && row.title_en
+            ? row.title_en
+            : archiveTitle(name, { dropDistrict: groupHistory });
+        let title_es = districtMap ? `Página del Distrito ${+distNum} del antiguo sitio del Área (2017)` : row.kind === "file" && row.title_es ? row.title_es : "";
+        if (groupHistory && gso && /^(\d+\s*)*(group histor(y|ies)|history|historia(s)?( de(l)? grupo)?)$/i.test(title_en)) {
+          title_en = `Group history (G.S.O. no. ${gso})`;
+          title_es = `Historia de grupo (n.º de la OSG ${gso})`;
+        } else if (groupHistory && !/group|grupo|history|historia/i.test(title_en)) {
+          title_es = `${title_en} – historia de grupo`;
+          title_en = `${title_en} – group history`;
+        }
+        // Only a number or a camera name left ("IMG 1234"): use the collection's own title.
+        if (!title_en || /^(img|dsc|dscn|image|scan|photo)?\s*[\d\s-]+$/i.test(title_en)) {
+          title_en = row.title_en;
+          title_es = row.title_es || "";
+        }
+        if (!title_en) continue;
+        // a file from the Archives' agendas folders is an agenda unless its name says it is a motion
+        const recordKind = kindOf(cat, `${title_en} ${name}`, "", /^Area agendas/i.test(row.title_en || "") ? "agenda" : "motion");
+        if (alreadyOurs(cat, recordKind, when.date, language)) continue; // the Area's own copy is already listed
+        const d = build(
+          {
+            id: `archives-${f.i}`,
+            name,
+            title_en,
+            title_es,
+            category: cat,
+            collection: "Archive",
+            date: when.date,
+            year: String(when.year || ""),
+            language,
+            district: dist,
+            committee: row.committee || "",
+            url: `https://drive.google.com/file/d/${f.i}/view`,
+            drive_id: f.i,
+            mimeType: f.m || "",
+            source: "Area 09 Archives",
+          },
+          false
+        );
+        d.archives = true;
+        d.archives_section = row.section_en;
+        // The Archives' file names sometimes carry a member's full name; on this site's pages a member is
+        // first name + last initial (the file itself stays as the Archives publish it).
+        d.title = shortenArchiveNames(d.title);
+        if (d.title_es) d.title_es = shortenArchiveNames(d.title_es);
+        if (archiveNameRisk(d.title)) nameRisk.push(`${row.key}: ${d.title}`);
+        if (!d.url || seenUrl.has(d.url)) continue;
+        // Several scans or formats of one document in the same folder (c.1, c.2, Word and PDF): keep one (a PDF first).
+        const dk = [row.key, folderPath, d.category, d.date || d.year, d.language, norm(d.title), gso].join("|");
+        const prevDoc = kept.get(dk);
+        if (prevDoc) {
+          if (prevDoc.fmt !== "pdf" && d.fmt === "pdf") Object.assign(prevDoc, d);
+          continue;
+        }
+        kept.set(dk, d);
+        seenUrl.add(d.url);
+        seenDrive.add(f.i);
+        docs.push(d);
+        card.listed++;
+        fromArchives++;
+      }
+    }
+    archiveCollections.sort((a, b) => a.sort - b.sort);
+    if (nameRisk.length && !loadDocuments.warnedNames) {
+      loadDocuments.warnedNames = true;
+      console.warn(
+        `[documents] ${nameRisk.length} Area 09 Archives title(s) may still show a member's surname (first name + last initial only on this site). ` +
+          `Add the first name to src/_lib/names.js, or the phrase to data/name-allowlist.csv if it is not a member:\n   ` +
+          nameRisk.slice(0, 15).join("\n   "),
+      );
+    }
+  }
+
   // Two published rows with the same title, date and language: readers cannot tell which is the right one.
   const dupKey = new Map();
   const dups = [];
   for (const d of docs) {
-    if (d.auto) continue;
+    if (d.auto || d.archives) continue;
     const k = [norm(d.title), d.date || d.year, d.language].join("|");
     if (dupKey.has(k)) dups.push(`${d.id} = ${dupKey.get(k)}`);
     else dupKey.set(k, d.id);
@@ -849,6 +1153,7 @@ function loadDocuments() {
   const dated = docs.filter((d) => d.year);
   const sourceKind = (s) => {
     const n = norm(s);
+    if (/area 09 archives/.test(n)) return "archives";
     if (/legacy|area09 org|area 09 legacy/.test(n)) return "area09";
     if (/msca09|wordpress|website/.test(n)) return "msca09";
     if (/drive/.test(n)) return "drive";
@@ -898,6 +1203,7 @@ function loadDocuments() {
     withheld,
     unlinked,
     auto,
+    fromArchives,
     sources,
     sourceYears,
     archiveShelves,
@@ -921,6 +1227,19 @@ function loadDocuments() {
     pages,
     facets,
     stats,
+    // The Area 09 Archives' collections, for the "From the Area 09 Archives" cards: one entry per section of
+    // msca09aa-archives.org with its folders/files ({ key, title_en/_es, url, archives_url, count, listed, mode }).
+    archiveSections: (() => {
+      const map = new Map();
+      for (const c of archiveCollections) {
+        if (!map.has(c.section_en)) map.set(c.section_en, { section_en: c.section_en, section_es: c.section_es, archives_url: c.archives_url, items: [], count: 0, listed: 0 });
+        const g = map.get(c.section_en);
+        g.items.push(c);
+        g.count += c.count;
+        g.listed += c.listed;
+      }
+      return [...map.values()];
+    })(),
   };
 }
 

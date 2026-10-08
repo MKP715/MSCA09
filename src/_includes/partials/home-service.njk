@@ -1,8 +1,10 @@
 {#-
   "How service works": the upside-down triangle from the Panel logo, band by band.
-  Hovering or focusing a line on the right lights up its band.
+  Hovering or focusing a line on the right lights up its band. The tip of the triangle is the
+  General Service Board's two operating corporations, A.A. World Services and AA Grapevine
+  (band words in home.service.corps.band; "|" starts the second line).
   Phones get a short version: a small triangle beside the heading, the words and the buttons;
-  tablets add the big triangle, and the six numbered steps show from 768 px.
+  tablets add the big triangle, and the seven numbered steps show from 768 px.
 -#}
 {%- set L = lang -%}
 {%- set layers = [
@@ -11,7 +13,8 @@
   { key: "districts", color: "sun" },
   { key: "areas", color: "sage" },
   { key: "gsc", color: "ocean" },
-  { key: "gsb", color: "iris" }
+  { key: "gsb", color: "iris" },
+  { key: "corps", color: "lilac" }
 ] -%}
 <section class="home-service relative isolate overflow-hidden bg-ink-950 pt-14 pb-12 text-white sm:py-20 lg:py-28" aria-labelledby="home-service-title" x-data="{ on: -1 }">
   <div class="home-service-bg absolute inset-0 -z-10" aria-hidden="true"></div>
@@ -21,11 +24,11 @@
     {%- set triangle -%}
       <div class="hm-tri">
         {%- for layer in layers %}
-        <div class="hm-tri-band" style="--i: {{ loop.index0 }}; {{ layer.color | accent }}" :class="on === {{ loop.index0 }} && 'is-on'">
-          <span>{{ ("home.service." + layer.key + ".band") | t(L) }}</span>
+        {%- set words = (("home.service." + layer.key + ".band") | t(L) | string).split("|") %}
+        <div class="hm-tri-band {{ 'hm-tri-tip' if loop.last }}" style="--i: {{ loop.index0 }}; {{ layer.color | accent }}" :class="on === {{ loop.index0 }} && 'is-on'">
+          <span>{% for w in words %}<span class="hm-tri-line">{{ w | trim }}</span>{% endfor %}</span>
         </div>
         {%- endfor %}
-        <div class="hm-tri-tip" style="--i: 6"></div>
       </div>
       <p class="hm-tri-caption"><span>{% icon "arrow-down", "size-4" %}{{ "home.service.down" | t(L) }}</span><span>{% icon "arrow-up", "size-4" %}{{ "home.service.up" | t(L) }}</span></p>
     {%- endset %}

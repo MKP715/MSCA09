@@ -35,7 +35,7 @@ people.also,Also:,También:,
 people.committees_title,Committee chairs,Coordinadores de comité,
 people.committees_lead,"Standing and coordinate committees, service schools, sub-committees and ad hoc committees. Many have an English-speaking and a Spanish-speaking chair.","Comités permanentes y coordinados, escuelas de servicio, subcomités y comités ad hoc. Muchos tienen un coordinador de habla inglesa y otro de habla hispana.",
 people.districts_title,District servants,Servidores de distrito,
-people.districts_lead,Each district's DCMC is its voice at the Area. Listed here are the servants each district has shared with the Area.,El CMCD de cada distrito es su voz en el Área. Aquí aparecen los servidores que cada distrito ha compartido con el Área.,
+people.districts_lead,"Each district's DCMC (MCD in the Spanish-speaking districts) is its voice at the Area. Listed here are each district's five officers: DCMC, Alternate DCMC, Secretary, Treasurer and Registrar.","El CMCD (MCD en los distritos de habla hispana) es la voz de cada distrito en el Área. Aquí aparecen los cinco oficiales de cada distrito: CMCD, CMCD alterno(a), secretario(a), tesorero(a) y registrador(a).",
 people.all_districts,All districts,Todos los distritos,
 people.spanish_speaking,Spanish-speaking,De habla hispana,
 people.english_speaking,English-speaking,De habla inglesa,
@@ -46,6 +46,7 @@ people.district_page,District page,Página del distrito,Footer link on short dis
 people.completed,Completed,Concluido,
 people.to_confirm,to be confirmed,por confirmar,Shown next to a name whose status is Unconfirmed in trusted-servants.csv
 people.name_tbc,Name to be confirmed,Nombre por confirmar,Shown instead of a name when the status is Unconfirmed and the name column is empty
+people.not_provided,Not provided yet,Aún sin información,"Shown instead of a name when the status is Unknown in trusted-servants.csv (the district has not sent the name, or said the seat is open)"
 people.could_serve,You could serve,Tú podrías servir,
 people.serve_subject,I'd like to serve: {role},Me gustaría servir: {role},
 people.about_list,About this list,Sobre esta lista,

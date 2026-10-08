@@ -7,6 +7,7 @@
 //   g Google Drive file id (the link is https://drive.google.com/file/d/<g>/view) · u any other link
 //   D district slug · C committee slugs (;-joined) · m meeting type (ASC, ASA, Board …)
 //   p pair number: the English and Spanish copies of one document share it (shown as one card)
+//   s 1 = kept by the Area 09 Archives Committee (msca09aa-archives.org)
 import { docLang } from "../_lib/plugins/documents.js";
 
 export default class {
@@ -54,6 +55,7 @@ export default class {
       if (d.committees && d.committees.length) r.C = d.committees.join(";");
       if (d.meeting_type) r.m = d.meeting_type;
       if (pairOf.has(i)) r.p = pairOf.get(i);
+      if (d.archives) r.s = 1;
       return r;
     });
     return JSON.stringify({ v: 1, built: site && site.build ? site.build.iso : "", count: rows.length, rows });

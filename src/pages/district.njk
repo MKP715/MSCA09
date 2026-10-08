@@ -362,11 +362,12 @@ eleventyComputed:
           <h2 id="h-people" class="dx-h2"><span class="icon-tile">{% icon "users", "size-5" %}</span>{{ "districts.people.title" | t(L) }}</h2>
           <span class="chip chip-accent">{{ "districts.people.panel" | t(L, { panel: site.panel, years: site.panel_years }) }}</span>
         </div>
-        <p class="mt-3 max-w-3xl text-ink-600">{{ "districts.people.lead" | t(L) }}</p>
+        <p class="mt-3 max-w-3xl text-ink-600">{{ ("districts.people.lead_es" if d.linguistic else "districts.people.lead") | t(L) }}</p>
         {%- if people | length %}
         <div class="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 2xl:grid-cols-3">
           {%- for s in people %}
-          {{ personCard({ name: s.name, role: ((s | loc("position", L)) or (s | loc("role", L))), email: s.email, color: (d.color if loop.first else ""), index: loop.index, lang: L }) }}
+          {%- set ph = ("people.not_provided" if s.unknown else ("people.name_tbc" if s.unconfirmed else ("committees.unnamed" if s.unnamed else "people.open_position"))) | t(L) %}
+          {{ personCard({ name: s.name, placeholder: ph, role: ((s | loc("position", L)) or (s | loc("role", L))), email: s.email, color: (d.color if loop.first else ""), index: loop.index, lang: L }) }}
           {%- endfor %}
         </div>
         {%- else %}

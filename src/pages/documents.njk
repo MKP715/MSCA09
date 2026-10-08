@@ -398,6 +398,7 @@ eleventyComputed:
                           <span x-show="r.size && r.versions.length < 2" x-text="r.size"></span>
                           <span x-show="r.dist" class="chip chip-soft">{% icon "map-pin", "size-3" %}<span x-text="r.dist"></span></span>
                           <span x-show="r.comm" class="chip chip-soft">{% icon "users", "size-3" %}<span x-text="r.comm"></span></span>
+                          <span x-show="r.arch" class="doc-arch">{{ "documents.from_archives" | t(L) }}</span>
                           <span x-show="r.versions.length < 2" class="ml-auto text-ink-300 transition group-hover:text-(--a-600)" aria-hidden="true">{% icon "arrow-up-right", "size-4" %}</span>
                         </span>
                         <span x-show="r.versions.length > 1" class="doc-versions !justify-start pt-1">
@@ -482,6 +483,7 @@ eleventyComputed:
                             <span class="font-semibold text-(--a-700)" x-text="r.catShort"></span>
                             <span x-show="r.when" x-text="r.when"></span>
                             <span x-show="r.size && r.versions.length < 2" x-text="r.size"></span>
+                            <span x-show="r.arch" class="doc-arch">{{ "documents.from_archives" | t(L) }}</span>
                             <span class="doc-badges" x-show="r.versions.length < 2">
                               <span x-show="r.l" class="doc-badge" :class="'doc-badge-' + r.l" :title="r.langName"><span aria-hidden="true" x-text="r.langShort"></span><span class="sr-only" x-text="r.langName"></span></span>
                               <span x-show="r.fmt" class="doc-badge doc-badge-fmt" x-text="r.fmt"></span>

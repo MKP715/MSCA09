@@ -55,6 +55,7 @@
       {%- if d.meeting_type and not o.compact %}<span>{{ d.meeting_type | docMeeting(L) }}</span>{% endif -%}
       {%- if d.district_label and not o.compact and o.showDistrict !== false %}<span>{{ "documents.district_n" | t(L, { n: d.district_label }) }}</span>{% endif -%}
       {%- if d.size_kb and not o.compact %}<span>{{ d.size_kb | docSize(L) }}</span>{% endif -%}
+      {%- if d.archives %}<span class="doc-arch">{{ "documents.from_archives" | t(L) }}</span>{% endif -%}
       <span class="doc-badges">{{ docBadges(d, L) }}</span>
     </span>
   </span>
@@ -79,6 +80,7 @@
     {%- if d.size_kb %}<span>{{ d.size_kb | docSize(L) }}</span>{% endif -%}
     {%- if d.district_label %}<span class="chip chip-soft">{% icon "map-pin", "size-3" %}{{ "documents.district_n" | t(L, { n: d.district_label }) }}</span>{% endif -%}
     {%- set cm = d | loc("committee", L) %}{% if cm %}<span class="chip chip-soft">{% icon "users", "size-3" %}{{ cm }}</span>{% endif -%}
+    {%- if d.archives %}<span class="doc-arch">{{ "documents.from_archives" | t(L) }}</span>{% endif -%}
     <span class="ml-auto text-ink-300 transition group-hover:text-(--a-600)">{% icon "arrow-up-right", "size-4" %}</span>
   </span>
   <span class="sr-only">{{ "documents.new_tab" | t(L) }}</span>
@@ -159,6 +161,7 @@
       {%- if d.meeting_type and not o.compact %}<span>{{ d.meeting_type | docMeeting(L) }}</span>{% endif -%}
       {%- if d.district_label and not o.compact %}<span>{{ "documents.district_n" | t(L, { n: d.district_label }) }}</span>{% endif -%}
       {%- set cm = d | loc("committee", L) %}{% if cm and not o.compact %}<span>{{ cm }}</span>{% endif -%}
+      {%- if d.archives %}<span class="doc-arch">{{ "documents.from_archives" | t(L) }}</span>{% endif -%}
     </span>
   </span>
   <span class="doc-versions">

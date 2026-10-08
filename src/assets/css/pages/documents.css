@@ -92,6 +92,8 @@
   .doc-badge-es { background: var(--color-coral-100); color: var(--color-coral-800); }
   .doc-badge-bi { background: var(--color-sun-100); color: var(--color-sun-800); }
   .doc-badge-fmt { background: var(--color-ink-100); color: var(--color-ink-600); text-transform: uppercase; }
+  /* a document kept by the Area 09 Archives Committee (opens in the Archives' Google Drive) */
+  .doc-arch { display: inline-flex; align-items: center; border-radius: 0.45rem; padding: 0.2rem 0.45rem; font-size: 10.5px; font-weight: 700; line-height: 1; white-space: nowrap; background: var(--color-amber-100); color: var(--color-amber-900); }
 
   /* ---------------------------------------------------- cards (docCard) */
   .doc-card {

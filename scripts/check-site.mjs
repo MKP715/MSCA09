@@ -27,6 +27,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { readCsv, readCsvDir, checkCsvFile } from "../src/_lib/csv.js";
+import { nameHits } from "../src/_lib/names.js";
 
 const ROOT = process.cwd();
 const SITE = path.resolve(process.argv[2] || process.env.SITE_DIR || "_site");
@@ -143,42 +144,8 @@ function checkPhones(text, where) {
 }
 
 // ------------------------------------------------------------- full-name look-alikes
-// "Maria Gonzalez" (first name + capitalised word) where "Maria G." is the rule. Built from
-// common first names plus the first names in data/trusted-servants.csv.
-const COMMON_FIRST = `Aaron Adam Adrian Adriana Alan Albert Alberto Alejandra Alejandro Alex Alexander Alfonso Alfredo Alice Alicia Allen Alma Amanda Amber Amy Ana Andrea Andres Andrew Andy Angel Angela Angelica Angie Anita Ann Anna Anne Annie Anthony Antonio Armando Arthur Arturo Ashley Barbara Ben Benjamin Bernard Beth Betty Bill Billy Blanca Bob Bobby Brad Brandon Brenda Brent Brian Bruce Bryan Carl Carla Carlos Carmen Carol Carolina Caroline Carrie Catherine Cathy Cecilia Cesar Chad Charles Charlie Cheryl Chris Christian Christina Christine Christopher Chuck Cindy Claudia Clyde Colleen Connie Craig Cristina Crystal Cyndi Cynthia Dale Dan Dana Daniel Daniela Danny Darlene Dave David Dawn Dean Debbie Deborah Debra Denise Dennis Diana Diane Diego Dolores Don Donald Donna Doris Dorothy Doug Douglas Eddie Edgar Eduardo Edward Elena Elizabeth Ellen Emily Emma Enrique Eric Erica Erik Ernesto Esther Eugene Evelyn Fernando Frances Francisco Frank Fred Gabriel Gabriela Gary George Gerardo Gina Glen Glenn Gloria Gordon Grace Greg Gregory Guadalupe Guillermo Gustavo Harold Harry Hector Heather Helen Henry Hugo Ignacio Irene Isabel Jack Jackie Jacob Jaime James Jamie Jane Janet Janice Jason Javier Jay Jean Jeff Jeffrey Jennifer Jenny Jeremy Jerry Jesse Jessica Jesus Jim Jimmy Joan Joanne Joe Joel John Johnny Jon Jonathan Jorge Jose Joseph Josh Joshua Joyce Juan Juana Judy Julia Julie Julio Justin Karen Kate Katherine Kathleen Kathy Katie Keith Kelly Ken Kenneth Kevin Kim Kimberly Kristen Kurt Larry Laura Lauren Leo Leonard Leticia Linda Lisa Lori Lorraine Louis Lucy Luis Lupe Manuel Marco Marcos Margaret Maria Marie Mario Marilyn Mark Martha Martin Mary Matt Matthew Maureen Melissa Michael Michelle Miguel Mike Monica Nancy Nicole Norma Oscar Pablo Pam Pamela Patricia Patrick Paul Paula Pedro Peggy Peter Phil Phillip Rachel Rafael Ralph Ramon Randy Raquel Raymond Rebecca Rene Ricardo Richard Rick Rita Robert Roberto Robin Rocio Rodolfo Roger Ron Ronald Rosa Rose Ruben Russell Ruth Ryan Sally Salvador Samuel Sandra Sandy Sara Sarah Scott Sergio Sharon Shawn Sheila Shirley Silvia Sonia Stacy Stephanie Stephen Steve Steven Susan Suzanne Tammy Tara Teresa Terri Terry Thomas Timothy Tina Todd Tommy Tony Tracy Valerie Veronica Vicki Victor Victoria Vincent Virginia Walter Wanda Wayne Wendy William Yolanda`.split(/\s+/);
+// "Maria Gonzalez" (first name + capitalised word) where "Maria G." is the rule: src/_lib/names.js.
 const servants = readCsv("trusted-servants.csv");
-const FIRST = new Set(COMMON_FIRST);
-for (const r of servants) {
-  const f = (r.name || "").trim().split(/\s+/)[0];
-  if (f && /^[\p{Lu}][\p{Ll}]{2,}$/u.test(f)) FIRST.add(f);
-}
-// Words that make "First Word" a place, a venue, a book or a role rather than a person.
-const NOT_SURNAME = new Set(
-  `Area District Distrito Committee Comité Panel Zoom Service Servicio General Conference Delegate Alternate Chair Secretary Treasurer Registrar Grapevine Vina Viña Archives The Long Beach North South East West Central Office Church Avenue Ave Street Blvd Road Drive Way Park Valley Hills Hall Club Center Room Hospital Monday Tuesday Wednesday Thursday Friday Saturday Sunday County Island Point Lake Mountain Mountains Springs City Desert College University School Hispanic Spanish English Inter Intergroup Hotel Community Fellowship Alano Foundation Unity Hope Serenity Sobriety Recovery Pacific Regional Forum Trustee Board Workshop Assembly Meeting Methodist Lutheran Catholic Baptist Presbyterian Episcopal Memorial Hill Bay Harbor Mission Grove Airport Plaza Square Library Building Centre Ranch Canyon Estates Village Heights Gardens Station Fire Police Senior Citizens Mesa Verde Palms Cove Bernardino Clemente Jacinto Angeles Cruz Washington Lincoln Kennedy Lane Court Highway Fwy Pkwy Auditorium Group Groups Steps Traditions Concepts Big Book Twelve Unidos Grupo Rancho Pre Post Report Reports Minutes News Study Tree Sees Leaders Past Class`.split(/\s+/),
-);
-const PLACE_BEFORE = /\b(San|Santa|Santo|St|Saint|Los|Las|El|La|Lake|Mount|Mt|Fort|Port|Point|Rancho|Laguna|Dana)\.?\s+$/;
-const VENUE_AFTER = /^\s+(Park|Center|Centre|Community|Hall|Gym|Sports|Road|Rd|Street|St|Avenue|Ave|Blvd|Church|School|Library|Building|Room|Plaza|Memorial|Elementary|High|Middle|Recreation|Senior|Auditorium|Field|Stadium|Hospital|Medical|Clinic|Way|Drive|Dr|Lane|Ln|Court|Ct)\b/;
-const nameAllow = readCsv("name-allowlist.csv")
-  .map((r) => (r.phrase || "").trim())
-  .filter(Boolean);
-const NAME_RE = new RegExp(
-  `\\b(${[...FIRST].sort((a, b) => b.length - a.length).join("|")}) ((?:Mc|Mac|O'|O’)?\\p{Lu}\\p{Ll}{2,}(?:-\\p{Lu}?\\p{Ll}+)?)(?![\\p{L}])`,
-  "gu",
-);
-function nameHits(text) {
-  const hits = [];
-  for (const m of text.matchAll(NAME_RE)) {
-    if (NOT_SURNAME.has(m[2])) continue;
-    const before = text.slice(Math.max(0, m.index - 12), m.index);
-    const after = text.slice(m.index + m[0].length, m.index + m[0].length + 20);
-    if (PLACE_BEFORE.test(before) || VENUE_AFTER.test(after)) continue;
-    if (/^\s+\p{Lu}\.(?!\p{L})/u.test(after)) continue; // "Lisa Marie P." — first names + last initial
-    const ctx = text.slice(Math.max(0, m.index - 50), m.index + m[0].length + 40).replace(/\s+/g, " ");
-    if (nameAllow.some((p) => ctx.includes(p))) continue;
-    hits.push({ name: m[0], ctx });
-  }
-  return hits;
-}
 const STRICT_NAME_PAGES = /^\/(es\/)?(about\/panel|committees|districts|events)\//;
 
 // ------------------------------------------------------------- data files
