@@ -59,6 +59,32 @@ SUMMARY:MSCA 09 Area Assembly
 TRANSP:OPAQUE
 END:VEVENT
 BEGIN:VEVENT
+DTSTART:20260425T170000Z
+DTEND:20260425T220000Z
+UID:04h894f3gqcm4kav77e0t8eoe8@google.com
+CREATED:20261008T201307Z
+DESCRIPTION:MSCA09|History|Hybrid\nLanguage: English\nTítulo: Casa Abierta 
+ de los Archivos\nZoomID: 939 1845 3142\nZoomLink: https://uci.zoom.us/j/939
+ 18453142\nWeb: https://msca09aa-archives.org/\nEmail: archiveschair@msca09a
+ a.org\nIMG: https://drive.google.com/file/d/1kVt_94NLm0mRJp5tZ8QOcaP-rT_1T_
+ 7r/view?usp=sharing\nNote: Online on Zoom from 11 AM to 1 PM.\nNota: En lín
+ ea por Zoom de 11:00 a. m. a 1:00 p. m.\n--\nMid-Southern California Area 9
+  Archives Committee presents:\n“Slogans and Sayings in A.A.”\nYou’ve probab
+ ly heard these sayings in AA – Where did they come from? Are they in the Bi
+ g Book?\nThink\, Think\, Think – Easy Does It – First Things First – Live a
+ nd Let Live – But For the Grace of God\nSee memorabilia such as: Temperance
+  Movements – Washingtonians – Oxford Group – Co-founders – Calif. AA Histor
+ y – Early AA Pioneers – Early AA Books & Literature – Come learn something 
+ about AA History\nJoin us for Fun & Fellowship. Come Early & Stay Late.
+LAST-MODIFIED:20261008T201308Z
+LOCATION:MSCA09 Archives\, 7111 Arlington Ave\, Suite B\, Riverside\, CA 92
+ 503
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Archives Open House
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
 DTSTART:20211010T150000Z
 DTEND:20211010T220000Z
 UID:063k4gcpv5g82tnd6plrigd6j4@google.com
@@ -228,6 +254,40 @@ LOCATION:Auga Dulce Womens Club\, 33201 Agua Dulce Canyon RD\, CA 91390
 SEQUENCE:0
 STATUS:CONFIRMED
 SUMMARY:4 Area DCM Sharing Session
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;VALUE=DATE:20270923
+DTEND;VALUE=DATE:20270927
+UID:0sk55qnv8drafnv27ghq3k6to8@google.com
+CREATED:20261008T201302Z
+DESCRIPTION:MSCA09|History|In person\nLanguage: English\nTítulo: 29.º Talle
+ r Nacional de Archivos de A.A.\nTopic: Archives & history\nWeb: https://msc
+ a09aa-archives.org/naaaw2027\nEmail: archiveschair@msca09aa.org\nCost: Regi
+ stration $70\; Thursday repository and museum visit $48\; Friday dessert $2
+ 0\; Saturday banquet $65\nLink: Registration form (English) (PDF) https://d
+ rive.google.com/file/d/1Mr_5XRdWCkf3OD15t-jGBrBWPO85fQNw/view?usp=sharing\n
+ Link: Formulario de inscripción (español) (PDF) https://drive.google.com/fi
+ le/d/1-M3WK51_n7Nt2OXW7ajeRsnypdRzf166/view?usp=sharing\nNote: Theme: “Arch
+ iving Into the Future: Preserving AA History in a Digital Age.” Hosted by A
+ rea 09. Registration opens January 19\, 2027.\nNote: Thursday: visit to the
+  Area 09 Archives repository and the March Field Air Museum. Friday: desser
+ t. Saturday: banquet. The keynote talks on Thursday\, Friday and Saturday n
+ ights will be interpreted.\nNota: Tema: «Archivando hacia el futuro: Preser
+ vando la historia de A.A. en la era digital». Anfitrión: Área 09. La inscri
+ pción abre el 19 de enero de 2027.\nNota: Jueves: visita al repositorio de 
+ Archivos del Área 09 y al March Field Air Museum. Viernes: postre. Sábado: 
+ banquete. Las conferencias magistrales de las noches del jueves\, viernes y
+  sábado contarán con interpretación.\n--\nJoin us for a weekend of hands-on
+  workshops\, archives presentations and speakers. Visit the Area 09 Archive
+ s repository and the March Field Air Museum. Hospitality room with coffee a
+ nd snacks.
+LAST-MODIFIED:20261008T201302Z
+LOCATION:DoubleTree by Hilton San Bernardino\, 285 East Hospitality Lane\, 
+ San Bernardino\, CA 92408
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:29th National A.A. Archives Workshop
 TRANSP:OPAQUE
 END:VEVENT
 BEGIN:VEVENT
@@ -760,6 +820,29 @@ LOCATION:Marriott Hotel Downtown\, 75 W. Temple Street\, Salt Lake City\, U
 SEQUENCE:0
 STATUS:CONFIRMED
 SUMMARY:2022 Pacific Regional Forum – “Recovery Elevated”
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;TZID=America/Los_Angeles:20261008T190000
+DTEND;TZID=America/Los_Angeles:20261008T210000
+RRULE:FREQ=WEEKLY;UNTIL=20280101T075959Z;BYDAY=TH
+UID:39272evbp9gndnpa6qjn4d188s@google.com
+CREATED:20261008T201312Z
+DESCRIPTION:MSCA09|Intergroup|In person\nLanguage: Spanish\nTítulo: Oficina
+  Intergrupal Hispana del Valle de Coachella\nWeb: aaintcoachella.net\nNote:
+  Weekly committee meeting of the intergroup office that serves the Spanish-
+ speaking A.A. groups of the Coachella Valley.\nNota: Junta semanal del comi
+ té de la oficina intergrupal que atiende a los grupos de A.A. de habla hisp
+ ana del Valle de Coachella.\n--\nCoachella Valley Hispanic Intergroup\nEver
+ y Thursday\, 7:00 PM to 9:00 PM (Pacific)\nIn person.\nSource: aaintcoachel
+ la.net\; msca09aa-archives.org/coordinate-committees for day and time only 
+ (its Indio address is out of date) (checked October 2026)
+LAST-MODIFIED:20261008T201313Z
+LOCATION:Oficina Intergrupal Hispana del Valle de Coachella\, 34116 Date Pa
+ lm Dr\, Suite 8\, Cathedral City\, CA 92234
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Coachella Valley Hispanic Intergroup
 TRANSP:OPAQUE
 END:VEVENT
 BEGIN:VEVENT
