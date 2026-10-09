@@ -465,9 +465,9 @@ SUMMARY:Pacific Region A.A. Service Assembly (PRAASA)
 TRANSP:OPAQUE
 END:VEVENT
 BEGIN:VEVENT
-DTSTART;TZID=America/Los_Angeles:20261005T190000
-DTEND;TZID=America/Los_Angeles:20261005T203000
-RRULE:FREQ=MONTHLY;UNTIL=20271207T075959Z;BYDAY=1MO
+DTSTART;TZID=America/Los_Angeles:20261027T190000
+DTEND;TZID=America/Los_Angeles:20261027T203000
+RRULE:FREQ=MONTHLY;UNTIL=20281226T075959Z;BYDAY=4TU
 UID:1qpha5a0oib0q73pvmepr90peb@google.com
 CLASS:PUBLIC
 CREATED:20261005T041822Z
@@ -478,10 +478,10 @@ DESCRIPTION:MSCA09|Committee|Virtual\nLanguage: English\nTopic: H&I & corre
  uring the Area meeting.\n--\nCorrections Committee\n1st Monday of the month
  \, 7:00 PM to 8:30 PM (Pacific)\nOnline only\, on Zoom.\nSource: msca09aa.o
  rg/corrections and the committee flyer (checked October 2026)
-LAST-MODIFIED:20261006T022733Z
+LAST-MODIFIED:20261009T000518Z
 LOCATION:https://us06web.zoom.us/j/88566243556?pwd=RG189g79XVysbw35N6fgO93L
  q9p6Fd.1
-SEQUENCE:0
+SEQUENCE:1
 STATUS:CONFIRMED
 SUMMARY:Corrections Committee
 TRANSP:OPAQUE
@@ -6414,12 +6414,13 @@ DESCRIPTION:MSCA09|Area Committee|Hybrid\nLanguage: Bilingual\nHost: D5\nTí
  iew\nLink: Orden del día (español) https://drive.google.com/file/d/1Z9yYmb5
  ZlbdiUOoZfHFNsHn1dUCskKS-/view\nLink: Delegate's report (slides) https://dr
  ive.google.com/file/d/1oCNbSMKlP8E7m9riscM1Qwof8wMFKdVC/view\nNote: Registr
- ation 8:00 AM · Delegate's report 9:05 · committees meet 9:45 · lunch 10:45
-  · ASC business 11:30 AM.\nNota: Inscripción 8:00 a. m. · informe de la Del
- egada 9:05 · reunión de comités 9:45 · almuerzo 10:45 · CSA 11:30 a. m.\n--
- \nHosted by District 5 at Long Beach City College\, Liberal Arts Campus. In
-  person and on Zoom.
-LAST-MODIFIED:20261007T184034Z
+ ation 8:00 AM · Delegate's report 9:05 · committees meet 9:45 · lunch 11:00
+  · ASC business 11:45 AM · no motions at this ASC.\nNota: Inscripción 8:00 
+ a. m. · informe de la Delegada 9:05 · reunión de comités 9:45 · almuerzo 11
+ :00 · CSA 11:45 a. m. · no hay mociones en este CSA.\n--\nHosted by Distric
+ t 5 at Long Beach City College\, Liberal Arts Campus. In person and on Zoom
+ .
+LAST-MODIFIED:20261009T003303Z
 LOCATION:Long Beach City College\, Liberal Arts Campus\, 4901 E Carson St\,
   Long Beach\, CA 90808
 SEQUENCE:1
