@@ -11,7 +11,7 @@ The site is live at **[mkp715.github.io/MSCA09](https://mkp715.github.io/MSCA09/
 | Role | Items | Most urgent |
 |---|---|---|
 | Area Chair | 22 | 1.1 Correct both Oct 11 agendas |
-| Area Secretary | 9 | 1.4 Sept 13 motion results before the Q&A |
+| Area Secretary | 9 | 1.4 Sept 13 motion results; where 76-7 and 76-8 come up |
 | Registrar | 6 | Confirm: Charles A. or Charles R.? |
 | Treasurer A/P | 5 | Adopted 2026 budget and Aug 9 report |
 | Treasurer A/R | 11 | 1.2 Test the Zelle QR |
@@ -29,10 +29,10 @@ Shared items are counted once, under the role that leads.
 
 ## 1. Before the October 11, 2026 ASC
 
-- [ ] **1.1 [Before Oct 11] Correct** — *Area Chair, with the Secretary and the Spanish translator.* Fix both Oct 11 agendas: minutes for approval are the **Aug 9, 2026 ASC-2** minutes (English says "September 2026", Spanish "Junio 2026"); add **District 2** to District Reports; Zoom link → `zoom.us/j/89661666203` (`zoom.us/meeting/…` is the host's page); lunch **10:45–11:30 AM**, ASC begins **11:30 AM** (printed PM); "Long Beach **City** College"; Spanish: "MOCIONES – **SOLO** PREGUNTAS Y RESPUESTAS" and "ÁREA" (not "ARE"). *Where:* `/service/area-meetings/` (both posted as received). *Why:* members would approve the wrong minutes; the Zoom link fails. *How:* send both PDFs; the webmaster replaces them. More in section 6.
+- [ ] **1.1 [Before Oct 11] Correct** — *Area Chair, with the Secretary and the Spanish translator.* The updated agendas (posted Oct 8 under the same links) still need: minutes for approval are the **Aug 9, 2026 ASC-2** minutes (both say "September 2026" / "septiembre de 2026"); add **District 2** to District Reports; Zoom link → `zoom.us/j/89661666203` (`zoom.us/meeting/…` is the host's page); lunch **11:00–11:45 AM** and ASC begins **11:45 AM** (both printed PM); "Long Beach **City** College"; name who presents "GAP Committee Process". *Where:* `/service/area-meetings/` (both posted as received). *Why:* members would approve the wrong minutes; the Zoom link fails. *How:* send both PDFs; the webmaster replaces them under the same links. More in section 6.
 - [ ] **1.2 [Before Oct 11] Verify** — *Treasurer A/R.* Test the Zelle QR now on [/contribute/](https://mkp715.github.io/MSCA09/contribute/): scan it in your bank app and send $1, send $1 to the typed ID contributions@msca09aa.org, and check both reach the Area account. *Why:* the QR carries a Zelle token (as on the Treasurers' flyer), not the typed ID, and members may scan it at the ASC. *How:* reply "QR confirmed on <date>"; if anything is wrong, the QR comes off at once.
 - [ ] **1.3 [Before Oct 11] Correct** — *Calendar keeper; District 5 DCMC (room); Archives Chair / District 14 DCMC (host).* The **Oct 11 ASC** entry was fixed on Oct 7 (9:00 AM start, `Registration: 8:00 AM`, Long Beach City College, bilingual, agenda and Delegate-report links, the day's schedule). Still open: the building and room as a Note/Nota (District 5), and **Oct 10 Heritage Day:** `Host: D14`, `Email: archiveschair@msca09aa.org`.
-- [ ] **1.4 [Before Oct 11] Confirm** — *Area Secretary, with the Area Chair and GAP Chair, before the Q&A on 76-7 and 76-8.* (a) **Sept 13 Assembly results** of 76-1 to 76-6 — whether 76-1 passed decides if 76-7 is a limit or conflicts with Bylaws 9.2; was the 2027 calendar (76-6) adopted? (b) **Which body decides 76-7** (ASC, Assembly, or Board resolution under Bylaws 9.2). (c) **Route of 76-8:** Bylaws/Guidelines changes need an Assembly vote with notice (2/3 for Guidelines), adopted by the Sept 12, 2027 Assembly to apply at the Oct 2027 elections — reword its closing paragraph. *Where:* `/service/motions/` still shows "old business". *How:* e-mail results, even "per unapproved minutes".
+- [ ] **1.4 [Before Oct 11] Confirm** — *Area Secretary, with the Area Chair and GAP Chair. The updated Oct 11 agenda has no motions, so also say at which meeting 76-7 and 76-8 come up (is the GAP Committee presentation where 76-8 is discussed?).* (a) **Sept 13 Assembly results** of 76-1 to 76-6 — whether 76-1 passed decides if 76-7 is a limit or conflicts with Bylaws 9.2; was the 2027 calendar (76-6) adopted? (b) **Which body decides 76-7** (ASC, Assembly, or Board resolution under Bylaws 9.2). (c) **Route of 76-8:** Bylaws/Guidelines changes need an Assembly vote with notice (2/3 for Guidelines), adopted by the Sept 12, 2027 Assembly to apply at the Oct 2027 elections — reword its closing paragraph. *Where:* `/service/motions/` still shows "old business". *How:* e-mail results, even "per unapproved minutes".
 - [ ] **1.5 [Before Oct 11] Do** — *Area Chair.* Use the ASC to collect quick answers and pass them to the webmaster: the **Registrar's initial (Charles A. or Charles R.?)**, the YPAA chair's initial, which Literature seat is vacant, which listed Area seats are still open, the Web Servant, the **Dec 13 ASC venue** (Districts 10 and 15), the District 8 Zoom meeting (2.7), the Spanish Convention Liaison seat, the Hispanic Women's flyers, the 2026 Grapevine & La Viña date.
 - [ ] **1.6 [Before Oct 11] Correct** — *Treasurer A/R.* Announce the two clear packet errors and send corrected copies if you can: the A/R Zelle total is **$2,814.49** (printed $2,784.49) and its date is **Oct 11** (printed Oct 13). All fixes: section 6.
 
@@ -64,7 +64,7 @@ Items in sections 1, 2, 5 and 6 are not repeated; each role starts with a pointe
 - [ ] **[Soon] Decide** who reads the mailboxes of vacant seats (pichair@, pichair-es@, editor@, archivist@, dcmschoolchair@ …) until they are filled. *Where:* contact links on `/about/panel/` and `/committees/` (e.g. `/committees/public-information/`). *How:* forward them to chair@ (Technology Chair sets it up).
 - [ ] **[Soon] Supply** a corrected district service-meetings flyer (the "Area calendar 2026" file in the library that lists district meeting times). It still shows District 1 & 3's old place and time, District 8 on "Riverside Dr" (Riverside Ave), District 9 as 3–5 PM, an old District 18 Zoom ID, District 10 as just "Fullerton". Use the corrected details for 2027. *Where:* `/documents/` (Flyers). *How:* after the districts reply, upload it over the old file in Drive (*Manage versions*) so the link stays; the webmaster retitles it, because the Area calendar has the same title.
 - [ ] **[Soon] Supply** the *adopted* 2026 Area calendar (the file on the site is printed "PROPUESTO"), and the 2027 calendar as a PDF once adopted, so the site and agendas can link a PDF instead of the Google Doc. *Where:* `/documents/` (Calendars).
-- [ ] **[Soon] Supply** within a week of Oct 11 what was decided on new business (ad hoc committee on committee structure, translation and inclusion, hosting-district expense policy). For a new committee: name, purpose, chair (first name + initial), contact. *Where:* `/service/motions/`, `/committees/`.
+- [ ] **[Soon] Supply** within a week of Oct 11 what was decided at the Oct 11 ASC (new business: GAP Committee process, ad hoc committee on committee structure, translation and inclusion; old business: hosting-district expense policy). For a new committee: name, purpose, chair (first name + initial), contact. *Where:* `/service/motions/`, `/committees/`.
 - [ ] **[Soon] Correct** the agenda template footer used on Sept 13: the P.O. Box ZIP is Irvine **92619-1446** (printed 92519) and the contributions link points to the old site. Say whether a corrected Sept 13 agenda should replace the posted one. *Where:* `/service/area-meetings/`.
 - [ ] **[Soon] Supply** the missing agendas: 2025 Aug 10 and Sept 7; 2026 Mar 8, Apr 12, May 17, Jun 14 and Aug 9 (table in section 5). *Where:* `/service/area-meetings/`.
 - [ ] **[Soon] Decide** which version is final where two agendas exist: Jan 11, 2026 Assembly (two per language) and Sept 8, 2024 Assembly (two English). The webmaster hides the other. *Where:* `/service/area-meetings/`.
@@ -220,7 +220,7 @@ Items in sections 1, 2, 5 and 6 are not repeated; each role starts with a pointe
 
 #### DCM School
 
-- [ ] **[Soon] Correct** with the Area Chair the break-out time: the agenda says committees meet 9:45–10:45 AM; the site and calendar say DCM School 10:15–11:30 AM. *Where:* `/committees/dcm-school/`, the calendar.
+- [ ] **[Soon] Correct** with the Area Chair the break-out time: the updated agenda says committees meet 9:45–11:00 AM; the site and calendar say DCM School 10:15–11:30 AM (30 minutes into lunch). *Where:* `/committees/dcm-school/`, the calendar.
 
 #### GSR School
 
@@ -476,15 +476,28 @@ Documents with a member's full name, personal phone or e-mail, a sobriety date, 
 
 ## 6. Corrections for the October 11, 2026 packet
 
-For each author, for the next or approved version. All eight files are posted as received (A/R contributors shortened to an initial; minutes without the anniversaries list); a corrected file replaces the old one under the same link.
+For each author, for the next or approved version. All eight files are posted as received (A/R contributors shortened to an initial; minutes without the anniversaries list); a corrected file replaces the old one under the same link. On Oct 8 both agendas and the budget were replaced by updated copies; the notes below were re-checked against them.
 
-**ASC agenda, English (Area Chair)**
-- [ ] High and medium: see 1.1; also "2027 Final Calendar" links a doc titled *Propuesto* — say "Proposed" unless adopted Sept 13; use the Guidelines committee names (Accessibilities, Cooperation with the Elder Community, Corrections, Young People in A.A.).
-- [ ] Low: consider more than 55 minutes for about 44 reports; add room and parking; District 5 hosting at District 4's venue on purpose?; "La Viña", "Area Officers' Reports", "17, 18"; which Treasurer presents the hosting-expense item; make "msca09aa.org" a real link.
+**ASC agenda, English (Area Chair) — updated copy (the Chair's Doc as edited Oct 7, posted Oct 8)**
+- [ ] High and medium (also in 1.1, whose lunch and ASC times become the ones below): the minutes for approval are the **Aug 9, 2026 ASC-2** minutes (it still says "September 2026"); add **District 2** to District Reports; Zoom link → `zoom.us/j/89661666203` (still `zoom.us/meeting/…`); lunch **11:00–11:45 AM** and ASC begins **11:45 AM** (still printed PM); "Long Beach **City** College"; "2027 Final Calendar" still links the doc titled *CALENDARIO PROPUESTO*, so say "Proposed" unless it was adopted Sept 13; use the Guidelines committee names (Accessibilities, Cooperation with the Elder Community, Corrections, Young People in A.A.).
+- [ ] New: name who presents "GAP Committee Process" (20 min, the only item with no presenter) and call it the Guidelines & Policies Committee, as the Spanish agenda does; "No motions this ASC": say which meeting takes the 76-7 and 76-8 Q&A (1.4); is the GAP presentation where 76-8, referred to GAP for drafting, comes up?; committees now meet until 11:00 AM, so DCM School at 10:15–11:30 AM runs 30 minutes into lunch (section 3, DCM School).
+- [ ] Low: still 55 minutes for 44 reports (21 districts, 19 committees, 4 others: 88 minutes at 2 minutes each); the 40 minutes freed from the motions went elsewhere; add room and parking; District 5 hosting at District 4's venue on purpose?; "La Viña", "Area Officers' Reports", "17, 18"; which Treasurer presents the hosting-expense item; make "msca09aa.org" a real link (it looks like a link but is not clickable); header "Mid-Southern California Area 09"; keep the committee table on one page and give the 2027-calendar link a short label so the URL does not break across pages.
 
-**ASC agenda, Spanish (Area Chair / translator)**
-- [ ] High and medium: see 1.1 (minutes line "del 9 de agosto de 2026", lunch AM, "SOLO PREGUNTAS Y RESPUESTAS", header "ÁREA 09 DEL MEDIO SUR DE CALIFORNIA / COMITÉ DE SERVICIO DE ÁREA (CSA-1) / 11 de octubre de 2026 / Organizado por el Distrito 5 / Dirección").
-- [ ] Low, one pass with the translator: translate the English left in it (Lunch, Treasurer / Delegate, Chair, minutes, the committee table "OTROS", "Próximos eventos del Área"); feminine titles ("Reporte de la Delegada", "(Coordinador y Delegada Alterna)", "Tesorera AP"); "Calendario Propuesto"; "evento de Grapevine / La Viña"; website item presenters as in English; "Apertura (llamado al orden)"; "Declaración de Propósito y Membresía"; "Pasados Delegados; … Nuevos Oficiales de Distrito"; "examinar la estructura de los comités"; 76-7 spacing and "..", 76-8 asterisks and bullets, "Guías", "Coordinador(a) Alterno(a)"; headings "REGISTRO", "Lecturas del CSA", "INICIO DEL CSA", "Reunión de Comités", "Asuntos Pendientes"; make "msca09aa.org" a real link.
+**ASC agenda, Spanish (Area Chair / translator) — updated copy (posted Oct 8)**
+- [ ] High and medium: see 1.1. These are still wrong in this copy, as in the English: minutes "de septiembre de 2026" → "del CSA del 9 de agosto de 2026"; "11:00 - 11:45 PM ALMUERZO" and "11:45 PM INICIA EL ASC" → **AM** (the old copy printed the start as 11:30 AM); Zoom `zoom.us/meeting/…` (opens the Zoom sign-in page) → `zoom.us/j/89661666203`; "Long Beach **City** College"; add **District 2** to "Informes de los distritos". Use the Guidelines' names, as on the Spanish site. In the committee table: Accesibilidades, Archivos Históricos, Cooperación con la Comunidad de la Tercera Edad, Enlace de Convenciones, Instituciones Correccionales, Centros de Tratamiento, Jóvenes en A.A. Under OTROS: Sonido del Área.
+- [ ] Low, one pass with the translator:
+  - "ÁREA 09 DEL **MEDIO SUR** DE CALIFORNIA" (printed "CENTRO-SUR").
+  - "Comité de Servicio **de** Área" and "CSA", not "del Área" and "ASC": header "(CSA-1)", "INICIO DEL CSA", "Lecturas del CSA", "EN ESTE CSA".
+  - "CMCD", not "MCDC"; no plural -s on acronyms ("CMCD", "MCD", "RSG").
+  - Feminine titles. The officer list had "Delegada Alt." and "Delegada", and this copy made them masculine. Use "Informe de la Delegada", "Tesorera AP", "Delegada Alterna", "Delegada", "(Coordinador y Delegada Alterna)", "(Delegada Alterna / Grapevine y La Viña)", "Coordinadora de Tecnología", and either "(Tesorera AP / Delegada)" or "(Tesorero AR / Delegada)", depending on which Treasurer presents.
+  - "Calendario propuesto de 2027" unless it was adopted Sept 13 (the linked doc is titled "CALENDARIO PROPUESTO").
+  - Widen the committee table: "…adultos mayores" and "…Foro Regional del" cross its right border.
+  - Capitalize "Área" when it means Area 09: "oficiales del Área", "Próximos eventos del Área".
+  - Give the GAP item a presenter (also in the English).
+  - "actas" rather than "minutas", as on the site.
+  - Hospitality and the Inter-District Hispanic Chair have no report slot (on purpose?).
+  - Make "msca09aa.org" a real link (it is blue but not clickable).
+  - The English low items apply here too: 55 minutes for about 44 reports, room and parking, District 5 hosting at District 4's venue, which Treasurer presents, "17, 18".
 
 **Aug 9 ASC minutes, EN and ES (Area Secretary)**
 - [ ] Confirm the posted draft (English file marked "Revised") is the final draft; full vote counts (for / against / abstain) for the overrides and 76-1 to 76-3; which Literature seat is vacant; number the overrides 76-4 (Registrar) and 76-5 (Convention Liaison); whether the body voted to refer the Alternate Chair proposal (now 76-8); adjournment mover/seconder; the 9:22–9:55 gap and 15-minute lunch; which report the $1,816.60 correction replaces; one name each for the Archives Workshop and the Oct 2 Soberfest; Alano Club name; "Southeast Intergroup" = Oficina Intergrupal Sureste de Riverside?; page numbers; Spanish "CMCD" and one Spanish Area name; the packet's Spanish link label "Actas aprobadas" → "Actas no aprobadas (borrador)".
@@ -495,10 +508,56 @@ For each author, for the next or approved version. All eight files are posted as
 **Statement of activity, Jan–Sep 2026 (Treasurer A/P)**
 - [ ] Export with *Save as PDF* (this copy is an image, not searchable) with a real title; reclassify $6,402.84 of contributions with no group and $2,155.72 on the parent "Area Meetings" account; the 35.96 refund is both income and expense; 107.50 "Reimbursement" has no line; "DCM", "La Viña"; the Q1 2026 P&L was bilingual.
 
-**Proposed 2027 budget, Draft #1 (Finance Committee)**
-- [ ] Medium: "2024 Actual" is the 2024 *budget*; 2025 beginning balance is $30,533 (not $16,147); 2024 G&A lines add to $4,550 (Government Fees looks duplicated); 2025 International Convention total is $2,781 (not $0); "Net Revenue (6,790)/(1,090)" is the projected ending checking balance — 2027 net revenue is −$29,790, so say how the gap is covered; no line for Motion 76-3's $2,000.
-- [ ] Low: "under budget includes $16,147" should read "Remaining 2026 expense budget as of 9/30/26"; explain the $23,000 2027 opening balance and the $5,700 (remove the stray margin cells); label the $4,349.41 row; "ACYPAA (annual)"; footnote PayPal $0 and Copier $2,400 (2026 already $5,412.99); P.O. Box and Pre-Conference over budget; Four-Area DCM Sharing $500 though the Area hosts; lease ends Dec 2027; 2025 rent +$120; 2025 Groups vs earlier figure; $1 rounding; footer date; stray "EXPENSES" label; the $31.08 book-vs-bank item.
-- [ ] Spanish labels: DCM, Liaison, Tecnología, Cobrar, coordinadores, Comités, Convención, Traducción, "a la conferencia", Comunidad de Edad Avanzada, La Viña, Jóvenes, Elecciones de Área, Coordinador(a), Contribución del Delegado, Servicios públicos, Seguros, Impuestos, GASTOS, "Sitio web del Área – Tecnología", "Escuela de RSG en español", "30 DE SEPTIEMBRE DE 2026", "Saldo de la cuenta de cheques y cuentas por cobrar"; the Headquarters & Archives Repository label (the Spanish does not match).
+**Proposed 2027 budget, Draft #1 (Finance Committee) — updated copy from the Treasurer A/P (posted Oct 8)**
+- [ ] High: the Spanish Communications line (p. 2, $800 / $65.90 / $600) is now labelled "CEC - Cooperación con la Comunidad de Edad Avanzada (SP)". That leaves two Spanish CEC lines and no Spanish Communications line, so CEC (SP) reads as $1,200 for 2027. Restore "Comunicaciones (Traductor principal y traducciones escritas - SP)". Rename the $400 line still called "Cooperacion con los ancianos" to the committee's site name, "Cooperación con la Comunidad de la Tercera Edad" (our earlier note said "de Edad Avanzada"; please use one name everywhere).
+- [ ] Medium:
+  - The summary row "2027 Available Funds" shows $85,556.39 / $130,205.00 in the 2026 columns, copied from Total Expenses. Use $107,488.22 / $126,747.00, as on p. 1, or leave those cells blank.
+  - "2024 Actual" is the 2024 *budget*.
+  - The 2025 beginning balance is $30,533, not $16,147. The 2025 column does not carry into the 2026 opening of $16,147 either way: it ends at $7,148 as printed, or $21,534 with $30,533.
+  - The 2024 G&A lines add to $4,550, not $4,350 (Government Fees looks duplicated). The 2024 total expenses carries the same gap.
+  - "Net Revenue (6,790)/(1,090)" is the projected ending checking balance. 2027 net revenue is −$29,790 (−$24,090 without the $5,700), so say how the gap is covered.
+  - There is no line for Motion 76-3's $2,000.
+- [ ] Low:
+  - "Under budget includes $16,147" should read "Remaining 2026 expense budget as of 9/30/26" ($130,205.00 − $85,556.39).
+  - Explain the $23,000 2027 opening balance (the 9/30/26 figures give $21,931.83) and the $5,700.
+  - Label the $4,349.41 row.
+  - "ACYPAA (annual)".
+  - Footnote PayPal $0 and Copier $2,400 (2026 is already at $5,412.99).
+  - Note the 2026 lines already over budget at 9/30: P.O. Box ($376 vs $200), Pre-Conference ($2,534.22 vs $2,000), Copier ($5,412.99 vs $5,300), Hispanic Women's Workshop ($630 vs $600), Miscellaneous Expenses ($143.46, none budgeted).
+  - Four-Area DCM Sharing has $500 although the Area hosts.
+  - The lease ends Dec 2027.
+  - 2025 rent +$120.
+  - 2025 Groups vs the earlier figure.
+  - The 2025 Committees lines add to $26,518 (printed $26,517).
+  - The $31.08 book-vs-bank item.
+  - Date any later revision (this Oct 8 copy is footed "Rev 2026-10-05").
+- [ ] Committee names as in the Guidelines and on the site:
+  - GAP is "Guidelines & Policies / Guías y Políticas" (the budget now says "Guidelines & Procedures / Guías y Procedimientos").
+  - Accesibilidades.
+  - Archivos Históricos.
+  - Cooperation with *the* Elder Community, and with *the* Professional Community.
+  - Instituciones Correccionales.
+  - Treatment Facilities / Centros de Tratamiento.
+  - Enlace de Convenciones.
+  - Young People in A.A. / Jóvenes en A.A.
+  - Four-Area DCM Sharing Session / Sesión de Compartimiento de MCD de Cuatro Áreas (now "4 Area DMC Sharing / 4 Compartición MCD de Área").
+- [ ] Spanish labels:
+  - Title: "PRESUPUESTO ANUAL PROPUESTO …" ("PROPUESTO" was dropped; the English still says "PROPOSED").
+  - "NO APROBADO" (the header says "APROVADO").
+  - Spanish for the "Actual" headers: "Real"; "ACTUALIDAD … A partir de" → "Real al 30-09-26".
+  - "POR DEBAJO DEL PRESUPUESTO" (not "POR DE BAJO … POR").
+  - "CHECKING" (not "CHECK ACCOUNT").
+  - Use one wording for "líneas presupuestarias … sin coordinador(a)" ("para no coordinadors" is still on Total Expenses).
+  - Add Spanish for "Miscellaneous Contributions" and "ASCs (6) and ASAs (3)".
+  - "TOTAL DE CUENTAS POR COBRAR" (p. 1).
+  - Liaison, Tecnología, Comités (Committees heading), Convención, Traducción, "a la conferencia", La Viña, Jóvenes, "Elecciones de Área" (now "de area"), Coordinador(a).
+  - Contribución del Delegado, with "solicitada por la CSG".
+  - Servicios públicos, Seguros, Impuestos.
+  - "Orientación del nuevo panel", "Compra y reparación de equipos", "Instalaciones y mantenimiento".
+  - "Sitio web del Área – Tecnología", "Escuela de RSG en español".
+  - "Saldo de la cuenta de cheques y cuentas por cobrar" (p. 1).
+  - Matching quote marks around "2027" and "2026".
+  - The Headquarters & Archives Repository label: the Spanish does not match.
 
 **Treasurer A/R report (Treasurer A/R; with the Treasurer A/P where marked)**
 - [ ] High: Zelle total **$2,814.49** (SUM skips the first $30 row); date **Oct 11**.
@@ -526,6 +585,8 @@ For each author, for the next or approved version. All eight files are posted as
 - **The Area 09 Archives in the library:** the Archives Committee's public Google Drive collections are listed with the Area's own documents (about 3,100 scans back to 1958, tagged "Area 09 Archives"; the Area's copy wins when both exist), group histories appear on each district's page, and `/documents/archive/` has a new *The Archives' collections* section. A new shelf, **Area history & maps**. The list refreshes itself daily.
 - **Saved from msca09aa-archives.org** to the Area's Drive (file properties cleared): The Chronicles of Area 09 History (Rev. U, 2023; Spanish Rev. D), the 45th-anniversary history (EN/ES), How A.A. Came to Los Angeles (1985/86), the court-cards history (EN/ES), the Hispanic districts' history, the first A.A. pamphlet (1940), A New Pair of Glasses (brochure, 2018), "So You've Been Told to Go to A.A.", the 2027 National Archives Workshop registration forms (EN/ES), four repository photos and the April 2026 Open House flyer. The 2017 "What's It All About? – Welcome GSRs" was saved too but is not shown: the library now points GSRs to its 2020 revision, which it already had.
 - **Archives Committee page and others:** visiting hours, Open House / Heritage Day timing, FAQs, history and glossary terms updated from the Archives' own site; hidden rows for three Spanish-speaking offices (to confirm, above); Areas 06 and 07 and a Spanish-speaking H&I committee added to `/resources/`.
+- **Oct 11 ASC packet updated:** both agendas (the Chair's updated Google Doc and the new Spanish agenda) and the Treasurer A/P's updated 2027 budget Draft #1 replaced the old copies under the same links (library, calendar, motions); file properties cleared, checked clean. The home-page notice and the calendar entry show the new schedule (committees 9:45–11:00, lunch 11:00, ASC 11:45 AM) and "no motions at this ASC"; 76-7 and 76-8 no longer point to the Oct 11 agenda (76-8 is dated to the Aug 9 ASC, where it was proposed). Section 6 re-checked against the new copies.
+- **Calendar:** added the 29th National A.A. Archives Workshop (Sept 23–26, 2027), the Apr 25, 2026 Archives Open House and the weekly Coachella Valley Hispanic Intergroup (section 4 lists what to confirm).
 
 ## How to send information to the webmaster
 
