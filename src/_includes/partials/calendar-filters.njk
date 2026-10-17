@@ -1,0 +1,152 @@
+{#- Calendar filters: a sticky sidebar from 1280px, an off-canvas drawer below. Part of /calendar/. -#}
+{%- set L = lang -%}
+<div class="cal-filters__inner">
+  <div class="cal-filters__head">
+    <h2 class="flex items-center gap-2 font-display text-lg font-bold text-ink-950">
+      <span class="icon-tile-soft size-9" style="{{ 'iris' | accent }}">{% icon "sliders-horizontal", "size-4" %}</span>{{ "ui.filters" | t(L) }}
+    </h2>
+    <button type="button" class="cal-clear" x-show="activeCount() > 0" @click="clearAll()">{{ "calendar.filters.clear" | t(L) }}</button>
+    <button type="button" class="cal-icon-btn xl:hidden" @click="closeDrawer()" aria-label="{{ 'nav.close' | t(L) }}">{% icon "x", "size-5" %}</button>
+  </div>
+
+  <div class="cal-filters__body">
+    {#- ---- categories, by group, with live counts -#}
+    <fieldset class="flt-group">
+      <legend class="flt-legend">{{ "calendar.filters.categories" | t(L) }}</legend>
+      <p id="flt-only-hint" class="sr-only">{{ "calendar.filters.only_hint" | t(L) }}</p>
+      {%- for g in calendar.types | groupBy("group") %}
+      {%- set shown = [] %}
+      {%- for ty in g.items %}{% if ty.seriesCount > 0 %}{% set shown = shown.concat([ty]) %}{% endif %}{% endfor %}
+      {%- if shown.length %}
+      {%- set keys = shown | pluck("key") %}
+      <div class="flt-cat">
+        <button type="button" class="flt-cat__head" @click="toggleGroup({{ keys | json }})" :aria-pressed="(groupState({{ keys | json }}) === 'all').toString()">
+          <span class="flt-tri" :data-state="groupState({{ keys | json }})" aria-hidden="true">{% icon "check", "flt-tri__all size-3" %}{% icon "minus", "flt-tri__some size-3" %}</span>
+          <span class="flex-1 text-left">{{ g.items[0] | loc("group", L) }}</span>
+          <span class="flt-count" x-text="groupCount({{ keys | json }})"></span>
+        </button>
+        <ul class="flt-types" role="list">
+          {%- for ty in shown %}
+          <li class="flt-type" style="{{ ty.color | accent }}" :class="count('types', {{ ty.key | json }}) === 0 && 'is-empty'">
+            <label class="flt-type__label">
+              <input type="checkbox" class="peer sr-only" value="{{ ty.key }}" x-model="f.types" aria-describedby="flt-only-hint" @keydown.enter.prevent="only({{ ty.key | json }})">
+              <span class="flt-box" aria-hidden="true">{% icon "check", "size-3" %}</span>
+              <span class="flt-type__icon" aria-hidden="true">{% icon ty.icon, "size-3.5" %}</span>
+              <span class="min-w-0 flex-1 leading-tight">{{ ty | loc("label", L) }}</span>
+              <span class="flt-count" x-text="count('types', {{ ty.key | json }})"></span>
+            </label>
+            <button type="button" class="flt-only" tabindex="-1" @click="only({{ ty.key | json }})" aria-label="{{ 'calendar.filters.only_label' | t(L, { name: ty | loc('label', L) }) }}">{{ "calendar.filters.only" | t(L) }}</button>
+          </li>
+          {%- endfor %}
+        </ul>
+      </div>
+      {%- endif %}
+      {%- endfor %}
+    </fieldset>
+
+    {#- ---- format -#}
+    <fieldset class="flt-group">
+      <legend class="flt-legend">{{ "calendar.filters.format" | t(L) }}</legend>
+      <div class="flt-pills">
+        {%- for fm in [{ k: "In person", key: "format.in_person", icon: "map-pin", color: "sage" }, { k: "Hybrid", key: "format.hybrid", icon: "monitor-smartphone", color: "iris" }, { k: "Virtual", key: "format.virtual", icon: "video", color: "ocean" }] %}
+        <label class="flt-pill" style="{{ fm.color | accent }}">
+          <input type="checkbox" class="sr-only" value="{{ fm.k }}" x-model="f.formats">
+          <span class="flt-pill__in">{% icon fm.icon, "size-3.5" %}{{ fm.key | t(L) }}<span class="flt-pill__n" x-text="count('formats', {{ fm.k | json }})"></span></span>
+        </label>
+        {%- endfor %}
+      </div>
+    </fieldset>
+
+    {#- ---- language -#}
+    <fieldset class="flt-group">
+      <legend class="flt-legend">{{ "calendar.filters.language" | t(L) }}</legend>
+      <div class="flt-pills">
+        {%- for lg in [{ k: "English", key: "language.english", color: "sea" }, { k: "Spanish", key: "language.spanish", color: "coral" }, { k: "Bilingual", key: "language.bilingual", color: "sun" }] %}
+        <label class="flt-pill" style="{{ lg.color | accent }}">
+          <input type="checkbox" class="sr-only" value="{{ lg.k }}" x-model="f.langs">
+          <span class="flt-pill__in">{% icon "languages", "size-3.5" %}{{ lg.key | t(L) }}<span class="flt-pill__n" x-text="count('langs', {{ lg.k | json }})"></span></span>
+        </label>
+        {%- endfor %}
+      </div>
+    </fieldset>
+
+    {#- ---- district, committee / topic -#}
+    <div class="flt-group space-y-4">
+      <label class="block">
+        <span class="flt-legend">{{ "calendar.filters.district" | t(L) }}</span>
+        <select class="flt-select" x-model="f.district">
+          <option value="">{{ "calendar.filters.all_districts" | t(L) }}</option>
+          {%- for d in calendar.districts %}
+          <option value="{{ d.slug }}">{{ d | calLoc("label", L) }}</option>
+          {%- endfor %}
+        </select>
+      </label>
+      <label class="block">
+        <span class="flt-legend">{{ "calendar.filters.committee" | t(L) }}</span>
+        <select class="flt-select" x-model="f.cmt">
+          <option value="">{{ "calendar.filters.all_committees" | t(L) }}</option>
+          {%- if calendar.committees.length %}
+          <optgroup label="{{ 'calendar.filters.committees' | t(L) }}">
+            {%- for c in calendar.committees %}
+            <option value="c:{{ c.slug }}">{{ c | calLoc("name", L) }}</option>
+            {%- endfor %}
+          </optgroup>
+          {%- endif %}
+          {%- if calendar.topics.length %}
+          <optgroup label="{{ 'calendar.filters.topics' | t(L) }}">
+            {%- for tp in calendar.topics %}
+            <option value="t:{{ tp.slug }}">{{ ("calendar.topic." + tp.slug) | t(L) }}</option>
+            {%- endfor %}
+          </optgroup>
+          {%- endif %}
+        </select>
+      </label>
+    </div>
+
+    {#- ---- day of week -#}
+    <fieldset class="flt-group">
+      <legend class="flt-legend">{{ "calendar.filters.day" | t(L) }}</legend>
+      <div class="flt-days">
+        {%- for d in [0, 1, 2, 3, 4, 5, 6] %}
+        <button type="button" class="flt-day" @click="toggle('dows', {{ d }})" :class="has('dows', {{ d }}) && 'is-on'" :aria-pressed="has('dows', {{ d }}).toString()" aria-label="{{ ('calendar.dow.' + d) | t(L) }}">
+          <span aria-hidden="true">{{ ("calendar.dow_short." + d) | t(L) }}</span>
+        </button>
+        {%- endfor %}
+      </div>
+    </fieldset>
+
+    {#- ---- time of day -#}
+    <fieldset class="flt-group">
+      <legend class="flt-legend">{{ "calendar.filters.time" | t(L) }}</legend>
+      <div class="flt-pills">
+        {%- for td in [{ k: "morning", icon: "sunrise", color: "sun" }, { k: "afternoon", icon: "sun", color: "copper" }, { k: "evening", icon: "moon", color: "iris" }, { k: "allday", icon: "calendar-days", color: "sea" }] %}
+        <label class="flt-pill" style="{{ td.color | accent }}">
+          <input type="checkbox" class="sr-only" value="{{ td.k }}" x-model="f.tods">
+          <span class="flt-pill__in">{% icon td.icon, "size-3.5" %}{{ ("calendar.js.tod_" + td.k) | t(L) }}<span class="flt-pill__n" x-text="count('tods', {{ td.k | json }})"></span></span>
+        </label>
+        {%- endfor %}
+      </div>
+    </fieldset>
+
+    {#- ---- has flyer / has Zoom -#}
+    <div class="flt-group space-y-2">
+      <label class="flt-switch">
+        <input type="checkbox" class="peer sr-only" x-model="f.flyer">
+        <span class="flt-switch__track" aria-hidden="true"><span class="flt-switch__dot"></span></span>
+        <span class="flex items-center gap-2">{% icon "image", "size-4 text-blush-600" %}{{ "calendar.js.has_flyer" | t(L) }}</span>
+      </label>
+      <label class="flt-switch">
+        <input type="checkbox" class="peer sr-only" x-model="f.zoom">
+        <span class="flt-switch__track" aria-hidden="true"><span class="flt-switch__dot"></span></span>
+        <span class="flex items-center gap-2">{% icon "video", "size-4 text-ocean-600" %}{{ "calendar.js.has_zoom" | t(L) }}</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="cal-filters__foot xl:hidden">
+    <button type="button" class="btn btn-ghost" @click="clearAll()">{{ "calendar.filters.clear" | t(L) }}</button>
+    <button type="button" class="btn btn-ocean flex-1" @click="closeDrawer()">
+      {{ "calendar.filters.show" | t(L) }} <span class="rounded-full bg-white/25 px-2 py-0.5 text-xs" x-text="counts.total"></span>
+    </button>
+  </div>
+</div>

@@ -1,0 +1,17 @@
+num,name_en,name_es,state,url,lat,lng,host
+# The 15 areas of the Pacific Region (list and map on /service/prf-2028/about/). num = the area number. host = yes for the host area. lat / lng = where the pin goes (roughly the area's main city).,,,,,,,
+02,Alaska,Alaska,AK,https://area02alaska.org/,61.22,-149.9,
+03,Arizona,Arizona,AZ,https://area03.org/,33.45,-112.07,
+05,Southern California,Southern California,CA,https://www.area05aa.org/,34.05,-118.24,
+06,California Northern Coastal,California Northern Coastal,CA,https://www.cnca06.org/,37.77,-122.42,
+07,California Northern Interior,California Northern Interior,CA,https://cnia.org/,38.58,-121.49,
+08,San Diego-Imperial,San Diego-Imperial,CA,https://www.area8aa.org/,32.72,-117.16,
+09,Mid-Southern California,Mid-Southern California,CA,https://msca09aa.org/,33.95,-117.4,yes
+17,Hawaii,Hawaii,HI,https://area17aa.org/,21.31,-157.86,
+18,Idaho,Idaho,ID,https://idahoarea18aa.org/,43.62,-116.2,
+42,Nevada,Nevada,NV,https://nevadaarea42.org/,38.8,-116.42,
+58,Oregon,Oregon,OR,https://www.aa-oregon.org/,44.94,-123.03,
+69,Utah,Utah,UT,https://utahaa.org/,40.76,-111.89,
+72,Western Washington,Western Washington,WA,https://area72aa.org/,47.61,-122.33,
+92,Eastern Washington,Eastern Washington,WA,https://area92aa.org/,47.66,-117.43,
+93,Central California,Central California,CA,https://area93.org/,36.74,-119.78,

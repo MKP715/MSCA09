@@ -1,0 +1,81 @@
+{#- Calendar right rail: next Area meeting (countdown), this week, subscribe, find a meeting. Part of /calendar/. -#}
+{%- from "macros/events.njk" import upcomingList -%}
+{%- set L = lang -%}
+{%- set C = calendar -%}
+
+{#- ---- next Area meeting -#}
+{%- if C.nextAreaMeetings and C.nextAreaMeetings.length %}
+<section class="area-next" aria-labelledby="area-next-title">
+  <div class="area-next__glow" aria-hidden="true"></div>
+  <p id="area-next-title" class="flex items-center gap-2 text-xs font-bold tracking-[0.18em] text-white uppercase">{% icon "landmark", "size-4" %}{{ "calendar.rail.next_area" | t(L) }}</p>
+  <ul data-limit="1" data-empty="#area-next-empty" role="list">
+    {%- for o in C.nextAreaMeetings %}
+    {%- set host = C.districts | find("slug", o.district) %}
+    <li data-hide-after="{{ o.end }}" data-when="{{ o.start }}" data-until="{{ o.end }}">
+      <a href="{{ o.url | lurl(L) }}" class="group mt-3 block">
+        <h3 class="font-display text-2xl leading-tight font-extrabold text-balance text-white group-hover:underline">{{ o | calTitle(L) }}</h3>
+      </a>
+      <p class="mt-2 flex items-center gap-2 text-white/90">{% icon "calendar-days", "size-4 shrink-0" %}<span class="inline-block first-letter:uppercase">{{ o.start | dt("long", L) }}</span></p>
+      <p class="mt-1 flex items-center gap-2 text-white/90">{% icon "clock", "size-4 shrink-0" %}<span>{{ o | calLoc("timeLabel", L) }} · {{ "time.pacific" | t(L) }}</span></p>
+      {%- if o.venue or o.city %}<p class="mt-1 flex items-start gap-2 text-white/90">{% icon "map-pin", "mt-0.5 size-4 shrink-0" %}<span>{{ [o.venue, o.city] | compact | join(", ") }}{% if o.format == "Hybrid" %} · + Zoom{% endif %}</span></p>{% endif %}
+      {%- if host %}<p class="mt-1 flex items-center gap-2 text-white/90">{% icon "users", "size-4 shrink-0" %}<span>{{ "calendar.rail.hosted_by" | t(L, { name: host | calLoc("short", L) }) }}</span></p>{% endif %}
+      <div class="mt-5 grid grid-cols-4 gap-2 text-center" x-data="countdown({{ o.start | json }})">
+        <template x-if="!past">
+          <div class="contents">
+            <div class="cd-box"><span class="cd-num" x-text="d"></span><span class="cd-lbl">{{ "time.days" | t(L) }}</span></div>
+            <div class="cd-box"><span class="cd-num" x-text="h"></span><span class="cd-lbl">{{ "time.hours" | t(L) }}</span></div>
+            <div class="cd-box"><span class="cd-num" x-text="m"></span><span class="cd-lbl">{{ "time.minutes" | t(L) }}</span></div>
+            <div class="cd-box"><span class="cd-num" x-text="s"></span><span class="cd-lbl">{{ "time.seconds" | t(L) }}</span></div>
+          </div>
+        </template>
+        <template x-if="past"><p class="col-span-4 rounded-2xl bg-white/15 py-3 font-display text-lg font-bold">{{ "time.in_progress" | t(L) }}</p></template>
+      </div>
+      <div class="mt-5 flex flex-wrap gap-2">
+        <a href="{{ o.url | lurl(L) }}" class="btn btn-white btn-sm">{% icon "info", "size-4" %}{{ "calendar.rail.details" | t(L) }}</a>
+        {%- set s = C.bySlug[o.slug] %}
+        {%- if s %}<a href="{{ s | calGoogle(o, L) }}" target="_blank" rel="noopener" class="btn btn-glass btn-sm">{% icon "calendar-plus", "size-4" %}{{ "calendar.add.short" | t(L) }}</a>{% endif %}
+      </div>
+    </li>
+    {%- endfor %}
+  </ul>
+  <p id="area-next-empty" class="mt-3 text-white/90" hidden>{{ "calendar.rail.next_area_none" | t(L) }}</p>
+  <a href="{{ '/service/area-meetings/' | lurl(L) }}" class="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-white/90 hover:text-white hover:underline">{{ "calendar.rail.all_area" | t(L) }}{% icon "arrow-right", "size-4" %}</a>
+</section>
+{%- endif %}
+
+{#- ---- this week -#}
+<section class="card p-5 sm:p-6" aria-labelledby="this-week-title">
+  <div class="mb-3 flex items-center justify-between gap-3">
+    <h2 id="this-week-title" class="flex items-center gap-2.5 font-display text-lg font-bold text-ink-950"><span class="icon-tile-soft size-9" style="{{ 'sun' | accent }}">{% icon "sparkles", "size-4" %}</span>{{ "calendar.rail.this_week" | t(L) }}</h2>
+  </div>
+  {{ upcomingList({ items: C.soon, lang: L, limit: 6, variant: "compact", id: "this-week", emptyText: "calendar.rail.this_week_empty" | t(L) }) }}
+</section>
+
+{#- ---- subscribe -#}
+<section id="subscribe" class="card scroll-mt-32 p-5 sm:p-6" aria-labelledby="subscribe-title" style="{{ 'iris' | accent }}">
+  <h2 id="subscribe-title" class="flex items-center gap-2.5 font-display text-lg font-bold text-ink-950"><span class="icon-tile-soft size-9">{% icon "bell", "size-4" %}</span>{{ "calendar.subscribe.title" | t(L) }}</h2>
+  <p class="mt-2 text-sm leading-relaxed text-ink-600">{{ "calendar.subscribe.body" | t(L) }}</p>
+  <div class="mt-4 grid gap-2">
+    <a href="{{ C.subscribeUrl }}" target="_blank" rel="noopener" class="sub-btn" style="{{ 'ocean' | accent }}">{% icon "calendar-plus", "size-5" %}<span class="flex-1">{{ "calendar.subscribe.google" | t(L) }}</span>{% icon "external-link", "size-4 opacity-60" %}</a>
+    <a href="{{ C.webcalUrl }}" class="sub-btn" style="{{ 'slate' | accent }}">{% icon "smartphone", "size-5" %}<span class="flex-1">{{ "calendar.subscribe.apple" | t(L) }}</span>{% icon "arrow-up-right", "size-4 opacity-60" %}</a>
+    <a href="https://outlook.live.com/calendar/0/addfromweb?url={{ C.icsUrl | urlencode }}&amp;name=MSCA09" target="_blank" rel="noopener" class="sub-btn" style="{{ 'sea' | accent }}">{% icon "mail", "size-5" %}<span class="flex-1">{{ "calendar.subscribe.outlook" | t(L) }}</span>{% icon "external-link", "size-4 opacity-60" %}</a>
+    <a href="{{ C.mirrorUrlEs if L.code == 'es' else C.mirrorUrl }}" download="msca09-calendar{{ '-es' if L.code == 'es' }}.ics" class="sub-btn" style="{{ 'iris' | accent }}">{% icon "download", "size-5" %}<span class="flex-1">{{ "calendar.subscribe.download" | t(L) }}</span></a>
+  </div>
+  <div class="mt-4 flex items-center gap-2 rounded-2xl bg-ink-50 p-2 pl-3" x-data="copyText({{ C.icsUrl | json }})">
+    <span class="min-w-0 flex-1 truncate font-mono text-xs text-ink-500">{{ C.icsUrl }}</span>
+    <button type="button" @click="copy()" class="btn btn-white btn-sm shrink-0" aria-label="{{ 'ui.copy_x' | t(L, { what: 'calendar.subscribe.address' | t(L) }) }}">
+      <span x-show="!copied" class="inline-flex items-center gap-1.5">{% icon "copy", "size-3.5" %}{{ "calendar.subscribe.copy" | t(L) }}</span>
+      <span x-cloak x-show="copied" class="inline-flex items-center gap-1.5 text-sage-700">{% icon "check", "size-3.5" %}{{ "ui.copied" | t(L) }}</span>
+    </button>
+  </div>
+</section>
+
+{#- ---- looking for a recovery meeting? -#}
+<section class="help-card" aria-labelledby="help-title" style="{{ 'coral' | accent }}">
+  <h2 id="help-title" class="flex items-center gap-2.5 font-display text-lg font-bold text-ink-950"><span class="icon-tile size-9">{% icon "heart-handshake", "size-4" %}</span>{{ "calendar.help.title" | t(L) }}</h2>
+  <p class="mt-2 text-sm leading-relaxed text-ink-700">{{ "calendar.help.body" | t(L) }}</p>
+  <div class="mt-4 flex flex-wrap gap-2">
+    <a href="{{ site.aa_find_meeting or 'https://www.aa.org/find-aa' }}" target="_blank" rel="noopener" class="btn btn-primary btn-sm">{% icon "map-pin", "size-4" %}{{ "header.find_meeting" | t(L) }}</a>
+    <a href="{{ '/newcomers/' | lurl(L) }}" class="btn btn-white btn-sm">{{ "calendar.help.newcomers" | t(L) }}{% icon "arrow-right", "size-4" %}</a>
+  </div>
+</section>

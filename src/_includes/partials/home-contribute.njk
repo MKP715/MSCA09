@@ -1,0 +1,62 @@
+{#-
+  Seventh Tradition band. Ways to give come from data/settings.csv (Zelle e-mail, business name, P.O. Box).
+  Phones show the heading, the Zelle card (with a link to the Contribute page for the other ways)
+  and the G.S.O. button; the explanation and the other two cards show from 640 / 768 px.
+  The Zelle address may break only after "@", never inside a word (people type it into a bank app).
+-#}
+{%- set L = lang -%}
+<section class="home-give relative isolate overflow-hidden py-10 text-white sm:py-16 lg:py-24" aria-labelledby="home-give-title">
+  <div class="home-sunset absolute inset-0 -z-10" aria-hidden="true"></div>
+  <div class="home-sun absolute -z-10" aria-hidden="true"></div>
+  <svg class="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-24 w-[200%] animate-wave text-white/10 [animation-iteration-count:3]" viewBox="0 0 2880 100" preserveAspectRatio="none" aria-hidden="true"><path fill="currentColor" d="M0 50 C 240 10, 480 10, 720 50 S 1200 90, 1440 50 S 1920 10, 2160 50 S 2640 90, 2880 50 V 100 H 0 Z"/></svg>
+  <div class="wrap grid items-center gap-10 lg:grid-cols-12 lg:gap-12 2xl:gap-16">
+    <div class="min-w-0 lg:col-span-5">
+      <p class="mb-3 inline-flex items-center gap-2 text-xs font-bold tracking-[0.18em] text-sun-100 uppercase">{% icon "hand-heart", "size-4" %}{{ "home.give.eyebrow" | t(L) }}</p>
+      <h2 id="home-give-title" class="font-display text-3xl font-bold tracking-tight text-balance sm:text-4xl 2xl:text-5xl">{{ "home.give.title" | t(L) }}</h2>
+      <p class="mt-4 hidden text-lg leading-relaxed text-pretty text-white/90 sm:block 2xl:text-xl">{{ "home.give.lead" | t(L) }}</p>
+      <div class="mt-6 flex flex-wrap gap-3 sm:mt-8">
+        <a href="{{ '/contribute/' | lurl(L) }}" class="btn btn-white btn-lg hidden sm:inline-flex">{% icon "heart", "size-5 text-coral-600" %}{{ "home.give.cta" | t(L) }}</a>
+        <a href="https://contribution.aa.org/" target="_blank" rel="noopener" class="btn btn-glass btn-lg">{{ "home.give.gso" | t(L) }}{% icon "external-link", "size-4 opacity-80" %}</a>
+      </div>
+    </div>
+    <div class="min-w-0 lg:col-span-7">
+      <ul class="hm-give-grid" role="list">
+        <li class="hm-give-card hm-give-zelle reveal">
+          <span class="hm-give-ico">{% icon "smartphone", "size-6" %}</span>
+          <h3 class="mt-4 font-display text-xl font-bold">{{ "home.give.zelle_title" | t(L) }}</h3>
+          <p class="mt-2 text-sm leading-relaxed text-white/85">{{ "home.give.zelle_body" | t(L, { name: site.zelle_name }) }}</p>
+          {%- if site.email_contributions %}
+          <div class="mt-4 rounded-2xl bg-white/95 p-1.5 text-ink-900" x-data="copyText({{ site.email_contributions | json }})">
+            {%- set ep = site.email_contributions.split("@") %}
+            <p class="hm-give-email">{{ ep[0] }}{% if ep.length > 1 %}@<wbr>{{ ep[1] }}{% endif %}</p>
+            {#- named after what it copies, starting with its visible words ("Copy e-mail: contributions@…", WCAG 2.5.3);
+                app.js announces "Copied!" (MSCA.announce). btn-primary = white on coral-700 (AA). -#}
+            <button type="button" @click="copy()" class="btn btn-primary btn-sm w-full py-2" aria-label="{{ 'ui.copy_x' | t(L, { what: ('home.give.copy_what' | t(L, { email: site.email_contributions })) }) }}">
+              <span x-show="!copied" aria-hidden="true">{% icon "copy", "size-3.5" %}</span><span x-cloak x-show="copied" aria-hidden="true">{% icon "check", "size-3.5" %}</span>
+              <span x-text="copied ? {{ ('ui.copied' | t(L)) | json }} : {{ ('home.give.copy_email' | t(L)) | json }}">{{ "home.give.copy_email" | t(L) }}</span>
+            </button>
+          </div>
+          {%- endif %}
+          <a href="{{ '/contribute/' | lurl(L) }}" class="hm-give-more-link">{{ "home.give.more" | t(L) }}{% icon "arrow-right", "size-4" %}</a>
+        </li>
+        <li class="hm-give-card hm-give-more reveal" style="--reveal-delay: 90ms">
+          <span class="hm-give-ico">{% icon "mail", "size-6" %}</span>
+          <h3 class="mt-4 font-display text-xl font-bold">{{ "home.give.mail_title" | t(L) }}</h3>
+          <p class="mt-2 text-sm leading-relaxed text-white/85">{{ "home.give.mail_body" | t(L) }}</p>
+          <address class="mt-4 rounded-2xl bg-black/15 px-4 py-3 text-sm leading-relaxed not-italic ring-1 ring-white/20">
+            <span class="block">{{ site.mailing_name }}</span>
+            <span class="block">{{ "home.give.attn" | t(L) }}</span>
+            <span class="block whitespace-nowrap">{{ site.mailing_po_box }}</span>
+            <span class="block whitespace-nowrap">{{ site.mailing_city }}</span>
+          </address>
+        </li>
+        <li class="hm-give-card hm-give-more reveal" style="--reveal-delay: 180ms">
+          <span class="hm-give-ico">{% icon "hand-coins", "size-6" %}</span>
+          <h3 class="mt-4 font-display text-xl font-bold">{{ "home.give.person_title" | t(L) }}</h3>
+          <p class="mt-2 text-sm leading-relaxed text-white/85">{{ "home.give.person_body" | t(L) }}</p>
+          <p class="mt-4 flex items-start gap-2 text-sm text-white/85">{% icon "info", "size-4 mt-0.5 shrink-0" %}<span>{{ "home.give.memo" | t(L) }}</span></p>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>

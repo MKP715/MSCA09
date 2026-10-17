@@ -1,0 +1,111 @@
+/* GSR School section of the district pages (partials/district-gsr.njk) and the list of district
+   GSR Schools on /committees/gsr-school/ (partials/committee-district-gsr.njk). Colours come from the
+   district's accent variables (--a-50 … --a-900); every card's when / where / contact panel reuses the
+   calendar's .meeting-info classes (pages/calendar.css), whether its times come from the calendar or not. */
+
+/* one school or orientation: a soft tinted block, the calendar panel sits on it in white. On phones
+   there is no room for a third frame (the Zoom ID and its Copy button need the width): just spacing. */
+.gsr-item + .gsr-item { @apply border-t border-ink-100 pt-6 sm:border-t-0 sm:pt-5 2xl:pt-6; }
+@media (min-width: 40rem) {
+  .gsr-item {
+    @apply rounded-3xl p-5 ring-1 ring-(--a-100) 2xl:p-6;
+    background: linear-gradient(160deg, color-mix(in oklab, var(--a-50) 85%, white), white 70%);
+  }
+}
+.gsr-study {
+  @apply mt-4 flex items-start gap-3 rounded-2xl bg-white px-4 py-3 text-[15px] leading-relaxed text-ink-700 ring-1 ring-(--a-100);
+  overflow-wrap: anywhere;
+}
+.gsr-study > svg { color: var(--a-700); }
+/* a note under the place (the row's where_ words: a side room, an entrance, what the district's website says): a grid
+   item of its own, right after the Where block. On phones it sits under Where, lined up with its text (the 2.5rem icon
+   + 0.875rem gap of .mi-block); from sm up under the place in the Where column, When running down beside both. The
+   negative top margin takes it back to 0.5rem under the place */
+.gsr-where-note {
+  @apply -mt-3 ml-13.5 flex items-start gap-2 rounded-xl px-3 py-2 text-sm leading-relaxed text-ink-700;
+  background: var(--a-50);
+  overflow-wrap: anywhere;
+}
+.gsr-where-note > svg { color: var(--a-700); }
+@media (min-width: 40rem) {
+  .meeting-info__grid:has(> .gsr-where-note) { grid-template-areas: "when where" "when note"; }
+  .meeting-info__grid:has(> .gsr-where-note) > .gsr-when { grid-area: when; }
+  .meeting-info__grid:has(> .gsr-where-note) > .gsr-where { grid-area: where; }
+  .meeting-info__grid:has(> .gsr-where-note) > .gsr-where-note { grid-area: note; }
+  /* a long note (--wide, set in partials/district-gsr.njk) runs across the panel under When and Where: in the Where
+     column it would be a tall thin column with empty space under When (District 9's, beside a flyer: 12 lines) */
+  .meeting-info__grid:has(> .gsr-where-note--wide) { grid-template-areas: "when where" "note note"; }
+  .gsr-where-note--wide { @apply -mt-2 ml-0; }
+}
+/* a contact with nothing beside it (no Cost), after the full-width Join online row: the whole row, so the e-mail
+   address and a long label ("Coordinador(a) de Escuela de RSG") do not wrap in a narrow panel */
+.meeting-info__grid > .mi-block--wide + .gsr-contact:last-child { grid-column: 1 / -1; }
+
+/* the panel gets the item's full width (a Zoom ID and passcode row needs it), unless the card is wide enough
+   to keep that room beside a flyer (below). A flyer: last on phones (after the Zoom details, not too tall);
+   beside the heading from tablets up */
+.gsr-body { @apply mt-4; }
+.gsr-more { @apply mt-3 inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-ocean-700 hover:text-iris-700 hover:underline; }
+.gsr-flyer { @apply mx-auto mt-5 w-full max-w-60; }
+.gsr-flyer .flyer-gallery__title { @apply mb-2; }
+/* small thumbnail: the zoom badge in a strip under the picture, not over the flyer's text */
+.gsr-flyer .flyer-gallery__item { @apply pb-9; }
+.gsr-flyer .flyer-gallery__zoom { @apply right-1 bottom-1 size-7 shadow-none; }
+.gsr-flyer .flyer-gallery__item:hover > .flyer-gallery__img { transform: none; } /* no grow under the badge */
+@media (min-width: 48rem) {
+  .gsr-item--flyer {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 10rem;
+    grid-template-areas: "top flyer" "body body" "more more";
+    column-gap: 1.5rem;
+    align-items: start;
+  }
+  .gsr-item--flyer > .gsr-top { grid-area: top; }
+  .gsr-item--flyer > .gsr-body { grid-area: body; }
+  .gsr-item--flyer > .gsr-more { grid-area: more; justify-self: start; }
+  .gsr-item--flyer > .gsr-flyer { grid-area: flyer; margin: 0; max-width: none; }
+}
+/* the flyer is taller than the heading beside it: on a wide card it runs on down beside the panel instead of
+   leaving an empty band between "What is studied" and the panel. Measured on the cards themselves (.gsr-items),
+   not the window, because the district page's columns change width at each breakpoint: on a narrower card the
+   panel beside the flyer would cut off the Zoom ID (the ID and passcode copy boxes sit two to a row) */
+.gsr-items { container-type: inline-size; }
+@container (min-width: 52rem) {
+  .gsr-item--flyer { grid-template-areas: "top flyer" "body flyer" "more flyer"; }
+}
+/* from 96rem the card's padding and the flyer column are wider (above): the panel needs a 54rem card */
+@media (min-width: 96rem) {
+  @container (min-width: 52rem) and (max-width: 54rem) {
+    .gsr-item--flyer { grid-template-areas: "top flyer" "body body" "more more"; }
+  }
+}
+@media (min-width: 96rem) {
+  .gsr-item--flyer { grid-template-columns: minmax(0, 1fr) 11rem; }
+}
+
+/* the district's own GSR material: one list, one row per link (no half-empty card grid) */
+.gsr-links { @apply divide-y divide-ink-100 overflow-hidden rounded-3xl bg-white shadow-soft ring-1 ring-ink-900/5; }
+.gsr-link { @apply flex items-start gap-3.5 p-4 transition hover:bg-(--a-50) sm:p-5; }
+.gsr-link:focus-visible { @apply outline-2 -outline-offset-2 outline-(--a-600); }
+
+/* the Area's help, under a hairline */
+.gsr-foot { @apply mt-8 border-t border-ink-100 pt-6; }
+
+/* /committees/gsr-school/: one row per district */
+.gsr-dlist { @apply mt-5 grid grid-cols-1 gap-3 md:grid-cols-2 3xl:grid-cols-3; }
+.gsr-drow {
+  @apply flex h-full items-start gap-3.5 rounded-3xl bg-white p-3.5 pr-4 shadow-soft ring-1 ring-ink-900/5 transition duration-300 hover:-translate-y-0.5 hover:shadow-lift;
+}
+.gsr-drow:focus-visible { @apply outline-2 outline-offset-2 outline-(--a-600); }
+.gsr-dline { @apply mt-1.5 block text-sm leading-snug; }
+.gsr-dline + .gsr-dline { @apply mt-2.5; }
+
+@media print {
+  .gsr-flyer { display: none; }
+  .gsr-item { background: none; }
+  /* the print stylesheet adds each external link's URL after it (site.css): in the half-width
+     link cards that extra flex item squeezed the text to a word a line. One column, URL on its own line */
+  #gsr ul.grid { grid-template-columns: minmax(0, 1fr); }
+  #gsr .dx-link-card, #gsr .gsr-link { flex-wrap: wrap; }
+  #gsr .dx-link-card::after, #gsr .gsr-link::after { flex-basis: 100%; overflow-wrap: anywhere; }
+}

@@ -1,0 +1,9 @@
+{#- Home "Coming up" lists drawn with the calendar's own macros (macros/events.njk). part: "slides" | "week". -#}
+{%- from "macros/events.njk" import eventCard, upcomingList with context -%}
+{%- if part == "slides" -%}
+{%- for occ in events %}
+<div class="swiper-slide" data-hide-after="{{ occ.end }}">{{ eventCard({ occ: occ, lang: L, variant: "flyer" }) }}</div>
+{%- endfor %}
+{%- else -%}
+{{ upcomingList({ items: week, lang: L, limit: 7, emptyText: "home.week.empty" | t(L), variant: "compact", id: "home-week" }) }}
+{%- endif -%}

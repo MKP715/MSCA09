@@ -1,0 +1,23 @@
+key,en,es,notes
+"# A.A.'s upside-down service triangle, drawn the same way on Home, About, Districts and How service works (src/_includes/macros/triangle.njk; the order of the levels and their colours are in src/_data/serviceTriangle.js). en = English, es = Spanish (A.A. usage, tú). notes = for editors only.",,,
+"# .band = the words inside the band, as on the Panel logo (""|"" starts a second line; keep them short — the lower bands are narrow). .name = the full name, in the numbered lists and for screen readers; it must contain the band's words (e.g. ""General Service Board (GSB)"") so people who use voice control can say what they see.",,,
+triangle.label,A.A.'s upside-down service triangle,El triángulo invertido del servicio de A.A.,What screen readers call the list of levels
+triangle.down,The groups' voice travels down,La voz de los grupos baja,Caption under every triangle
+triangle.up,Information comes back up,La información vuelve a subir,Caption under every triangle
+triangle.here,You are here,Estás aquí,Marks the page's own level (the Districts page)
+triangle.groups.band,A.A. GROUPS,GRUPOS DE A.A.,Words inside the top band (as on the logo)
+triangle.groups.name,A.A. groups,Grupos de A.A.,
+triangle.gsrs.band,GSRs,RSG,
+triangle.gsrs.name,General Service Representatives (GSRs),Representantes de Servicios Generales (RSG),
+triangle.districts.band,DISTRICTS,DISTRITOS,
+triangle.districts.name,Districts,Distritos,
+triangle.areas.band,AREAS,ÁREAS,
+triangle.areas.name,Areas,Áreas,
+triangle.gsc.band,GSC,CSG,
+triangle.gsc.name,General Service Conference (GSC),Conferencia de Servicios Generales (CSG),Contains the band's words (GSC / CSG)
+triangle.gsb.band,GSB,JSG,
+triangle.gsb.name,General Service Board (GSB),Junta de Servicios Generales (JSG),Contains the band's words (GSB / JSG)
+triangle.corps.band,AAWS|AA GRAPEVINE,AAWS|AA GRAPEVINE,Words in the tip of the triangle: the General Service Board's two operating corporations; | starts the second line
+triangle.corps.name,A.A. World Services (AAWS) and AA Grapevine,A.A. World Services (AAWS) y AA Grapevine,Contains the band's words (AAWS ... AA Grapevine)
+triangle.gsb.why_title,Why 22 trustees?,¿Por qué 22 custodios?,"Heading of the note below, on How service works (General Service Board level)"
+triangle.gsb.why,"The board normally has 21 trustees: 7 Class A (non-alcoholic) and 14 Class B (A.A. members). A Class B chair is added as an extra voting Class B trustee, so there are 22 while Scott H., the first Class B chair, serves his four-year term (spring 2024 to spring 2028). If the next chair is Class A, the board goes back to 21.","La Junta suele tener 21 custodios: 7 de clase A (no alcohólicos) y 14 de clase B (miembros de A.A.). Un presidente de clase B se suma como custodio adicional de clase B con voto, así que hay 22 mientras Scott H., el primer presidente de clase B, cumple su período de cuatro años (de la primavera de 2024 a la de 2028). Si el próximo presidente es de clase A, la Junta vuelve a tener 21.","Shown on About (the triangle's General Service Board line) and on How service works. UPDATE IN SPRING 2028 when the next chair takes office (also: about.tri.gsb in content.csv, service.structure.gsb_what in service.csv, and the General Service Board and trustee rows of data/glossary.csv). Source: A.A. Service Manual / GSB bylaws; Scott H. took office after the 74th GSC (2024), term through the annual meeting after the 78th GSC (2028). Name: first name and last initial only."

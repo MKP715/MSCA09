@@ -1,0 +1,128 @@
+---
+pagination: { data: langs, size: 1, alias: lang, addAllPagesToCollections: true }
+permalink: "{{ lang.prefix }}/service/prf-2028/volunteer/"
+layout: page.njk
+title_key: prf.vol.title
+description_key: prf.vol.description
+eyebrow_key: prf.vol.eyebrow
+lead_key: prf.vol.lead
+heroIcon: hand-heart
+accent: coral
+crumbs: [{ label_key: "prf.crumb_service", url: "/service/" }, { label_key: "prf.crumb", url: "/service/prf-2028/" }]
+bare: true
+prfPage: volunteer
+ogImage: /assets/img/prf/long-beach-1024.jpg
+source: data/prf/positions.csv
+scripts: ["/assets/js/prf.js"]
+jsText: ["prf.js.to", "prf.js.subject"]
+---
+{#- Volunteering for the Forum: how it works, the ten host (Welcome) committee chair positions (filter: before the
+    Forum / Forum weekend), the weekend shifts, and the sign-up form (an e-mail to the host committee). "I'm interested"
+    on a position ticks it in the form. Data: data/prf/positions.csv, shifts.csv, cards.csv (steps, volnotes);
+    wording: data/text/prf.csv. -#}
+{%- from "macros/ui.njk" import sectionHead with context -%}
+{%- from "macros/prf.njk" import prfMailForm with context -%}
+{%- set L = lang -%}
+{%- set P = prf -%}
+{%- set S = P.set -%}
+
+{% include "partials/prf-nav.njk" %}
+
+<div class="wrap space-y-20 py-12 lg:space-y-24 lg:py-16 2xl:py-20">
+
+  {#- ============================================================ how it works -#}
+  <section aria-labelledby="prf-steps-h">
+    <h2 id="prf-steps-h" class="sr-only">{{ "prf.vol.steps_title" | t(L) }}</h2>
+    <ol class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5" role="list">
+      {%- for c in P.cards.steps %}
+      <li class="card relative p-5" style="{{ ['coral', 'sun', 'sea', 'iris', 'sage'][loop.index0 % 5] | accent }}">
+        <span class="grid size-9 place-items-center rounded-full bg-(--a-600) font-display font-bold text-white">{{ loop.index }}</span>
+        <p class="mt-3 font-display text-lg font-bold text-ink-950">{{ c | loc("title", L) }}</p>
+        <p class="mt-1 text-sm leading-relaxed text-ink-600">{{ c | loc("body", L) }}</p>
+      </li>
+      {%- endfor %}
+    </ol>
+    <p class="mt-6"><a href="#signup" class="btn btn-accent" style="{{ 'coral' | accent }}">{% icon "hand-heart", "size-4" %}{{ "prf.vol.cta" | t(L) }}</a></p>
+  </section>
+
+  {#- ============================================================ the ten positions -#}
+  <section id="positions" class="scroll-mt-28" aria-labelledby="prf-pos-h" x-data="prfPositions">
+    {{ sectionHead({ eyebrow: "prf.vol.pos_eyebrow" | t(L), title: "prf.vol.pos_title" | t(L), lead: "prf.vol.pos_lead" | t(L, { n: P.positions.length }), id: "prf-pos-h", accent: "coral" }) }}
+    <div class="mb-6 flex flex-wrap items-center gap-2" x-cloak x-show="ready" role="group" aria-label="{{ 'prf.vol.filter' | t(L) }}">
+      {%- for f in ["all", "before", "during"] %}
+      <button type="button" class="chip-link" :class="phase === '{{ f }}' && 'is-on'" :aria-pressed="(phase === '{{ f }}').toString()" @click="phase = '{{ f }}'">{{ ("prf.vol.f_" + f) | t(L) }}</button>
+      {%- endfor %}
+      <p class="ml-auto text-sm text-ink-500" aria-live="polite"><span x-text="shown"></span> / {{ P.positions.length }}</p>
+    </div>
+    <ul class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3" role="list">
+      {%- for p in P.positions %}
+      <li id="position-{{ p.id }}" class="prf-pos card flex flex-col p-6 scroll-mt-28" style="{{ ['coral', 'sea', 'sun', 'iris', 'sage', 'ocean', 'copper', 'blush', 'lilac', 'teal'][loop.index0 % 10] | accent }}"
+          data-phases="{{ p.phases | join(' ') }}" x-show="show($el)">
+        <div class="flex items-start justify-between gap-3">
+          <span class="icon-tile size-12">{% icon p.icon or "user-round", "size-6" %}</span>
+          {%- if p.open %}<span class="chip chip-accent" style="{{ 'sage' | accent }}">{{ "prf.vol.open" | t(L) }}</span>{% else %}<span class="chip chip-soft">{{ "prf.vol.filled" | t(L) }}</span>{% endif %}
+        </div>
+        <h3 class="mt-4 font-display text-xl font-bold text-ink-950">{{ p | loc("title", L) }}</h3>
+        <ul class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-ink-500" role="list">
+          <li class="inline-flex items-center gap-1.5">{% icon "users", "size-4 shrink-0" %}{{ p | loc("crew", L) }}</li>
+          <li class="inline-flex items-center gap-1.5">{% icon "clock", "size-4 shrink-0" %}{{ p | loc("when", L) }}</li>
+        </ul>
+        <p class="mt-3 flex-1 leading-relaxed text-ink-700">{{ p | loc("summary", L) }}</p>
+        {%- set duties = p.duties_es if L.code == "es" else p.duties_en %}
+        {%- if duties.length %}
+        <details class="prf-duties mt-4">
+          <summary>{% icon "list-checks", "size-4" %}{{ "prf.vol.duties" | t(L) }}</summary>
+          <ul class="mt-2 space-y-1.5 text-sm text-ink-700" role="list">{% for d in duties %}<li class="flex items-start gap-2">{% icon "check", "size-4 mt-0.5 shrink-0 text-(--a-600)" %}<span>{{ d }}</span></li>{% endfor %}</ul>
+        </details>
+        {%- endif %}
+        {%- if p.open %}
+        <a href="#signup" class="btn btn-white btn-sm mt-5 self-start" @click="interested('{{ p.id }}')">{% icon "hand-heart", "size-4 text-(--a-600)" %}{{ "prf.vol.interest" | t(L) }}<span class="sr-only">: {{ p | loc("title", L) }}</span></a>
+        {%- endif %}
+      </li>
+      {%- endfor %}
+    </ul>
+  </section>
+
+  {#- ============================================================ weekend shifts -#}
+  <section id="shifts" class="scroll-mt-28" aria-labelledby="prf-shifts-h">
+    <div class="card overflow-hidden" style="{{ 'sea' | accent }}">
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-ink-100 p-6">
+        <h2 id="prf-shifts-h" class="flex items-center gap-3 font-display text-2xl font-bold text-ink-950"><span class="icon-tile size-11">{% icon "clipboard-list", "size-5" %}</span>{{ "prf.vol.shift_title" | t(L) }}</h2>
+        <p class="text-sm text-ink-600">{{ "prf.vol.shift_note" | t(L) }}</p>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="prf-table">
+          <thead><tr><th scope="col">{{ "prf.vol.th_day" | t(L) }}</th><th scope="col">{{ "prf.vol.th_time" | t(L) }}</th><th scope="col">{{ "prf.vol.th_task" | t(L) }}</th><th scope="col" class="text-right">{{ "prf.vol.th_people" | t(L) }}</th></tr></thead>
+          <tbody>
+            {%- for d in P.days %}{% for s in d.shifts %}
+            <tr>
+              {%- if loop.first %}<th scope="rowgroup" rowspan="{{ d.shifts.length }}" class="align-top">{{ ("prf.day." + d.key) | t(L) }}</th>{% endif %}
+              <td class="whitespace-nowrap tabular-nums">{{ s | loc("time", L) }}</td>
+              <td>{{ s | loc("task", L) }}</td>
+              <td class="text-right font-semibold tabular-nums">{{ s.people }}</td>
+            </tr>
+            {%- endfor %}{% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  {#- ============================================================ sign-up -#}
+  <section id="signup" class="scroll-mt-28 grid grid-cols-1 gap-8 lg:grid-cols-12" aria-labelledby="prf-signup-h">
+    <div class="lg:col-span-4">
+      <p class="eyebrow mb-2" style="{{ 'coral' | accent }}">{{ "prf.vol.form_eyebrow" | t(L) }}</p>
+      <h2 id="prf-signup-h" class="h-section">{{ "prf.vol.form_title" | t(L) }}</h2>
+      <p class="lead mt-3">{{ "prf.vol.form_lead" | t(L) }}</p>
+      <ul class="mt-6 space-y-3" role="list">
+        {%- for c in P.cards.volnotes %}
+        <li class="flex items-start gap-2.5 text-ink-700">{% icon "circle-check", "size-5 mt-0.5 shrink-0 text-sage-600" %}<span>{{ c | loc("body", L) }}</span></li>
+        {%- endfor %}
+      </ul>
+      <p class="mt-6 text-sm text-ink-600">{% icon "mail", "size-4 inline align-[-2px]" %} {{ "prf.vol.questions" | t(L) }} <a href="mailto:{{ S.email }}" class="font-semibold text-ocean-700 hover:underline">{{ S.email }}</a></p>
+    </div>
+    <div class="card p-6 sm:p-8 lg:col-span-8">
+      {{ prfMailForm({ form: "volunteer", lang: L }) }}
+    </div>
+  </section>
+</div>

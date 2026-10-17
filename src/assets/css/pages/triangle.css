@@ -1,0 +1,145 @@
+/* A.A.'s upside-down service triangle — one component for Home, About, Districts and How service works.
+   Markup: src/_includes/macros/triangle.njk (levels: src/_data/serviceTriangle.js, words: data/text/triangle.csv).
+   Red bands like the Panel logo, the tip (AAWS and AA Grapevine) taller so its two lines fit inside the point.
+   A band takes its own colour (--a-* from the `accent` filter) when it is lit: .is-on (a hovered list line),
+   [aria-selected="true"] (the chosen tab) or .is-here (the page's own level).
+   Imported before the page files, so a page can size or place the wrapper (e.g. .hm-tri-wrap on Home). */
+
+.tri-wrap {
+  width: 100%;
+  margin-inline: auto;
+  container: tri / inline-size;
+}
+.tri {
+  display: grid;
+  /* six bands, then a taller tip (AAWS and AA Grapevine) so its two lines fit inside the point */
+  grid-template-rows: repeat(6, minmax(0, 1fr)) minmax(0, 2.4fr);
+  gap: 4px;
+  aspect-ratio: 1 / 0.86;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  filter: drop-shadow(0 20px 40px rgb(0 0 0 / 0.4));
+}
+/* light pages: no dark shadow (it would show through the gaps as grey stripes) — the gaps stay the page's colour,
+   as on the Panel logo — and a soft red glow under the point (on .tri itself the clip-path would cut it off) */
+.tri-wrap:not(.tri-wrap--dark) .tri { filter: none; }
+.tri-wrap:not(.tri-wrap--dark) .tri-shadow { filter: drop-shadow(0 16px 22px rgb(237 28 36 / 0.22)); }
+
+.tri-band {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: linear-gradient(90deg, var(--color-coral-800), var(--color-coral-700) 30%, var(--color-coral-700) 70%, var(--color-coral-800)); /* white text: 700 (AA) */
+  color: white;
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  font-size: calc(4.6cqw - var(--i) * 0.3cqw);
+  line-height: 1;
+  /* the bands drop in one after another (opacity, transform); a band lights up at once (background, filter) */
+  transition: opacity 0.6s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1), background 0.35s, filter 0.35s;
+  transition-delay: calc(var(--i) * 110ms), calc(var(--i) * 110ms), 0s, 0s;
+  position: relative;
+  overflow: hidden;
+}
+/* inside a .reveal wrapper the bands wait until it scrolls into view */
+.tri-wrap.reveal:not(.is-visible) .tri-band { opacity: 0; transform: translateY(-14px); }
+.tri-in { position: relative; z-index: 1; text-shadow: 0 1px 2px rgb(0 0 0 / 0.25); }
+.tri-words, .tri-line { display: block; text-align: center; }
+/* the tip: two short lines near the top of the point, where it is still wide enough */
+.tri-band.tri-tip { place-items: start center; padding-top: 0.45em; }
+.tri-tip .tri-line + .tri-line { margin-top: 0.3em; font-size: 0.78em; letter-spacing: 0.02em; }
+.tri-band::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 30%, rgb(255 255 255 / 0.28) 50%, transparent 70%);
+  transform: translateX(-120%);
+  animation: tri-sheen 6s ease-in-out 4;
+  animation-delay: calc(1.2s + var(--i) * 0.18s);
+}
+@keyframes tri-sheen {
+  0%, 55% { transform: translateX(-120%); }
+  80%, 100% { transform: translateX(120%); }
+}
+.tri-band.is-on {
+  background: linear-gradient(90deg, var(--a-800), var(--a-600) 30%, var(--a-600) 70%, var(--a-800));
+  filter: brightness(1.08);
+  transition-delay: 0ms;
+}
+/* the chosen tab, "you are here" and (on light pages) a hovered line: the level's own colour with dark words
+   (300/400: deep enough that even the small lilac tip stands out on a white page; ink on 400 is at least 7:1
+   for every accent, while white words on the lighter accents' 600 would not even reach 4.5:1) */
+.tri-band[aria-selected="true"], .tri-band.is-here, .tri-wrap:not(.tri-wrap--dark) .tri-band.is-on {
+  background: linear-gradient(90deg, var(--a-400), var(--a-300) 30%, var(--a-300) 70%, var(--a-400));
+  color: var(--color-ink-950);
+}
+.tri-band[aria-selected="true"] .tri-in, .tri-band.is-here .tri-in, .tri-wrap:not(.tri-wrap--dark) .tri-band.is-on .tri-in { text-shadow: none; }
+.tri-band.is-here .tri-in { display: inline-flex; align-items: center; gap: 0.35em; }
+.tri-pin { width: 1em; height: 1em; flex-shrink: 0; }
+
+/* as tabs (How service works) */
+button.tri-band { cursor: pointer; }
+button.tri-band:hover { filter: brightness(1.12); }
+/* the point clips anything outside the band, so the focus ring is drawn inside it */
+button.tri-band:focus-visible { outline: 3px solid var(--color-ink-950); outline-offset: -6px; border-radius: 0; }
+
+/* narrow (phones, side columns): the words would be too small, so each band shows its number;
+   the list beside the triangle gives the names. Not on Home (dark): it has its own phone version (a mini triangle
+   and the list) and always shows the words, even when a scrollbar makes its column a little narrower at 1024px. */
+.tri-num { display: none; }
+@container tri (max-width: 26.99rem) {
+  .tri-wrap:not(.tri-wrap--mini, .tri-wrap--dark) .tri-band { font-size: max(0.8rem, calc(6.4cqw - var(--i) * 0.45cqw)); }
+  .tri-wrap:not(.tri-wrap--dark) .tri-words { display: none; }
+  .tri-wrap:not(.tri-wrap--dark) .tri-num { display: block; }
+}
+
+/* the caption under it: "The groups' voice travels down" / "Information comes back up" */
+.tri-caption {
+  @apply mt-6 flex flex-wrap justify-center gap-2 text-xs font-semibold text-ink-700 sm:text-sm;
+}
+.tri-caption > span { @apply inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 ring-1 ring-ink-200; }
+.tri-caption svg { color: var(--color-coral-600); }
+
+/* on a dark background (Home) */
+.tri-wrap--dark .tri-caption { @apply text-ink-200; }
+.tri-wrap--dark .tri-caption > span { @apply bg-white/10 ring-white/15; }
+.tri-wrap--dark .tri-caption svg { color: var(--color-sun-300); }
+
+/* mini: a small triangle without words (Home, beside the heading on phones) */
+.tri-wrap--mini .tri { gap: 2px; filter: drop-shadow(0 10px 18px rgb(0 0 0 / 0.45)); }
+.tri-wrap--mini .tri-band > span, .tri-wrap--mini .tri-caption { display: none; }
+
+/* ---------------------------------------------------------------- the numbered list beside a triangle */
+.tri-key { @apply grid gap-1.5; }
+/* tablets (640–1023px, where the list sits under a wide triangle): two columns, read down the first then the second.
+   (Page CSS is not in a Tailwind layer, so a utility such as lg:columns-1 could not undo this; hence the range.) */
+@media (min-width: 640px) and (max-width: 1023.98px) {
+  .tri-key--cols { display: block; columns: 2; column-gap: 1.5rem; }
+  .tri-key--cols > .tri-key-row { break-inside: avoid; margin-bottom: 0.375rem; }
+}
+.tri-key-row {
+  @apply flex items-start gap-3 rounded-2xl px-3 py-2.5 ring-1 ring-transparent transition duration-200;
+}
+.tri-key-row:hover, .tri-key-row.is-on { background: var(--a-50); --tw-ring-color: var(--a-200); }
+.tri-key-row.is-here { background: var(--a-50); --tw-ring-color: var(--a-300); }
+.tri-key-num {
+  @apply grid size-8 shrink-0 place-items-center rounded-xl font-display text-sm font-bold text-white;
+  background: linear-gradient(135deg, var(--a-700), var(--a-900)); /* white digit: AA even for the lightest accents */
+}
+.tri-key-name { @apply font-display leading-snug font-bold text-ink-950; }
+.tri-key-here {
+  @apply ml-1 inline-flex items-center gap-1 rounded-full px-2 py-0.5 align-[2px] text-[11px] font-bold tracking-wide whitespace-nowrap uppercase;
+  background: var(--a-200);
+  color: var(--a-900);
+}
+.tri-key-note { @apply mt-0.5 block text-sm leading-snug text-ink-600; }
+.tri-key-more { @apply mt-2 block text-[13px] leading-relaxed text-ink-600; }
+
+@media print {
+  /* printed as on screen (browsers leave background colours out unless asked), even if never scrolled into view */
+  .tri { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .tri-band::after { display: none; }
+  .tri-wrap.reveal, .tri-wrap.reveal:not(.is-visible) .tri-band { opacity: 1; transform: none; }
+}

@@ -1,0 +1,268 @@
+{#-
+  The GSR School section of a district page (/districts/<slug>/#gsr): one card per GSR School or new-GSR
+  orientation, the district's own GSR material and the way to the Area GSR School.
+  Content: data/gsr-schools.csv joined with the Area calendar and the roster's GSR School Chair (dxGsr in
+  src/_lib/plugins/districts.js); wording: data/text/districts.csv (districts.gsr.*). Styles:
+  src/assets/css/pages/gsr-schools.css, on the calendar's .meeting-info panel (pages/calendar.css).
+  Expects (from district.njk): L, d, gsrInfo, series (the business meeting) and the meeting place
+  placeName, placeAddr, mapsUrl, onlineOnly.
+  Every card has the same parts in the same order, wherever its times come from (it.mode):
+    label (GSR School / New-GSR orientation), title, about, what is studied;
+    a panel: format, language, "before the district meeting" and Cancelled chips · When (day, time,
+    registration, next date) · Where · Join online (a calendar entry with Zoom) · Contact (the district's
+    GSR School Chair when the roster names one; a calendar entry's website) · Cost · the calendar's notes ·
+    Add to calendar (a calendar entry) or where the times come from;
+    a calendar entry's flyer and its "All dates and details" link.
+    A calendar entry's panel shows everything the calendar's own meetingInfo panel shows (macros/events.njk):
+    its blocks below are copies of meetingInfo's, so a change to one belongs in the other too.
+    mode "calendar" → the school's own Area calendar entry; the row's where_ words are a note under Where
+    mode "meeting"  → held on the business-meeting days at the row's time, where the district meets
+                      (the row's where_ words are a note under the place)
+    mode "text"     → the row's when_ / where_ words (and its start / end time)
+-#}
+{%- from "macros/ui.njk" import emailLink, formatBadge, langBadge, copyable with context -%}
+{%- from "macros/events.njk" import addToCalendar, flyerGallery with context -%}
+{%- set gi = gsrInfo -%}
+<section id="gsr" class="dx-section dx-panel" aria-labelledby="h-gsr">
+  <h2 id="h-gsr" class="dx-h2"><span class="icon-tile">{% icon "graduation-cap", "size-5" %}</span>{{ ("districts.gsr.title" if gi.kind == "school" else "districts.gsr.title_orientation") | t(L) }}</h2>
+  <p class="mt-3 max-w-3xl text-ink-600">{{ "districts.gsr.lead" | t(L) }}</p>
+
+  <div class="gsr-items mt-6 space-y-5">
+    {%- for it in gi.items %}
+    {%- set s = it.series if it.mode == "calendar" else null %}
+    {%- set title = (it | loc("title", L)) or (s | calTitle(L)) %}
+    {%- set about = it | loc("about", L) %}
+    {%- set study = it | loc("study", L) %}
+    {%- set rule = it | loc("rule", L) %}
+    {%- set time = (it.time_es or it.time_en) if L.code == "es" else it.time_en %}
+    {%- set whereText = it | loc("where", L) %}
+    {%- set ct = it.contact or {} %}
+    {%- set flyers = ((s.flyers or []) | limit(1)) if s else [] %}
+    {#- with a flyer: heading | flyer side by side on wide screens, the panel full width under them;
+        on phones the flyer comes last, after the Zoom details (gsr-schools.css) -#}
+    <article class="gsr-item{{ ' gsr-item--flyer' if flyers.length }}" aria-labelledby="h-gsr-{{ loop.index }}">
+      <div class="gsr-top min-w-0">
+        <div class="flex items-start gap-3.5 sm:gap-4">
+          {#- (the icon shortcode takes a plain value: an "x if y else z" argument does not parse) -#}
+          {%- set itIcon = "graduation-cap" if it.kind == "school" else "user-plus" %}
+          <span class="icon-tile shrink-0">{% icon itIcon, "size-5" %}</span>
+          <div class="min-w-0">
+            {#- the kind label tells the cards of a district apart (an orientation and a school): one card needs
+                none, the section heading above already says it; nor does a title that is that very label -#}
+            {%- set kindLabel = ("districts.gsr.kind_school" if it.kind == "school" else "districts.gsr.label_orientation") | t(L) %}
+            {%- if gi.items.length > 1 and (kindLabel | lower) != (title | lower) %}<p class="dx-kicker mb-0.5">{{ kindLabel }}</p>{% endif %}
+            <h3 id="h-gsr-{{ loop.index }}" class="font-display text-xl leading-snug font-bold text-balance text-ink-950 sm:text-2xl">{{ title }}</h3>
+            {%- if about %}<p class="mt-1.5 max-w-3xl text-[15px] leading-relaxed text-ink-700">{{ about }}</p>{% endif %}
+          </div>
+        </div>
+        {%- if study %}
+        <p class="gsr-study">{% icon "book-open-text", "size-5 mt-0.5 shrink-0" %}<span><strong class="font-semibold text-ink-950">{{ "districts.gsr.study" | t(L) }}</strong> {{ study }}</span></p>
+        {%- endif %}
+      </div>
+
+      {#- the same panel for every item, in the calendar panel's look -#}
+      <div class="meeting-info gsr-body" style="{{ d.color | accent }}">
+        {%- set cancelled = s and s.status == "cancelled" %}
+        {%- set chips = it.format or it.before or (s and s.language) or cancelled %}
+        {%- if chips %}
+        <div class="flex flex-wrap items-center gap-1.5">
+          {{ formatBadge({ format: it.format, lang: L }) }}
+          {%- if s %}{{ langBadge({ language: s.language, lang: L }) }}{% endif %}
+          {%- if it.before %}<span class="chip chip-soft">{% icon "clock", "size-3.5" %}{{ "districts.gsr.before_meeting" | t(L) }}</span>{% endif %}
+          {%- if cancelled %}<span class="chip chip-accent" style="{{ 'red' | accent }}">{{ "calendar.cancelled" | t(L) }}</span>{% endif %}
+        </div>
+        {%- endif %}
+        <div class="meeting-info__grid{{ ' mt-0!' if not chips }}">
+          {#- WHEN -#}
+          <div class="mi-block gsr-when">
+            <span class="mi-icon">{% icon "calendar-clock", "size-5" %}</span>
+            <div class="min-w-0">
+              <p class="mi-label">{{ "calendar.info.when" | t(L) }}</p>
+              {%- if s and not s.recurring %}
+              <div class="mi-value first-letter:uppercase">{% if s.multiDay %}{{ s | calLoc("dateLabel", L) }}{% else %}{{ s.start | dt("long", L) }}{% endif %}</div>
+              {%- else %}
+              <div class="mi-value">{{ rule or (("districts.gsr.meeting_days" if it.mode == "meeting" else "districts.gsr.ask_when") | t(L)) }}</div>
+              {%- endif %}
+              {%- if time %}<p class="mi-sub">{{ time }}{% if not (s and s.allDay) %} · {{ "time.pacific" | t(L) }}{% endif %}</p>{% endif %}
+              {%- set reg = (s | calLoc("registration", L)) if s else "" %}
+              {%- if reg %}
+              <p class="mi-reg">{% icon "door-open", "size-4 shrink-0" %}<span>{{ reg }}</span></p>
+              {%- endif %}
+              {%- if s and not s.recurring and not s.ended %}
+              <p class="mt-2" data-when="{{ s.start }}" data-until="{{ s.end }}" data-hide-after="{{ s.end }}"><span data-rel hidden class="rel-badge"></span></p>
+              {%- elif it.dates.length %}
+              <ul class="mt-2" data-limit="1" role="list">
+                {%- for n in it.dates %}
+                <li class="mi-next" data-hide-after="{{ n.end or n.start }}" data-when="{{ n.start }}" data-until="{{ n.end or n.start }}">
+                  <span class="inline-flex items-center gap-1.5 whitespace-nowrap">{% icon "arrow-right", "size-3.5 shrink-0" %}{{ "calendar.info.next" | t(L) }}:</span>
+                  <strong class="text-ink-900">{{ n.start | dt("date", L) }}</strong>
+                  <span data-rel hidden class="rel-badge"></span>
+                </li>
+                {%- endfor %}
+              </ul>
+              {%- endif %}
+            </div>
+          </div>
+
+          {#- WHERE: the calendar's place, "to be announced" (in person or hybrid without a place, as meetingInfo
+              says it) or Zoom / where the district meets / the row's words -#}
+          {%- set place = s.location if (s and s.location and not s.location.tba) else null %}
+          {%- set atMeeting = it.mode == "meeting" and not onlineOnly and (placeName or placeAddr) %}
+          {%- set tba = s and not place and ((s.location and s.location.tba) or s.format == "In person" or s.format == "Hybrid") %}
+          {%- if place or (s and s.online) or tba or atMeeting or whereText %}
+          <div class="mi-block gsr-where">
+            <span class="mi-icon">{% icon "map-pin", "size-5" %}</span>
+            <div class="min-w-0">
+              <p class="mi-label">{{ "calendar.info.where" | t(L) }}</p>
+              {%- if place %}
+              <div class="mi-value">{{ place.name or place.address }}</div>
+              {%- if place.name and place.address %}<p class="mi-sub">{{ place.address }}</p>{% endif %}
+              {%- if s.online %}<p class="mi-sub">{{ "districts.gsr.also_zoom" | t(L) }}</p>{% endif %}
+              {%- if place.mapsUrl %}<a href="{{ place.mapsUrl }}" target="_blank" rel="noopener" class="mi-link">{% icon "navigation", "size-4" %}{{ "calendar.directions" | t(L) }}</a>{% endif %}
+              {%- elif tba %}
+              <div class="mi-value">{{ "calendar.place_tba" | t(L) }}</div>
+              {%- if s.online %}<p class="mi-sub">{{ "districts.gsr.also_zoom" | t(L) }}</p>{% endif %}
+              {%- if s.web %}<p class="mi-sub">{{ "calendar.info.see_website" | t(L) }}</p>{% endif %}
+              {%- elif s and s.online %}
+              <div class="mi-value">{{ "districts.gsr.where_zoom" | t(L) }}</div>
+              {%- elif atMeeting %}
+              <div class="mi-value">{{ "districts.gsr.where_meeting" | t(L) }}</div>
+              {%- if placeName %}<p class="mi-sub font-semibold text-ink-800">{{ placeName }}</p>{% endif %}
+              {%- if placeAddr and placeAddr != placeName %}<p class="mi-sub">{{ placeAddr }}</p>{% endif %}
+              {%- if mapsUrl %}<a href="{{ mapsUrl }}" target="_blank" rel="noopener" class="mi-link">{% icon "navigation", "size-4" %}{{ "calendar.directions" | t(L) }}</a>{% endif %}
+              {%- else %}
+              <div class="mi-value">{{ whereText }}</div>
+              {%- endif %}
+            </div>
+          </div>
+          {#- the row's where_ words under a place: a room, an entrance, or what the district's own website says. A grid
+              item of its own, right after Where: a short note under the place in the Where column; a long one (more
+              than about two lines there, over 60 characters) across the panel under When and Where (gsr-schools.css) -#}
+          {%- if whereText and (place or (s and s.online) or tba or atMeeting) %}
+          <p class="gsr-where-note{{ ' gsr-where-note--wide' if whereText | length > 60 }}">{% icon "info", "size-4 mt-0.5 shrink-0" %}<span>{{ whereText }}</span></p>
+          {%- endif %}
+          {%- endif %}
+
+          {#- JOIN ONLINE (a calendar entry with Zoom) -#}
+          {%- if s and s.online and (s.online.zoomId or s.online.joinUrl) %}
+          <div class="mi-block mi-block--wide">
+            <span class="mi-icon">{% icon "video", "size-5" %}</span>
+            <div class="min-w-0 flex-1">
+              <p class="mi-label">{{ "calendar.info.online" | t(L) }}</p>
+              {%- if s.online.zoomId or s.online.passcode %}
+              <div class="mt-2 grid gap-2 sm:grid-cols-2">
+                {{ copyable({ label: ("calendar.meeting_id" | t(L)), value: s.online.zoomId, lang: L }) }}
+                {{ copyable({ label: ("calendar.passcode" | t(L)), value: s.online.passcode, lang: L }) }}
+              </div>
+              {%- endif %}
+              {%- if s.online.joinUrl %}
+              <a href="{{ s.online.joinUrl }}" target="_blank" rel="noopener" class="btn btn-ocean mt-3">{% icon "video", "size-4" %}{{ "calendar.join_zoom" | t(L) }}</a>
+              {%- endif %}
+            </div>
+          </div>
+          {%- endif %}
+
+          {#- CONTACT: the district's GSR School Chair, else the row's (or the calendar's) role address, else the
+              district; a chair without an address of their own: the district's, said to be the district's -#}
+          {%- set web = s.web if s else "" %}
+          {%- if ct.name or ct.email or web %}
+          <div class="mi-block gsr-contact">
+            <span class="mi-icon">{% icon "send", "size-5" %}</span>
+            <div class="min-w-0">
+              <p class="mi-label">{{ ("districts.gsr.contact_chair" if ct.chair else "calendar.info.contact") | t(L) }}</p>
+              {%- if ct.name %}<div class="mi-value">{{ ct.name }}{% if ct.unconfirmed %} <span class="text-sm font-normal text-ink-500">({{ "people.to_confirm" | t(L) }})</span>{% endif %}</div>{% endif %}
+              {%- if ct.email and ct.viaDistrict %}<p class="mi-sub mt-1.5!">{{ "districts.gsr.contact_via" | t(L) }}</p>{% endif %}
+              {%- if ct.email %}<div class="{{ 'mt-1 ' if ct.name and not ct.viaDistrict }}text-sm">{{ emailLink({ email: ct.email, lang: L }) }}</div>{% endif %}
+              {%- if web %}<a href="{{ web }}" target="_blank" rel="noopener" class="mi-link">{% icon "globe", "size-4" %}{{ web | calHost }}</a>{% endif %}
+            </div>
+          </div>
+          {%- endif %}
+
+          {#- COST (a calendar entry's Cost: line) -#}
+          {%- if s and s.cost %}
+          <div class="mi-block">
+            <span class="mi-icon">{% icon "ticket", "size-5" %}</span>
+            <div class="min-w-0">
+              <p class="mi-label">{{ "calendar.info.cost" | t(L) }}</p>
+              <div class="mi-value">{{ s.cost }}</div>
+            </div>
+          </div>
+          {%- endif %}
+        </div>
+
+        {#- the calendar entry's Note lines (Spanish pages: its Nota: lines, else the English marked as such) -#}
+        {%- set notes = (s | calNotes(L)) if s else [] %}
+        {%- if notes.length %}
+        <ul class="mi-notes" role="list">
+          {%- for n in notes %}
+          <li>{% icon "info", "size-4 mt-0.5 shrink-0" %}<span>{% if n.lang != L.code %}<span lang="{{ n.lang }}">{{ n.text }}</span> <span class="mi-notes__tag">{{ "calendar.note_in_english" | t(L) }}</span>{% else %}{{ n.text }}{% endif %}</span></li>
+          {%- endfor %}
+        </ul>
+        {%- endif %}
+
+        {%- if s and not s.ended %}
+        <div class="mt-5 border-t border-ink-100 pt-5" data-hide-after="{{ s.end if not s.recurring else '' }}">
+          {{ addToCalendar({ series: s, lang: L }) }}
+        </div>
+        {%- elif not s %}
+        <p class="mt-4 text-xs text-ink-500">{{ ("districts.gsr.source_meeting" if it.mode == "meeting" else "districts.gsr.source_text") | t(L) }}</p>
+        {%- endif %}
+      </div>
+
+      {%- if s %}
+      <a href="{{ s.url | lurl(L) }}" class="gsr-more">{% icon "calendar-search", "size-4" %}{{ "districts.gsr.event_page" | t(L) }}{% icon "arrow-right", "size-4" %}</a>
+      {%- endif %}
+      {%- if flyers.length %}
+      <div class="gsr-flyer">{{ flyerGallery({ flyers: flyers, lang: L, title: ("districts.gsr.flyer" | t(L)), alt: ("calendar.flyer_alt" | t(L, { title: title })), sizes: "240px" }) }}</div>
+      {%- endif %}
+    </article>
+    {%- endfor %}
+  </div>
+
+  {#- the district's own GSR material: one tidy list -#}
+  {%- if gi.links.length %}
+  <h3 class="mt-8 mb-3 text-xs font-bold tracking-[0.14em] text-ink-500 uppercase">{{ "districts.gsr.links" | t(L) }}</h3>
+  <ul class="gsr-links" role="list">
+    {%- for k in gi.links %}
+    <li>
+      <a href="{{ k.url }}" target="_blank" rel="noopener" class="gsr-link group">
+        {%- set kIcon = k.icon or "file-text" %}
+        <span class="icon-tile-soft">{% icon kIcon, "size-5" %}</span>
+        <span class="min-w-0 flex-1">
+          <span class="block font-display text-lg leading-snug font-bold text-ink-950 group-hover:text-(--a-800)">{{ k | loc("title", L) }}</span>
+          {%- set ka = k | loc("about", L) %}{% if ka %}<span class="mt-1 block text-sm leading-relaxed text-ink-600">{{ ka }}</span>{% endif %}
+          <span class="mt-1 block text-sm text-ink-500">{{ k.url | hostname }}</span>
+        </span>
+        {% icon "external-link", "size-4 mt-1 shrink-0 text-ink-300 group-hover:text-(--a-600)" %}
+      </a>
+    </li>
+    {%- endfor %}
+  </ul>
+  {%- endif %}
+
+  {#- the Area's help for every GSR -#}
+  <div class="gsr-foot">
+    <ul class="grid grid-cols-1 gap-3 md:grid-cols-2">
+      <li>
+        <a href="{{ '/committees/gsr-school/' | lurl(L) }}" class="dx-link-card group" style="{{ 'sun' | accent }}">
+          <span class="icon-tile-soft">{% icon "school", "size-5" %}</span>
+          <span class="min-w-0 flex-1">
+            <span class="block font-display text-lg leading-snug font-bold text-ink-950 group-hover:text-(--a-800)">{{ "districts.gsr.area_title" | t(L) }}</span>
+            <span class="mt-1 block text-sm leading-relaxed text-ink-600">{{ "districts.gsr.area_body" | t(L) }}</span>
+          </span>
+          {% icon "arrow-right", "size-4 shrink-0 text-ink-300" %}
+        </a>
+      </li>
+      <li>
+        <a href="{{ '/service/' | lurl(L) }}#new-gsr" class="dx-link-card group" style="{{ 'sage' | accent }}">
+          <span class="icon-tile-soft">{% icon "compass", "size-5" %}</span>
+          <span class="min-w-0 flex-1">
+            <span class="block font-display text-lg leading-snug font-bold text-ink-950 group-hover:text-(--a-800)">{{ "districts.gsr.new_title" | t(L) }}</span>
+            <span class="mt-1 block text-sm leading-relaxed text-ink-600">{{ "districts.gsr.new_body" | t(L) }}</span>
+          </span>
+          {% icon "arrow-right", "size-4 shrink-0 text-ink-300" %}
+        </a>
+      </li>
+    </ul>
+  </div>
+</section>

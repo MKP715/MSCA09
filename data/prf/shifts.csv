@@ -1,0 +1,16 @@
+day,sort,time_en,time_es,task_en,task_es,people
+# Forum-weekend volunteer needs (the table on /service/prf-2028/volunteer/). day = fri | sat | sun. people = how many volunteers (a number or a range such as 2–4; — for everyone).,,,,,,
+fri,10,10:30 a.m.,10:30 a. m.,Literature display set-up,Montaje de literatura,4
+fri,20,12:00 p.m.,12:00 p. m.,Name badge preparation,Preparación de gafetes,2–4
+fri,30,1:00 p.m.,1:00 p. m.,Volunteer training (all volunteers),Capacitación (todos los voluntarios),—
+fri,40,2:00–7:00 p.m.,2:00–7:00 p. m.,Greeters near registration,Recepcionistas en la inscripción,4–6
+fri,50,2:00–10:00 p.m.,2:00–10:00 p. m.,Registration desk (relief shifts),Mesa de inscripción (turnos),2–4
+fri,60,5:30–7:00 p.m.,5:30–7:00 p. m.,Translation equipment check-out,Préstamo del equipo de interpretación,3–4
+fri,70,6:00–6:45 p.m.,6:00–6:45 p. m.,Door greeters — opening session,Recepción en puertas — apertura,4
+sat,80,8:30 a.m.–10:00 p.m.,8:30 a. m.–10:00 p. m.,Registration desk (relief shifts),Mesa de inscripción (turnos),2–4
+sat,90,8:30–9:15 a.m.,8:30–9:15 a. m.,Door greeters & handouts,Recepción y materiales,4
+sat,100,6:15–6:45 p.m.,6:15–6:45 p. m.,Workshop signs & guides,Letreros y guías de talleres,3–5
+sat,110,8:15 p.m.,8:15 p. m.,Remove workshop signs,Retirar letreros de talleres,2
+sun,120,8:30–10:00 a.m.,8:30–10:00 a. m.,Late-arrival registration,Inscripción de llegadas tardías,2
+sun,130,12:00 p.m.,12:00 p. m.,Translation equipment return,Devolución del equipo de interpretación,3–4
+sun,140,12:00 p.m.,12:00 p. m.,Literature pack-up & tear-down,Empaque y desmontaje de literatura,3
