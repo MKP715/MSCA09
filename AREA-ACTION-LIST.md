@@ -327,7 +327,7 @@ Your item is **2.7** (Zoom meeting). Note: your Nov 21 Heritage Day overlaps the
 
 - [ ] **[Soon] Confirm** the Service Manual study (3rd Sunday, 3 PM): the passcode is 642408 as on your flyer and the Secretary's e-mail (the old calendar entry said 634401), and that it continues through 2027. *Where:* `/events/` (D09 GSR School), `/districts/d09/`.
 
-- [ ] **[Soon] Confirm** when the Zoom room opens and when GSR School starts (site says 3:30 and 3:00; flyer 3–5 PM), the right passcode (district meeting and GSR School use one ID with two passcodes), whether the GSR School series (ended Aug 2026) continues, and the Registrar's name (is the Outlook address a role mailbox?). *Where:* `/districts/d09/`, the calendar.
+- [ ] **[Soon] Confirm** the GSR School hours (since Oct 17 the calendar says the Zoom room opens at 2:50 PM and GSR School starts at 3:00, ending 3:50; the flyer says 3–5 PM), the right passcode (district meeting and GSR School use one ID with two passcodes), whether the GSR School series (ended Aug 2026) continues, and the Registrar's name (is the Outlook address a role mailbox?). *Where:* `/districts/d09/`, the calendar.
 
 #### District 10 — DCMC
 
