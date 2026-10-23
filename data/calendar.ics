@@ -3531,13 +3531,19 @@ DTSTART:20261101T203000Z
 DTEND:20261101T220000Z
 UID:e2c7sq6nhbl44kphuj7j3utgfk@google.com
 CREATED:20261013T132749Z
-DESCRIPTION:MSCA09|Social|In person\nLanguage: English\nTítulo: Boliche del
-  Intergrupo del Condado de Orange\nWeb: https://www.oc-aa.org/\nCost: $25 (
- bowling\, shoes\, pizza and soda)\nNote: Reserve a place by October 25 (det
- ails on oc-aa.org).\nNota: Reserva tu lugar antes del 25 de octubre (detall
- es en oc-aa.org).\n--\nOCAA Intergroup Bowling\, Sunday\, November 1\, 2026
- \, 12:30–2:00 PM.\nSource: oc-aa.org events (checked October 13\, 2026)
-LAST-MODIFIED:20261013T132749Z
+DESCRIPTION:MSCA09|Social|In person<br>Language: English<br>Título: Boliche
+  del Intergrupo del Condado de Orange<br>IMG: <a href="https://www.oc-aa.or
+ g/wp-content/uploads/2026/08/8EFBF189-E9B1-4ECC-8CC6-D62CF0BAAA2B.png">http
+ s://www.oc-aa.org/wp-content/uploads/2026/08/8EFBF189-E9B1-4ECC-8CC6-D62CF0
+ BAAA2B.png</a><br>Web: <a href="https://www.oc-aa.org/" target="_blank">htt
+ ps://www.oc-aa.org/</a><br>Cost: $25 (bowling\, shoes\, pizza and soda)<br>
+ Note: Reserve a place by October 25 (details on <a href="http://oc-aa.org" 
+ target="_blank">oc-aa.org</a>).<br>Nota: Reserva tu lugar antes del 25 de o
+ ctubre (detalles en <a href="http://oc-aa.org" target="_blank">oc-aa.org</a
+ >).<br>--<br>OCAA Intergroup Bowling\, Sunday\, November 1\, 2026\, 12:30–2
+ :00 PM.<br>Source: <a href="http://oc-aa.org" target="_blank">oc-aa.org</a>
+  events (checked October 13\, 2026)
+LAST-MODIFIED:20261023T021302Z
 LOCATION:Irvine Lanes\, 2415 Michelson Dr\, Irvine\, CA 92612
 SEQUENCE:0
 STATUS:CONFIRMED
