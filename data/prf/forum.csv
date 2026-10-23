@@ -1,0 +1,27 @@
+key,value,notes
+# Settings for the Pacific Regional Forum 2028 pages (/service/prf-2028/). key = never change it. value = the setting. notes = for editors.,,
+"# Wording (English and Spanish) is in data/text/prf.csv; the lists are the other files in this folder (data/prf/). Leave a value empty when it is not known yet: the pages then say ""To be announced"".",,
+start,2028-12-01T18:30:00-08:00,"When the Forum opens, in Pacific time (December = -08:00). The countdown and the Add to calendar links use it."
+end,2028-12-03T12:00:00-08:00,"When the Forum closes, in Pacific time."
+venue_name,Hilton Long Beach,The Forum hotel.
+venue_street,701 W. Ocean Blvd.,
+venue_city,"Long Beach, CA",
+venue_zip,90831,
+venue_lat,33.76781,"Map position of the hotel (latitude, longitude)."
+venue_lng,-118.19947,
+hotel_url,https://www.hilton.com/en/hotels/lgblhhf-hilton-long-beach/,The hotel's own website.
+hotel_rate,,"The A.A. group room rate once G.S.O. publishes it, e.g. $209/night + tax."
+booking_url,,"G.S.O.'s room-block booking link (it opens with registration, about two months before the Forum)."
+group_code,,"The room-block group code, if G.S.O. gives one."
+booking_cutoff,,"Last day for the group rate, as YYYY-MM-DD."
+registration_url,,"G.S.O.'s registration page on aa.org once it opens. While empty, the pages say registration is not open yet."
+email,delegate@msca09aa.org,"Where the forms and questions go. Interim: the Delegate's role mailbox, until the Area sets up a host committee address (e.g. prf2028@msca09aa.org). Never a personal address."
+chair,Alex W.,The host committee chair: first name and last initial only.
+forums_url,https://www.aa.org/regional-local-and-special-forums,"aa.org: Regional, Local & Special Forums."
+video_url,https://www.aa.org/regional-forum-video,aa.org: the Regional Forum video.
+sample_program_url,https://www.aa.org/sites/default/files/literature/regional-forum-sample-program-en.pdf,G.S.O.'s sample Forum program (PDF).
+reports_url,https://www.aa.org/resources/literature?terms=regional+forum&format=20&items_per_page=24&sort_bef_combine=title_DESC,aa.org literature search for past Forum final reports.
+prf2026_url,https://www.aa.org/event/2026-pacific-regional-forum,The 2026 Pacific Regional Forum on aa.org.
+history_doc,gso-2024-history-and-purpose-of-regional-forums-en,Document library id of G.S.O.'s one-page History and Purpose of Regional Forums (rev. 2024).
+bid_doc,reports-2024-area-09-bid-to-host-the-2028-pacific-regional-forum-en-es,Document library id of the Area's 2024 bid presentation (bilingual).
+flyer_2010,archive-flyers-2010-pacific-regional-forum-2010-en,"Document library id of the 2010 Forum flyer (Torrance), shown under ""Area 09 has hosted before""."

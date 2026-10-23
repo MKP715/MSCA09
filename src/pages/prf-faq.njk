@@ -1,0 +1,72 @@
+---
+pagination: { data: langs, size: 1, alias: lang, addAllPagesToCollections: true }
+permalink: "{{ lang.prefix }}/service/prf-2028/faq/"
+layout: page.njk
+title_key: prf.faq.title
+description_key: prf.faq.description
+eyebrow_key: prf.faq.eyebrow
+lead_key: prf.faq.lead
+heroIcon: circle-help
+accent: iris
+crumbs: [{ label_key: "prf.crumb_service", url: "/service/" }, { label_key: "prf.crumb", url: "/service/prf-2028/" }]
+bare: true
+prfPage: faq
+ogImage: /assets/img/prf/long-beach-1024.jpg
+source: data/prf/faq.csv
+scripts: ["/assets/js/prf.js"]
+---
+{#- Questions about the Forum: a search box and topic chips (prf.js prfFaq, with the site's shared matcher MSearch),
+    then the questions as <details> (they work without JavaScript). Each has an id from its English words, so a link to
+    it opens it (app.js openToHash). Data: data/prf/faq.csv; wording: data/text/prf.csv. -#}
+{%- from "macros/ui.njk" import shareButton with context -%}
+{%- set L = lang -%}
+{%- set P = prf -%}
+
+{% include "partials/prf-nav.njk" %}
+
+<div class="wrap py-12 lg:py-16 2xl:py-20">
+  <div class="mx-auto max-w-4xl" x-data="prfFaq">
+    <div class="flex flex-col gap-4" x-cloak x-show="ready">
+      <label class="relative block">
+        <span class="sr-only">{{ "prf.faq.search" | t(L) }}</span>
+        {% icon "search", "pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-ink-400" %}
+        <input type="search" x-model="q" placeholder="{{ 'prf.faq.search' | t(L) }}" class="prf-input !rounded-full !py-3 !pl-12" autocomplete="off">
+      </label>
+      <div class="flex flex-wrap gap-2" role="group" aria-label="{{ 'prf.faq.cats' | t(L) }}">
+        {%- set cats = ["all"] %}{% for c in P.faqCats %}{% set _x = cats.push(c) %}{% endfor %}
+        {%- for c in cats %}
+        <button type="button" class="chip-link" :class="cat === '{{ c }}' && 'is-on'" :aria-pressed="(cat === '{{ c }}').toString()" @click="cat = '{{ c }}'">{{ ("prf.faq.cat_" + c) | t(L) }}</button>
+        {%- endfor %}
+        <p class="ml-auto self-center text-sm text-ink-500" aria-live="polite"><span x-text="shown"></span> / {{ P.faq.length }}</p>
+      </div>
+    </div>
+
+    <div class="mt-6 space-y-3">
+      {%- for q in P.faq %}
+      {%- set fid = "faq-" + (q.q_en | slugify).slice(0, 60) %}
+      <details id="{{ fid }}" class="faq-item group card scroll-mt-28 overflow-hidden" data-cat="{{ q.cat }}" data-search="{{ (q.q_en + ' ' + q.q_es + ' ' + q.a_en + ' ' + q.a_es) | striptags }}" x-show="show($el)"
+               style="{{ ['sea', 'coral', 'iris', 'sun', 'sage', 'ocean', 'copper', 'blush'][loop.index0 % 8] | accent }}">
+        <summary class="flex cursor-pointer list-none items-start gap-4 p-5 sm:p-6">
+          <span class="grid size-9 shrink-0 place-items-center rounded-xl bg-(--a-100) text-(--a-800)">{% icon "circle-help", "size-5" %}</span>
+          <span class="flex-1 pt-1 font-display text-lg font-bold leading-snug text-ink-950">{{ q | loc("q", L) }}</span>
+          <span class="faq-chevron mt-1 grid size-8 shrink-0 place-items-center rounded-full bg-ink-50 text-ink-500 transition">{% icon "plus", "size-4" %}</span>
+        </summary>
+        <div class="prose-msca prose-base px-5 pb-6 sm:pl-[4.75rem] sm:pr-8">{{ (q | loc("a", L)) | md | safe }}</div>
+        <div class="-mt-3 px-5 pb-5 sm:pl-[4.75rem]">{{ shareButton({ lang: L, title: q | loc("q", L), hash: fid, style: "btn btn-ghost btn-sm", label: "share.answer" | t(L) }) }}</div>
+      </details>
+      {%- endfor %}
+    </div>
+    <div x-cloak x-show="ready && shown === 0" class="card mt-4 flex flex-col items-center gap-3 p-10 text-center">
+      <span class="icon-tile-soft size-12" style="{{ 'iris' | accent }}">{% icon "search-x", "size-6" %}</span>
+      <p class="font-semibold text-ink-800">{{ "ui.no_results" | t(L) }}</p>
+      <button type="button" class="btn btn-ghost btn-sm" @click="q = ''; cat = 'all'">{{ "ui.clear" | t(L) }}</button>
+    </div>
+
+    <div class="card mt-10 flex flex-col items-center gap-3 p-8 text-center" style="{{ 'sea' | accent }}">
+      <span class="icon-tile size-12">{% icon "message-circle-question", "size-6" %}</span>
+      <h2 class="font-display text-2xl font-bold text-ink-950">{{ "prf.faq.still_title" | t(L) }}</h2>
+      <p class="text-ink-600">{{ "prf.faq.still_body" | t(L) }}</p>
+      <a href="{{ (P.base + 'contact/') | lurl(L) }}#question" class="btn btn-ocean">{% icon "mail", "size-4" %}{{ "prf.faq.still_cta" | t(L) }}</a>
+    </div>
+  </div>
+</div>

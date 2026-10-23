@@ -1,0 +1,28 @@
+---
+permalink: /sitemap.xml
+eleventyExcludeFromCollections: true
+---
+{#-
+  Every indexable page (pages with noindex — the 404 page, old-address forwarding pages,
+  the Spanish copies of the English-only Delegate's Corner archive, one-time events that ended
+  more than two years ago — are left out; see sitemapEntries in eleventy.config.js).
+  The other-language alternate is listed only when that page exists and is indexable.
+  <lastmod> appears only for pages that give a real date (front matter `lastmod`):
+  a build time would change eight times a day and teach search engines to ignore it.
+-#}
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+{%- for e in collections.all | sitemapEntries %}
+  <url>
+    <loc>{{ e.url | absUrl(site.url + "/") }}</loc>
+    {%- if e.alt %}
+    <xhtml:link rel="alternate" hreflang="{{ e.lang }}" href="{{ e.url | absUrl(site.url + '/') }}"/>
+    <xhtml:link rel="alternate" hreflang="{{ e.altLang }}" href="{{ e.alt | absUrl(site.url + '/') }}"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="{{ (e.alt if e.lang == 'es' else e.url) | absUrl(site.url + '/') }}"/>
+    {%- endif %}
+    {%- if e.lastmod %}
+    <lastmod>{{ e.lastmod }}</lastmod>
+    {%- endif %}
+  </url>
+{%- endfor %}
+</urlset>

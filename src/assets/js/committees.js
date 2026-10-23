@@ -1,0 +1,235 @@
+/*
+  Committees, Panel directory and Contact pages — small Alpine components.
+
+  cmFilter({ group, lang })   live filtering of [data-cm-item] elements inside the component:
+      data-search  the item's search text, built at build time with MSearch.index (src/assets/js/search.js) and
+                   matched with MSearch.test; without it, the item's visible text is indexed once
+      data-group   group key(s), space-separated (matches `group`, or "all")
+      data-lang    "en" | "es" | "" (matches `lang`, or "all")
+      data-open    "1" when the item is (or holds) an open position
+      data-cm-past an item of the previous panel, in a folded list: counted in `shown` only while a query is typed
+    Containers marked [data-cm-section] are hidden when none of their items is visible.
+    details[data-cm-autoopen] open while a filter is on; details[data-cm-autofold] open while a query is typed
+    and fold back when it is cleared (only when the filter opened them). A URL #anchor inside a folded <details>
+    of the component opens it (on load and on a hash change).
+    Counts that follow the filters:
+      [data-cm-count="{n} in this group"]  the visible items of its section ([data-cm-unit="section"]: the visible
+                   sections inside it); [data-cm-of="{n} of {total} …"] + [data-cm-total] is used while some are hidden
+      [data-cm-facet="<group key>|open"]   how many items that pill would show, with the other filters as they are
+    `shown` = number of visible items; `announce` = text for a polite live region.
+
+  cmSpy()   highlights the in-page section link ([data-spy] anchors) of the section in view.
+*/
+(function () {
+  "use strict";
+  // an item's search text: its data-search, else its visible text indexed once
+  const hays = new WeakMap();
+  const hayOf = (el) => {
+    if (el.dataset.search) return el.dataset.search;
+    let h = hays.get(el);
+    if (h === undefined) hays.set(el, (h = window.MSearch.index(el.textContent)));
+    return h;
+  };
+
+  document.addEventListener("alpine:init", () => {
+    const Alpine = window.Alpine;
+
+    Alpine.data("cmFilter", (opts = {}) => ({
+      q: "",
+      group: opts.group || "all",
+      lang: opts.lang || "all",
+      openOnly: false,
+      shown: -1,
+      total: 0,
+      announce: "",
+      drawer: false,
+      showSearch: false,
+      init() {
+        // deep links: ?q=…&group=…&open=1
+        try {
+          const p = new URLSearchParams(location.search);
+          if (p.get("q")) (this.q = p.get("q")), (this.showSearch = true);
+          if (p.get("group")) this.group = p.get("group");
+          if (p.get("lang")) this.lang = p.get("lang");
+          if (p.get("open") === "1") this.openOnly = true;
+        } catch (e) {}
+        this.$watch("q", () => this.apply());
+        this.$watch("group", () => this.apply());
+        this.$watch("lang", () => this.apply());
+        this.$watch("openOnly", () => this.apply());
+        this.$nextTick(() => {
+          this.apply(true);
+          this.reveal();
+        });
+        window.addEventListener("hashchange", () => this.reveal());
+      },
+      // a link to an anchor inside a folded list (a site-search hit such as /contact/#dir-committees on a phone)
+      // opens that list and brings the anchor back into view
+      reveal() {
+        let el = null;
+        try {
+          if (location.hash.length > 1) el = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+        } catch (e) {}
+        const d = el && this.$root.contains(el) ? el.closest("details") : null;
+        if (!d || d.open) return;
+        d.open = true;
+        el.scrollIntoView();
+      },
+      apply(first) {
+        const query = window.MSearch.query(this.q);
+        const typed = !query.empty;
+        const items = this.$root.querySelectorAll("[data-cm-item]");
+        const facet = { open: 0 };
+        let shown = 0;
+        let total = 0;
+        items.forEach((el) => {
+          const okQ = window.MSearch.test(hayOf(el), query);
+          const groups = (el.dataset.group || "").split(" ");
+          const okG = this.group === "all" || groups.includes(this.group);
+          const okL = this.lang === "all" || !el.dataset.lang || el.dataset.lang === this.lang;
+          const isOpen = el.dataset.open === "1";
+          const okO = !this.openOnly || isOpen;
+          const ok = okQ && okG && okL && okO;
+          el.hidden = !ok;
+          const past = "cmPast" in el.dataset;
+          if (!past) total++;
+          // a previous-panel row sits in a folded list: it counts only while a query is typed
+          if (past && !typed) return;
+          if (ok) shown++;
+          // what each pill would show if it were chosen, the other filters staying as they are
+          if (okQ && okL && okO) groups.forEach((g) => (facet[g] = (facet[g] || 0) + 1));
+          if (okQ && okL && okG && isOpen) facet.open++;
+        });
+        this.$root.querySelectorAll("[data-cm-section]").forEach((sec) => {
+          const any = [...sec.querySelectorAll("[data-cm-item]")].some((el) => !el.hidden);
+          sec.hidden = !any;
+        });
+        // counts that follow the filters: "4 of 5 in this group", and each pill's own number
+        this.$root.querySelectorAll("[data-cm-count]").forEach((chip) => {
+          const sec = chip.closest("[data-cm-section]");
+          if (!sec) return;
+          const units = chip.dataset.cmUnit === "section" ? sec.querySelectorAll("[data-cm-section]") : sec.querySelectorAll("[data-cm-item]");
+          const n = [...units].filter((el) => !el.hidden).length;
+          const all = Number(chip.dataset.cmTotal) || units.length;
+          const tpl = n < all && chip.dataset.cmOf ? chip.dataset.cmOf : chip.dataset.cmCount;
+          chip.textContent = tpl.replace("{n}", n).replace("{total}", all);
+        });
+        this.$root.querySelectorAll("[data-cm-facet]").forEach((el) => (el.textContent = facet[el.dataset.cmFacet] || 0));
+        // folded sections open while searching so matches are visible
+        if (typed || this.openOnly) this.$root.querySelectorAll("details[data-cm-autoopen]").forEach((d) => (d.open = true));
+        this.$root.querySelectorAll("details[data-cm-autofold]").forEach((d) => {
+          if (typed && !d.open) (d.open = true), (d.dataset.cmOpened = "1");
+          else if (!typed && d.dataset.cmOpened) (d.open = false), delete d.dataset.cmOpened;
+        });
+        // show folded extras (e.g. long district lists) while a filter is on
+        this.$root.classList.toggle("cm-filtering", typed || this.openOnly || this.lang !== "all");
+        this.total = total;
+        this.shown = shown;
+        // wording comes from the page (data-results="… {n} …") so it is translated with the rest of the site
+        if (!first) this.announce = (this.$root.dataset.results || "{n}").replace("{n}", shown);
+        this.syncUrl();
+      },
+      syncUrl() {
+        try {
+          const p = new URLSearchParams(location.search);
+          const set = (k, v, def) => (v && v !== def ? p.set(k, v) : p.delete(k));
+          set("q", this.q.trim(), "");
+          set("group", this.group, "all");
+          set("lang", this.lang, "all");
+          set("open", this.openOnly ? "1" : "", "");
+          const qs = p.toString();
+          history.replaceState(null, "", location.pathname + (qs ? "?" + qs : "") + location.hash);
+        } catch (e) {}
+      },
+      reset() {
+        this.q = "";
+        this.group = "all";
+        this.lang = "all";
+        this.openOnly = false;
+      },
+    }));
+
+    /*
+      The current section is the LAST one whose top has scrolled past the line where an anchored section
+      lands (html scroll-padding-top + the section's scroll-margin-top, + a little slack). At the very bottom
+      of the page the last section counts as reached once it is in view. A click on a link marks that
+      section at once and keeps it until the reader scrolls on.
+    */
+    Alpine.data("cmSpy", () => ({
+      current: "",
+      init() {
+        const links = [...this.$root.querySelectorAll("a[data-spy]")];
+        const ids = [...new Set(links.map((a) => a.getAttribute("href").slice(1)))];
+        const targets = ids.map((id) => document.getElementById(id)).filter(Boolean);
+        if (!targets.length) return;
+        const root = document.documentElement;
+        const px = (v) => parseFloat(v) || 0;
+
+        const mark = (id) => {
+          if (!id || id === this.current) return;
+          this.current = id;
+          links.forEach((a) => {
+            const on = a.getAttribute("href") === "#" + id;
+            a.classList.toggle("is-current", on);
+            if (on) a.setAttribute("aria-current", "true");
+            else a.removeAttribute("aria-current");
+          });
+          // keep the active pill in view in the horizontal rail
+          const pill = links.find((a) => a.closest(".cm-secnav") && a.getAttribute("href") === "#" + id);
+          const rail = pill && pill.parentElement;
+          if (rail && rail.scrollWidth > rail.clientWidth && rail.offsetParent) {
+            rail.scrollTo({ left: pill.offsetLeft - rail.clientWidth / 2 + pill.clientWidth / 2, behavior: window.MSCA && MSCA.reducedMotion ? "auto" : "smooth" });
+          }
+        };
+
+        const compute = () => {
+          const pad = px(getComputedStyle(root).scrollPaddingTop);
+          let id = targets[0].id;
+          for (const t of targets) {
+            const line = pad + px(getComputedStyle(t).scrollMarginTop) + 24;
+            if (t.getBoundingClientRect().top <= line) id = t.id;
+          }
+          if (window.innerHeight + window.scrollY >= root.scrollHeight - 4) {
+            const last = targets[targets.length - 1];
+            if (last.getBoundingClientRect().top < window.innerHeight) id = last.id;
+          }
+          return id;
+        };
+
+        // a clicked link wins until the reader scrolls on from where the jump ended
+        let pinned = "";
+        let settledAt = null;
+        let settleTimer = 0;
+        links.forEach((a) =>
+          a.addEventListener("click", () => {
+            pinned = a.getAttribute("href").slice(1);
+            settledAt = null;
+            clearTimeout(settleTimer);
+            settleTimer = setTimeout(() => (settledAt = window.scrollY), 300); // also when the click needs no scrolling
+            mark(pinned);
+          })
+        );
+
+        let ticking = false;
+        const onScroll = () => {
+          if (pinned) {
+            clearTimeout(settleTimer);
+            if (settledAt === null) settleTimer = setTimeout(() => (settledAt = window.scrollY), 180);
+            else if (Math.abs(window.scrollY - settledAt) > 60) (pinned = ""), (settledAt = null);
+            if (pinned) return;
+          }
+          if (ticking) return;
+          ticking = true;
+          requestAnimationFrame(() => {
+            ticking = false;
+            mark(compute());
+          });
+        };
+        window.addEventListener("scroll", onScroll, { passive: true });
+        window.addEventListener("resize", onScroll, { passive: true });
+        if (location.hash && ids.includes(location.hash.slice(1))) (pinned = location.hash.slice(1)), mark(pinned);
+        else mark(compute());
+      },
+    }));
+  });
+})();

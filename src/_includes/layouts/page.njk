@@ -1,0 +1,35 @@
+---
+layout: base.njk
+---
+{#-
+  Interior page: a colourful heading band, then the page body.
+  Front matter:
+    title_key | title      the big heading
+    eyebrow_key | eyebrow  small label above the heading
+    lead_key | lead        one or two sentences under the heading
+    heroIcon               a Lucide icon name
+    accent                 colour of the band (ocean, coral, sage, iris, sun, sea, copper, blush, lilac …)
+    crumbs                 [{ label_key: "nav.service", url: "/service/" }] — breadcrumb trail before the title
+    bare                   true → the page draws its own containers (no .wrap around the body)
+    titleLang              "en" when the heading stays in English on a Spanish page (e.g. archived posts)
+-#}
+{%- from "macros/ui.njk" import pageHero -%}
+{%- set L = lang -%}
+{{ pageHero({
+  lang: L,
+  title: title,
+  eyebrow: (eyebrow_key | t(L)) if eyebrow_key else eyebrow,
+  lead: (lead_key | t(L)) if lead_key else lead,
+  icon: heroIcon,
+  accent: accent,
+  crumbs: crumbs,
+  titleLang: titleLang,
+  page: page
+}) }}
+{%- if bare %}
+{{ content | safe }}
+{%- else %}
+<div class="wrap py-12 lg:py-16 2xl:py-20">
+  {{ content | safe }}
+</div>
+{%- endif %}

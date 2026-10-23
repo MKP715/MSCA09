@@ -1,0 +1,22 @@
+group,sort,title_en,title_es,url_en,url_es,desc_en,desc_es,pdf
+"# Resource links at the end of /service/prf-2028/about/. group = forums (Regional Forums) | safety (Anonymity, safety & accessibility) | service (A.A. service structure). url_es = the Spanish page, when aa.org has one (otherwise the English one is used). pdf = yes for a PDF.",,,,,,,,
+# The Forum's own documents come from the document library (history_doc and bid_doc in data/prf/forum.csv).,,,,,,,,
+forums,10,"Regional, Local & Special Forums","Foros regionales, locales y especiales",https://www.aa.org/regional-local-and-special-forums,https://www.aa.org/es/regional-local-and-special-forums,Official Forum information and schedule on aa.org.,Información oficial y calendario de Foros en aa.org.,
+forums,20,Regional Forum video,Video del Foro Regional,https://www.aa.org/regional-forum-video,,A short introduction to Regional Forums.,Una breve introducción a los Foros Regionales.,
+forums,30,Sample Forum program,Programa de muestra,https://www.aa.org/sites/default/files/literature/regional-forum-sample-program-en.pdf,,What a typical Forum weekend looks like.,Cómo es un fin de semana típico de Foro (inglés).,yes
+forums,40,2024 Pacific Regional Forum Final Report,Informe Final del FRP 2024,https://www.aa.org/sites/default/files/literature/2024_regional_forum_pacific_final_report_en.pdf,,Read the sharing and presentations from Las Vegas.,Lee lo compartido y las presentaciones de Las Vegas (en inglés).,yes
+forums,50,Past Forum Final Reports,Informes Finales anteriores,https://www.aa.org/resources/literature?terms=regional+forum&format=20&items_per_page=24&sort_bef_combine=title_DESC,,Search the A.A. literature library.,Busca en la biblioteca de literatura de A.A.,
+forums,60,Regional Forum registration planning,Planificación de la inscripción,https://www.aa.org/regional-forum-registration-planning,,How GSO handles Forum registration.,Cómo la OSG gestiona la inscripción.,
+forums,70,2026 Pacific Regional Forum (San Diego),FRP 2026 (San Diego),https://www.aa.org/event/2026-pacific-regional-forum,,"December 4–6, 2026.",4–6 de diciembre de 2026.,
+safety,10,Anonymity: Our Spiritual Foundation,Anonimato: nuestra base espiritual,https://www.aa.org/anonymity-our-spiritual-foundation,,Pamphlet on anonymity.,Folleto sobre el anonimato.,
+safety,20,Anonymity online & digital media,Anonimato en línea,https://www.aa.org/anonymity-online-and-digital-media,,Guidance for social media and photos.,Orientación para redes sociales y fotos.,
+safety,30,Safety card for A.A. groups,Tarjeta de seguridad para grupos,https://www.aa.org/safety-card-aa-groups,,Keeping meetings and events safe.,Mantener seguras las reuniones y eventos.,
+safety,40,A.A. Guidelines: Safety and A.A. groups,Guías: Seguridad y grupos de A.A.,https://www.aa.org/aa-guidelines-safety-and-aa-groups,,Shared experience on safety.,Experiencia compartida sobre seguridad.,
+safety,50,Accessibility resources,Recursos de accesibilidad,https://www.aa.org/accessibility-resources,,"ASL, audio, large print and more.","ASL, audio, letra grande y más.",
+safety,60,Accessibilities committees,Comités de Accesibilidades,https://www.aa.org/accessibilities-committees,,Carrying the message to all.,Llevar el mensaje a todos.,
+service,10,The A.A. Service Manual,El Manual de Servicio de A.A.,https://www.aa.org/aa-service-manualtwelve-concepts-world-services,,Combined with Twelve Concepts for World Service.,Combinado con los Doce Conceptos para el Servicio Mundial.,
+service,20,The Twelve Concepts,Los Doce Conceptos,https://www.aa.org/the-twelve-concepts,,Principles of A.A. world service.,Principios del servicio mundial de A.A.,
+service,30,General Service Conference structure,Estructura de la Conferencia,https://www.aa.org/general-service-conference-structure-us-and-canada,,"How groups, districts, areas and regions fit together.","Cómo se relacionan grupos, distritos, áreas y regiones.",
+service,40,General Service Conference,Conferencia de Servicios Generales,https://www.aa.org/event/general-service-conference,,A.A.’s annual business meeting.,La reunión anual de A.A.,
+service,50,The General Service Office,La Oficina de Servicios Generales,https://www.aa.org/aa-gso,,What GSO does for the Fellowship.,Lo que hace la OSG por la Comunidad.,
+service,60,Box 4-5-9,Box 4-5-9,https://www.aa.org/box-459,,News and notes from GSO.,Noticias de la OSG.,

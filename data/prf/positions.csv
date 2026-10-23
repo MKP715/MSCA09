@@ -1,0 +1,46 @@
+id,sort,icon,status,phase,title_en,title_es,crew_en,crew_es,when_en,when_es,summary_en,summary_es,duties_en,duties_es,notes
+# The ten host (Welcome) committee chair positions on /service/prf-2028/volunteer/. id = short name (never change it). sort = order. icon = a Lucide icon name (lucide.dev/icons).,,,,,,,,,,,,,,,
+"# status = open | filled (set filled once the Area confirms a chair — the January 2027 Assembly). phase = before and/or during (the Forum weekend), separated by ;",,,,,,,,,,,,,,,
+"# duties_en / duties_es = one responsibility per line, each starting with ""- "".",,,,,,,,,,,,,,,
+registration,10,id-card,open,before; during,Registration Chair,Coordinador(a) de inscripción,Chair + 2–4 at the desk,Coordinador(a) + 2–4 en la mesa,Fri–Sun,Vie–Dom,Leads the registration desk and relief teams all weekend.,Dirige la mesa de inscripción y los equipos de relevo todo el fin de semana.,"- Staff the desk Fri 2–10 p.m., Sat 8:30 a.m.–10 p.m., Sun 8:30–10 a.m.
+- Arrive by noon Friday for name badge preparation; attend 1 p.m. training.
+- Coordinate relief teams; GSO provides office supplies.","- Atender la mesa vie 2–10 p. m., sáb 8:30 a. m.–10 p. m., dom 8:30–10 a. m.
+- Llegar al mediodía del viernes para preparar gafetes; asistir a la capacitación de la 1 p. m.
+- Coordinar equipos de relevo; la OSG provee los materiales.",
+carry,20,book-open-text,open,during,Carry the Message Chair,Coordinador(a) de «Llevar el mensaje»,4 set-up · 3 tear-down · table hosts,4 montaje · 3 desmontaje · anfitriones,Fri 10:30 a.m. · Sun noon,Vie 10:30 a. m. · Dom mediodía,Sets up and staffs the literature displays that support Twelfth Step committees.,Monta y atiende las exhibiciones de literatura que apoyan a los comités de Paso Doce.,"- Four people to set up Friday at 10:30 a.m.
+- Three people Sunday at noon to pack boxes returning to GSO.
+- Invite district & area chairs (Grapevine, Corrections, Treatment, Accessibilities, PI, CPC, Archives, Literature) to staff tables.","- Cuatro personas para montar el viernes a las 10:30 a. m.
+- Tres personas el domingo al mediodía para empacar cajas que regresan a la OSG.
+- Invitar a coordinadores de distrito y área (Grapevine, Correccionales, Tratamiento, Accesibilidades, IP, CCP, Archivos, Literatura) a atender mesas.",
+greeters,30,laugh,open,during,Volunteers / Greeters Chair,Coordinador(a) de voluntarios y bienvenida,Chair + volunteer team,Coordinador(a) + equipo,Fri 2–7 p.m. · all weekend,Vie 2–7 p. m. · todo el fin de semana,"Organizes the friendly faces who welcome, guide and assist attendees.","Organiza las caras amables que reciben, guían y ayudan a los asistentes.","- Greeters near registration Friday 2–7 p.m.
+- Greet attendees at the doors before General Sessions.
+- Distribute handouts; guide attendees to workshops Saturday.","- Recepcionistas cerca de la inscripción el viernes 2–7 p. m.
+- Recibir a los asistentes en las puertas antes de las Sesiones Generales.
+- Repartir materiales; guiar a los asistentes a los talleres el sábado.",
+translation,40,headphones,open,during,Translation Equipment Chair,Coordinador(a) del equipo de interpretación,Chair + rotating volunteers,Coordinador(a) + voluntarios,All weekend,Todo el fin de semana,Checks interpretation headsets in and out so everyone can participate. Bilingual volunteers especially welcome!,Presta y recibe los audífonos de interpretación para que todos participen. ¡Los voluntarios bilingües son especialmente bienvenidos!,"- Check equipment out before the Friday opening session (busy!).
+- Collect equipment Sunday after the close of the Forum.
+- Keep a simple check-out log throughout the weekend.","- Prestar equipos antes de la sesión de apertura del viernes (¡mucho movimiento!).
+- Recoger equipos el domingo al cierre del Foro.
+- Llevar un registro de préstamos durante el fin de semana.",
+workshops,50,signpost,open,during,Workshops Chair,Coordinador(a) de talleres,Chair + 2 helpers,Coordinador(a) + 2 ayudantes,Sat 6:30 & 8:15 p.m.,Sáb 6:30 y 8:15 p. m.,Makes sure workshop rooms are signed and ready.,Asegura que las salas de talleres estén señalizadas y listas.,"- Place signs at workshop rooms at 6:30 p.m. and remove them at 8:15 p.m.
+- Provide one large container marked “Ask-It-Basket” (GSO provides pencils and paper).","- Colocar letreros en las salas a las 6:30 p. m. y retirarlos a las 8:15 p. m.
+- Proveer un recipiente grande marcado “Canasta de Preguntas” (la OSG da lápices y papel).",
+meetings,60,coffee,open,before; during,A.A. Meetings Chair,Coordinador(a) de reuniones de A.A.,Chair + meeting secretaries,Coordinador(a) + secretarios,Fri 4 p.m. · Sat/Sun 7:30 a.m.,Vie 4 p. m. · Sáb/Dom 7:30 a. m.,Arranges A.A. meetings outside of Forum sessions.,Organiza reuniones de A.A. fuera de las sesiones del Foro.,"- Arrange meeting rooms directly with the hotel (A.A.W.S. does not contract or pay for meeting or hospitality rooms).
+- Schedule Friday 4:00 p.m. and Saturday/Sunday 7:30 a.m. — never during Forum sessions.
+- Recruit chairpersons and speakers for each meeting.","- Reservar salas directamente con el hotel (A.A.W.S. no contrata ni paga salas de reunión u hospitalidad).
+- Programar viernes 4:00 p. m. y sábado/domingo 7:30 a. m., nunca durante las sesiones.
+- Reclutar coordinadores y oradores para cada reunión.",
+coffee,70,cup-soda,open,before; during,Coffee Chair,Coordinador(a) del café,Chair,Coordinador(a),Planning + weekend,Planificación + fin de semana,Makes coffee arrangements with the hotel.,Coordina el café con el hotel.,"- Work with the hotel on coffee service (A.A.W.S. does not pay for coffee).
+- Plan a self-supporting approach within the host budget.","- Coordinar el servicio de café con el hotel (A.A.W.S. no paga el café).
+- Planificar de forma automantenida dentro del presupuesto anfitrión.",
+nightlife,80,moon-star,open,before; during,Friday/Saturday Night Activities Chair,Coordinador(a) de actividades del viernes y sábado por la noche,Chair + committee,Coordinador(a) + comité,After sessions,Después de las sesiones,"Coordinates optional, self-supporting fellowship like an ice cream social.",Coordina actividades opcionales y automantenidas como un convivio con helado.,"- Work with the hotel on an ice cream social Friday and/or Saturday night.
+- Explore banquet, dance or young people’s events (e.g., with LACYPAA).","- Coordinar con el hotel un convivio con helado el viernes y/o sábado.
+- Explorar banquete, baile o eventos de jóvenes (p. ej., con LACYPAA).",
+hospitality,90,door-open,open,before; during,Hospitality Suite Chair,Coordinador(a) de la sala de hospitalidad,Chair + hosts,Coordinador(a) + anfitriones,All weekend,Todo el fin de semana,Creates a welcoming space to relax and connect between sessions.,Crea un espacio acogedor para descansar y conectar entre sesiones.,"- Gather shared experience from past host areas via GSO’s Forums assignment.
+- Coordinate area-sponsored games or snacks.","- Recopilar experiencia de áreas anfitrionas anteriores mediante el despacho de Foros de la OSG.
+- Coordinar juegos o bocadillos patrocinados por las áreas.",
+outreach,100,megaphone,open,before,Attraction / Outreach Committee,Comité de atracción y difusión,Chair + committee,Coordinador(a) + comité,2026–2028,2026–2028,Encourages attendance across the host city and the whole region.,Promueve la asistencia en la ciudad anfitriona y toda la región.,"- Deliver flyers to groups, districts, intergroups and central offices.
+- Help members pre-register at A.A. gatherings once registration opens.
+- Organize ride sharing and room sharing.","- Llevar volantes a grupos, distritos, intergrupos y oficinas centrales.
+- Ayudar a los miembros a inscribirse en eventos de A.A. cuando se abra la inscripción.
+- Organizar viajes y habitaciones compartidas.",

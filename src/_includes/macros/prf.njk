@@ -1,0 +1,139 @@
+{#-
+  Building blocks of the Pacific Regional Forum 2028 pages (/service/prf-2028/…). Import with
+    {% from "macros/prf.njk" import prfAddCal, prfMailForm with context %}
+  Data: src/_data/prf.js (data/prf/*.csv); wording: data/text/prf.csv (prf.*).
+-#}
+
+{#- "Add to your calendar": Google, Apple / Outlook (.ics file) and Outlook.com. o: { lang, dark, cls } -#}
+{% macro prfAddCal(o) %}
+{%- set L = o.lang -%}
+{%- set P = prf -%}{%- set S = P.set -%}
+{%- set calTitle = "prf.cal.title" | t(L) -%}
+{%- set calPlace = S.venue_name + ", " + S.venue_street + ", " + S.venue_city + " " + S.venue_zip -%}
+{%- set calDetails = "prf.cal.details" | t(L, { url: (P.base | lurl(L)) | absUrl(site.url + '/') }) -%}
+{%- set linkCls = "prf-addcal__link" + (" is-dark" if o.dark else "") -%}
+<div class="prf-addcal {{ o.cls }}" data-pagefind-ignore>
+  <span class="prf-addcal__label{{ ' is-dark' if o.dark }}">{% icon "calendar-plus", "size-4" %}{{ "prf.cal.add" | t(L) }}</span>
+  <a class="{{ linkCls }}" target="_blank" rel="noopener"
+     href="https://calendar.google.com/calendar/render?action=TEMPLATE&text={{ calTitle | urlencode }}&dates={{ P.gcal }}&details={{ calDetails | urlencode }}&location={{ calPlace | urlencode }}">Google</a>
+  <a class="{{ linkCls }}" href="{{ P.base }}prf-2028.ics" download="prf-2028.ics">{{ "prf.cal.ics" | t(L) }}</a>
+  <a class="{{ linkCls }}" target="_blank" rel="noopener"
+     href="https://outlook.live.com/calendar/0/deeplink/compose?path=%2Fcalendar%2Faction%2Fcompose&rru=addevent&subject={{ calTitle | urlencode }}&startdt={{ P.startUtc | urlencode }}&enddt={{ P.endUtc | urlencode }}&location={{ calPlace | urlencode }}&body={{ calDetails | urlencode }}">Outlook.com</a>
+</div>
+{% endmacro %}
+
+{#- One question of a sign-up form. f: { k, type (text|textarea|select|radio|checks|consent), label, hint, req, opts: [[value, label]], auto, show } -#}
+{% macro _field(f, form, L) %}
+{%- set id = "prf-" + form + "-" + f.k -%}
+{%- set star = ' <span class="text-coral-700" aria-hidden="true">*</span>' if f.req else "" -%}
+{%- if f.type == "radio" or f.type == "checks" %}
+<fieldset class="prf-field{{ ' sm:col-span-2' if f.wide }}" {% if f.show %}x-show="{{ f.show }}"{% endif %} {% if f.type == 'checks' and f.req %}data-req-group="{{ f.k }}"{% endif %}>
+  <legend class="prf-field__label">{{ f.label }}{{ star | safe }}</legend>
+  {%- if f.hint %}<p class="prf-field__hint">{{ f.hint }}</p>{% endif %}
+  <div class="prf-choices{{ ' prf-choices--cols' if f.opts.length > 4 }}">
+    {%- for o in f.opts %}
+    <label class="prf-choice"><input type="{{ 'radio' if f.type == 'radio' else 'checkbox' }}" name="{{ f.k }}" value="{{ o[1] }}" data-key="{{ o[0] }}" {% if f.type == 'radio' and f.req %}required{% endif %}><span>{{ o[1] }}</span></label>
+    {%- endfor %}
+  </div>
+  {%- if f.type == 'checks' and f.req %}<p class="prf-field__err" x-cloak x-show="missing.includes('{{ f.k }}')" role="alert">{{ "prf.form.pick_one" | t(L) }}</p>{% endif %}
+</fieldset>
+{%- elif f.type == "consent" %}
+<label class="prf-consent sm:col-span-2"><input type="checkbox" name="{{ f.k }}" value="{{ 'prf.form.yes' | t(L) }}" required><span>{{ f.label }}{{ star | safe }}</span></label>
+{%- else %}
+<div class="prf-field{{ ' sm:col-span-2' if f.type == 'textarea' or f.wide }}" {% if f.show %}x-show="{{ f.show }}"{% endif %}>
+  <label for="{{ id }}" class="prf-field__label">{{ f.label }}{{ star | safe }}</label>
+  {%- if f.hint %}<p class="prf-field__hint" id="{{ id }}-hint">{{ f.hint }}</p>{% endif %}
+  {%- if f.type == "textarea" %}
+  <textarea id="{{ id }}" name="{{ f.k }}" rows="{{ f.rows or 3 }}" class="prf-input" {% if f.req %}required{% endif %} {% if f.hint %}aria-describedby="{{ id }}-hint"{% endif %}></textarea>
+  {%- elif f.type == "select" %}
+  <select id="{{ id }}" name="{{ f.k }}" class="prf-input" {% if f.req %}required{% endif %} {% if f.hint %}aria-describedby="{{ id }}-hint"{% endif %}>
+    <option value="">{{ "prf.form.choose" | t(L) }}</option>
+    {%- for o in f.opts %}<option value="{{ o[1] }}" data-key="{{ o[0] }}">{{ o[1] }}</option>{% endfor %}
+  </select>
+  {%- else %}
+  <input id="{{ id }}" name="{{ f.k }}" type="text" class="prf-input" {% if f.auto %}autocomplete="{{ f.auto }}"{% endif %} {% if f.req %}required{% endif %} {% if f.hint %}aria-describedby="{{ id }}-hint"{% endif %}>
+  {%- endif %}
+</div>
+{%- endif %}
+{% endmacro %}
+
+{#- A sign-up form that writes an e-mail. Nothing is sent from the page: prf.js (prfMail) opens the visitor's own
+    e-mail program with their answers, addressed to the host committee (email in data/prf/forum.csv), and offers to
+    copy the message instead. o: { form: volunteer | updates | question | ride, lang, id } -#}
+{% macro prfMailForm(o) %}
+{%- set L = o.lang -%}
+{%- set P = prf -%}
+{%- set form = o.form -%}
+{%- set areaOpts = [] -%}
+{%- for a in P.areas %}{% set _x = areaOpts.push([a.num, ("prf.form.area_n" | t(L, { n: a.num, name: a | loc("name", L) }))]) %}{% endfor -%}
+{%- set _x = areaOpts.push(["other", "prf.form.other" | t(L)]) -%}
+{%- set name = { k: "name", type: "text", label: "prf.form.name" | t(L), hint: "prf.form.name_hint" | t(L), req: true, auto: "nickname" } -%}
+{%- set area = { k: "area", type: "select", label: "prf.form.area" | t(L), req: true, opts: areaOpts } -%}
+{%- set days = [["thu", "prf.form.day_thu" | t(L)], ["fri", "prf.form.day_fri" | t(L)], ["sat", "prf.form.day_sat" | t(L)], ["sun", "prf.form.day_sun" | t(L)], ["mon", "prf.form.day_mon" | t(L)]] -%}
+
+{%- if form == "volunteer" -%}
+{%- set posOpts = [] -%}
+{%- for p in P.positions %}{% set _x = posOpts.push([p.id, p | loc("title", L)]) %}{% endfor -%}
+{%- set _x = posOpts.push(["general", "prf.form.pos_general" | t(L)], ["any", "prf.form.pos_any" | t(L)]) -%}
+{%- set fields = [
+  name, area,
+  { k: "district", type: "text", label: "prf.form.district" | t(L) },
+  { k: "current", type: "text", label: "prf.form.current" | t(L), hint: "prf.form.current_hint" | t(L) },
+  { k: "positions", type: "checks", label: "prf.form.positions" | t(L), req: true, opts: posOpts, wide: true },
+  { k: "availability", type: "checks", label: "prf.form.availability" | t(L), wide: true, opts: [
+      ["thu", "prf.form.av_thu" | t(L)], ["fri-am", "prf.form.av_fri_am" | t(L)], ["fri-pm", "prf.form.av_fri_pm" | t(L)], ["fri-eve", "prf.form.av_fri_eve" | t(L)],
+      ["sat-am", "prf.form.av_sat_am" | t(L)], ["sat-pm", "prf.form.av_sat_pm" | t(L)], ["sat-eve", "prf.form.av_sat_eve" | t(L)], ["sun-am", "prf.form.av_sun_am" | t(L)]] },
+  { k: "languages", type: "checks", label: "prf.form.languages" | t(L), opts: [["en", "prf.form.lang_en" | t(L)], ["es", "prf.form.lang_es" | t(L)], ["fr", "prf.form.lang_fr" | t(L)], ["asl", "prf.form.lang_asl" | t(L)], ["other", "prf.form.other" | t(L)]] },
+  { k: "meetings", type: "radio", label: "prf.form.meetings" | t(L), opts: [["yes", "prf.form.yes" | t(L)], ["some", "prf.form.some" | t(L)], ["no", "prf.form.no" | t(L)]] },
+  { k: "experience", type: "textarea", label: "prf.form.experience" | t(L) },
+  { k: "more", type: "textarea", label: "prf.form.more" | t(L) }
+] -%}
+{%- elif form == "updates" -%}
+{%- set fields = [
+  name, area,
+  { k: "language", type: "radio", label: "prf.form.pref_lang" | t(L), req: true, opts: [["en", "prf.form.lang_en" | t(L)], ["es", "prf.form.lang_es" | t(L)]] },
+  { k: "attend", type: "radio", label: "prf.form.attend" | t(L), opts: [["yes", "prf.form.attend_yes" | t(L)], ["maybe", "prf.form.attend_maybe" | t(L)], ["online", "prf.form.attend_online" | t(L)], ["updates", "prf.form.attend_updates" | t(L)]] },
+  { k: "first", type: "radio", label: "prf.form.first" | t(L), opts: [["yes", "prf.form.yes" | t(L)], ["no", "prf.form.no" | t(L)]] },
+  { k: "topics", type: "checks", label: "prf.form.topics" | t(L), wide: true, opts: [["reg", "prf.form.topic_reg" | t(L)], ["hotel", "prf.form.topic_hotel" | t(L)], ["vol", "prf.form.topic_vol" | t(L)], ["share", "prf.form.topic_share" | t(L)], ["events", "prf.form.topic_events" | t(L)]] }
+] -%}
+{%- elif form == "question" -%}
+{%- set fields = [
+  name,
+  { k: "topic", type: "radio", label: "prf.form.topic" | t(L), req: true, wide: true, opts: [["question", "prf.form.q_general" | t(L)], ["access", "prf.form.q_access" | t(L)], ["idea", "prf.form.q_idea" | t(L)], ["present", "prf.form.q_present" | t(L)], ["vol", "prf.form.q_vol" | t(L)], ["other", "prf.form.other" | t(L)]] },
+  { k: "where", type: "text", label: "prf.form.where" | t(L) },
+  { k: "present", type: "textarea", label: "prf.form.present" | t(L), hint: "prf.form.present_hint" | t(L), show: "vals.topic === 'present'" },
+  { k: "message", type: "textarea", label: "prf.form.message" | t(L), req: true, rows: 5 }
+] -%}
+{%- else -%}
+{%- set fields = [
+  name,
+  { k: "kind", type: "radio", label: "prf.form.ride_kind" | t(L), req: true, wide: true, opts: [["give-ride", "prf.form.ride_offer" | t(L)], ["need-ride", "prf.form.ride_need" | t(L)], ["give-room", "prf.form.room_offer" | t(L)], ["need-room", "prf.form.room_need" | t(L)]] },
+  { k: "from", type: "text", label: "prf.form.ride_from" | t(L), req: true },
+  { k: "dates", type: "checks", label: "prf.form.ride_dates" | t(L), opts: days, wide: true },
+  { k: "details", type: "textarea", label: "prf.form.ride_details" | t(L) },
+  { k: "consent", type: "consent", label: "prf.form.ride_consent" | t(L), req: true }
+] -%}
+{%- endif -%}
+{%- set cfg = {
+  to: P.set.email,
+  form: form,
+  subject: ("prf.form." + form + "_subject") | t(L),
+  heading: ("prf.form." + form + "_heading") | t(L),
+  from: "prf.form.mail_from" | t(L),
+  missing: "prf.form.missing" | t(L)
+} -%}
+<form id="{{ o.id or ('prf-form-' + form) }}" class="prf-form" novalidate x-data="prfMail({{ cfg | json }})" @submit.prevent="send($event)" @change="track($event)" @prf-pick.window="pick($event.detail)" data-pagefind-ignore>
+  <div class="grid grid-cols-1 gap-x-5 gap-y-5 sm:grid-cols-2">
+    {%- for f in fields %}{{ _field(f, form, L) }}{% endfor %}
+  </div>
+  <div class="prf-form__foot">
+    <p class="prf-form__how">{% icon "shield-check", "size-4 shrink-0 mt-0.5 text-sage-700" %}<span>{{ "prf.form.how" | t(L, { email: P.set.email }) }}</span></p>
+    <div class="flex flex-wrap gap-2">
+      <button type="submit" class="btn btn-ocean">{% icon "send", "size-4" %}{{ "prf.form.send" | t(L) }}</button>
+      <button type="button" class="btn btn-white" @click="copy($el)">{% icon "copy", "size-4" %}<span x-show="!copied">{{ "prf.form.copy" | t(L) }}</span><span x-cloak x-show="copied">{{ "ui.copied" | t(L) }}</span></button>
+    </div>
+    <p x-cloak x-show="sent" class="prf-form__sent" role="status">{% icon "mail-check", "size-4 shrink-0 mt-0.5" %}<span>{{ "prf.form.sent" | t(L, { email: P.set.email }) }}</span></p>
+    <p x-cloak x-show="missing.length" class="prf-field__err" role="alert">{{ "prf.form.missing" | t(L) }}</p>
+  </div>
+</form>
+{% endmacro %}

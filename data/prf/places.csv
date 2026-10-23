@@ -1,0 +1,25 @@
+list,sort,cat,code,icon,name_en,name_es,body_en,body_es,dist_en,dist_es,drive_en,drive_es,url,lat,lng
+# Travel page places (/service/prf-2028/travel/). list = airport (the airports table) | todo (Things to do nearby) | map (extra pins on the map; the hotel is always on it).,,,,,,,,,,,,,,,
+# cat (map pins) = airport | sight | food | transit (the pin's colour). code = the airport code. dist = distance or walking time; drive = typical drive time (airports). icon = a Lucide icon name.,,,,,,,,,,,,,,,
+airport,10,airport,LGB,plane,Long Beach,Long Beach,,,~5 mi,~5 mi,15 min,15 min,https://www.longbeach.gov/lgb,,
+airport,20,airport,LAX,plane,Los Angeles Intl.,Los Angeles Intl.,,,~22 mi,~22 mi,35–60 min,35–60 min,https://www.flylax.com/,,
+airport,30,airport,SNA,plane,John Wayne (Orange County),John Wayne (Orange County),,,~22 mi,~22 mi,30–45 min,30–45 min,https://www.ocair.com/,,
+airport,40,airport,BUR,plane,Hollywood Burbank,Hollywood Burbank,,,~33 mi,~33 mi,45–75 min,45–75 min,https://hollywoodburbankairport.com/,,
+airport,50,airport,ONT,plane,Ontario Intl.,Ontario Intl.,,,~50 mi,~50 mi,60–90 min,60–90 min,https://www.flyontario.com/,,
+todo,10,,,waves,Aquarium of the Pacific,Aquarium of the Pacific,World-class aquarium on Rainbow Harbor.,Acuario de clase mundial en Rainbow Harbor.,~10 min walk,~10 min a pie,,,https://www.aquariumofpacific.org/,,
+todo,20,,,ship,The Queen Mary,The Queen Mary,Historic ocean liner with tours and dining.,Histórico trasatlántico con recorridos y restaurantes.,~2 mi,~3 km,,,https://www.queenmary.com/,,
+todo,30,,,store,Shoreline Village,Shoreline Village,"Waterfront shops, restaurants and harbor views.","Tiendas, restaurantes y vistas al puerto.",~15 min walk,~15 min a pie,,,https://shorelinevillage.com/,,
+todo,40,,,shopping-bag,The Pike,The Pike,"Shopping, dining and the waterfront Ferris wheel.","Compras, restaurantes y la rueda de la fortuna.",~8 min walk,~8 min a pie,,,https://www.thepikelbc.com/,,
+todo,50,,,sun,Beach & bike path,Playa y ciclovía,"Free: miles of beach path for walking, running and biking.","Gratis: kilómetros de sendero junto a la playa para caminar, correr o andar en bicicleta.",Walkable,A pie,,,https://www.visitlongbeach.com/,,
+todo,60,,,compass,Visit Long Beach,Visit Long Beach,"Official visitor guide: restaurants, events and more.","Guía oficial: restaurantes, eventos y más.",Guide,Guía,,,https://www.visitlongbeach.com/,,
+todo,70,,,wand-sparkles,Disneyland Resort,Disneyland Resort,Anaheim theme parks — great for a pre- or post-Forum day.,"Parques temáticos en Anaheim, ideal antes o después del Foro.",~22 mi,~35 km,,,https://disneyland.disney.go.com/,,
+todo,80,,,party-popper,Knott’s Berry Farm,Knott’s Berry Farm,Classic Buena Park theme park.,Clásico parque temático en Buena Park.,~20 mi,~32 km,,,https://www.knotts.com/,,
+todo,90,,,zap,Six Flags Magic Mountain,Six Flags Magic Mountain,Thrill rides in Valencia.,Atracciones extremas en Valencia.,~60 mi,~95 km,,,https://www.sixflags.com/magicmountain,,
+map,10,airport,,,Long Beach Airport (LGB),Long Beach Airport (LGB),,,,,,,,33.8177,-118.1516
+map,40,sight,,,Aquarium of the Pacific,Aquarium of the Pacific,,,,,,,,33.762,-118.1967
+map,50,sight,,,The Queen Mary,The Queen Mary,,,,,,,,33.7529,-118.1897
+map,60,sight,,,Long Beach Convention Center,Long Beach Convention Center,,,,,,,,33.764,-118.1886
+map,70,food,,,Shoreline Village,Shoreline Village,,,,,,,,33.7614,-118.1897
+map,80,food,,,The Pike,The Pike,,,,,,,,33.7653,-118.1934
+map,90,food,,,Pine Avenue,Pine Avenue,,,,,,,,33.77,-118.1929
+map,100,transit,,,Metro A Line — Downtown Long Beach,Metro A Line — Downtown Long Beach,,,,,,,,33.7682,-118.1925

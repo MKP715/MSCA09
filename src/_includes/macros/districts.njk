@@ -1,0 +1,250 @@
+{#-
+  Building blocks for the district pages. Import with context (they read `site`, `calendar`):
+    {% from "macros/districts.njk" import numTile, districtCard, districtRow, districtChip, miniDistrict, nextDates, meetingLine, meetingFallback, occRow, pastRow with context %}
+  Every macro takes one object. `d` is a district from src/_data/districts.js.
+-#}
+{%- from "macros/ui.njk" import formatBadge, langBadge, copyable, emailLink, btn -%}
+
+{#- The big coloured district number. o: { d, lang, size: "sm"|"md"|"lg"|"xl", href, invert } -#}
+{% macro numTile(o) %}
+{%- set d = o.d -%}
+{%- set n = d | dxNum(o.lang) -%}
+{%- set long = n | length > 2 -%}
+{%- set sizes = {
+  "xs": "size-9 rounded-xl " + ("text-[11px]" if long else "text-sm"),
+  "sm": "size-12 rounded-2xl " + ("text-sm" if long else "text-xl"),
+  "md": "size-16 rounded-2xl " + ("text-lg" if long else "text-3xl"),
+  "lg": "size-20 rounded-3xl " + ("text-2xl" if long else "text-4xl"),
+  "xl": "size-24 sm:size-32 rounded-[2rem] " + ("text-3xl sm:text-4xl" if long else "text-5xl sm:text-6xl")
+} -%}
+{%- set cls = "dx-num " + sizes[o.size or "md"] + (" dx-num-invert" if o.invert) -%}
+{#- decorative: kept out of the search index (Pagefind would read "5 District 5") -#}
+{%- if o.href %}<a href="{{ o.href }}" class="{{ cls }}" style="{{ d.color | accent }}" aria-label="{{ d | loc('name', o.lang) }}" data-pagefind-ignore>{{ n }}</a>
+{%- else %}<span class="{{ cls }}" style="{{ d.color | accent }}" aria-hidden="true" data-pagefind-ignore>{{ n }}</span>{% endif -%}
+{% endmacro %}
+
+{#- Small chip linking to a district, in its colour. o: { d, lang, short } -#}
+{% macro districtChip(o) %}
+{%- set d = o.d -%}
+<a href="{{ ('/districts/' + d.slug + '/') | lurl(o.lang) }}" class="dx-chip {{ 'dx-chip-short' if o.short }}" style="{{ d.color | accent }}" {% if o.short %}aria-label="{{ d | loc('name', o.lang) }}"{% endif %}>
+  <span class="dx-chip-num">{{ d | dxNum(o.lang) }}</span>{% if not o.short %}<span>{{ d | loc("name", o.lang) }}</span>{% endif %}
+</a>
+{% endmacro %}
+
+{#- Upcoming meeting dates that prune themselves in the browser. o: { dates:[{start,end}], lang, limit, id, prefix } -#}
+{% macro nextDates(o) %}
+{%- if o.dates and o.dates | length %}
+<ul class="dx-dates" data-limit="{{ o.limit or 1 }}" {% if o.id %}id="{{ o.id }}"{% endif %}>
+  {%- for x in o.dates %}
+  <li data-hide-after="{{ x.end or x.start }}" data-when="{{ x.start }}" data-until="{{ x.end or x.start }}">
+    {%- if o.prefix %}<span class="dx-dates-label">{{ o.prefix }}</span>{% endif -%}
+    <time datetime="{{ x.start }}">{{ x.start | dt("date", o.lang) }}</time>
+    <span data-rel hidden class="dx-rel"></span>
+  </li>
+  {%- endfor %}
+</ul>
+{%- endif %}
+{% endmacro %}
+
+{#- "Every 2nd Monday · 7:00–8:30 PM", with the time range kept on one line. o: { d, lang, series } -#}
+{% macro meetingLine(o) %}
+{%- set mp = o.d | dxMeetingParts(o.lang, o.series) -%}
+{{ mp.pattern }}{% if mp.pattern and mp.time %} · {% endif %}{% if mp.time %}<span class="whitespace-nowrap">{{ mp.time }}</span>{% endif %}
+{%- endmacro %}
+
+{#- One district in the index grid. o: { d, lang, series, index } -#}
+{% macro districtCard(o) %}
+{%- set d = o.d -%}
+{%- set L = o.lang -%}
+{%- set url = ('/districts/' + d.slug + '/') | lurl(L) -%}
+{%- set cityList = d.cities_es if L.code == "es" else d.cities -%}
+{%- set fmt = (o.series.format if o.series and o.series.format else d.meeting.format) -%}
+{%- set dates = o.series | dxNextMeetings(d) -%}
+<article class="dx-card group" style="{{ d.color | accent }}"
+  x-show="show({{ d.kind | json }}, {{ d.counties | json }})" x-transition.opacity.duration.200ms
+  data-kind="{{ d.kind }}">
+  <div class="flex items-start gap-4 p-5 pb-4 2xl:p-6 2xl:pb-4">
+    {{ numTile({ d: d, lang: L, size: "md" }) }}
+    <div class="min-w-0 flex-1">
+      <p class="dx-kicker">{{ ("districts.kind.spanish_short" if d.linguistic else "districts.kind.english_short") | t(L) }}</p>
+      <h3 class="mt-1 font-display text-xl font-bold leading-tight text-ink-950">
+        <a href="{{ url }}" class="dx-stretch focus-visible:outline-none">{{ d | loc("name", L) }}</a>
+      </h3>
+      <p class="mt-1 text-sm text-ink-500">{% for c in d.counties %}{{ ("districts.county." + (c | slugify)) | t(L) }}{% if not loop.last %} · {% endif %}{% endfor %}</p>
+    </div>
+    <span class="dx-card-arrow" aria-hidden="true">{% icon "arrow-up-right", "size-4" %}</span>
+  </div>
+  <p class="px-5 text-[15px] leading-relaxed text-ink-700 2xl:px-6">
+    {%- for c in cityList | limit(5) %}{{ c }}{% if not loop.last %}, {% endif %}{% endfor -%}
+    {%- if cityList | length > 5 %} <span class="whitespace-nowrap font-semibold text-(--a-800)">{{ "districts.card.more_cities" | t(L, { n: (cityList | length) - 5 }) }}</span>{% endif -%}
+  </p>
+  <div class="mt-auto px-5 pt-4 pb-5 2xl:px-6">
+    <div class="dx-card-meet">
+      <p class="flex items-start gap-2 text-sm font-semibold text-ink-800">
+        <span class="mt-0.5 text-(--a-600)">{% icon "calendar-clock", "size-4" %}</span>
+        <span>{{ meetingLine({ d: d, lang: L, series: o.series }) }}</span>
+      </p>
+      {%- if dates | length %}
+      <div class="mt-1.5 flex items-center gap-2 pl-6 text-sm text-ink-600">
+        {{ nextDates({ dates: dates | limit(4), lang: L, limit: 1, prefix: ("districts.card.next" | t(L)) }) }}
+      </div>
+      {%- endif %}
+    </div>
+    <div class="mt-3 flex flex-wrap gap-1.5">
+      {{ formatBadge({ format: fmt, lang: L }) }}
+      {{ langBadge({ language: d.language, lang: L }) }}
+    </div>
+  </div>
+</article>
+{% endmacro %}
+
+{#- Long secondary content that phones see shortened, with a "Show more" button (needs JS; without
+    it nothing is shortened). Use as {% call clamp({ lang: L, height: "12rem" }) %}…{% endcall %} -#}
+{% macro clamp(o) %}
+<div class="dx-clamp {{ o.class or '' }}" x-data="{ more: false }" :class="more ? 'is-open' : 'is-clamped'" style="--clamp: {{ o.height or '14rem' }}">
+  <div class="dx-clamp-body">{{ caller() }}</div>
+  <button type="button" class="dx-clamp-btn" x-cloak @click="more = !more" :aria-expanded="more.toString()">
+    <span x-text="more ? {{ ('ui.show_less' | t(o.lang)) | json }} : {{ ('ui.show_more' | t(o.lang)) | json }}">{{ "ui.show_more" | t(o.lang) }}</span>
+    <span class="transition" :class="more && 'rotate-180'">{% icon "chevron-down", "size-4" %}</span>
+  </button>
+</div>
+{% endmacro %}
+
+{#- One district as a compact row that opens into the full card (phones). o: { d, lang, series } -#}
+{% macro districtRow(o) %}
+{%- set d = o.d -%}
+{%- set L = o.lang -%}
+{%- set url = ('/districts/' + d.slug + '/') | lurl(L) -%}
+{%- set cityList = d.cities_es if L.code == "es" else d.cities -%}
+{%- set fmt = (o.series.format if o.series and o.series.format else d.meeting.format) -%}
+{%- set dates = (o.series | dxNextMeetings(d)) | limit(4) -%}
+<details class="dx-row" style="{{ d.color | accent }}" x-show="show({{ d.kind | json }}, {{ d.counties | json }})" data-kind="{{ d.kind }}">
+  <summary class="dx-row-sum">
+    {{ numTile({ d: d, lang: L, size: "sm" }) }}
+    <span class="min-w-0 flex-1">
+      <span class="block truncate font-display text-[17px] leading-tight font-bold text-ink-950">{{ d | loc("name", L) }}</span>
+      <span class="dx-row-meta">
+        {%- if dates | length %}
+        <span class="dx-row-next" data-limit="1">
+          {%- for x in dates %}
+          <span data-hide-after="{{ x.end or x.start }}" data-when="{{ x.start }}" data-until="{{ x.end or x.start }}">
+            <span class="sr-only">{{ "districts.card.next" | t(L) }}</span><time datetime="{{ x.start }}" class="font-semibold text-ink-800">{{ x.start | dt("wkd", L) | replace(".", "") }} {{ x.start | dt("short", L) }}</time><span data-rel hidden class="dx-rel"></span>
+          </span>
+          {%- endfor %}
+        </span>
+        {%- endif %}
+        <span class="min-w-0 truncate">{% if dates | length %}· {% endif %}{% for c in d.counties %}{{ ("districts.county_short." + (c | slugify)) | t(L) }}{% if not loop.last %}, {% endif %}{% endfor %}</span>
+      </span>
+    </span>
+    <span class="dx-row-chev" aria-hidden="true">{% icon "chevron-down", "size-5" %}</span>
+  </summary>
+  <div class="dx-row-body">
+    <p class="text-[15px] leading-relaxed text-ink-700">
+      {%- for c in cityList | limit(8) %}{{ c }}{% if not loop.last %}, {% endif %}{% endfor -%}
+      {%- if cityList | length > 8 %} <span class="whitespace-nowrap font-semibold text-(--a-800)">{{ "districts.card.more_cities" | t(L, { n: (cityList | length) - 8 }) }}</span>{% endif -%}
+    </p>
+    <p class="mt-3 flex items-start gap-2 text-sm font-semibold text-ink-800">
+      <span class="mt-0.5 text-(--a-600)">{% icon "calendar-clock", "size-4" %}</span>
+      <span>{{ meetingLine({ d: d, lang: L, series: o.series }) }}</span>
+    </p>
+    <div class="mt-3 flex flex-wrap items-center gap-1.5">
+      {{ formatBadge({ format: fmt, lang: L }) }}
+      {{ langBadge({ language: d.language, lang: L }) }}
+    </div>
+    <a href="{{ url }}" class="btn btn-accent mt-4 w-full justify-center">{{ "districts.card.open" | t(L) }}{% icon "arrow-right", "size-4" %}</a>
+  </div>
+</details>
+{% endmacro %}
+
+{#- An event the district hosted (no data-hide-after: it stays). o: { occ, lang } -#}
+{% macro pastRow(o) %}
+{%- set e = o.occ -%}
+{%- set L = o.lang -%}
+{%- set es = L.code == "es" -%}
+<li style="{{ (e.color or 'ocean') | accent }}">
+  <a href="{{ (e.url or '/calendar/') | lurl(L) }}" class="dx-past group">
+    <span class="dx-past-date">
+      <span class="text-[11px] font-bold uppercase">{{ e.start | dt("mon", L) | replace(".", "") }}</span>
+      <span class="font-display text-xl leading-none font-extrabold">{{ e.start | dt("day", L) }}</span>
+      <span class="text-[10px] font-semibold">{{ e.start | dt("year", L) }}</span>
+    </span>
+    <span class="min-w-0 flex-1">
+      <span class="line-clamp-2 font-semibold leading-snug text-ink-900 group-hover:text-(--a-800)">{{ (e.title_es if (es and e.title_es) else e.title) }}</span>
+      <span class="mt-0.5 block text-sm text-ink-500">{{ (e.typeLabel_es if (es and e.typeLabel_es) else (e.typeLabel_en or e.type)) }}{% if e.city %} · {{ e.city }}{% endif %}</span>
+    </span>
+  </a>
+</li>
+{% endmacro %}
+
+{#- Compact district link card (neighbours, prev/next, coverage). o: { d, lang, label, icon, align } -#}
+{% macro miniDistrict(o) %}
+{%- set d = o.d -%}
+<a href="{{ ('/districts/' + d.slug + '/') | lurl(o.lang) }}" class="dx-mini group {{ 'flex-row-reverse text-right' if o.align == 'right' }}" style="{{ d.color | accent }}">
+  {{ numTile({ d: d, lang: o.lang, size: "sm" }) }}
+  <span class="min-w-0 flex-1">
+    {%- if o.label %}<span class="block text-xs font-bold tracking-wide text-(--a-800) uppercase">{{ o.label }}</span>{% endif %}
+    <span class="block truncate font-display text-lg font-bold text-ink-950 group-hover:text-(--a-800)">{{ d | loc("name", o.lang) }}</span>
+    <span class="block truncate text-sm text-ink-500">{{ (d.cities_es if o.lang.code == "es" else d.cities) | limit(3) | join(", ") }}</span>
+  </span>
+  {%- if o.icon %}<span class="grid grid-cols-1 size-9 shrink-0 place-items-center rounded-full bg-ink-50 text-ink-400 transition group-hover:bg-(--a-600) group-hover:text-white">{% icon o.icon, "size-4" %}</span>{% endif %}
+</a>
+{% endmacro %}
+
+{#- One upcoming event row, used only when the calendar's own macros are not available. o: { occ, lang } -#}
+{% macro occRow(o) %}
+{%- set e = o.occ -%}
+<li data-hide-after="{{ e.end or e.start }}" data-when="{{ e.start }}" data-until="{{ e.end or e.start }}">
+  <a href="{{ (e.url or '/calendar/') | lurl(o.lang) }}" class="group flex items-center gap-4 rounded-2xl p-3 transition hover:bg-ink-50">
+    <span class="grid grid-cols-1 w-14 shrink-0 place-items-center rounded-2xl bg-(--a-100) py-2 text-(--a-800)">
+      <span class="text-[11px] font-bold uppercase">{{ e.start | dt("mon", o.lang) }}</span>
+      <span class="font-display text-2xl leading-none font-extrabold">{{ e.start | dt("day", o.lang) }}</span>
+    </span>
+    <span class="min-w-0 flex-1">
+      <span class="block font-semibold text-ink-900 group-hover:text-iris-700">{{ (e.title_es if o.lang.code == "es" and e.title_es else e.title) }}</span>
+      <span class="mt-0.5 flex flex-wrap gap-x-3 text-sm text-ink-500"><span>{{ e.start | dt("wkd", o.lang) }} {% if not e.allDay %}{{ e.start | dt("time", o.lang) }}{% endif %}</span>{% if e.city %}<span>{{ e.city }}</span>{% endif %}<span data-rel hidden class="dx-rel"></span></span>
+    </span>
+  </a>
+</li>
+{% endmacro %}
+
+{#- Business meeting panel built from the CSV columns (used when the calendar has no series). o: { d, lang } -#}
+{% macro meetingFallback(o) %}
+{%- set d = o.d -%}
+{%- set L = o.lang -%}
+{%- set m = d.meeting -%}
+<div class="space-y-5">
+  <div class="flex flex-wrap items-center gap-2">
+    {{ formatBadge({ format: m.format, lang: L }) }}
+    {{ langBadge({ language: d.language, lang: L }) }}
+  </div>
+  <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <div class="dx-fact">
+      <dt>{% icon "repeat", "size-4" %}{{ "districts.meeting.when" | t(L) }}</dt>
+      <dd>{{ m | loc("pattern", L) }}<br><span class="text-ink-600">{{ m.time_es if L.code == "es" else m.time_en }} <span class="text-xs text-ink-500">({{ "time.pacific" | t(L) }})</span></span></dd>
+    </div>
+    {%- if m.venue or m.address or m.city %}
+    <div class="dx-fact">
+      <dt>{% icon "map-pin", "size-4" %}{{ "districts.meeting.where" | t(L) }}</dt>
+      <dd>
+        {%- if m.venue %}<span class="font-semibold text-ink-900">{{ m.venue }}</span><br>{% endif -%}
+        {%- if m.room %}{{ m.room }}<br>{% endif -%}
+        {{ m.addressLine or m.city }}
+        {%- if m.mapsUrl %}<br><a href="{{ m.mapsUrl }}" target="_blank" rel="noopener" class="mt-1 inline-flex items-center gap-1 text-sm font-semibold text-(--a-800) hover:underline">{% icon "navigation", "size-3.5" %}{{ "districts.meeting.directions" | t(L) }}</a>{% endif %}
+      </dd>
+    </div>
+    {%- endif %}
+  </dl>
+  {%- if m.zoomId or m.joinUrl %}
+  <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+    {{ copyable({ label: "districts.meeting.zoom_id" | t(L), value: m.zoomId, lang: L }) }}
+    {{ copyable({ label: "districts.meeting.passcode" | t(L), value: m.passcode, lang: L }) if m.passcode }}
+    {%- if not m.passcode and m.zoomId %}<div class="flex items-center rounded-2xl bg-ink-50 px-4 py-3 text-sm text-ink-600">{{ "districts.meeting.no_passcode" | t(L) }}</div>{% endif %}
+  </div>
+  {%- if m.joinUrl %}
+  <a href="{{ m.joinUrl }}" target="_blank" rel="noopener" class="btn btn-accent">{% icon "video", "size-4" %}{{ "districts.meeting.join" | t(L) }}</a>
+  {%- endif %}
+  {%- endif %}
+  {%- set note = m | loc("note", L) %}
+  {%- if note %}<p class="flex gap-2 rounded-2xl bg-sun-50 px-4 py-3 text-sm text-ink-700">{% icon "info", "size-4 mt-0.5 shrink-0 text-sun-700" %}<span>{{ note }}</span></p>{% endif %}
+</div>
+{% endmacro %}

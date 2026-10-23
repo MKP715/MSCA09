@@ -1,0 +1,8 @@
+{#- Inside <head> of /events/<slug>/ (front matter headInclude): schema.org Event data for the coming dates.
+    Online-only events point to this page, never to the Zoom link; held flyers never appear (data/flyer-holds.csv). -#}
+{%- if entry and entry.item -%}
+{%- set ld = entry.item | calJsonLd(lang, entry.item | calMetaDescription(lang)) -%}
+{%- if ld.length %}
+  <script type="application/ld+json">{{ (ld[0] if ld.length == 1 else ld) | json | safe }}</script>
+{%- endif -%}
+{%- endif -%}

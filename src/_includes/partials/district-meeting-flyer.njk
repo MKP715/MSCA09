@@ -1,0 +1,12 @@
+{#-
+  The business meeting's flyer, from the district's calendar entry (its IMG: line), under the meeting
+  details on /districts/<slug>/#meeting. Spanish pages show the flyer labelled Spanish first; flyers on
+  hold (data/flyer-holds.csv) never reach the calendar data, so they never show here. One flyer only:
+  the event page (/events/<slug>/) has the rest. Included only when macros/events.njk exists and the
+  calendar has a series for this district. Expects: L (language), series (calendar Series).
+-#}
+{%- from "macros/events.njk" import flyerGallery with context -%}
+{%- set meetFlyers = (series | calLoc("flyers", L)) | limit(1) -%}
+{%- if meetFlyers | length %}
+<div class="dx-meeting-flyer">{{ flyerGallery({ flyers: meetFlyers, lang: L, title: ("districts.meeting.flyer" | t(L)), alt: ("calendar.flyer_alt" | t(L, { title: series | calTitle(L) })), sizes: "240px" }) }}</div>
+{%- endif %}
