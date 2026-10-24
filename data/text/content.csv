@@ -235,6 +235,13 @@ contribute.f3_cite,"Self-Support: Where Money and Spirituality Mix, page 5 — r
 contribute.ways_eyebrow,Ways to give,Formas de contribuir,
 contribute.ways_title,"Zelle, mail or in person","Zelle, correo o en persona",
 contribute.ways_lead,Area 09 accepts contributions only from A.A. sources. There is no credit card or PayPal option.,El Área 09 acepta contribuciones solo de fuentes de A.A. No hay opción de tarjeta de crédito ni de PayPal.,
+contribute.flyer_kicker,Printable flyer,Volante para imprimir,"The flyer card beside the Ways to give heading. The PDF is the contribute-flyer row of data/resources.csv, the picture of its page the contribute-flyer-pages row"
+contribute.flyer_title,"All the ways to give, on one page","Todas las formas de contribuir, en una página",
+contribute.flyer_body,"The Area's Seventh Tradition flyer: Zelle, mail or in person, and what to write with your contribution. Page 1 is in English and page 2 in Spanish — print it for your group's treasurer or business meeting.","El volante de la Séptima Tradición del Área: Zelle, correo o en persona, y qué anotar con tu contribución. La página 1 está en inglés y la 2 en español: imprímelo para el tesorero o la reunión de trabajo de tu grupo.",
+contribute.flyer_open,Open the flyer,Abrir el volante,Opens the PDF in Google Drive (new tab)
+contribute.flyer_download,Download PDF,Descargar PDF,Saves the PDF straight from Google Drive
+contribute.flyer_zoom,Open the flyer page full size,Ver la página del volante en tamaño completo,Screen-reader name of the flyer picture (it opens the picture full size)
+contribute.flyer_alt,"The contributions flyer, page 1 (English): the ways to contribute to Area 09 — check, money order or cash, in person or by mail, and Zelle — and what to write with a contribution","El volante de contribuciones, página 2 (español): las formas de contribuir al Área 09 —cheque, giro postal o efectivo, en persona o por correo, y Zelle— y qué anotar con la contribución","Image description of the flyer picture: the English page shows page 1 (url of contribute-flyer-pages), the Spanish page shows page 2 (url_es)"
 contribute.zelle_kicker,Online,En línea,
 contribute.zelle_title,Zelle®,Zelle®,
 contribute.zelle_sub,Send it from your bank's app.,Envíala desde la aplicación de tu banco.,
@@ -332,6 +339,7 @@ contribute.reading_title,Read more on aa.org,Lee más en aa.org,
 contribute.print_title,Take it with you,Llévalo contigo,
 contribute.print_body,Print these instructions for your group's treasurer or business meeting.,Imprime estas instrucciones para el tesorero o la reunión de trabajo de tu grupo.,
 contribute.print_cta,Print this page,Imprimir esta página,
+contribute.print_flyer,The printable flyer,El volante para imprimir,"Link from the Take it with you card up to the flyer card in Ways to give (shown while the contribute-flyer row of data/resources.csv has show = yes)"
 about.title,About Area 09,Sobre el Área 09,
 about.crumb,About,Nosotros,Breadcrumb on pages under /about/
 about.description,"Who Mid-Southern California Area 09 of Alcoholics Anonymous is, where it serves, what it does, how it is organized, when it meets and its history since 1958.","Quién es el Área 09 del Medio Sur de California de Alcohólicos Anónimos, dónde sirve, qué hace, cómo se organiza, cuándo se reúne y su historia desde 1958.",

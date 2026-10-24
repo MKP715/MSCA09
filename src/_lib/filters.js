@@ -136,6 +136,12 @@ export function driveView(urlOrId) {
   return id ? `https://drive.google.com/file/d/${id}/view` : urlOrId || "";
 }
 
+/** A direct download of a public Drive file: the browser saves it instead of opening Drive's viewer. */
+export function driveDownload(urlOrId) {
+  const id = driveId(urlOrId);
+  return id ? `https://drive.google.com/uc?export=download&id=${id}` : urlOrId || "";
+}
+
 export function accentVars(color, fallbackIndex = 0) {
   let c = String(color || "").trim().toLowerCase();
   if (!ACCENTS.includes(c)) c = ACCENT_CYCLE[Math.abs(Number(fallbackIndex) || 0) % ACCENT_CYCLE.length];
@@ -244,6 +250,7 @@ export function registerFilters(eleventyConfig) {
   eleventyConfig.addFilter("driveId", driveId);
   eleventyConfig.addFilter("driveImg", (u, w) => driveImg(u, w));
   eleventyConfig.addFilter("driveView", driveView);
+  eleventyConfig.addFilter("driveDownload", driveDownload);
 
   // ---- menu ----
   // Is a nav.csv item (or one of its dropdown entries) the page being viewed? enPath = English path of the page.

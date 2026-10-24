@@ -107,6 +107,34 @@
   background: conic-gradient(from 180deg, var(--color-ocean-400), var(--color-iris-500), var(--color-coral-500), var(--color-sun-400), var(--color-ocean-400));
 }
 
+/* ---------------------------------------------------------------- printable flyer (Contribute) */
+/* The contributions flyer beside the Ways to give heading: a picture of its page that opens full size
+   (flyerGallery in macros/events.njk) | kicker and title | what it is | open or save the PDF.
+   Phones: the picture beside the title, the words and buttons under both. From 40rem: the picture beside it all. */
+.ct-flyer {
+  @apply grid scroll-mt-28 items-start gap-x-5 gap-y-3 p-5 sm:gap-x-6 sm:p-6;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas: "page head" "body body" "actions actions";
+}
+.ct-flyer__page { grid-area: page; }
+.ct-flyer__pic { @apply w-26 sm:w-34; }
+.ct-flyer__head { grid-area: head; @apply self-center; }
+.ct-flyer__body { grid-area: body; }
+.ct-flyer__actions { grid-area: actions; @apply mt-1 flex flex-wrap gap-2; }
+/* phones: two equal buttons, side by side when they fit, else one under the other at full width */
+.ct-flyer__actions > .btn { @apply flex-1 sm:flex-none; }
+@media (min-width: 40rem) {
+  .ct-flyer {
+    grid-template-areas: "page head" "page body" "page actions";
+    grid-template-rows: auto auto 1fr; /* a tall picture leaves its extra height under the buttons */
+  }
+  .ct-flyer__head { @apply self-start; }
+}
+/* a small thumbnail: the zoom badge in a strip under the picture, not over the flyer's text (as on district pages) */
+.ct-flyer .flyer-gallery__item { @apply pb-9; }
+.ct-flyer .flyer-gallery__zoom { @apply right-1 bottom-1 size-7 shadow-none; }
+.ct-flyer .flyer-gallery__item:hover > .flyer-gallery__img { transform: none; } /* no grow under the badge */
+
 /* ---------------------------------------------------------------- 404 */
 .nf-number {
   @apply font-display leading-none font-black tracking-tighter;
