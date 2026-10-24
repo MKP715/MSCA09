@@ -5,7 +5,7 @@ key,en,es,notes
 calendar.title,Area calendar,Calendario del Área,Page title of /calendar/
 calendar.eyebrow,Meetings & events,Reuniones y eventos,
 calendar.lead,"Every Area, district and committee meeting, workshop and event — in Pacific time.","Todas las reuniones del Área, de distrito y de comité, talleres y eventos — en hora del Pacífico.",One line under the page title
-calendar.skip,Skip to the calendar,Ir al calendario,Keyboard link at the top of /calendar/
+calendar.skip,Skip to the calendar,Ir al calendario,Keyboard link at the top of /calendar/: jumps past the event flyers to the calendar
 calendar.sticky.label,Calendar tools,Herramientas del calendario,Bar that stays at the top of the screen on phones
 calendar.sticky.top,Back to search and views,Volver a la búsqueda y las vistas,
 calendar.ics_description,"Meetings and events of Mid-Southern California Area 09 (MSCA09) of Alcoholics Anonymous, from the Area calendar. All times are Pacific time.","Reuniones y eventos del Área 09 del Centro-Sur de California (MSCA09) de Alcohólicos Anónimos, tomados del calendario del Área. Todas las horas están en hora del Pacífico.",Description inside the downloadable .ics file
@@ -200,6 +200,7 @@ calendar.featured.eyebrow,Save the date,Reserva la fecha,
 calendar.featured.title,Coming up: Area events & gatherings,Próximamente: eventos y encuentros,
 calendar.featured.lead,"Assemblies, workshops, conventions and fellowship — open a flyer for the details.","Asambleas, talleres, convenciones y compañerismo — abre un volante para ver los detalles.",
 calendar.featured.all,All meetings & events,Todas las reuniones y eventos,
+calendar.featured.more,Show more events,Mostrar más eventos,"Button under the row of event flyers on /calendar/ (laptops and wider): shows the other flyers"
 calendar.browse.title,More ways to browse,Más formas de explorar,
 calendar.browse.meetings,Every regular meeting,Todas las reuniones periódicas,
 calendar.browse.meetings_body,"{n} district, committee, H&I and intergroup meetings, with times, places and Zoom links.","{n} reuniones de distritos, comités, H&I e intergrupos, con horarios, lugares y enlaces de Zoom.",

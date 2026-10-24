@@ -12,12 +12,18 @@ accent: ocean
 scripts: ["/assets/js/calendar.js"]
 ---
 {#-
-  /calendar/ — the Area calendar. A slim header (so the calendar starts on the first screen), then:
-    phones / tablets:  toolbar + calendar, rail below, filters in a drawer
-    1280–1919px:       filters | calendar, the rail as a band under the calendar
-    1920px and up:     filters | calendar | rail
-  The calendar comes before the filters in the page (keyboard and screen-reader order); CSS grid areas
-  put the filters on the left.
+  /calendar/ — the Area calendar. From the top:
+    1. a slim header (title, stats; the "Skip to the calendar" link jumps past 2)
+    2. "Coming up: Area events & gatherings": the flyers of the next Area events — a swipeable row on phones and
+       tablets; from 1024px one row of the grid, the rest behind "Show more events"
+    3. the calendar app:
+         phones / tablets:  toolbar + calendar, rail below, filters in a drawer
+         1280–1919px:       filters | calendar, the rail as a band under the calendar
+         1920px and up:     filters | calendar | rail
+       The calendar comes before the filters in the page (keyboard and screen-reader order); CSS grid areas
+       put the filters on the left. A link with filters in the address (?committee=, ?district=, "Share this
+       view") opens the page at the calendar, past the flyers (calendar.js jumpToCalendar)
+    4. more ways to browse
 -#}
 {%- from "macros/events.njk" import upcomingList -%}
 {%- from "macros/ui.njk" import sectionHead -%}
@@ -32,7 +38,7 @@ scripts: ["/assets/js/calendar.js"]
   <img src="/assets/img/logo/logo-{{ L.code }}-256.webp" alt="" aria-hidden="true" width="256" height="256" loading="lazy"
        class="pointer-events-none absolute -top-10 right-6 -z-10 hidden size-56 rotate-12 opacity-[0.07] lg:block 2xl:right-16">
   <div class="wrap pt-4 pb-5 sm:pt-5 lg:pt-6 lg:pb-7">
-    <a href="#cal-title" class="cal-skip">{% icon "arrow-down", "size-4" %}{{ "calendar.skip" | t(L) }}</a>
+    <a href="#cal-main" class="cal-skip">{% icon "arrow-down", "size-4" %}{{ "calendar.skip" | t(L) }}</a>
     <nav aria-label="{{ 'nav.breadcrumb' | t(L) }}" class="mb-3 text-sm max-sm:hidden">
       <ol class="flex flex-wrap items-center gap-1.5 text-ink-500">
         <li><a href="{{ '/' | lurl(L) }}" class="inline-flex items-center gap-1 hover:text-ink-900">{% icon "house", "size-4" %}<span class="sr-only">{{ "nav.home" | t(L) }}</span></a></li>
@@ -56,12 +62,35 @@ scripts: ["/assets/js/calendar.js"]
   </div>
 </section>
 
+{#- ---------------------------------------------------------- featured events with flyers -#}
+{%- set featured = (C.featuredEvents or []) | limit(15) -%}
+{%- if featured.length %}
+<section class="cal-feat relative isolate overflow-hidden py-10 sm:py-12 lg:py-14 2xl:py-16" aria-labelledby="featured-title" style="{{ 'coral' | accent }}"
+         x-data="calFeatured" :class="all && 'is-all'">
+  <div class="absolute inset-0 -z-10 bg-ring-soft" aria-hidden="true"></div>
+  <div class="wrap">
+    {{ sectionHead({ eyebrow: "calendar.featured.eyebrow" | t(L), title: "calendar.featured.title" | t(L), lead: "calendar.featured.lead" | t(L), id: "featured-title", action: { label: "calendar.featured.all" | t(L), url: "/events/" | lurl(L), icon: "arrow-right" } }) }}
+    {#- phones and tablets: one swipeable row of flyers (calendar.css .ev-grid--rail); from 1024px a grid that shows
+        one row until "Show more events" (calendar.css .cal-feat), so the calendar stays near the top -#}
+    {{ upcomingList({ items: featured, lang: L, limit: 10, variant: "flyer", id: "featured-events", class: "ev-grid ev-grid--flyer ev-grid--rail" }) }}
+    <div class="cal-feat__more">
+      <button type="button" class="btn btn-ghost" x-cloak aria-controls="featured-events" :aria-expanded="all.toString()"
+              @click="toggle($el)">
+        <span x-show="!all">{{ "calendar.featured.more" | t(L) }}</span><span x-cloak x-show="all">{{ "ui.show_less" | t(L) }}</span>
+        <span class="transition" :class="all && 'rotate-180'">{% icon "chevron-down", "size-4" %}</span>
+      </button>
+    </div>
+  </div>
+</section>
+{%- endif %}
+
 <div x-data="areaCalendar" @keydown.escape.window="closeAll()" class="cal-page" :class="tbOut && 'tb-out'">
   {#- ---------------------------------------------------------- calendar · filters · rail -#}
-  <div class="wrap">
+  <div class="wrap pt-6 sm:pt-8 lg:pt-10">
     <div class="cal-layout">
-      {#- the calendar (first in the page: keyboard users reach it before the filters) -#}
-      <section class="cal-main min-w-0" aria-labelledby="cal-title">
+      {#- the calendar (first in the page: keyboard users reach it before the filters). The target of the header's
+          "Skip to the calendar" link: it takes the keyboard here, so Tab goes on to the quick views -#}
+      <section id="cal-main" class="cal-main min-w-0" aria-labelledby="cal-title" tabindex="-1">
         {% include "partials/calendar-toolbar.njk" %}
         {% include "partials/calendar-views.njk" %}
       </section>
@@ -82,19 +111,6 @@ scripts: ["/assets/js/calendar.js"]
 
   {% include "partials/calendar-detail.njk" %}
 </div>
-
-{#- ---------------------------------------------------------- featured events with flyers -#}
-{%- set featured = (C.featuredEvents or []) | limit(15) -%}
-{%- if featured.length %}
-<section class="relative isolate mt-20 overflow-hidden py-16 lg:mt-28 lg:py-20" aria-labelledby="featured-title" style="{{ 'coral' | accent }}">
-  <div class="absolute inset-0 -z-10 bg-ring-soft" aria-hidden="true"></div>
-  <div class="wrap">
-    {{ sectionHead({ eyebrow: "calendar.featured.eyebrow" | t(L), title: "calendar.featured.title" | t(L), lead: "calendar.featured.lead" | t(L), id: "featured-title", action: { label: "calendar.featured.all" | t(L), url: "/events/" | lurl(L), icon: "arrow-right" } }) }}
-    {#- phones and tablets: one swipeable row of flyers (calendar.css .ev-grid--rail); a grid from 1024px -#}
-    {{ upcomingList({ items: featured, lang: L, limit: 10, variant: "flyer", id: "featured-events", class: "ev-grid ev-grid--flyer ev-grid--rail" }) }}
-  </div>
-</section>
-{%- endif %}
 
 {#- ---------------------------------------------------------- browse more -#}
 <section class="wrap py-16 lg:py-20" aria-labelledby="browse-title">

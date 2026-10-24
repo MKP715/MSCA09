@@ -17,11 +17,15 @@
       only), so a later visit does not open on an old search. The view is remembered only once the visitor picks one; until
       then it follows the screen: the month grid from 1024px, the agenda on phones and tablets (where month titles
       would be cut off)
+    - the page shows the Area events' flyers above the calendar; a link with filters or a view in the address opens
+      it at the calendar instead of at the top (jumpToCalendar)
     - clicking an entry opens a details panel with a link to its page; closing it puts the keyboard
       focus back on the entry
     - keyboard: every entry in every view is a link (Enter opens the panel, Ctrl/Cmd+Enter the page);
       "+N more" opens a popover that takes the focus; Escape closes panels and popovers
   Every time is shown in Pacific time, whatever the visitor's own time zone.
+
+  Alpine component "calFeatured": the "Coming up" flyers above the calendar ("Show more events" / "Show less" from 1024px).
 
   Also on every event page: [data-reveal-after="ISO"] elements are un-hidden once that moment passes.
 */
@@ -37,6 +41,8 @@
   const AREA_TYPES = ["Area", "Area Committee", "Assembly", "Foro", "Servathon", "Conference"];
   const LEARNING_TYPES = ["Service School", "Workshop", "History"];
   const STORE_KEY = "msca-calendar-v1";
+  // the calendar's own words in the address (readUrl / urlParams)
+  const URL_KEYS = ["view", "date", "type", "format", "lang", "district", "committee", "topic", "day", "time", "flyer", "zoom", "q"];
   // a text search lists this many matches at a time ("Show more matches" adds as many): phones and tablets draw
   // agenda rows several times slower, so they get about what their 14-day agenda shows
   const SEARCH_STEP = { small: 40, large: 100 };
@@ -183,6 +189,8 @@
               this.tbOut = !e.isIntersecting && e.boundingClientRect.top < 0;
             }, { rootMargin: "-100px 0px 0px 0px" }).observe(this.$refs.toolbar);
           }
+          // before the data arrives, so the page does not move once the visitor has started reading
+          this.jumpToCalendar();
 
           let data;
           try {
@@ -333,8 +341,7 @@
         /* ------------------------------------------------ URL <-> state */
         readUrl() {
           const p = new URLSearchParams(location.search);
-          const known = ["view", "date", "type", "format", "lang", "district", "committee", "topic", "day", "time", "flyer", "zoom", "q"];
-          if (![...p.keys()].some((k) => known.includes(k))) return false;
+          if (![...p.keys()].some((k) => URL_KEYS.includes(k))) return false;
           silent = true;
           const f = blank();
           if (p.get("type")) {
@@ -400,6 +407,18 @@
           try { this.saved = Object.assign(viewPicked ? { view: this.view } : {}, { f: Object.assign(JSON.parse(JSON.stringify(this.f)), { q: "" }) }); } catch (e) {}
         },
         shareUrl() { return location.origin + location.pathname + "?" + this.urlParams().toString(); },
+        // the Area events' flyers come before the calendar. A link with the calendar's words in the address (a committee
+        // or district page's "Area calendar" link, "Share this view") is about the calendar: open the page there. Not when
+        // the address names a part of the page (#…), on a reload or Back / Forward (the browser puts the page back where
+        // it was), or once the page has been scrolled
+        jumpToCalendar() {
+          const p = new URLSearchParams(location.search);
+          if (location.hash || window.scrollY > 0 || ![...p.keys()].some((k) => URL_KEYS.includes(k))) return;
+          const nav = performance.getEntriesByType ? performance.getEntriesByType("navigation")[0] : null;
+          if (nav && nav.type !== "navigate") return;
+          const main = document.getElementById("cal-main");
+          if (main) main.scrollIntoView({ block: "start", behavior: "instant" });
+        },
 
         /* ------------------------------------------------ filtering */
         match(o, skip) {
@@ -1233,5 +1252,22 @@
         slug(s) { return fold(s).replace(/&/g, " and ").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, ""); },
       };
     });
+
+    /* ---------------------------------------------------------------- "Coming up" flyers */
+    // the flyers above the calendar: from 1024px only their first row shows until "Show more events" (calendar.css
+    // .cal-feat). "Show less" folds the rows above its button: keep the button where it was on screen, so the
+    // visitor is not left somewhere down in the calendar
+    Alpine.data("calFeatured", () => ({
+      all: false,
+      toggle(btn) {
+        const y = btn.getBoundingClientRect().top;
+        this.all = !this.all;
+        if (this.all) return;
+        this.$nextTick(() => {
+          const dy = btn.getBoundingClientRect().top - y;
+          if (dy) window.scrollBy({ top: dy, behavior: "instant" });
+        });
+      },
+    }));
   });
 })();

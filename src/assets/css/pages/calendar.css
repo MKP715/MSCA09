@@ -192,24 +192,52 @@
 
 /* ======================================================================= /calendar/ page */
 @layer components {
-  /* ---- slim page header: the calendar itself starts on the first screen */
+  /* ---- slim page header: the Area events ("Coming up") and the calendar come right after it */
   .cal-hero__bg {
     background:
       radial-gradient(60rem 22rem at 0% -20%, var(--a-200), transparent 60%),
       radial-gradient(50rem 22rem at 100% -10%, color-mix(in oklab, var(--color-iris-200) 80%, transparent), transparent 60%),
       linear-gradient(180deg, var(--a-50), white);
   }
+  /* "Skip to the calendar": past the flyers, to .cal-main */
   .cal-skip {
     @apply sr-only;
   }
   .cal-skip:focus {
     @apply not-sr-only mb-3 inline-flex items-center gap-2 rounded-full bg-ink-900 px-4 py-2.5 text-sm font-semibold text-white;
   }
-  /* stats: three small tiles beside the title on laptops and up (phones go straight to the calendar) */
+  /* stats: three small tiles beside the title on laptops and up (phones and tablets keep the header short) */
   .cal-stats { @apply hidden shrink-0 grid-cols-3 gap-2.5 lg:grid 2xl:gap-3; }
   .cal-stat { @apply flex min-w-[7.5rem] flex-col-reverse justify-end rounded-2xl px-3.5 py-2 2xl:min-w-[8.5rem] 2xl:px-4 2xl:py-2.5; background: color-mix(in oklab, white 70%, var(--a-50)); box-shadow: inset 0 0 0 1px var(--a-100); }
   .cal-stat dt { @apply mt-0.5 text-[11px] leading-tight font-semibold text-ink-600 2xl:text-xs; }
   .cal-stat dd { @apply font-display text-2xl leading-none font-extrabold 2xl:text-[1.75rem]; color: var(--a-700); }
+
+  /* ---- "Coming up": the flyers between the header and the calendar. Phones and tablets swipe through them all
+       (.ev-grid--rail); from 1024px the grid shows one row (3 cards, 4 from 1536px, 5 from 1920px) and the rest wait
+       behind "Show more events" (.is-all, set by the button), so the calendar is not pushed several screens down.
+       Only the cards app.js leaves visible count (it hides ended events and those past data-limit). A browser
+       without :has() or nth-child(… of …) shows the whole grid and no button; without JavaScript the button stays
+       hidden (x-cloak) and "All meetings & events" leads to the rest. */
+  .cal-feat__more { @apply mt-8 hidden justify-center; }
+  @supports selector(:has(a)) and selector(:nth-child(1 of a)) {
+    @media (min-width: 1024px) and (max-width: 1535px) {
+      .cal-feat:not(.is-all) .ev-grid--rail > li:nth-child(n + 4 of :not([hidden])) { display: none; }
+      .cal-feat:has(.ev-grid--rail > li:nth-child(4 of :not([hidden]))) .cal-feat__more { display: flex; }
+    }
+    @media (min-width: 1536px) and (max-width: 1919px) {
+      .cal-feat:not(.is-all) .ev-grid--rail > li:nth-child(n + 5 of :not([hidden])) { display: none; }
+      .cal-feat:has(.ev-grid--rail > li:nth-child(5 of :not([hidden]))) .cal-feat__more { display: flex; }
+    }
+    @media (min-width: 1920px) {
+      .cal-feat:not(.is-all) .ev-grid--rail > li:nth-child(n + 6 of :not([hidden])) { display: none; }
+      .cal-feat:has(.ev-grid--rail > li:nth-child(6 of :not([hidden]))) .cal-feat__more { display: flex; }
+    }
+  }
+  /* the target of the header's "Skip to the calendar" link: it takes the focus (no ring around the whole calendar).
+     html has scroll-padding-top for the site header; the 1rem covers the header shrinking by up to 1rem while the
+     smooth scroll from the top runs, so the toolbar is not tucked under it */
+  .cal-main { scroll-margin-top: 1rem; }
+  .cal-main:focus { outline: none; }
 
   /* ---- quick views: first row of the toolbar; one swipeable row on phones / tablets, wrapping from 1024px */
   .cal-quick { @apply -mx-3 flex gap-2 overflow-x-auto px-3 pb-0.5 sm:-mx-4 sm:px-4 lg:mx-0 lg:flex-wrap lg:overflow-visible lg:px-0; scroll-padding-inline: 0.75rem; }
