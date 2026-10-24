@@ -1,4 +1,5 @@
-{#- Committee page header band in the committee's colour. Expects: c (committee), L (lang), nextInfo, catLabel. -#}
+{#- Committee page header band in the committee's colour: e-mail, the committee's website and live working document (c.site,
+    c.log), when we meet, share. Expects: c (committee), L (lang), nextInfo, catLabel. -#}
 {%- from "macros/ui.njk" import shareButton -%}
 <section class="cm-hero" style="{{ c.color | accent }}">
   <div class="bg-confetti absolute inset-0 -z-10 opacity-25 mix-blend-screen" aria-hidden="true"></div>
@@ -40,6 +41,8 @@
             {% icon "external-link", "size-4 shrink-0 text-ink-500" %}<span class="sr-only"> {{ "share.new_tab" | t(L) }}</span>
           </a>
           {%- endif %}
+          {#- the committee's live working document (its log row in committee-resources.csv; also a card at the top of the page) -#}
+          {%- if c.log %}<a href="{{ c.log.url }}" target="_blank" rel="noopener" class="btn btn-glass">{% icon "notebook-pen", "size-4" %}{{ "committees.log_hero" | t(L) }}<span class="sr-only"> {{ "share.new_tab" | t(L) }}</span></a>{% endif %}
           <a href="#meetings" class="btn btn-glass">{% icon "calendar-days", "size-4" %}{{ "committees.when_we_meet" | t(L) }}</a>
           {{ shareButton({ lang: L, title: c | loc("name", L), url: page.url, style: "btn btn-glass" }) }}
         </div>

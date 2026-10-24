@@ -1,4 +1,4 @@
-{#- Sticky aside on committee pages: quick links and on-this-page. Expects: c, L, lib, sections, meetings, events. -#}
+{#- Sticky aside on committee pages: quick links and on-this-page. Expects: c, L, lib, sections, meetings, events, rec (the page's recordings, or null). -#}
 <div class="space-y-5 xl:sticky xl:top-[7.5rem]">
   {#- quick links -#}
   <div class="rounded-3xl bg-white p-5 shadow-soft ring-1 ring-ink-900/5">
@@ -6,6 +6,12 @@
     <ul class="space-y-0.5 text-sm">
       {%- if c.site %}
       <li><a href="{{ c.site.url }}" target="_blank" rel="noopener" class="flex items-center gap-2 rounded-xl px-2 py-2 font-medium text-ink-700 hover:bg-[var(--a-50)] hover:text-ink-950">{% icon "globe", "size-4 shrink-0 text-[var(--a-600)]" %}<span class="min-w-0">{{ "committees.site_label" | t(L) }} <span class="text-ink-500">· {{ c.site.url | hostname }}</span></span><span class="sr-only"> {{ "share.new_tab" | t(L) }}</span></a></li>
+      {%- endif %}
+      {%- if c.log %}
+      <li><a href="{{ c.log.url }}" target="_blank" rel="noopener" class="flex items-center gap-2 rounded-xl px-2 py-2 font-medium text-ink-700 hover:bg-[var(--a-50)] hover:text-ink-950">{% icon "notebook-pen", "size-4 shrink-0 text-[var(--a-600)]" %}<span class="min-w-0">{{ "committees.log_hero" | t(L) }} <span class="text-ink-500">· {{ c.log.url | hostname }}</span></span><span class="sr-only"> {{ "share.new_tab" | t(L) }}</span></a></li>
+      {%- endif %}
+      {%- if rec %}
+      <li><a href="#recordings" class="flex items-center gap-2 rounded-xl px-2 py-2 font-medium text-ink-700 hover:bg-[var(--a-50)] hover:text-ink-950">{% icon "headphones", "size-4 shrink-0 text-[var(--a-600)]" %}<span class="min-w-0">{{ "committees.rec.title" | t(L) }} <span class="text-ink-500">· {{ rec.count }}</span></span></a></li>
       {%- endif %}
       {%- for g in lib.guidelines | limit(2) %}{% if g.url %}
       <li><a href="{{ g.url }}" target="_blank" rel="noopener" class="flex items-center gap-2 rounded-xl px-2 py-2 font-medium text-ink-700 hover:bg-[var(--a-50)] hover:text-ink-950">{% icon "book-marked", "size-4 shrink-0 text-[var(--a-600)]" %}<span class="min-w-0">{{ g | loc("title", L) }}</span></a></li>

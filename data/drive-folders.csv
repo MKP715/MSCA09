@@ -5,6 +5,7 @@ path,category,collection,include,notes
 MSCA09AA-private,,,no,"Private working files (the crawl of the old msca09aa.org, held originals, research). Never listed by the site."
 TO-Organize,,,no,Drop box for new files before they are checked and filed under docs/. Never listed by the site.
 MSCA09AA-archives,,,no,"Shortcuts to the Area 09 Archives Committee's own Drive folders (made by scripts/archives-shortcuts.gs). Their files reach the library through data/archives/collections.csv instead."
+Zoom Recordings,,,no,"The Area's Zoom recordings (audio, video, transcripts and chats). Never listed by the site: only their audio files are shown, one by one, through data/recordings.csv (filled by scripts/recordings.py) on the Technology Committee page."
 docs/history,History,Current,yes,"Area history pamphlets, chronicles, maps (many saved from msca09aa-archives.org)."
 docs,Misc,Current,yes,Everything the public site may link to lives under docs/.
 docs/minutes,Minutes,Current,yes,"Approved Assembly (ASA), Area Service Committee (ASC) and Board minutes, one sub-folder per year."

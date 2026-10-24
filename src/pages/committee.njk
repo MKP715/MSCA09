@@ -30,6 +30,8 @@ eleventyComputed:
 {%- set hasGuides = lib.guidelines.length or lib.pendingGuidelines.length or lib.older.length or lib.extraGuidelines.length -%}
 {%- set hasReports = lib.reports.length or c.reports.length or lib.pendingReports.length -%}
 {%- set hasAa = c.aaResources.length -%}
+{#- Zoom meeting recordings this page lists (data/recordings.csv, show = yes): src/_data/recordings.js -#}
+{%- set rec = recordings.byCommittee[c.slug] if (recordings and recordings.byCommittee) else null -%}
 {#- a "thin" page (two people or fewer, two documents or fewer): on wide screens "Who serves" and the guidelines sit side by side -#}
 {%- set nPeople = people.length + c.liaisons.length -%}
 {%- set nDocs = lib.guidelines.length + lib.pendingGuidelines.length + lib.older.length + lib.extraGuidelines.length + lib.reports.length + c.reports.length + lib.pendingReports.length -%}
@@ -39,6 +41,7 @@ eleventyComputed:
 {%- set sections = [{ id: "about", key: "committees.sec_about", icon: "info" }, { id: "meetings", key: "committees.sec_meetings", icon: "calendar-days" }] -%}
 {%- if hasPeople %}{% set sections = sections.concat([{ id: "people", key: "committees.sec_people", icon: "users" }]) %}{% endif -%}
 {%- if hasGuides or hasReports %}{% set sections = sections.concat([{ id: "documents", key: "committees.sec_documents", icon: "book-marked" }]) %}{% endif -%}
+{%- if rec %}{% set sections = sections.concat([{ id: "recordings", key: "committees.sec_recordings", icon: "headphones" }]) %}{% endif -%}
 {%- if hasAa or c.links.length or lib.pendingLinks.length %}{% set sections = sections.concat([{ id: "literature", key: "committees.sec_literature", icon: "library" }]) %}{% endif -%}
 {%- if c.faqs.length %}{% set sections = sections.concat([{ id: "faq", key: "committees.sec_faq", icon: "circle-help" }]) %}{% endif -%}
 
@@ -71,6 +74,9 @@ eleventyComputed:
 
       {#- the committee's own website (committees.csv website + its website row in committee-resources.csv) -#}
       {% include "partials/committee-site.njk" %}
+
+      {#- the committee's live working document: its log row in committee-resources.csv (status = hidden takes it off) -#}
+      {% include "partials/committee-log.njk" %}
 
       {#- standing flyer: flyer rows of committee-resources.csv (pictures of the pages + the PDF) -#}
       {% include "partials/committee-flyer.njk" %}
@@ -316,6 +322,9 @@ eleventyComputed:
       </section>
       {%- endif %}
       {%- if thin %}</div>{% endif %}
+
+      {#- ======================================================= meeting recordings (data/recordings.csv) -#}
+      {%- if rec %}{% include "partials/committee-recordings.njk" %}{% endif %}
 
       {#- ======================================================= aa.org literature & links -#}
       {%- if hasAa or c.links.length or lib.pendingLinks.length %}

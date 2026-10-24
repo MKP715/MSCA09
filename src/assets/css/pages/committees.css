@@ -388,3 +388,107 @@ a.cm-res:hover .cm-res-ico {
 .cm-meeting-flyer .flyer-gallery__zoom { @apply right-1 bottom-1 size-7 shadow-none; }
 .cm-meeting-flyer .flyer-gallery__item:hover > .flyer-gallery__img { transform: none; } /* no grow under the badge */
 @media print { .cm-meeting-flyer { display: none; } }
+
+/* ---------------------------------------------------------------- meeting recordings (committee page, #recordings) */
+/* the gentle anonymity note under the lead */
+.cm-rec-note {
+  @apply mt-4 flex max-w-3xl items-start gap-2 rounded-2xl bg-sage-50 px-4 py-3 text-sm leading-relaxed text-ink-700 ring-1 ring-sage-200;
+}
+/* one button per meeting: a row that scrolls sideways on phones (to the screen's edges), wrapped from sm up */
+.cm-rec-filters {
+  @apply -mx-4 mt-6 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0;
+}
+/* a month: a white card whose header folds the list */
+.cm-rec-month {
+  @apply rounded-3xl bg-white shadow-soft ring-1 ring-ink-900/5;
+}
+.cm-rec-month > summary {
+  @apply flex min-h-14 cursor-pointer list-none items-center gap-3 rounded-3xl px-4 py-3 transition hover:bg-[var(--a-50)] sm:px-5;
+}
+.cm-rec-month > summary::-webkit-details-marker {
+  display: none;
+}
+.cm-rec-month[open] > summary {
+  @apply rounded-b-none border-b border-ink-100;
+}
+.cm-rec-month .cm-count {
+  @apply rounded-full bg-ink-100 px-2 py-0.5 text-xs font-bold text-ink-600;
+}
+.cm-rec-chev {
+  @apply ml-auto grid size-8 shrink-0 place-items-center rounded-full transition;
+  background: var(--a-100);
+  color: var(--a-700);
+}
+.cm-rec-month[open] > summary .cm-rec-chev {
+  transform: rotate(180deg);
+}
+/* a recording: date tile | name, badges, start and length | Play, Drive, Download (under the text on phones and tablets) */
+.cm-rec-list > li + li {
+  @apply border-t border-ink-100;
+}
+.cm-rec {
+  @apply px-3 py-3.5 sm:px-5;
+}
+.cm-rec-row {
+  @apply grid grid-cols-[auto_minmax(0,1fr)] items-start gap-x-3 gap-y-3 sm:gap-x-4 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:items-center;
+}
+.cm-rec-date {
+  @apply flex w-12 shrink-0 flex-col items-center rounded-2xl py-1.5 leading-none;
+  background: var(--a-50);
+  color: var(--a-800);
+}
+.cm-rec-wkd {
+  @apply text-[11px] font-bold tracking-wide uppercase;
+}
+.cm-rec-day {
+  @apply mt-1 font-display text-xl font-extrabold;
+}
+.cm-rec-name {
+  @apply leading-snug font-semibold text-pretty text-ink-950;
+}
+.cm-rec-name a {
+  @apply underline-offset-2 hover:underline;
+  color: var(--a-800);
+}
+.cm-rec-meta {
+  @apply mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm text-ink-600;
+}
+.cm-rec-badge {
+  @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold;
+  background: var(--a-100);
+  color: var(--a-800);
+}
+.cm-rec-badge-lang {
+  @apply bg-sea-100 text-sea-800;
+}
+.cm-rec-fact {
+  @apply inline-flex items-center gap-1.5 whitespace-nowrap;
+}
+.cm-rec-actions {
+  @apply col-span-2 flex flex-wrap items-center gap-2 lg:col-span-1 lg:justify-end;
+}
+.cm-rec-link {
+  @apply inline-flex min-h-11 items-center gap-1.5 rounded-full px-3.5 text-xs font-semibold whitespace-nowrap text-ink-700 ring-1 ring-ink-200 transition hover:bg-ink-50 hover:text-ink-950 lg:min-h-0 lg:py-1.5;
+}
+/* the player under its recording: Google Drive's own (an iframe) */
+.cm-rec-player {
+  @apply mt-3 rounded-2xl p-3 sm:p-4;
+  background: var(--a-50);
+  box-shadow: inset 0 0 0 1px var(--a-200);
+}
+.cm-rec-close {
+  @apply -mt-1 -mr-1 grid size-11 shrink-0 place-items-center rounded-full text-ink-600 ring-1 ring-ink-200 transition hover:bg-white hover:text-ink-950 lg:size-9;
+}
+.cm-rec-hint {
+  @apply mt-3 flex items-start gap-2 rounded-xl bg-sun-50 px-3 py-2 text-sm leading-relaxed text-ink-800 ring-1 ring-sun-200;
+}
+.cm-rec-frame {
+  @apply mt-3 block h-[12.5rem] w-full rounded-xl border-0 bg-ink-900;
+}
+@media print {
+  .cm-rec-filters,
+  .cm-rec-player,
+  .cm-rec-actions {
+    display: none !important;
+  }
+}

@@ -181,3 +181,36 @@ committees.flyer_pdf,Download the flyer (PDF),Descargar el volante (PDF),
 committees.flyer_pdf_lang,"Download the flyer (PDF, {language})","Descargar el volante (PDF, {language})","When the flyer is only in the other language"
 committees.flyer_page_open,Open page {n} of the flyer full size,Ver la página {n} del volante en tamaño completo,"Screen-reader name of each page picture of a standing flyer with two or more pages (opens the lightbox); {n} = the page number"
 committees.flyer_page_alt,{title} — page {n} of {total},{title} — página {n} de {total},"Image description of each page picture of a standing flyer with two or more pages; {title} = the flyer row's title, {n} = the page, {total} = how many pages"
+committees.sec_recordings,Recordings,Grabaciones,"Section nav label of the meeting recordings (data/recordings.csv) on a committee page"
+committees.log_label,Live working document,Documento de trabajo en vivo,"Over a committee's live working document (log row of committee-resources.csv): the card near the top of the page"
+committees.log_title,The committee's work log,El registro de trabajo del comité,"Card title when the log row has no title"
+committees.log_body,"Minutes and a dated log of the committee's work, kept up to date as it goes.","Las actas y un registro con fecha del trabajo del comité, al día.","Card text when the log row has no body"
+committees.log_live,"Linked, not copied: it always opens the latest version.","Enlazado, no copiado: siempre se abre la versión más reciente.","Small line on the log card"
+committees.log_open,Open the live document,Abrir el documento en vivo,"Big button on the log card (screen readers also hear that it opens in a new tab)"
+committees.log_hero,Work log,Registro de trabajo,"Page header button and Quick links entry that open the committee's live working document"
+committees.rec.title,Meeting recordings,Grabaciones de reuniones,"Heading of the recordings section (data/recordings.csv) on a committee page, and its Quick links entry"
+committees.rec.lead,"Audio of Area meetings held on Zoom, newest first. Press Play to listen right here: the recording plays from the Area's Google Drive, in Google's own player.","Audio de las reuniones del Área en Zoom, de la más reciente a la más antigua. Pulsa Reproducir para escucharla aquí: la grabación se reproduce desde el Google Drive del Área, en el reproductor de Google.",
+committees.rec.anonymity,"You will hear members' voices. Out of respect for their anonymity, please keep these recordings within A.A.: don't re-post or share them on social media or other websites.","Escucharás las voces de los miembros. Por respeto a su anonimato, mantén estas grabaciones dentro de A.A.: no las vuelvas a publicar ni las compartas en redes sociales ni en otros sitios web.",
+committees.rec.filter_label,Show the recordings of,Mostrar las grabaciones de,"Screen-reader name of the row of meeting buttons that filter the recordings"
+committees.rec.count_one,{n} recording,{n} grabación,
+committees.rec.count_n,{n} recordings,{n} grabaciones,
+committees.rec.results,{n} recordings shown,Se muestran {n} grabaciones,"Read out by screen readers after a meeting button is pressed"
+committees.rec.play,Play,Reproducir,"Button on each recording: opens Google Drive's player under the row (without JavaScript: opens the file in Google Drive)"
+committees.rec.close,Close player,Cerrar el reproductor,"The same button while its player is open, and the close button of the player"
+committees.rec.opened,"Player open: {name}, {date}","Reproductor abierto: {name}, {date}","Read out by screen readers when a player opens"
+committees.rec.drive,Open in Google Drive,Abrir en Google Drive,
+committees.rec.drive_short,Drive,Drive,"Short label of the same link on phones"
+committees.rec.download,Download,Descargar,
+committees.rec.part,Part {n},Parte {n},"Badge: Zoom split the recording into parts"
+committees.rec.session,Session {n},Sesión {n},"Badge: the meeting room was opened more than once at that time"
+committees.rec.track_es,Spanish interpretation,Interpretación al español,"Badge: the Spanish interpretation channel of the meeting"
+committees.rec.track_en,English interpretation,Interpretación al inglés,"Badge: the English interpretation channel of the meeting"
+committees.rec.started,Started {time},Inicio: {time},"When the recording started (Pacific time). Spanish without ""a las"", which would be wrong for 1:00–1:59 (""a la 1:24"")"
+committees.rec.length,Length,Duración,"Screen-reader label before a recording's length"
+committees.rec.big,"Large file ({mb} MB): Google Drive may first say that it can't scan it for viruses. Press “Play anyway” to listen.","Archivo grande ({mb} MB): es posible que Google Drive diga primero que no puede analizarlo en busca de virus. Pulsa “Reproducir de todos modos” (“Play anyway”) para escucharlo.",
+committees.rec.player_title,"Audio player: {name}, {date}","Reproductor de audio: {name}, {date}","Title of the Google Drive player frame (screen readers)"
+committees.rec.blank,If the player stays blank:,Si el reproductor queda en blanco:,"Under an open player, before the link that opens the recording in Google Drive"
+committees.rec.untitled,Zoom recording,Grabación de Zoom,"Name of a recording whose series is not in data/recording-series.csv"
+committees.rec.all,All meetings,Todas las reuniones,"First meeting button over the recordings: shows every recording"
+committees.rec.hm,{h} h {m} min,{h} h {m} min,"A recording's length, one hour or more"
+committees.rec.m,{m} min,{m} min,"A recording's length, under an hour"

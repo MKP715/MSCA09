@@ -24,6 +24,7 @@
     "clean": "node -e \"require('fs').rmSync('_site',{recursive:true,force:true})\"",
     "check:calendar": "node scripts/check-calendar.mjs",
     "drive:ids": "python scripts/drive_ids.py",
+    "drive:recordings": "python scripts/recordings.py",
     "archives": "node scripts/archives-index.mjs",
     "postarchives": "node scripts/archives-links-md.mjs",
     "archives:links": "node scripts/archives-links-md.mjs",

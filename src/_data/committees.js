@@ -15,6 +15,7 @@
 //     aa_url, aa_url_es, calendar_match:[…], meets_at_area_meeting, meets_en/_es, liaison, parent, related:[slug],
 //     notice:{en,es,url,end}|null, status, notes,
 //     site:{url,title_en,title_es,body_en,body_es}|null, flyers:[Resource + {pages:[driveLink], pages_es:[driveLink]}],
+//     log:Resource|null (the committee's live working document: its log row),
 //     chairs:[Servant], servants:[Servant], positions:[Servant], members:[Servant], vacancies:[Servant], liaisons:[Servant], previous:[Servant],
 //     resources:[Resource], guidelines:[Resource], pending:[Resource], aaResources:[Resource], links:[Resource], reports:[Resource],
 //     faqs:[{q_en,q_es,a_en,a_es}], documents:[], series:[], upcoming:[] }
@@ -58,6 +59,8 @@ export default function () {
 
   const resBy = {};
   for (const r of res) {
+    // status = hidden keeps a row (of any kind) in the file but off the site
+    if (/^hidden$/i.test(r.status || "")) continue;
     const item = {
       committee: r.committee,
       kind: (r.kind || "link").toLowerCase(),
@@ -165,6 +168,8 @@ export default function () {
         .filter((x) => x.kind === "flyer")
         .map((x) => ({ ...x, pages: list(x.url), pages_es: list(x.url_es) }))
         .filter((x) => x.pages.length || x.pages_es.length),
+      // the committee's live working document (a Google Doc or Sheet it keeps up to date): linked, never copied
+      log: resources.find((x) => x.kind === "log" && x.url) || null,
       faqs: resources.filter((x) => x.kind === "faq").map((x) => ({ q_en: x.title_en, q_es: x.title_es, a_en: x.body_en, a_es: x.body_es })),
       // filled in by the pages from calendar.byCommittee / documents.byCommittee
       documents: [],

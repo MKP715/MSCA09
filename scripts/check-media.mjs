@@ -24,6 +24,8 @@
 // label names a document (agenda, minutes, report …, see DOC_LABEL). Flyers are still checked
 // for e-mail addresses and sobriety dates; documents are checked for all three.
 // The details found are never written anywhere — only what kind of detail it was.
+// The Zoom audio recordings in data/recordings.csv are never downloaded or read, wherever their id turns up:
+// they are hours of sound with no printed words (and up to hundreds of MB each).
 //
 // A false alarm (OCR misread, a public line): open the file, then delete its row in
 // data/flyer-holds.csv and change its result in data/media-review.csv to "cleared".
@@ -176,7 +178,11 @@ const describe = (f) =>
 /* ------------------------------------------------------------------ which files */
 const DRIVE_ID = /(?:\/file\/d\/|\/d\/|[?&]id=)([A-Za-z0-9_-]{20,})/g;
 const candidates = new Map(); // id -> { kind, source, flyer }
+// Zoom audio recordings (data/recordings.csv, every row, shown or not): never downloaded, even when a calendar
+// Link: or a resource row points at one (--ids cannot pick them either: they never become candidates)
+const RECORDINGS = new Set(readCsv("recordings.csv").map((r) => String(r.drive_id || "").trim()).filter(Boolean));
 function addCandidate(id, kind, source, flyer = false) {
+  if (RECORDINGS.has(id)) return;
   if (!candidates.has(id)) candidates.set(id, { kind, source, flyer });
 }
 // a calendar Link: whose label names one of these is a document, not a flyer: it is checked for phone numbers
@@ -228,6 +234,7 @@ function extraLinkFiles() {
   for (const f of ["committee-resources.csv", "resources.csv", "motions.csv", "districts.csv"]) {
     for (const r of readCsv(f)) {
       if (r.show && !yes(r.show)) continue;
+      if (/^hidden$/i.test(r.status || "")) continue; // a committee-resources row kept off the site
       for (const [col, v] of Object.entries(r)) {
         if (col.startsWith("_") || col === "notes") continue;
         for (const m of String(v || "").matchAll(new RegExp(DRIVE_ID.source, "g"))) addCandidate(m[1], "link", `${f} ${col}${r.committee ? ` (${r.committee})` : r.key ? ` (${r.key})` : r.slug ? ` (${r.slug})` : r.id ? ` (${r.id})` : ""}`);

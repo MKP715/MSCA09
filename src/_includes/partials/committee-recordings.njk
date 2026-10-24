@@ -1,0 +1,89 @@
+{#- Meeting recordings on a committee page: the audio of Area meetings held on Zoom (data/recordings.csv, with the
+    meetings' names from data/recording-series.csv; src/_data/recordings.js groups them by month, newest first).
+    A button per meeting filters the list; the newest month is open, older months are folded.
+    Play opens Google Drive's own player (an iframe of …/file/d/<id>/preview) under that recording, one at a time:
+    opening another or closing it removes the frame, which stops its sound (cmRecordings in src/assets/js/committees.js).
+    Without JavaScript, Play opens the file in Google Drive instead, and every recording is listed.
+    The long list stays out of the site search (data-pagefind-ignore); the heading and the lead are searchable.
+    Expects: c, L, rec (recordings.byCommittee[c.slug]: { count, series, months }). -#}
+<section id="recordings" class="cm-section" aria-labelledby="recordings-title" x-data="cmRecordings" data-results="{{ 'committees.rec.results' | t(L) }}" data-opened="{{ 'committees.rec.opened' | t(L) }}">
+  <div class="flex flex-wrap items-end justify-between gap-3">
+    <h2 id="recordings-title" class="cm-h2"><span class="icon-tile-soft">{% icon "headphones", "size-5" %}</span>{{ "committees.rec.title" | t(L) }}</h2>
+    <span class="chip chip-soft" data-pagefind-ignore>{{ ("committees.rec.count_one" if rec.count == 1 else "committees.rec.count_n") | t(L, { n: rec.count }) }}</span>
+  </div>
+  <p class="mt-2 max-w-3xl text-ink-600">{{ "committees.rec.lead" | t(L) }}</p>
+  <p class="cm-rec-note">{% icon "shield-check", "size-4 mt-0.5 shrink-0 text-sage-600" %}<span>{{ "committees.rec.anonymity" | t(L) }}</span></p>
+
+  <div data-pagefind-ignore>
+    {#- one button per meeting, with how many recordings it has (JavaScript only: without it every recording is listed) -#}
+    {%- if rec.series.length > 1 %}
+    <div class="cm-rec-filters no-scrollbar" role="group" aria-label="{{ 'committees.rec.filter_label' | t(L) }}" x-cloak>
+      <button type="button" class="cm-pill" :aria-pressed="(series === 'all').toString()" @click="pick('all')">{{ "committees.rec.all" | t(L) }}<span class="cm-count">{{ rec.count }}</span></button>
+      {%- for s in rec.series %}
+      <button type="button" class="cm-pill" :aria-pressed="(series === '{{ s.key }}').toString()" @click="pick('{{ s.key }}')">{{ s | loc("name", L) }}<span class="cm-count">{{ s.count }}</span></button>
+      {%- endfor %}
+    </div>
+    {%- endif %}
+    <p class="sr-only" aria-live="polite" x-text="announce"></p>
+
+    <div class="mt-5 space-y-3">
+      {%- for m in rec.months %}
+      <details class="cm-rec-month" data-rec-month {% if loop.first %}open{% endif %}>
+        <summary>
+          <span class="inline-block font-display text-lg font-bold text-ink-950 first-letter:uppercase">{{ m.first | dt("month", L) }}</span>
+          <span class="cm-count" data-rec-count data-one="{{ 'committees.rec.count_one' | t(L) }}" data-many="{{ 'committees.rec.count_n' | t(L) }}">{{ ("committees.rec.count_one" if m.count == 1 else "committees.rec.count_n") | t(L, { n: m.count }) }}</span>
+          <span class="cm-rec-chev">{% icon "chevron-down", "size-4" %}</span>
+        </summary>
+        <ul class="cm-rec-list" role="list">
+          {%- for r in m.items %}
+          {%- set name = (r | loc("title", L)) or ("committees.rec.untitled" | t(L)) %}
+          {%- set dateLong = r.date | dt("long", L) %}
+          {%- set link = r.seriesItem.link if (r.seriesItem and r.seriesItem.link and r.seriesItem.linkSlug != c.slug) else "" %}
+          {%- set h = (r.minutes / 60) | int if r.minutes else 0 %}
+          <li class="cm-rec" data-rec data-id="{{ r.id }}" data-series="{{ r.series }}">
+            <div class="cm-rec-row">
+              <time class="cm-rec-date" datetime="{{ r.date }}"><span class="cm-rec-wkd" aria-hidden="true">{{ r.date | dt("wkd", L) | replace(".", "") }}</span><span class="cm-rec-day" aria-hidden="true">{{ r.date | dt("day", L) }}</span><span class="sr-only">{{ dateLong }}</span></time>
+              <div class="min-w-0">
+                <p class="cm-rec-name">{% if link %}<a href="{{ link | lurl(L) }}">{{ name }}</a>{% else %}{{ name }}{% endif %}</p>
+                <p class="cm-rec-meta">
+                  {%- if r.session %}<span class="cm-rec-badge">{{ "committees.rec.session" | t(L, { n: r.session }) }}</span>{% endif %}
+                  {%- if r.part %}<span class="cm-rec-badge">{{ "committees.rec.part" | t(L, { n: r.part }) }}</span>{% endif %}
+                  {%- if r.track != "main" %}<span class="cm-rec-badge cm-rec-badge-lang">{% icon "languages", "size-3.5" %}{{ ("committees.rec.track_" + r.track) | t(L) }}</span>{% endif %}
+                  {%- if r.time %}<span class="cm-rec-fact">{% icon "clock", "size-3.5 shrink-0" %}{{ "committees.rec.started" | t(L, { time: r.start | timeRange(null, L) }) }}</span>{% endif %}
+                  {%- if r.minutes %}<span class="cm-rec-fact"><span class="sr-only">{{ "committees.rec.length" | t(L) }}: </span>{% icon "timer", "size-3.5 shrink-0" %}<time datetime="{{ r.iso }}">{{ ("committees.rec.hm" | t(L, { h: h, m: r.minutes % 60 })) if h else ("committees.rec.m" | t(L, { m: r.minutes })) }}</time></span>{% endif %}
+                </p>
+              </div>
+              <div class="cm-rec-actions">
+                {#- Play: a link to the file in Google Drive until JavaScript takes over, then the button that opens the player here -#}
+                <a href="{{ r.viewUrl }}" target="_blank" rel="noopener" class="btn btn-accent btn-sm cm-rec-play" x-show="false">{% icon "play", "size-4" %}{{ "committees.rec.play" | t(L) }}<span class="sr-only"> {{ name }}, {{ dateLong }} {{ "share.new_tab" | t(L) }}</span></a>
+                <button type="button" class="btn btn-accent btn-sm cm-rec-play" x-cloak aria-controls="rp-{{ r.id }}" :aria-expanded="(open === '{{ r.id }}').toString()" @click="toggle('{{ r.id }}')" data-name="{{ name }}" data-date="{{ dateLong }}">
+                  <span class="inline-flex items-center gap-2" x-show="open !== '{{ r.id }}'">{% icon "play", "size-4" %}{{ "committees.rec.play" | t(L) }}</span>
+                  <span class="inline-flex items-center gap-2" x-show="open === '{{ r.id }}'" x-cloak>{% icon "x", "size-4" %}{{ "committees.rec.close" | t(L) }}</span>
+                  <span class="sr-only"> {{ name }}, {{ dateLong }}</span>
+                </button>
+                <a href="{{ r.viewUrl }}" target="_blank" rel="noopener" class="cm-rec-link">{% icon "external-link", "size-4 shrink-0" %}<span class="sm:hidden" aria-hidden="true">{{ "committees.rec.drive_short" | t(L) }}</span><span class="max-sm:sr-only">{{ "committees.rec.drive" | t(L) }}</span><span class="sr-only"> {{ name }}, {{ dateLong }} {{ "share.new_tab" | t(L) }}</span></a>
+                <a href="{{ r.downloadUrl }}" target="_blank" rel="noopener" class="cm-rec-link">{% icon "download", "size-4 shrink-0" %}{{ "committees.rec.download" | t(L) }}<span class="sr-only"> {{ name }}, {{ dateLong }} {{ "share.new_tab" | t(L) }}</span></a>
+              </div>
+            </div>
+            {#- the player: Google Drive's own, put in (x-if) only while this recording is open -#}
+            <div id="rp-{{ r.id }}" class="cm-rec-player" x-cloak x-show="open === '{{ r.id }}'">
+              <div class="flex items-start justify-between gap-3">
+                <p class="flex min-w-0 items-start gap-2 text-sm font-semibold text-ink-800">{% icon "headphones", "size-4 mt-0.5 shrink-0 text-[var(--a-600)]" %}<span>{{ name }} · <span class="inline-block first-letter:uppercase">{{ dateLong }}</span></span></p>
+                <button type="button" class="cm-rec-close" @click="close(true)">{% icon "x", "size-4" %}<span class="sr-only">{{ "committees.rec.close" | t(L) }}</span></button>
+              </div>
+              {%- if r.big %}
+              <p class="cm-rec-hint">{% icon "info", "size-4 mt-0.5 shrink-0" %}<span>{{ "committees.rec.big" | t(L, { mb: r.size_mb | round }) }}</span></p>
+              {%- endif %}
+              <template x-if="open === '{{ r.id }}'">
+                <iframe class="cm-rec-frame" src="{{ r.previewUrl }}" title="{{ 'committees.rec.player_title' | t(L, { name: name, date: dateLong }) }}" allow="autoplay" loading="lazy"></iframe>
+              </template>
+              <p class="mt-2 text-xs text-ink-500">{{ "committees.rec.blank" | t(L) }} <a href="{{ r.viewUrl }}" target="_blank" rel="noopener" class="font-semibold text-ocean-700 hover:underline">{{ "committees.rec.drive" | t(L) }}<span class="sr-only"> {{ "share.new_tab" | t(L) }}</span></a></p>
+            </div>
+          </li>
+          {%- endfor %}
+        </ul>
+      </details>
+      {%- endfor %}
+    </div>
+  </div>
+</section>

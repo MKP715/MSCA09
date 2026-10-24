@@ -19,6 +19,16 @@
     `shown` = number of visible items; `announce` = text for a polite live region.
 
   cmSpy()   highlights the in-page section link ([data-spy] anchors) of the section in view.
+
+  cmRecordings()   the meeting recordings on a committee page (src/_includes/partials/committee-recordings.njk).
+    series   the meeting shown ("all" or a key of data/recording-series.csv), set by pick(key): recordings [data-rec]
+             of other meetings are hidden, a month [data-rec-month] with none left is hidden and its [data-rec-count]
+             follows (data-one / data-many, "{n}"); when no month left in view is open, the first one opens
+    open     the Drive id of the recording whose player is open, or "". The template puts Google Drive's player
+             (an iframe) in only for that one (x-if), so opening another, closing it or filtering it away removes the
+             frame and stops its sound. toggle(id) opens it and moves focus into the player; close(true) closes it
+             and gives focus back to that recording's Play button.
+    `announce` = text for a polite live region (data-results / data-opened on the section, translated by the page).
 */
 (function () {
   "use strict";
@@ -229,6 +239,56 @@
         window.addEventListener("resize", onScroll, { passive: true });
         if (location.hash && ids.includes(location.hash.slice(1))) (pinned = location.hash.slice(1)), mark(pinned);
         else mark(compute());
+      },
+    }));
+
+    Alpine.data("cmRecordings", () => ({
+      series: "all",
+      open: "",
+      announce: "",
+      pick(key) {
+        this.series = key;
+        let shown = 0;
+        const months = [...this.$root.querySelectorAll("[data-rec-month]")];
+        months.forEach((m) => {
+          let n = 0;
+          m.querySelectorAll("[data-rec]").forEach((li) => {
+            const ok = key === "all" || li.dataset.series === key;
+            li.hidden = !ok;
+            if (ok) n++;
+            else if (li.dataset.id === this.open) this.open = ""; // its player goes (and stops) with it
+          });
+          m.hidden = !n;
+          shown += n;
+          const count = m.querySelector("[data-rec-count]");
+          if (count) count.textContent = (n === 1 ? count.dataset.one : count.dataset.many).replace("{n}", n);
+        });
+        const left = months.filter((m) => !m.hidden);
+        if (left.length && !left.some((m) => m.open)) left[0].open = true;
+        this.announce = (this.$root.dataset.results || "{n}").replace("{n}", shown);
+      },
+      toggle(id) {
+        if (this.open === id) return this.close(false);
+        this.open = id;
+        const btn = this.$root.querySelector(`button[aria-controls="rp-${id}"]`);
+        if (btn) this.announce = (this.$root.dataset.opened || "").replace("{name}", btn.dataset.name || "").replace("{date}", btn.dataset.date || "");
+        // the frame is in the page after Alpine's next update: bring the player into view and focus it, so Tab
+        // reaches Google's play button next (Shift+Tab: the close button)
+        this.$nextTick(() => {
+          const player = document.getElementById("rp-" + id);
+          const frame = player && player.querySelector("iframe");
+          if (!player) return;
+          if (frame) frame.focus({ preventScroll: true });
+          player.scrollIntoView({ block: "nearest", behavior: window.MSCA && MSCA.reducedMotion ? "auto" : "smooth" });
+        });
+      },
+      close(back) {
+        const id = this.open;
+        this.open = "";
+        if (back && id) this.$nextTick(() => {
+          const btn = this.$root.querySelector(`button[aria-controls="rp-${id}"]`);
+          if (btn) btn.focus();
+        });
       },
     }));
   });

@@ -68,6 +68,7 @@ and announcements also update in visitors' browsers between builds.
 | The menu and the footer links | `data/nav.csv` | webmaster |
 | Every heading, sentence and button label, in both languages | `data/text/*.csv` | anyone |
 | Panel number, mailing address, Zelle, role e-mails, calendar id … | `data/settings.csv` | webmaster |
+| Meeting recordings (audio) on the Technology Committee page | Drive folder `MSCA09AA/Zoom Recordings/` + `data/recordings.csv` and `data/recording-series.csv` | Technology Committee |
 | Flyers and PDFs kept off the site | `data/flyer-holds.csv` (filled by the weekly check) | webmaster |
 | Old WordPress addresses that forward to the new pages | `data/redirects.csv` | webmaster |
 
@@ -115,6 +116,9 @@ and CSV file and come from `data/settings.csv`, so nothing needs editing when th
 | Add a guideline or aa.org link to a committee page | Add a row to `data/committee-resources.csv`. |
 | Add or change a committee's own website | Put the address in the `website` column of `data/committees.csv`, and add a `website` row to `data/committee-resources.csv` with the site's name (`title_en`, `title_es`) and one line on what is on it (`body_en`, `body_es`). The committee page then gets a button in its header and a card at the top. Leave `url` empty unless every link to the site on the page (the header button, the card, the contact card and Quick links) should open a more specific page of it. |
 | Show a flyer at the top of a committee page | Put the pictures of its pages (JPEG or PNG) and the PDF in `docs/flyers/` on Drive and check them like any flyer (see [Flyers and PDFs on hold](#flyers-and-pdfs-on-hold); record them in `data/media-review.csv`). Then add a `flyer` row to `data/committee-resources.csv`: `url` = the page pictures, `;`-separated in page order; `pdf` = the PDF; `language` = `en`, `es` or `en; es` (a Spanish version goes in `url_es` and `pdf_es`). To change a page later, upload it in Drive as a new version of the same file (Manage versions), so the links stay. |
+| Link a committee's live working document (minutes, a log of its work) | Add a `log` row to `data/committee-resources.csv`: `url` = the Google Doc's share link (shared as *anyone with the link can view*), `title_en`/`title_es`, one line in `body_en`/`body_es`, and `language` (`en` if it is only in English: the Spanish page says so). The page gets a card near the top, a header button and a Quick links entry. The public reads the document like a page of this site: no full names, phone numbers or personal e-mails in it. To take it off the site for a while, set the row's `status` to `hidden` (any row of that file can be hidden this way). |
+| Add new meeting recordings | On a computer with Google Drive for Desktop and FFmpeg: `npm run drive:recordings`. It adds every new `.m4a` in `MSCA09AA/Zoom Recordings/` to `data/recordings.csv` (recordings shorter than 3 minutes are added hidden), never changes what you edited, and lists files that have gone. Then commit the file. A recording can also be added by hand on github.com: its Drive id, `committee`, `series`, `date` and `show` = `yes`. |
+| Hide a meeting recording | Set `show` to `no` on its row in `data/recordings.csv` (the row stays, so the script never adds it back). A new meeting gets its name, Spanish name and filter button from `data/recording-series.csv`. |
 | Record a motion's result | In `data/motions.csv`, set `status` (`passed`, `failed`, `tabled`…) and `decided_date`. |
 | Swap the home page photo | Put the photo in `src/assets/img/hero/` (at least 2560 px wide; 3840 px is ideal) and add a row to `data/hero.csv` with its alt text and photo credit. Phones show a tall crop around `position_mobile`; for a better phone picture, add an upright (portrait) photo and put its file name in `file_mobile`. Check the licence (see [Credits](#credits-and-licences)), and make sure no person in the photo can be identified. |
 | Hide a central office or a link | Set `show` to `no` on its row. |
@@ -525,6 +529,7 @@ npm run check        # anonymity, links, CSV and missing-text checks on _site/
 node scripts/check-site.mjs _site_preview   # the same checks on another output folder
 npm run check:calendar                      # calendar entries that need fixing in Google Calendar
 npm run check:media -- --dry-run            # read new flyers/PDFs (needs tesseract + poppler); changes nothing
+npm run drive:recordings                    # add new Zoom recordings to data/recordings.csv (Drive for Desktop + ffprobe)
 npm run social-card                         # redraw src/assets/img/social-card.jpg (Python + pillow)
 ```
 
@@ -538,7 +543,7 @@ npm run social-card                         # redraw src/assets/img/social-card.
 | `src/_includes/` | Layouts, partials and macros (`macros/ui.njk`, `macros/events.njk`, …) |
 | `src/assets/` | CSS (Tailwind input + per-section files), browser scripts, images |
 | `src/content/delegate/` | Archived Delegate's Corner posts (Markdown) |
-| `scripts/` | Calendar fetch and check, Drive listing and id filler, site check, flyer/PDF check, document scanner, social-card builder |
+| `scripts/` | Calendar fetch and check, Drive listing and id filler, Zoom recordings list, site check, flyer/PDF check, document scanner, social-card builder |
 | `.github/workflows/deploy.yml` | Build and deploy on push, every 3 hours, and on demand |
 | `.github/workflows/media-check.yml` | The Monday flyer and PDF check |
 

@@ -18,10 +18,14 @@
 //     collides with a real page
 //   - wording a page asks for that is missing from data/text/*.csv
 //   - a page title or meta description escaped twice ("&amp;amp;" shows as "&amp;")
+//   - a meeting recording (data/recordings.csv) without a Drive id, a real date, a committee of
+//     data/committees.csv or a meeting of data/recording-series.csv, or whose show is not yes / no;
+//     a meeting (data/recording-series.csv) listed twice, without a name or linking nowhere
 // Prints warnings (does not stop) for links to the old WordPress site, pages without a
 // title or heading, very large pages, full-name look-alikes elsewhere, Zoom IDs that
-// look like a member's own phone number, and committee website or flyer rows
-// (data/committee-resources.csv) that are missing their address, description, pictures or PDF.
+// look like a member's own phone number, committee website, flyer or work-log rows
+// (data/committee-resources.csv) that are missing their address, description, pictures or PDF,
+// and recordings whose show is empty or whose length, part or track cannot be read.
 //
 // Allowed contact details live in data/contact-allowlist.csv (value, kind, reason): role
 // mailboxes that happen to be on gmail/outlook (their name must say which role), public
@@ -32,7 +36,7 @@
 // live in data/name-allowlist.csv. Both files need a reviewer's approval (.github/CODEOWNERS).
 import fs from "node:fs";
 import path from "node:path";
-import { readCsv, readCsvDir, checkCsvFile } from "../src/_lib/csv.js";
+import { readCsv, readCsvDir, checkCsvFile, yes } from "../src/_lib/csv.js";
 import { nameHits } from "../src/_lib/names.js";
 import { normStatus, holdsSeat } from "../src/_lib/status.js";
 
@@ -293,7 +297,8 @@ for (const c of committeeRows) {
 // data/committee-resources.csv, as src/_data/committees.js reads it: a website row is shown only when there is an
 // address (its url, else the website column of data/committees.csv: siteOf), as a card that says in both languages
 // what is on the site (body_en / body_es); a flyer row is dropped without pictures of its pages (url, or url_es for
-// a Spanish one) and offers no printable copy without a PDF (pdf / pdf_es).
+// a Spanish one) and offers no printable copy without a PDF (pdf / pdf_es). A log row (the committee's live working
+// document) needs its share link and a line in both languages; status = hidden keeps any row off the site.
 {
   const committeeSite = new Map(committeeRows.map((c) => [c.slug, String(c.website || "").trim()]));
   const filled = (...v) => v.some((x) => String(x || "").trim());
@@ -301,7 +306,15 @@ for (const c of committeeRows) {
     if (!r.committee || r.committee.startsWith("#")) continue;
     const kind = String(r.kind || "").trim().toLowerCase();
     const where = `data/committee-resources.csv row ${r._row} (${r.committee}, ${kind})`;
-    if (kind === "website") {
+    const status = String(r.status || "").trim().toLowerCase();
+    if (status && !["current", "superseded", "draft", "reference", "report", "hidden"].includes(status))
+      warn(where, `status "${r.status}" — use current, superseded, draft, reference, or hidden to keep the row off the site`);
+    if (status === "hidden") continue;
+    if (kind === "log") {
+      if (!/^https:\/\/(docs|drive)\.google\.com\//.test(String(r.url || "").trim()))
+        warn(where, `url should be the share link of the committee's Google Doc or Sheet (https://docs.google.com/… or https://drive.google.com/…) — without one the committee page shows no work-log card`);
+      if (!filled(r.body_en) || !filled(r.body_es)) warn(where, `the work-log card needs one line on what is in the document in English and in Spanish (body_en and body_es)`);
+    } else if (kind === "website") {
       if (!filled(r.url, committeeSite.get(r.committee)))
         warn(where, `no address: fill url, or the website column of the "${r.committee}" row of data/committees.csv — until then the committee page shows no website card`);
       if (!filled(r.body_en) || !filled(r.body_es))
@@ -310,6 +323,50 @@ for (const c of committeeRows) {
       if (!filled(r.url, r.url_es)) warn(where, `no pictures of the flyer's pages (url, or url_es for a Spanish version): the committee page leaves the flyer out`);
       if (!filled(r.pdf, r.pdf_es)) warn(where, `no printable copy (pdf, or pdf_es for a Spanish version): the flyer is shown without a PDF to download or print`);
     }
+  }
+}
+
+// ------------------------------------------------------------- meeting recordings
+// data/recordings.csv and data/recording-series.csv, as src/_data/recordings.js reads them: the page plays each
+// recording from its Drive id (…/file/d/<id>/preview), files it under its date and meeting (series) on the page of its
+// committee, and shows only rows whose show is yes. A row the loader cannot place would silently go missing.
+{
+  const slugs = new Set(committeeRows.map((c) => c.slug));
+  const seriesKeys = new Set();
+  const folders = new Map();
+  for (const s of readCsv("recording-series.csv")) {
+    const where = `data/recording-series.csv row ${s._row} (${s.key || s.folder || "?"})`;
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(s.key || "")) err(where, `key "${s.key || ""}" — use lowercase letters, digits and dashes (it is what the series column of data/recordings.csv names)`);
+    else if (seriesKeys.has(s.key)) err(where, `key "${s.key}" is listed twice`);
+    seriesKeys.add(s.key);
+    const folder = String(s.folder || "").trim().toLowerCase();
+    if (folder && folders.has(folder)) err(where, `folder "${s.folder}" is also on row ${folders.get(folder)} — scripts/recordings.py could not tell which meeting a new recording belongs to`);
+    if (folder) folders.set(folder, s._row);
+    if (!String(s.name_en || "").trim()) err(where, `no English name (name_en): the page and its filter button need one`);
+    else if (!String(s.name_es || "").trim()) warn(where, `no Spanish name (name_es): the Spanish page shows "${s.name_en}"`);
+    const link = String(s.link || "").trim();
+    if (link && !link.startsWith("/") && !slugs.has(link)) err(where, `link "${link}" is neither a committee slug of data/committees.csv nor an address on this site (/…/)`);
+  }
+  // a real day: 2026-02-30 fails (it would come back as March 2)
+  const isDay = (d) => /^\d{4}-\d{2}-\d{2}$/.test(d || "") && !Number.isNaN(Date.parse(`${d}T12:00:00Z`)) && new Date(`${d}T12:00:00Z`).toISOString().slice(0, 10) === d;
+  const ids = new Map();
+  for (const r of readCsv("recordings.csv")) {
+    const id = String(r.drive_id || "").trim();
+    const where = `data/recordings.csv row ${r._row}${r.path ? ` (${r.path})` : id ? ` (${id})` : ""}`;
+    if (!/^[A-Za-z0-9_-]{25,60}$/.test(id)) err(where, `drive_id "${id}" does not look like a Google Drive file id (the long code in the file's Share link: …/file/d/<id>/view)`);
+    else if (ids.has(id)) err(where, `the same recording (${id}) is also on row ${ids.get(id)}`);
+    else ids.set(id, r._row);
+    if (!isDay(r.date)) err(where, `date "${r.date || ""}" — write the meeting's day as YYYY-MM-DD`);
+    if (r.time && !/^([01]?\d|2[0-3]):[0-5]\d$/.test(r.time)) err(where, `time "${r.time}" — write when the recording started as HH:MM (24-hour, Pacific), or leave it empty`);
+    if (!slugs.has(r.committee)) err(where, `committee "${r.committee || ""}" is not a slug of data/committees.csv (the page that lists the recording)`);
+    if (!seriesKeys.has(r.series)) err(where, `series "${r.series || ""}" is not a key of data/recording-series.csv`);
+    const show = String(r.show || "").trim();
+    if (!show) warn(where, `show is empty: the recording stays off the site until it says yes`);
+    else if (!yes(show) && !/^(no|n|false|0)$/i.test(show)) err(where, `show "${show}" — write yes or no`);
+    if (r.track && !/^(main|es|en)$/i.test(r.track)) warn(where, `track "${r.track}" — main (the meeting's own audio), es or en (an interpretation channel); the page shows it as main`);
+    if (r.duration && !/^\d+:[0-5]\d:[0-5]\d$/.test(r.duration)) warn(where, `duration "${r.duration}" — write H:MM:SS (the page leaves the length out)`);
+    for (const k of ["part", "session"]) if (r[k] && !/^\d+$/.test(r[k])) warn(where, `${k} "${r[k]}" — a number, or empty`);
+    if (r.size_mb && !Number.isFinite(Number(r.size_mb))) warn(where, `size_mb "${r.size_mb}" — the file's size in MB, e.g. 94.5`);
   }
 }
 
