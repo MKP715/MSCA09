@@ -139,15 +139,15 @@ search.kw./service/forms/,"forms, finance forms, expense form, budget form, reim
 search.kw./service/forms/expense/,"expense form, expense reimbursement, reimbursement request, reimburse, expenses, mileage, receipts, Treasurer A/P, accounts payable, Zelle, check","formulario de gastos, reembolso de gastos, solicitud de reembolso, reembolsar, gastos, millaje, kilometraje, recibos, tesorero, cuentas por pagar, Zelle, cheque",
 search.kw./service/forms/budget/,"budget form, budget request, annual budget, committee budget, budget line, Finance Committee","formulario de presupuesto, solicitud de presupuesto, presupuesto anual, presupuesto del comité, línea de presupuesto, Comité de Finanzas",
 "# The installed app (scripts/build-pwa.mjs writes the app's manifest from the app.* rows; README ""The app""). Changing app.name, app.short_name or the logo asks people who installed the app to approve the change; everything else reaches them by itself.",,,
-app.name,Mid-Southern California Area 09 of A.A.,Área 09 del Medio Sur de California de A.A.,"The installed app's full name (install dialog, app list, Start menu, Dock). Changing it asks people who installed the app to approve the new name"
-app.short_name,MSCA 09,MSCA 09,"The name under the app's icon: 12 characters at most, the same in both languages (phones show one name whatever the language)"
+app.name,MSCA09,MSCA09,"The installed app's name (install dialog, app list, Start menu, Dock). Changing it asks people who installed the app to approve the new name"
+app.short_name,MSCA09,MSCA09,"The name under the app's icon: 12 characters at most, the same in both languages (phones show one name whatever the language)"
 app.description,"The calendar, meetings, events, districts, committees and service documents of Mid-Southern California Area 09 of Alcoholics Anonymous, in English and Spanish.","El calendario, las reuniones, los eventos, los distritos, los comités y los documentos de servicio del Área 09 del Medio Sur de California de Alcohólicos Anónimos, en inglés y en español.",Shown in the install dialog of some browsers (under 300 characters)
 app.shortcut.calendar,Events,Eventos,Shortcut in the app icon's menu (long-press or right-click the icon)
 app.shortcut.events,Happenings,Actividades,Shortcut in the app icon's menu
 app.shortcut.newcomers,New to A.A.?,¿Nuevo en A.A.?,Shortcut in the app icon's menu
 app.shortcut.contact,Contact,Contacto,Shortcut in the app icon's menu
 app.install,Install the app,Instalar la aplicación,"Footer button: puts the site on the home screen, Start menu or Dock like an app"
-app.install_title,Install the Area 09 app,Instala la aplicación del Área 09,Heading of the window the footer button opens
+app.install_title,Install the MSCA09 app,Instala la aplicación MSCA09,Heading of the window the footer button opens
 app.install_lead,"It opens from your home screen or Dock like any app, updates by itself, and the pages you have opened still work without internet.","Se abre desde la pantalla de inicio o el Dock como cualquier aplicación, se actualiza sola, y las páginas que ya abriste funcionan sin internet.",First line of the install window
 app.steps.ios,"Tap the Share button (on iPhones with iOS 26 it is in the ⋯ menu next to the address), then “Add to Home Screen”. Leave “Open as Web App” on.",Toca el botón Compartir (en iPhone con iOS 26 está en el menú ⋯ junto a la dirección) y luego “Agregar a pantalla de inicio”. Deja activado “Abrir como app web”.,Install steps for Safari on iPhone and iPad
 app.steps.ios_other,"Open your browser's Share menu, then choose “Add to Home Screen”.",Abre el menú Compartir de tu navegador y elige “Agregar a pantalla de inicio”.,"Install steps for Chrome, Edge or Firefox on iPhone and iPad"
@@ -164,3 +164,7 @@ offline.saved,"Saved on this device, ready without internet:","Guardadas en este
 offline.none,Pages you open while online are saved on this device for later.,Las páginas que abras con conexión se guardan en este dispositivo para después.,When none of the main pages is saved yet
 offline.retry,Try again,Reintentar,Button that tries to load the page again
 app.install_dismiss,Already installed? Don't show this again,¿Ya la instalaste? No volver a mostrar esto,"Link in the install window on iPhone, iPad and Mac Safari, which cannot tell the browser that the app was added: hides the footer's Install button in this browser"
+app.banner_title,Get the MSCA09 app,Instala la aplicación MSCA09,"The small invitation to install the app (bottom of the screen, from the second page a visitor opens; not on the newcomers page or the form pages)"
+app.banner_body,"Events, meetings and districts from your home screen: always up to date, and it works without internet.","Eventos, reuniones y distritos desde tu pantalla de inicio: siempre al día, y funciona sin internet.",
+app.banner_install,Install,Instalar,"Button of the invitation: the browser's own install window, or the steps for this device"
+app.banner_later,Not now,Ahora no,Hides the invitation on this device for 30 days

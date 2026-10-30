@@ -959,8 +959,8 @@ The Area Google Calendar was checked against every district, intergroup and cent
 
 ## 19. Done on October 30, 2026 (evening) — the website is now an app
 
-- **Install it like an app** on any phone, tablet or computer: with the browser's own install button, or with
-  **Install the app** at the bottom of every page (on iPhones, iPads, Macs and Firefox it shows the steps). It opens
+- **Install it like an app** (it is called **MSCA09**) on any phone, tablet or computer: with the browser's own install
+  button, the small invitation card visitors see from their second page, or **Install the app** at the bottom of every page (on iPhones, iPads, Macs and Firefox it shows the steps). It opens
   from the home screen, Start menu or Dock in its own window, in the language of the last page read on that device,
   with shortcuts to the Calendar, Meetings & events, New to A.A.? and Contact (long-press or right-click the icon).
 - **Always up to date, nothing to reload:** every page is fetched fresh while online. A page left open brings itself up

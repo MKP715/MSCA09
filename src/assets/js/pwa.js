@@ -451,8 +451,22 @@
   }
 
   /* ---------------------------------------------------------- "Install the app" */
+  // The invitation (partials/app-install.njk): from the second page a visitor opens on this device, a few seconds after
+  // it opens, where the app can be installed and is not; not on the newcomers page (data-no-app-banner: someone may be
+  // looking for help), the pages with a form, or the offline page. "Not now" hides it here for 30 days.
+  const BANNER_LATER = "msca-app-banner"; // when "Not now" was pressed
+  const BANNER_PAUSE = 30 * 24 * 60 * 60 * 1000;
+  const views = (+get("msca-app-views") || 0) + 1;
+  set("msca-app-views", String(Math.min(views, 99)));
+  const bannerWanted = () =>
+    live && !offlinePage && views >= 2 && !html.hasAttribute("data-no-app-banner") && !html.hasAttribute("data-no-auto-reload") &&
+    Date.now() - (+get(BANNER_LATER) || 0) > BANNER_PAUSE;
+
   let prompt = null; // Chrome, Edge, Samsung Internet: their own install window, saved for the button
   window.addEventListener("beforeinstallprompt", (e) => {
+    // where the invitation will show, it replaces the browser's own little install bar (the menu and the address
+    // bar keep theirs); elsewhere the browser shows its own as usual
+    if (bannerWanted()) e.preventDefault();
     prompt = e; // offered again, so not installed (any more): the button may show
     del("msca-installed");
     window.dispatchEvent(new CustomEvent("msca:installable"));
@@ -485,6 +499,7 @@
     window.Alpine.store("app", {
       can: false,
       open: false,
+      banner: false,
       steps: "",
       opener: null,
       init() {
@@ -494,7 +509,21 @@
         window.addEventListener("msca:installed", () => {
           this.can = false;
           this.open = false;
+          this.banner = false;
         });
+        if (bannerWanted())
+          setTimeout(() => {
+            if (this.can && !this.open && bannerWanted()) this.banner = true;
+          }, 6000);
+      },
+      // the invitation's two buttons
+      fromBanner() {
+        this.banner = false;
+        this.install(null); // no focus to give back: the invitation is gone, and the footer button would scroll the page
+      },
+      later() {
+        set(BANNER_LATER, String(Date.now()));
+        this.banner = false;
       },
       async install(button) {
         this.opener = button || null;
@@ -527,6 +556,7 @@
         set("msca-installed", "1");
         this.can = false;
         this.open = false;
+        this.banner = false;
         const footer = document.querySelector("footer");
         if (footer) {
           footer.setAttribute("tabindex", "-1");

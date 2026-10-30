@@ -541,8 +541,11 @@ The website can be installed like an app on any phone, tablet or computer: it th
 Start menu or Dock in its own window, and the pages already opened work without internet. There is nothing to
 publish in an app store, and nothing to do when something changes: the app *is* the website.
 
-**Installing.** Chrome, Edge and Samsung Internet offer it themselves (an install button in the address bar, or
-in the menu). Every page also has **Install the app** at the bottom: it opens the browser's own install window, or
+**Installing.** The app is called **MSCA09** (`app.name` and `app.short_name` in `data/text/common.csv`). Chrome, Edge and
+Samsung Internet offer it themselves (an install button in the address bar, or in the menu). From the second page a
+visitor opens, a small card at the bottom of the screen invites them to install it ("Not now" hides it on that device
+for 30 days; never on the newcomers page, the form pages or where the app cannot be installed or already is). Every
+page also has **Install the app** at the bottom: it opens the browser's own install window, or
 shows the steps for that device (iPhone and iPad: Share → Add to Home Screen; Mac Safari: File → Add to Dock;
 Firefox on Android and Windows). It is hidden where the browser cannot install apps and once the app is installed.
 iPhones, iPads and Mac Safari keep the app apart from the browser and never tell the browser it was added, so there

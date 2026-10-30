@@ -58,8 +58,9 @@
 {%- set indexable = not (noindex or page.url == "/404.html") -%}
 <!doctype html>
 {#- data-alt: this page in the other language (the installed app's start below); data-no-auto-reload: a page with a form
-    the app never reloads by itself (front matter noAutoReload, pwa.js) -#}
-<html lang="{{ L.htmlLang }}" data-lang="{{ lc }}" data-base="{{ site.base }}"{% if alt and page.url not in ["/404.html", "/offline/", "/es/offline/"] %} data-alt="{{ alt }}"{% endif %}{% if noAutoReload %} data-no-auto-reload{% endif %} class="scroll-smooth">
+    the app never reloads by itself (front matter noAutoReload, pwa.js); data-no-app-banner: no invitation to install the
+    app on this page (front matter noAppBanner) -#}
+<html lang="{{ L.htmlLang }}" data-lang="{{ lc }}" data-base="{{ site.base }}"{% if alt and page.url not in ["/404.html", "/offline/", "/es/offline/"] %} data-alt="{{ alt }}"{% endif %}{% if noAutoReload %} data-no-auto-reload{% endif %}{% if noAppBanner %} data-no-app-banner{% endif %} class="scroll-smooth">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
