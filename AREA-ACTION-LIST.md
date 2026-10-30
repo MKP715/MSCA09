@@ -442,7 +442,7 @@ Most of this section was done on October 13, 2026 (see section 12). **Done** row
 | Dec 12 Hispanic Women's Workshop | English theme → "From darkness to light" | Start 7:00 or 8:00 AM? venue name |
 | ACYPAA LIV (Apr 15, 2027) | Delta Hotels by Marriott Ontario Airport, ZIP 91761; Bilingual; $25 pre-registration | — |
 | ACYPAA Business Meeting | — | Venue name before 21535 Palomar St, Wildomar |
-| PRAASA 2026 and 2027; 77th Conference; PRF 2028 | PRAASA 2026 spelling and address; **added** PRAASA 2027 (Seattle), the 77th General Service Conference (Apr 11–17, 2027, New York) and the 2028 Pacific Regional Forum (Dec 1–3, 2028, Hilton Long Beach) | — (**Oct 30:** PRAASA 2027 `Web:` is now praasa.org/register/; 2027.praasa.org forwards there) |
+| PRAASA 2026 and 2027; 77th Conference; PRF 2028 | PRAASA 2026 spelling and address; **added** PRAASA 2027 (Seattle), the 77th General Service Conference (Apr 11–17, 2027, New York) and the 2028 Pacific Regional Forum (Dec 1–3, 2028, Hilton Long Beach) | — (**Oct 30:** PRAASA 2027 `Web:` is praasa.org; the registration forms, flyers and hotel link are on the entry, see section 18) |
 | Events added from district and intergroup websites | See section 12 (22 events from Oct 17, 2026 to 2030, and four meeting series) | Foro 23 (Indio) and the ACYPAA game night (Riverside): venue names; the 2030 International Convention: venue when aa.org names it |
 
 **Add once dates are known:** the 2027 boot camps and Spanish Inter-District Pre-Conference (Inter-District Hispanic Chair); 2027 Four-Area DCM Sharing (DCM School); 2027 Open House (Archives); the Finance Committee; **the Area Young People Committee** (1st and 3rd Thursday, 8:00 PM, per the North OC Central Office — no place or Zoom given); Inter-District meetings; Board meetings if decided.
@@ -941,6 +941,12 @@ The Area Google Calendar was checked against every district, intergroup and cent
   (free registration on aa.org), PRAASA 2027 ($65 to attend in person) and the South Orange County H&I Chili Cook-Off
   (free entry); the Area's copies of the Harbor Area Traditions Banquet flyer and the 42nd Orange County AA Convention
   flyer (page 1) added to those two entries.
+- **PRAASA 2027 (Mar 5–7, Seattle), completed from praasa.org:** the English and Spanish mail-in flyers (pictures on
+  the Area's Drive, each page leading with its own language; the PDFs linked on praasa.org), the online registration
+  forms in both languages, the hotel's group-rate booking link, prices ($65 in person, $35 online via Zoom, meals
+  extra), the mail-in and hotel deadlines (Feb 20 and Feb 11, 2027), Thursday's early-bird meeting and the Friday
+  schedule, in English and Spanish. The website link is now praasa.org, because praasa.org/register/ says only "More
+  information will be provided soon".
 
 **Still to confirm**
 - [ ] **District 22 MCD (or the Coachella Valley Hispanic intergroup):** who hosts Foro 23 (Nov 22, Indio) and Congreso
