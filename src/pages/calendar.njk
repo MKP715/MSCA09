@@ -16,7 +16,7 @@ scripts: ["/assets/js/calendar.js"]
   /calendar/ — the Area calendar. From the top:
     1. a slim header (title, stats; the "Skip to the calendar" link jumps past 2)
     2. "Coming up: Area events & gatherings": the flyers of the next Area events — a swipeable row on phones and
-       tablets; from 1024px one row of the grid, the rest behind "Show more events". Its heading's buttons lead to
+       tablets; from 1024px one row of the grid, three full rows behind "Show more events". Its heading's buttons lead to
        /events/ and to every upcoming flyer (/calendar/flyers/, pages/calendar-flyers.njk); a link beside "Show more
        events" leads to the flyers too, at every width
     3. the calendar app:
@@ -67,7 +67,9 @@ scripts: ["/assets/js/calendar.js"]
 </section>
 
 {#- ---------------------------------------------------------- featured events with flyers -#}
-{%- set featured = (C.featuredEvents or []) | limit(15) -%}
+{#- 15 shown at most (three rows of 5 on wide screens, calendar.css .cal-feat), and 5 more in case some end before
+    the next build (app.js removes them) -#}
+{%- set featured = (C.featuredEvents or []) | limit(20) -%}
 {%- if featured.length %}
 <section class="cal-feat relative isolate overflow-hidden py-10 sm:py-12 lg:py-14 2xl:py-16" aria-labelledby="featured-title" style="{{ 'coral' | accent }}"
          x-data="calFeatured" :class="all && 'is-all'">
@@ -75,16 +77,17 @@ scripts: ["/assets/js/calendar.js"]
   <div class="wrap">
     {{ sectionHead({ eyebrow: "calendar.featured.eyebrow" | t(L), title: "calendar.featured.title" | t(L), lead: "calendar.featured.lead" | t(L), id: "featured-title",
                      actions: [{ label: "calendar.featured.all" | t(L), url: "/events/" | lurl(L) }, { label: "calendar.flyers.all" | t(L), url: "/calendar/flyers/" | lurl(L) }] }) }}
-    {#- phones and tablets: one swipeable row of flyers (calendar.css .ev-grid--rail); from 1024px a grid that shows
-        one row until "Show more events" (calendar.css .cal-feat), so the calendar stays near the top. The first
+    {#- phones and tablets: one swipeable row of 10 flyers (calendar.css .ev-grid--rail); from 1024px a grid that shows
+        one row until "Show more events" opens three full rows (calendar.css .cal-feat), so the calendar stays near
+        the top. The first
         flyer is the page's main picture: it loads at once, with high priority. The others are marked lazy, but a
         browser counts the next cards of the row as near and fetches a few at once anyway; on phones they share the
         connection with the first, which is why phones get files no wider than 640px (macros/events.njk _flyerImg).
         sizes follows those widths (a rail card is min(78vw, 20rem)) -#}
-    {{ upcomingList({ items: featured, lang: L, limit: 10, variant: "flyer", id: "featured-events", class: "ev-grid ev-grid--flyer ev-grid--rail",
+    {{ upcomingList({ items: featured, lang: L, limit: 15, variant: "flyer", id: "featured-events", class: "ev-grid ev-grid--flyer ev-grid--rail",
                       eager: 1, sizes: "(min-width: 1920px) 18vw, (min-width: 1536px) 22vw, (min-width: 1024px) 30vw, min(78vw, 20rem)" }) }}
-    {#- "Show more events" (from 1024px, when there are more flyers than one row) and, at every width, the way to every
-        upcoming flyer -#}
+    {#- "Show more events" (from 1024px, when the flyers fill at least two rows; it opens three full rows) and, at every
+        width, the way to every upcoming flyer -#}
     <div class="cal-feat__foot">
       <div class="cal-feat__more">
         <button type="button" class="btn btn-ghost" x-cloak aria-controls="featured-events" :aria-expanded="all.toString()"

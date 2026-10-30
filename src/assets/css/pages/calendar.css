@@ -120,8 +120,8 @@
   .ev-grid--flyer { @apply grid-cols-1 gap-5 min-[480px]:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 3xl:grid-cols-5; }
   .ev-grid > li, .ev-list > li { @apply min-w-0; }
   /* phones and tablets: a long run of flyer cards becomes one swipeable row (the next card peeks in) instead of a
-     tall stack; a grid from 1024px */
-  @media (max-width: 1023px) {
+     tall stack; a grid from 1024px (64rem, like lg:grid-cols-3: the switch moves with the visitor's font size) */
+  @media (width < 64rem) {
     .ev-grid--rail {
       @apply -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pt-1 pb-5 sm:-mx-6 sm:px-6;
       scroll-padding-inline: 1rem;
@@ -240,35 +240,55 @@
   .cal-stat dt { @apply mt-0.5 text-[11px] leading-tight font-semibold text-ink-600 2xl:text-xs; }
   .cal-stat dd { @apply font-display text-2xl leading-none font-extrabold 2xl:text-[1.75rem]; color: var(--a-700); }
 
-  /* ---- "Coming up": the flyers between the header and the calendar. Phones and tablets swipe through them all
-       (.ev-grid--rail); from 1024px the grid shows one row (3 cards, 4 from 1536px, 5 from 1920px) and the rest wait
-       behind "Show more events" (.is-all, set by the button), so the calendar is not pushed several screens down.
-       Only the cards app.js leaves visible count (it hides ended events and those past data-limit). A browser
-       without :has() or nth-child(… of …) shows the whole grid and no button; without JavaScript the button stays
-       hidden (x-cloak) and "All meetings & events" leads to the rest. The link to every upcoming flyer
-       (/calendar/flyers/) sits beside it, and alone below the row on phones and tablets. */
+  /* ---- "Coming up": the flyers between the header and the calendar. Phones and tablets swipe through the first 10
+       (.ev-grid--rail); from 1024px the grid shows one row (3 cards, 4 from 1536px, 5 from 1920px) and "Show more
+       events" (.is-all, set by the button) opens it to three full rows (9, 12 or 15 cards), so the calendar is not
+       pushed several screens down and the last row never ends in empty places. Fewer cards than three rows: as many
+       full rows as they fill (the cards of a last, part-filled row stay folded; the flyers link beside the button
+       shows them), and no button without at least two full rows. Only the cards app.js leaves visible count (it
+       hides ended events and those past data-limit, 15 in pages/calendar.njk). A browser without :has() or
+       nth-child(… of …) shows all 15 and no button; without JavaScript the button stays hidden (x-cloak) and "All
+       meetings & events" leads to the rest. The link to every upcoming flyer (/calendar/flyers/) sits beside the
+       button, and alone below the row on phones and tablets.
+       Each width below: [first row] / [three rows] / [a part-filled last row from the second row on: its first card
+       (a row's first card among the last cards, fewer than a row) and the cards after it] / [the button: two full
+       rows or more]. The widths are in rem, the units of the grid's own lg / 2xl / 3xl columns (.ev-grid--flyer):
+       with a larger default font size in the browser both move together, so the counts below always match the
+       columns on screen (and the ranges meet without a gap at zoomed, fractional widths). */
   .cal-feat__foot { @apply mt-3 flex flex-wrap items-center justify-center gap-3 lg:mt-8; }
   /* the Spanish link is wider than a phone: it wraps onto two lines there instead of running off the screen */
   .cal-feat__foot > .btn { @apply max-w-full whitespace-normal text-center; }
   .cal-feat__more { @apply hidden; }
   @supports selector(:has(a)) and selector(:nth-child(1 of a)) {
-    @media (min-width: 1024px) and (max-width: 1535px) {
-      .cal-feat:not(.is-all) .ev-grid--rail > li:nth-child(n + 4 of :not([hidden])) { display: none; }
-      .cal-feat:has(.ev-grid--rail > li:nth-child(4 of :not([hidden]))) .cal-feat__more { display: flex; }
+    @media (width < 64rem) {
+      .cal-feat .ev-grid--rail > li:nth-child(n + 11 of :not([hidden])) { display: none; }
     }
-    @media (min-width: 1536px) and (max-width: 1919px) {
-      .cal-feat:not(.is-all) .ev-grid--rail > li:nth-child(n + 5 of :not([hidden])) { display: none; }
-      .cal-feat:has(.ev-grid--rail > li:nth-child(5 of :not([hidden]))) .cal-feat__more { display: flex; }
-    }
-    @media (min-width: 1920px) {
-      .cal-feat:not(.is-all) .ev-grid--rail > li:nth-child(n + 6 of :not([hidden])) { display: none; }
+    @media (64rem <= width < 96rem) {
+      .cal-feat:not(.is-all) .ev-grid--rail > li:nth-child(n + 4 of :not([hidden])),
+      .cal-feat.is-all .ev-grid--rail > li:nth-child(n + 10 of :not([hidden])),
+      .cal-feat.is-all .ev-grid--rail > li:nth-child(3n + 4 of :not([hidden])):nth-last-child(-n + 2 of :not([hidden])),
+      .cal-feat.is-all .ev-grid--rail > li:nth-child(3n + 4 of :not([hidden])):nth-last-child(-n + 2 of :not([hidden])) ~ li { display: none; }
       .cal-feat:has(.ev-grid--rail > li:nth-child(6 of :not([hidden]))) .cal-feat__more { display: flex; }
+    }
+    @media (96rem <= width < 120rem) {
+      .cal-feat:not(.is-all) .ev-grid--rail > li:nth-child(n + 5 of :not([hidden])),
+      .cal-feat.is-all .ev-grid--rail > li:nth-child(n + 13 of :not([hidden])),
+      .cal-feat.is-all .ev-grid--rail > li:nth-child(4n + 5 of :not([hidden])):nth-last-child(-n + 3 of :not([hidden])),
+      .cal-feat.is-all .ev-grid--rail > li:nth-child(4n + 5 of :not([hidden])):nth-last-child(-n + 3 of :not([hidden])) ~ li { display: none; }
+      .cal-feat:has(.ev-grid--rail > li:nth-child(8 of :not([hidden]))) .cal-feat__more { display: flex; }
+    }
+    @media (width >= 120rem) {
+      .cal-feat:not(.is-all) .ev-grid--rail > li:nth-child(n + 6 of :not([hidden])),
+      .cal-feat.is-all .ev-grid--rail > li:nth-child(n + 16 of :not([hidden])),
+      .cal-feat.is-all .ev-grid--rail > li:nth-child(5n + 6 of :not([hidden])):nth-last-child(-n + 4 of :not([hidden])),
+      .cal-feat.is-all .ev-grid--rail > li:nth-child(5n + 6 of :not([hidden])):nth-last-child(-n + 4 of :not([hidden])) ~ li { display: none; }
+      .cal-feat:has(.ev-grid--rail > li:nth-child(10 of :not([hidden]))) .cal-feat__more { display: flex; }
     }
   }
   /* "Show more events": the rows that were folded away ease into place. Only under .is-all (set by the button, never
      on load), and only rows that were hidden a moment before (@starting-style), so the first row with the page's main
      picture never moves */
-  @media (min-width: 1024px) {
+  @media (width >= 64rem) {
     .cal-feat.is-all .ev-grid--rail > li { transition: opacity 0.2s ease-out, translate 0.2s ease-out; }
     @starting-style { .cal-feat.is-all .ev-grid--rail > li { opacity: 0; translate: 0 -6px; } }
   }

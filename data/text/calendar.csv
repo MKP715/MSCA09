@@ -202,7 +202,7 @@ calendar.featured.eyebrow,Save the date,Reserva la fecha,
 calendar.featured.title,Coming up: Area events & gatherings,Próximamente: eventos y encuentros,
 calendar.featured.lead,"Assemblies, workshops, conventions and fellowship — open a flyer for the details.","Asambleas, talleres, convenciones y compañerismo — abre un volante para ver los detalles.",
 calendar.featured.all,All meetings & events,Todas las reuniones y eventos,
-calendar.featured.more,Show more events,Mostrar más eventos,"Button under the row of event flyers on /calendar/ (laptops and wider): shows the other flyers"
+calendar.featured.more,Show more events,Mostrar más eventos,"Button under the row of event flyers on /calendar/ (laptops and wider): opens them to three full rows (9, 12 or 15 flyers, by screen width); all of them are on /calendar/flyers/"
 calendar.flyers.all,All event flyers,Todos los volantes,"Button beside ""All meetings & events"" at the top of the event flyers on /calendar/: opens /calendar/flyers/"
 calendar.flyers.see_all,See every upcoming event flyer,Ver todos los volantes de los próximos eventos,"Link under the event flyers on /calendar/ (beside ""Show more events"" on laptops; alone on phones and tablets): opens /calendar/flyers/"
 calendar.flyers.title,Event flyers,Volantes de eventos,"Page title of /calendar/flyers/, its breadcrumb, and its quick link on /events/"

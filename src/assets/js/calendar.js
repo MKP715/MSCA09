@@ -1262,9 +1262,9 @@
     });
 
     /* ---------------------------------------------------------------- "Coming up" flyers */
-    // the flyers above the calendar: from 1024px only their first row shows until "Show more events" (calendar.css
-    // .cal-feat). "Show less" folds the rows above its button: keep the button where it was on screen, so the
-    // visitor is not left somewhere down in the calendar
+    // the flyers above the calendar: from 1024px only their first row shows until "Show more events" opens three full
+    // rows (calendar.css .cal-feat). "Show less" folds the rows above its button: keep the button where it was on
+    // screen, so the visitor is not left somewhere down in the calendar
     Alpine.data("calFeatured", () => ({
       all: false,
       toggle(btn) {
