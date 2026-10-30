@@ -1,0 +1,35 @@
+{#- Strings the browser-side scripts need, in the page's language. Keys live in data/text/common.csv.
+    Also set here, in <head> before the page paints: the visitor's "Pause animations" choice and html.js (scroll reveal). -#}
+{%- set jsKeys = [
+  "time.today", "time.tomorrow", "time.yesterday", "time.in_days", "time.days_ago", "time.now", "time.starting_soon",
+  "time.in_progress", "time.ended", "time.days", "time.hours", "time.minutes", "time.seconds",
+  "ui.copied", "ui.copy", "ui.link_copied", "ui.share", "ui.loading", "ui.no_results", "ui.show_more", "ui.show_less",
+  "search.placeholder", "search.zero_results", "search.many_results", "search.one_result", "search.load_more",
+  "format.in_person", "format.hybrid", "format.virtual", "map.two_fingers",
+  "gallery.close", "gallery.zoom", "gallery.prev", "gallery.next", "gallery.error", "gallery.label"
+] -%}
+{%- set jsKeys = jsKeys.concat(jsText or []) -%}
+<script>
+  {#- The visitor's "Pause animations" choice, applied before the page paints (see app.js). #}
+  try { if (localStorage.getItem("msca-motion") === "paused") document.documentElement.dataset.motion = "paused"; } catch (e) {}
+  {#- Scripts are on: .reveal blocks wait hidden until app.js fades them in (site.css). If app.js has not taken over
+      within 4 s (blocked, failed), the class goes and they simply show. #}
+  document.documentElement.classList.add("js");
+  setTimeout(function () {
+    if (!(window.MSCA && MSCA.revealing)) document.documentElement.classList.remove("js");
+    {#- Alpine or content.js never started: the newcomers Call button (content.css .js .call-fab:not(.is-on)) shows, as
+        it does without scripts. Once its component runs it always has .is-on or .is-hidden, so this matches nothing #}
+    document.querySelectorAll(".call-fab:not(.is-on):not(.is-hidden)").forEach(function (b) { b.classList.add("is-on"); });
+  }, 4000);
+  window.MSCA = {
+    lang: "{{ lang.code }}",
+    locale: "{{ lang.locale }}",
+    base: "{{ site.base }}",
+    tz: "{{ site.timezone }}",
+    t: {
+      {%- for k in jsKeys %}
+      "{{ k }}": {{ k | t(lang) | json | safe }}{% if not loop.last %},{% endif %}
+      {%- endfor %}
+    }
+  };
+</script>

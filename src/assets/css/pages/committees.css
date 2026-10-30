@@ -1,0 +1,494 @@
+/* committees page styles — /committees/, /committees/<slug>/, /about/panel/, /contact/
+   Colours come from the accent variables (--a-50 … --a-900) set by style="{{ color | accent }}". */
+
+/* ---------------------------------------------------------------- index cards */
+.cm-card {
+  @apply relative flex h-full flex-col overflow-hidden rounded-3xl bg-white shadow-soft ring-1 ring-ink-900/5 transition duration-300;
+}
+.cm-card:hover,
+.cm-card:focus-visible {
+  @apply -translate-y-1 shadow-lift;
+}
+.cm-card-band {
+  @apply relative flex h-24 items-start justify-between overflow-hidden px-5 pt-4;
+  background:
+    radial-gradient(9rem 6rem at 100% 0%, color-mix(in oklab, var(--a-300) 80%, transparent), transparent 70%),
+    linear-gradient(135deg, var(--a-500), var(--a-700));
+}
+.cm-card-band::after {
+  content: "";
+  @apply pointer-events-none absolute -right-6 -bottom-10 size-28 rounded-full;
+  background: color-mix(in oklab, white 14%, transparent);
+}
+.cm-card-icon {
+  @apply relative z-[1] grid size-14 place-items-center rounded-2xl text-white ring-1 ring-white/35 transition duration-300;
+  background: color-mix(in oklab, white 18%, transparent);
+  backdrop-filter: blur(6px);
+}
+.cm-card:hover .cm-card-icon {
+  transform: rotate(-6deg) scale(1.06);
+}
+.cm-card-acr {
+  @apply relative z-[1] mt-1 rounded-full bg-white/90 px-2.5 py-1 font-display text-xs font-extrabold tracking-wide;
+  color: var(--a-800);
+}
+.cm-help {
+  @apply inline-flex items-center gap-1 rounded-full bg-white px-2.5 py-1 text-[11px] font-bold tracking-wide text-coral-700 uppercase shadow-sm;
+}
+/* initials: white on the accent at 700–800 (4.9:1 or better for every accent), with a lighter accent rim */
+.cm-avatar {
+  @apply grid size-8 shrink-0 place-items-center rounded-full font-display text-xs font-bold text-white;
+  background: linear-gradient(135deg, var(--a-700), var(--a-800));
+  box-shadow: inset 0 0 0 2px color-mix(in oklab, var(--a-400) 70%, transparent);
+}
+.cm-avatar-open {
+  @apply grid size-8 shrink-0 place-items-center rounded-full border-2 border-dashed border-coral-300 bg-coral-50 text-coral-700;
+}
+
+/* group headings on the index */
+.cm-group-head {
+  @apply mb-6 flex flex-wrap items-end justify-between gap-4 border-b border-ink-100 pb-5 lg:mb-8;
+}
+
+/* sticky toolbar under the site header */
+.cm-toolbar {
+  @apply sticky z-30 border-y border-ink-900/5 bg-white/90 backdrop-blur-xl;
+  top: 6.25rem;
+}
+.cm-pill {
+  @apply inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full px-4 text-sm font-semibold whitespace-nowrap text-ink-700 ring-1 ring-ink-200 transition hover:bg-ink-50 lg:min-h-10;
+}
+.cm-pill[aria-pressed="true"],
+.cm-pill.is-active {
+  @apply text-white ring-transparent;
+  background: linear-gradient(135deg, var(--a-700, var(--color-ocean-700)), var(--a-800, var(--color-iris-800)));
+}
+.cm-pill .cm-count {
+  @apply rounded-full bg-ink-100 px-1.5 py-0.5 text-[11px] font-bold text-ink-600;
+}
+.cm-pill[aria-pressed="true"] .cm-count,
+.cm-pill.is-active .cm-count {
+  @apply bg-white;
+  color: var(--a-800, var(--color-iris-800));
+}
+
+/* the "visitors welcome" tile that fills the empty cells at the end of a group's grid
+   (its display and column span are set per width by utility classes in committees.njk) */
+.cm-fill {
+  @apply flex-col justify-center rounded-3xl p-6 2xl:p-7;
+  background:
+    radial-gradient(18rem 10rem at 100% 0%, var(--a-100), transparent 70%),
+    linear-gradient(160deg, var(--a-50), white);
+  border: 2px dashed color-mix(in oklab, var(--a-300) 70%, transparent);
+}
+
+/* small groups on wide screens: horizontal cards, so two cards fill the row instead of 2 of 5 columns */
+@media (min-width: 80rem) {
+  .cm-card-h {
+    flex-direction: row;
+  }
+  .cm-card-h .cm-card-band {
+    @apply h-auto w-56 shrink-0 flex-col items-start justify-between gap-4 pb-5 2xl:w-64;
+  }
+  .cm-card-h .cm-card-band > span:last-child {
+    @apply items-start;
+  }
+}
+
+/* ---------------------------------------------------------------- committee page hero */
+.cm-hero {
+  @apply relative isolate overflow-hidden text-white;
+  background:
+    radial-gradient(60rem 30rem at 85% -10%, color-mix(in oklab, var(--a-500) 50%, transparent), transparent 60%),
+    radial-gradient(40rem 26rem at 0% 110%, color-mix(in oklab, var(--color-iris-600) 45%, transparent), transparent 60%),
+    linear-gradient(120deg, var(--a-900), var(--a-800) 45%, var(--a-700));
+}
+.cm-hero-icon {
+  @apply grid size-20 shrink-0 place-items-center rounded-[1.75rem] text-white shadow-lift ring-1 ring-white/30 sm:size-24 lg:size-28 2xl:size-32;
+  background: linear-gradient(135deg, color-mix(in oklab, white 26%, transparent), color-mix(in oklab, white 8%, transparent));
+  backdrop-filter: blur(10px);
+}
+.cm-hero-chip {
+  @apply inline-flex items-center gap-1.5 rounded-full bg-ink-950/20 px-3 py-1.5 text-xs font-semibold text-white ring-1 ring-white/35 backdrop-blur-md;
+}
+.cm-hero-wave {
+  @apply pointer-events-none absolute inset-x-0 -bottom-px h-10 w-full text-white sm:h-14;
+}
+
+/* the committee's own website in the header: a white pill beside "E-mail the committee", with the address
+   (label in the accent's 800 shade, which keeps AA contrast on white with every accent) */
+.cm-hero-site {
+  @apply inline-flex min-h-11 max-w-full items-center gap-3 rounded-full bg-white py-1.5 pr-4 pl-1.5 text-left text-ink-950 shadow-soft transition duration-200 hover:-translate-y-0.5 hover:shadow-lift focus-visible:outline-offset-4;
+}
+.cm-hero-site-ico {
+  @apply grid size-9 shrink-0 place-items-center rounded-full text-white;
+  background: linear-gradient(135deg, var(--a-600), var(--a-800));
+}
+.cm-hero-site-label {
+  @apply block text-[11px] leading-tight font-bold tracking-wide uppercase;
+  color: var(--a-800);
+}
+.cm-hero-site-host {
+  @apply block truncate text-sm leading-snug font-semibold;
+}
+
+/* section headings on the committee page */
+.cm-h2 {
+  @apply flex items-center gap-3 font-display text-2xl font-bold tracking-tight text-ink-950 sm:text-3xl;
+}
+.cm-h2 .icon-tile-soft {
+  @apply size-10 rounded-xl;
+}
+/* Anchored sections land just below whatever is sticky. html already has scroll-padding-top (6.5rem, the
+   site header), so these margins only cover what sits under it:
+   - /committees/ and /about/panel/: the filter toolbar (about 4.25rem)
+   - committee pages: the "on this page" rail below xl (3.8rem), nothing at xl and up (the list is in the aside) */
+.cm-section {
+  scroll-margin-top: 5rem;
+}
+.cm-page .cm-section {
+  scroll-margin-top: 4.5rem;
+}
+@media (min-width: 80rem) {
+  .cm-page .cm-section {
+    scroll-margin-top: 1rem;
+  }
+}
+
+/* activities as a check-list grid */
+.cm-checklist ul {
+  @apply m-0 grid list-none gap-3 p-0 sm:grid-cols-2 2xl:grid-cols-2;
+}
+.cm-checklist li {
+  @apply relative m-0 rounded-2xl bg-white p-4 pl-14 text-[15px] leading-relaxed text-ink-700 shadow-soft ring-1 ring-ink-900/5;
+}
+.cm-checklist li::before {
+  content: "";
+  @apply absolute top-4 left-4 size-7 rounded-full;
+  background: linear-gradient(135deg, var(--a-400), var(--a-600));
+}
+.cm-checklist li::after {
+  content: "";
+  @apply absolute top-[1.4rem] left-[1.4rem] size-4 bg-white;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+/* an odd last item spans both columns instead of leaving a hole beside it */
+@media (width >= 40rem) {
+  .cm-checklist li:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+}
+.cm-checklist li a {
+  @apply font-semibold text-ocean-700 underline-offset-2 hover:underline;
+}
+
+/* people */
+.cm-person {
+  @apply relative flex min-w-0 items-start gap-4 rounded-3xl bg-white p-5 shadow-soft ring-1 ring-ink-900/5;
+}
+/* e-mail addresses in cards wrap (after the @ when they must) instead of pushing the card wider than a phone */
+.cm-mail-text {
+  overflow-wrap: anywhere;
+}
+.cm-person-open {
+  @apply bg-coral-50/40 ring-2 ring-coral-200;
+  background-image: repeating-linear-gradient(135deg, transparent 0 14px, color-mix(in oklab, var(--color-coral-100) 45%, transparent) 14px 15px);
+}
+.cm-person-avatar {
+  @apply grid size-12 shrink-0 place-items-center rounded-full font-display text-lg font-bold text-white shadow-soft;
+  background: linear-gradient(135deg, var(--a-700), var(--a-800));
+  box-shadow: inset 0 0 0 3px color-mix(in oklab, var(--a-400) 70%, transparent), var(--shadow-soft);
+}
+.cm-person-open .cm-person-avatar {
+  @apply border-2 border-dashed border-coral-300 bg-white text-coral-700 shadow-none;
+  background-image: none;
+}
+
+/* document / resource rows */
+.cm-res {
+  @apply flex items-center gap-4 rounded-2xl p-3 transition hover:bg-[var(--a-50)];
+}
+.cm-res-ico {
+  @apply grid size-11 shrink-0 place-items-center rounded-xl transition;
+  background: var(--a-100);
+  color: var(--a-700);
+}
+a.cm-res:hover .cm-res-ico {
+  background: var(--a-600);
+  @apply text-white;
+}
+
+/* aa.org literature */
+.cm-code {
+  @apply inline-flex shrink-0 items-center justify-center rounded-md px-1.5 py-0.5 font-mono text-[11px] font-bold tracking-tight;
+  background: var(--a-100);
+  color: var(--a-800);
+}
+.cm-mini-link {
+  @apply inline-flex min-h-8 items-center gap-1 rounded-full px-2.5 text-xs font-semibold ring-1 ring-ink-200 transition hover:bg-ink-900 hover:text-white hover:ring-ink-900;
+}
+
+.cm-seg {
+  @apply inline-flex items-stretch overflow-hidden rounded-full text-xs font-semibold ring-1 ring-ink-200;
+}
+.cm-seg-lab {
+  @apply grid min-h-10 place-items-center px-2.5 font-bold lg:min-h-8;
+  background: var(--a-100);
+  color: var(--a-800);
+}
+.cm-seg a {
+  @apply inline-flex min-h-10 items-center gap-1 border-l border-ink-200 px-3 text-ink-700 transition hover:bg-ink-900 hover:text-white lg:min-h-8;
+}
+
+/* FAQ */
+.cm-faq {
+  @apply rounded-2xl bg-white ring-1 ring-ink-900/5 shadow-soft;
+}
+.cm-faq > summary {
+  @apply flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 font-semibold text-ink-900;
+}
+.cm-faq > summary::-webkit-details-marker {
+  display: none;
+}
+.cm-faq[open] > summary .cm-faq-chev {
+  transform: rotate(180deg);
+}
+.cm-faq-chev {
+  @apply grid size-8 shrink-0 place-items-center rounded-full transition;
+  background: var(--a-100);
+  color: var(--a-700);
+}
+
+/* details/summary folds */
+.cm-fold > summary {
+  @apply inline-flex cursor-pointer list-none items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-ink-700 ring-1 ring-ink-200 transition hover:bg-ink-50;
+}
+.cm-fold > summary::-webkit-details-marker {
+  display: none;
+}
+.cm-fold[open] > summary .cm-fold-chev {
+  transform: rotate(180deg);
+}
+
+/* in-page section nav (sticky rail on phones/tablets, list in the aside on desktop) */
+.cm-secnav {
+  @apply sticky z-20 -mx-4 border-b border-ink-900/5 bg-white/90 px-4 backdrop-blur-xl sm:-mx-6 sm:px-6 xl:hidden;
+  top: 6.25rem;
+}
+.cm-secnav a {
+  @apply inline-flex min-h-11 shrink-0 items-center rounded-full px-3.5 text-sm font-semibold whitespace-nowrap text-ink-600 transition hover:text-ink-950;
+}
+.cm-secnav a.is-current {
+  @apply text-white;
+  background: var(--a-700); /* 700: white text keeps AA contrast with every accent colour */
+}
+.cm-toc a {
+  @apply flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-ink-600 transition hover:bg-[var(--a-50)] hover:text-ink-950;
+}
+.cm-toc a.is-current {
+  @apply font-semibold text-ink-950;
+  background: var(--a-50);
+  box-shadow: inset 3px 0 0 var(--a-500);
+}
+
+/* directory rows (contact page) */
+.cm-dir-row {
+  @apply flex flex-wrap items-center justify-between gap-x-4 gap-y-1 border-t border-ink-100 px-4 py-3 first:border-t-0;
+}
+
+/* panel page: district cards */
+.cm-district {
+  @apply relative flex h-full flex-col overflow-hidden rounded-3xl bg-white shadow-soft ring-1 ring-ink-900/5;
+}
+/* card headers: white text runs right across, so the gradient stays on the 800–700 shades (4.9:1 or better for
+   every accent); the card itself is a size container so a narrow card can put the "help wanted" pill under the name */
+.cm-district { container-type: inline-size; }
+.cm-district-head {
+  @apply flex items-center gap-3 px-5 py-4 text-white;
+  background: linear-gradient(120deg, var(--a-800), var(--a-700));
+}
+.cm-head-text { @apply flex min-w-0 flex-1 flex-col items-start gap-1.5; }
+/* long single words (Accesibilidades, Comunicaciones) hyphenate or break instead of running under the pill */
+.cm-head-name { @apply min-w-0 max-w-full; overflow-wrap: anywhere; hyphens: auto; }
+@container (min-width: 26rem) {
+  .cm-head-text { flex-direction: row; align-items: center; justify-content: space-between; gap: 0.75rem; }
+  .cm-head-text > .cm-help { flex-shrink: 0; }
+}
+/* deep ring gradient for white text (the site .bg-ring is decoration only) */
+.cm-ring-deep {
+  background:
+    radial-gradient(28rem 18rem at 100% 0%, color-mix(in oklab, var(--color-ocean-500) 35%, transparent), transparent 65%),
+    linear-gradient(120deg, var(--color-ocean-800), var(--color-iris-700) 60%, var(--color-iris-800));
+}
+/* smoked glass button for white text on those gradients */
+.cm-glass {
+  @apply bg-ink-950/25 text-white ring-1 ring-white/45 backdrop-blur-md hover:bg-ink-950/40;
+}
+
+/* panel page on phones: each card in a rail shows its first 3 people; "Show all" opens the rest in place,
+   so one long card no longer leaves big empty gaps under its shorter neighbours */
+@media (max-width: 39.99rem) {
+  .cm-filter-root:not(.cm-filtering) .cm-fold-xs:not(.is-more) .cm-xs-extra {
+    display: none;
+  }
+  /* height:auto (not 100%) so the rail can stretch every card to the same height */
+  .rail > .cm-district {
+    height: auto;
+  }
+}
+
+/* while filtering, folded extra rows that match are shown */
+.cm-filtering [data-cm-extra]:not([hidden]) {
+  display: flex !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cm-card:hover,
+  .cm-card:focus-visible {
+    transform: none;
+  }
+}
+
+/* ---------------------------------------------------------------- website card and standing flyer (top of a committee page) */
+.cm-kicker {
+  @apply flex items-center gap-2 text-xs font-bold tracking-[0.14em] uppercase;
+  color: var(--a-800);
+}
+/* icon | name, address, what is on the site | Visit button — stacked on phones, the button full width */
+.cm-site {
+  @apply grid grid-cols-1 items-start gap-5 rounded-3xl p-6 sm:p-8 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:items-center lg:gap-8;
+  border: 2px solid var(--a-200);
+  background:
+    radial-gradient(36rem 18rem at 100% 0%, var(--a-100), transparent 70%),
+    linear-gradient(160deg, var(--a-50), white 70%);
+}
+/* the address, drawn like a browser's address bar */
+.cm-site-url {
+  @apply mt-3 inline-flex max-w-full items-center gap-2 rounded-full bg-white px-3.5 py-1.5 font-mono text-sm font-semibold text-ink-800 shadow-soft ring-1 ring-ink-900/5;
+}
+.cm-site-url > span {
+  overflow-wrap: anywhere;
+}
+/* text and button | the flyer's pages (side by side on wide screens) */
+.cm-flyer {
+  @apply grid grid-cols-1 items-center gap-6 rounded-3xl bg-white p-6 shadow-soft ring-1 ring-ink-900/5 sm:p-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:gap-10 2xl:grid-cols-[minmax(0,1fr)_minmax(0,32rem)];
+}
+.cm-flyer-pages {
+  @apply w-full max-w-md lg:max-w-none;
+}
+@media print {
+  .cm-flyer-pages { display: none; }
+}
+
+/* ---------------------------------------------------------------- meeting flyer (committee page, #meetings) */
+.cm-meeting-flyer { @apply mt-4 w-full max-w-60; }
+.cm-meeting-flyer .flyer-gallery__title { @apply mb-2; }
+.cm-meeting-flyer .flyer-gallery__item { @apply pb-9; }
+.cm-meeting-flyer .flyer-gallery__zoom { @apply right-1 bottom-1 size-7 shadow-none; }
+.cm-meeting-flyer .flyer-gallery__item:hover > .flyer-gallery__img { transform: none; } /* no grow under the badge */
+@media print { .cm-meeting-flyer { display: none; } }
+
+/* ---------------------------------------------------------------- meeting recordings (committee page, #recordings) */
+/* the gentle anonymity note under the lead */
+.cm-rec-note {
+  @apply mt-4 flex max-w-3xl items-start gap-2 rounded-2xl bg-sage-50 px-4 py-3 text-sm leading-relaxed text-ink-700 ring-1 ring-sage-200;
+}
+/* one button per meeting: a row that scrolls sideways on phones (to the screen's edges), wrapped from sm up */
+.cm-rec-filters {
+  @apply -mx-4 mt-6 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0;
+}
+/* a month: a white card whose header folds the list */
+.cm-rec-month {
+  @apply rounded-3xl bg-white shadow-soft ring-1 ring-ink-900/5;
+}
+.cm-rec-month > summary {
+  @apply flex min-h-14 cursor-pointer list-none items-center gap-3 rounded-3xl px-4 py-3 transition hover:bg-[var(--a-50)] sm:px-5;
+}
+.cm-rec-month > summary::-webkit-details-marker {
+  display: none;
+}
+.cm-rec-month[open] > summary {
+  @apply rounded-b-none border-b border-ink-100;
+}
+.cm-rec-month .cm-count {
+  @apply rounded-full bg-ink-100 px-2 py-0.5 text-xs font-bold text-ink-600;
+}
+.cm-rec-chev {
+  @apply ml-auto grid size-8 shrink-0 place-items-center rounded-full transition;
+  background: var(--a-100);
+  color: var(--a-700);
+}
+.cm-rec-month[open] > summary .cm-rec-chev {
+  transform: rotate(180deg);
+}
+/* a recording: date tile | name, badges, start and length | Play, Drive, Download (under the text on phones and tablets) */
+.cm-rec-list > li + li {
+  @apply border-t border-ink-100;
+}
+.cm-rec {
+  @apply px-3 py-3.5 sm:px-5;
+}
+.cm-rec-row {
+  @apply grid grid-cols-[auto_minmax(0,1fr)] items-start gap-x-3 gap-y-3 sm:gap-x-4 lg:grid-cols-[auto_minmax(0,1fr)_auto] lg:items-center;
+}
+.cm-rec-date {
+  @apply flex w-12 shrink-0 flex-col items-center rounded-2xl py-1.5 leading-none;
+  background: var(--a-50);
+  color: var(--a-800);
+}
+.cm-rec-wkd {
+  @apply text-[11px] font-bold tracking-wide uppercase;
+}
+.cm-rec-day {
+  @apply mt-1 font-display text-xl font-extrabold;
+}
+.cm-rec-name {
+  @apply leading-snug font-semibold text-pretty text-ink-950;
+}
+.cm-rec-name a {
+  @apply underline-offset-2 hover:underline;
+  color: var(--a-800);
+}
+.cm-rec-meta {
+  @apply mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm text-ink-600;
+}
+.cm-rec-badge {
+  @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-semibold;
+  background: var(--a-100);
+  color: var(--a-800);
+}
+.cm-rec-badge-lang {
+  @apply bg-sea-100 text-sea-800;
+}
+.cm-rec-fact {
+  @apply inline-flex items-center gap-1.5 whitespace-nowrap;
+}
+.cm-rec-actions {
+  @apply col-span-2 flex flex-wrap items-center gap-2 lg:col-span-1 lg:justify-end;
+}
+.cm-rec-link {
+  @apply inline-flex min-h-11 items-center gap-1.5 rounded-full px-3.5 text-xs font-semibold whitespace-nowrap text-ink-700 ring-1 ring-ink-200 transition hover:bg-ink-50 hover:text-ink-950 lg:min-h-0 lg:py-1.5;
+}
+/* the player under its recording: Google Drive's own (an iframe) */
+.cm-rec-player {
+  @apply mt-3 rounded-2xl p-3 sm:p-4;
+  background: var(--a-50);
+  box-shadow: inset 0 0 0 1px var(--a-200);
+}
+.cm-rec-close {
+  @apply -mt-1 -mr-1 grid size-11 shrink-0 place-items-center rounded-full text-ink-600 ring-1 ring-ink-200 transition hover:bg-white hover:text-ink-950 lg:size-9;
+}
+.cm-rec-hint {
+  @apply mt-3 flex items-start gap-2 rounded-xl bg-sun-50 px-3 py-2 text-sm leading-relaxed text-ink-800 ring-1 ring-sun-200;
+}
+.cm-rec-frame {
+  @apply mt-3 block h-[12.5rem] w-full rounded-xl border-0 bg-ink-900;
+}
+@media print {
+  .cm-rec-filters,
+  .cm-rec-player,
+  .cm-rec-actions {
+    display: none !important;
+  }
+}

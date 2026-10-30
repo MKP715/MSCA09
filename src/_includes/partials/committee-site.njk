@@ -1,0 +1,17 @@
+{#- The committee's own website, as a card at the top of the committee page (the page header has a button too).
+    Address: the website column of data/committees.csv; the site's name and its one-line description: the committee's
+    website row in data/committee-resources.csv (without one, general wording from data/text/committees.csv). Expects: c, L. -#}
+{%- if c.site %}
+{%- set host = c.site.url | hostname -%}
+{%- set urlIcon = "lock" if c.site.url.indexOf("https:") == 0 else "link" -%}
+<section class="cm-site" aria-labelledby="cm-site-h">
+  <span class="icon-tile size-14 rounded-2xl lg:self-start" aria-hidden="true">{% icon "globe", "size-7" %}</span>
+  <div class="min-w-0">
+    <p class="cm-kicker">{{ "committees.site_label" | t(L) }}</p>
+    <h2 id="cm-site-h" class="mt-1 font-display text-xl font-bold text-balance text-ink-950 sm:text-2xl">{{ (c.site | loc("title", L)) or ("committees.site_title" | t(L)) }}</h2>
+    <p class="cm-site-url">{% icon urlIcon, "size-3.5 shrink-0 text-sage-600" %}<span>{{ host }}</span></p>
+    <p class="mt-3 max-w-3xl text-[15px] leading-relaxed text-pretty text-ink-700">{{ (c.site | loc("body", L)) or ("committees.site_body" | t(L)) }}</p>
+  </div>
+  <a href="{{ c.site.url }}" target="_blank" rel="noopener" class="btn btn-accent btn-lg w-full lg:w-auto">{{ "committees.site_visit" | t(L) }}<span class="sr-only"> {{ host }} {{ "share.new_tab" | t(L) }}</span>{% icon "external-link", "size-5" %}</a>
+</section>
+{%- endif %}

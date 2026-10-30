@@ -1,0 +1,756 @@
+// Filters used by the district pages (src/pages/districts.njk, district.njk).
+// They join the districts data with the calendar and documents data, which are
+// separate global data files, and cope with any of them being missing.
+import fs from "node:fs";
+import path from "node:path";
+import { DateTime } from "luxon";
+import { t, loc, lurl, code, dictionary } from "../i18n.js";
+import { formatDate, accentVars } from "../filters.js";
+
+const INCLUDES = path.join(process.cwd(), "src", "_includes");
+const esc = (s) =>
+  String(s ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+
+/** "/districts/d05/" + "/repo/" → "/repo/districts/d05/" (for URLs that end up inside JavaScript). */
+export function withBase(url, base = "/") {
+  const u = String(url || "");
+  if (!u.startsWith("/") || u.startsWith("//")) return u;
+  return String(base || "/").replace(/\/+$/, "") + u;
+}
+
+/** The district's own business-meeting series exactly as the calendar has it, or null. */
+function rawDistrictSeries(calendar, d) {
+  if (!calendar || !d) return null;
+  const series = calendar.series || [];
+  if (d.calendar_uid) {
+    const hit = series.find((s) => s && s.uid === d.calendar_uid);
+    if (hit) return hit;
+  }
+  const own = (calendar.byDistrict && calendar.byDistrict[d.slug] && calendar.byDistrict[d.slug].series) || [];
+  const candidates = own.filter((s) => s && s.recurring && (s.district === d.slug || !s.district));
+  const typed = candidates.find((s) => /district/i.test(String(s.type || "")));
+  return typed || candidates[0] || null;
+}
+
+// ---------------------------------------------------------------- calendar ↔ districts.csv
+// The calendar is the source for the business meeting. data/districts.csv steps in where the
+// calendar is known to be wrong or thin:
+//   - meeting_override = yes  → the CSV format, place and times win (and the page says so);
+//   - the calendar says "Virtual" with no place but the CSV has an in-person venue → the CSV
+//     place and format are shown (a Virtual entry for a hybrid meeting is the usual mistake);
+//   - the calendar has the street but no venue name or ZIP (or another ZIP) → filled from the CSV;
+//   - the calendar has only a city → no "Directions" link (it would go to the city centre).
+// Every difference is written to the build log once, so the calendar can be corrected.
+const TZ = "America/Los_Angeles";
+const warned = new Set();
+const merged = new WeakMap();
+
+function warnOnce(msg) {
+  if (warned.has(msg)) return;
+  warned.add(msg);
+  console.warn(`[districts] ${msg}`);
+}
+
+const hhmm = (iso) => {
+  const m = String(iso || "").match(/T(\d{2}):(\d{2})/);
+  return m ? `${m[1]}:${m[2]}` : "";
+};
+const pad = (s) => {
+  const m = String(s || "").match(/^(\d{1,2}):(\d{2})/);
+  return m ? `${m[1].padStart(2, "0")}:${m[2]}` : "";
+};
+const fmtKey = (f) => {
+  const s = String(f || "").toLowerCase();
+  if (/hybrid|h[ií]brid/.test(s)) return "Hybrid";
+  if (/virtual|online|zoom|en l[ií]nea/.test(s)) return "Virtual";
+  if (/person|presencial/.test(s)) return "In person";
+  return "";
+};
+/** "120 South Harvard St" and "120 S Harvard St, Suite 7" → "120 harvard" (house number + street name). */
+function streetKey(s) {
+  const words = String(s || "")
+    .toLowerCase()
+    .replace(/[.,#]/g, " ")
+    .split(/\s+/)
+    .filter(Boolean);
+  const num = words.find((w) => /^\d+[a-z]?$/.test(w));
+  if (!num) return "";
+  const rest = words.slice(words.indexOf(num) + 1).filter((w) => !/^(n|s|e|w|north|south|east|west)$/.test(w));
+  return rest.length ? `${num} ${rest[0]}` : "";
+}
+const mapsSearch = (q) => (q ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}` : "");
+
+/** The same calendar dates with the CSV start and end time ("19:00", "20:30"). */
+function retime(occ, start, end) {
+  if (!occ || !occ.start) return occ;
+  const day = DateTime.fromISO(occ.start, { zone: TZ });
+  const at = (t) => {
+    const [h, m] = t.split(":").map(Number);
+    return day.set({ hour: h, minute: m, second: 0, millisecond: 0 });
+  };
+  const s = start ? at(start) : DateTime.fromISO(occ.start, { zone: TZ });
+  let e = end ? at(end) : DateTime.fromISO(occ.end || occ.start, { zone: TZ });
+  if (e <= s) e = s.plus({ hours: 1 });
+  return { ...occ, start: s.toISO({ suppressMilliseconds: true }), end: e.toISO({ suppressMilliseconds: true }) };
+}
+
+function mergeSeries(cal, d) {
+  const m = (d && d.meeting) || {};
+  const out = { ...cal, dxFixed: [] };
+  const calFmt = fmtKey(cal.format);
+  const csvFmt = fmtKey(m.format);
+  const calStart = hhmm(cal.start);
+  const calEnd = hhmm(cal.end);
+  const csvStart = pad(m.start);
+  const csvEnd = pad(m.end);
+  const csvPlace = Boolean(m.venue || m.address);
+
+  const diffs = [];
+  if (csvFmt && calFmt && csvFmt !== calFmt) diffs.push("format");
+  if (csvStart && calStart && csvStart !== calStart) diffs.push("start");
+  if (csvEnd && calEnd && csvEnd !== calEnd) diffs.push("end");
+  const calLine = `${cal.format || "?"} ${calStart}-${calEnd}`;
+  const csvLine = `${m.format || "?"} ${csvStart}-${csvEnd}`;
+
+  const virtualButVenue = calFmt === "Virtual" && !cal.location && csvPlace && (csvFmt === "Hybrid" || csvFmt === "In person");
+  const useCsv = Boolean(m.override) || virtualButVenue;
+
+  if (m.override && !diffs.length && cal.location && cal.location.name) {
+    warnOnce(`${d.slug}: the Area calendar now agrees with data/districts.csv (${calLine}) — you can clear meeting_override for this district.`);
+  } else if (diffs.length) {
+    warnOnce(
+      `${d.slug}: calendar ${calLine} vs data/districts.csv ${csvLine} (${diffs.join(", ")} differ) — ` +
+        (m.override
+          ? "the page shows the CSV (meeting_override = yes). Correct the Google Calendar entry."
+          : useCsv
+            ? "the calendar lists no place, so the page shows the CSV place and format. Correct the Google Calendar entry."
+            : "the page shows the calendar. Correct whichever is wrong, or set meeting_override = yes in data/districts.csv.")
+    );
+  }
+
+  // ---- format and times
+  if (useCsv && csvFmt && csvFmt !== calFmt) {
+    out.format = m.format;
+    out.dxFixed.push("format");
+  }
+  if (m.override && (diffs.includes("start") || diffs.includes("end"))) {
+    const start = csvStart || calStart;
+    const end = csvEnd || calEnd;
+    out.timeLabel_en = m.time_en || out.timeLabel_en;
+    out.timeLabel_es = m.time_es || out.timeLabel_es;
+    if (cal.rule_en) out.pattern_en = `${cal.rule_en} · ${out.timeLabel_en}`;
+    if (cal.rule_es) out.pattern_es = `${cal.rule_es} · ${out.timeLabel_es}`;
+    const re = (o) => {
+      const x = retime(o, start, end);
+      return x === o ? o : { ...x, timeLabel_en: out.timeLabel_en, timeLabel_es: out.timeLabel_es, format: out.format };
+    };
+    const first = retime({ start: cal.start, end: cal.end }, start, end);
+    out.start = first.start;
+    out.end = first.end;
+    out.durationMin = Math.round((Date.parse(first.end) - Date.parse(first.start)) / 60000);
+    out.upcomingDates = (cal.upcomingDates || []).map(re);
+    out.next = cal.next ? re(cal.next) : cal.next;
+    out.dxFixed.push("time");
+  }
+
+  // ---- place
+  const loc = cal.location;
+  if (useCsv && csvPlace && (!loc || m.override)) {
+    const addr = [m.room, m.addressLine].filter(Boolean).join(", ");
+    out.location = {
+      raw: m.fullAddress,
+      name: m.venue || null,
+      address: addr || m.city || "",
+      mapsUrl: m.address ? m.mapsUrl : "",
+      city: m.city || "",
+      street: m.address || null,
+      zip: m.zip || null,
+      tba: false,
+      fromCsv: true,
+    };
+    out.dxFixed.push("place");
+  } else if (loc && !loc.tba) {
+    const next = { ...loc };
+    const sameStreet = loc.street && m.address && streetKey(loc.street) && streetKey(loc.street) === streetKey(m.address);
+    if (sameStreet) {
+      if (!loc.name && m.venue) {
+        next.name = m.venue;
+        warnOnce(`${d.slug}: the calendar Location has no venue name; "${m.venue}" from data/districts.csv is shown.`);
+      }
+      // the ZIP follows the state ("…, CA 92705"); a five-digit house number is not a ZIP
+      const z = String(next.address || "").match(/\b(?:CA|California)\.?\s+(\d{5})(?:-\d{4})?\b/i);
+      if (m.zip && (!z || z[1] !== m.zip)) {
+        if (z) {
+          next.address = next.address.replace(z[0], z[0].replace(/\d{5}(?:-\d{4})?/, m.zip));
+          warnOnce(`${d.slug}: calendar ZIP ${z[1]} vs data/districts.csv ${m.zip} for ${loc.street} — the CSV ZIP is shown.`);
+        } else {
+          next.address = /,\s*CA\s*$/i.test(next.address) ? `${next.address} ${m.zip}` : `${next.address}, ${m.zip}`;
+          warnOnce(`${d.slug}: the calendar Location has no ZIP; ${m.zip} from data/districts.csv is shown.`);
+        }
+        next.zip = m.zip;
+      }
+      if (next.name !== loc.name || next.address !== loc.address) {
+        next.mapsUrl = mapsSearch([next.name, next.address].filter(Boolean).join(", "));
+        out.dxFixed.push("address");
+      }
+    }
+    if (!loc.street) next.mapsUrl = ""; // only a city: no directions to the city centre
+    out.location = next;
+  }
+  if (useCsv && !out.online && (m.zoomId || m.joinUrl)) {
+    out.online = { zoomId: m.zoomId || "", passcode: m.passcode || "", joinUrl: m.joinUrl || "" };
+  }
+  out.dxOverride = useCsv && out.dxFixed.some((k) => k === "format" || k === "time" || k === "place");
+  return out;
+}
+
+/** The district's business-meeting series: the calendar's, corrected from data/districts.csv (see above). */
+export function districtSeries(calendar, d) {
+  const cal = rawDistrictSeries(calendar, d);
+  if (!cal) return null;
+  let byCal = merged.get(calendar);
+  if (!byCal) merged.set(calendar, (byCal = new Map()));
+  if (!byCal.has(d.slug)) byCal.set(d.slug, mergeSeries(cal, d));
+  return byCal.get(d.slug);
+}
+
+/**
+ * Upcoming occurrences this district hosts or co-hosts, without its own business meetings. A repeating
+ * entry (a monthly GSR School, a weekly study) shows once, at its next date — its card says how often
+ * it meets — so it never fills the list with one row per month; one-time events are all kept.
+ * Its following date is sent too, marked seriesNext (the card is hidden): once the first date has passed,
+ * the page's time script (data-series in app.js) shows it in its place until the next rebuild.
+ * A cancelled date is listed as it is and does not count. Copies: the occurrences are shared with other pages.
+ * Read from the whole upcoming list, not byDistrict's first 30 dates, which a weekly series can use up.
+ */
+export function districtEvents(calendar, d, series) {
+  if (!calendar || !d) return [];
+  const x = calendar.byDistrict && calendar.byDistrict[d.slug];
+  if (!x) return [];
+  const slugs = new Set((x.series || []).map((s) => s.slug));
+  const up = calendar.upcoming ? calendar.upcoming.filter((o) => o && slugs.has(o.slug)) : x.upcoming || [];
+  const skip = series && series.uid;
+  const count = new Map();
+  const out = [];
+  for (const o of up) {
+    if (!o || o.uid === skip || (o.recurring && o.district === d.slug && /district/i.test(String(o.type || "")))) continue;
+    if (!o.recurring || o.status === "cancelled") {
+      out.push(o);
+      continue;
+    }
+    const n = count.get(o.uid) || 0;
+    if (n >= 2) continue;
+    count.set(o.uid, n + 1);
+    out.push({ ...o, seriesKey: o.uid, seriesNext: n === 1 });
+  }
+  return out;
+}
+
+/** Up to `max` events this district hosted in the last year, newest first (one per series). */
+export function districtRecent(calendar, d, series, max = 3) {
+  if (!calendar || !d) return [];
+  const now = Date.now();
+  const from = now - 365 * 864e5;
+  const skip = series && series.uid;
+  const seen = new Set();
+  const out = [];
+  const all = calendar.occurrences || [];
+  for (let i = all.length - 1; i >= 0 && out.length < max; i--) {
+    const o = all[i];
+    if (!o || o.status === "cancelled" || o.uid === skip) continue;
+    const end = Date.parse(o.end || o.start);
+    const start = Date.parse(o.start);
+    if (!(end < now) || start < from) continue;
+    const hosts = [o.district, ...(o.districts || []), ...(o.hosts || [])];
+    if (!hosts.includes(d.slug)) continue;
+    if (o.recurring && /district/i.test(String(o.type || ""))) continue; // business meetings
+    if (seen.has(o.uid)) continue;
+    seen.add(o.uid);
+    out.push(o);
+  }
+  return out;
+}
+
+/** { pattern, time } of the business meeting, so the time range can be kept on one line. */
+export function meetingParts(d, lang, series) {
+  const L = code(lang);
+  if (series && series.recurring) {
+    const rule = L === "es" ? series.rule_es || series.rule_en : series.rule_en;
+    const time = L === "es" ? series.timeLabel_es || series.timeLabel_en : series.timeLabel_en;
+    if (rule) return { pattern: rule, time: time || "" };
+  }
+  if (!d || !d.meeting) return { pattern: "", time: "" };
+  return { pattern: loc(d.meeting, "pattern", L), time: (L === "es" ? d.meeting.time_es : d.meeting.time_en) || "" };
+}
+
+/** Next meeting dates: from the calendar series, else computed from the CSV pattern. [{start,end}] */
+export function nextMeetings(series, d) {
+  const fromCal = (series && (series.upcomingDates || (series.next ? [series.next] : []))) || [];
+  if (fromCal.length) return fromCal.map((o) => ({ start: o.start, end: o.end || o.start, cancelled: false }));
+  return ((d && d.meeting && d.meeting.nextDates) || []).map((o) => ({ start: o.start, end: o.end }));
+}
+
+/** The next business meetings of all districts, soonest first: [{ d, start, end }]. */
+export function upcomingDistrictMeetings(list, calendar, perDistrict = 3) {
+  const out = [];
+  for (const d of list || []) {
+    const dates = nextMeetings(districtSeries(calendar, d), d).slice(0, perDistrict);
+    for (const x of dates) if (x && x.start) out.push({ d, start: x.start, end: x.end || x.start });
+  }
+  return out.sort((a, b) => Date.parse(a.start) - Date.parse(b.start)).slice(0, 18);
+}
+
+/** The CSV meeting note, unless the calendar series already says the same thing. */
+export function extraNote(d, series, lang) {
+  const note = d && d.meeting ? loc(d.meeting, "note", lang) : "";
+  if (!note) return "";
+  return repeatsShownNote(note, series, d, lang) ? "" : note;
+}
+
+/** The CSV's GSR note (d.meeting.gsr_en / gsr_es), unless the meeting panel above already shows it. */
+export function gsrNote(d, series, lang) {
+  const note = d && d.meeting ? loc(d.meeting, "gsr", lang) : "";
+  if (!note) return "";
+  return repeatsShownNote(note, series, d, lang) ? "" : note;
+}
+
+/**
+ * Spanish pages: meetingInfo's noteOverride. When the calendar has English Note lines but no Spanish
+ * ones (no "Nota:" line and no calendar.note_es.<slug> row), the district's own Spanish notes from
+ * data/districts.csv (meeting_note_es, gsr_note_es) are shown instead of the English marked "(en inglés)".
+ */
+export function noteOverride(d, series, lang) {
+  if (code(lang) !== "es" || !series || !d || !d.meeting) return [];
+  const en = series.notes_en || series.notes || [];
+  if (!en.length || (series.notes_es || []).length) return [];
+  return [d.meeting.note_es, d.meeting.gsr_es].map((x) => String(x || "").trim()).filter(Boolean);
+}
+
+/** The Note lines meetingInfo shows for this series on this page (same rule as the calNotes filter). */
+function shownNotes(series, d, lang) {
+  if (!series) return [];
+  const en = series.notes_en || series.notes || [];
+  if (code(lang) !== "es") return en;
+  if ((series.notes_es || []).length) return series.notes_es;
+  const ov = noteOverride(d, series, lang);
+  return ov.length ? ov : en;
+}
+
+// Two notes say the same thing when most words of the shorter one are in the longer one
+// ("No meeting in June: the district is at …" vs "No meeting in June: the district takes part in …").
+const noteWords = (s) =>
+  new Set(
+    String(s || "")
+      .normalize("NFD")
+      .replace(/[̀-ͯ]/g, "")
+      .toLowerCase()
+      .split(/[^a-z0-9]+/)
+      .filter((w) => w.length > 2)
+  );
+function sameNote(a, b) {
+  const A = noteWords(a);
+  const B = noteWords(b);
+  if (!A.size || !B.size) return false;
+  const [small, big] = A.size <= B.size ? [A, B] : [B, A];
+  let hit = 0;
+  for (const w of small) if (big.has(w)) hit++;
+  return hit / small.size >= 0.7;
+}
+function repeatsShownNote(note, series, d, lang) {
+  return shownNotes(series, d, lang).some((n) => sameNote(note, n));
+}
+
+// ---------------------------------------------------------------- GSR School section
+// data/gsr-schools.csv (d.gsr) says what a district's GSR School or new-GSR orientation is; when it meets
+// comes, in this order, from
+//   - the Area calendar entry named in calendar_uid  → mode "calendar" (day, time, place or Zoom, notes,
+//     flyer, add to calendar). Its Note lines that repeat the row's about / study text are left out;
+//   - start / end on the business-meeting days       → mode "meeting" (the meeting's next dates at that time);
+//   - the row's when_ / where_ words                  → mode "text" (with start / end: the time on its own day).
+// A repeating Service School entry with GSR / RSG in its title that the district hosts and no row names
+// is added too, so a school put on the calendar shows up before anyone edits the CSV.
+// Every item comes out in the same shape, so each card (and each line on /committees/gsr-school/) shows the
+// same things in the same order: rule_* (the day), time_* (the time range), dates (next dates), before (held
+// just before the district meeting), format, and contact (the district's GSR School Chair when the roster
+// names one, else the row's or the calendar's role address, else the district's).
+const gsrCache = new WeakMap();
+const uidKey = (u) => String(u || "").trim().toLowerCase().replace(/@google\.com$/, "");
+const byDay = (s) => ((String((s && s.rrule) || "").match(/BYDAY=([^;]+)/) || [])[1] || "").toUpperCase();
+const freqOf = (s) => (String((s && s.rrule) || "").match(/FREQ=([A-Z]+)/) || [])[1] || "";
+
+function gsrSeries(s, row) {
+  const said = (L) => [row[`about_${L}`], row[`study_${L}`]].filter(Boolean).join(" ");
+  const keep = (notes, L) => (notes || []).filter((n) => !said(L) || !sameNote(n, said(L)));
+  const en = keep(s.notes_en || s.notes, "en");
+  return { ...s, notes: en, notes_en: en, note: en.join(" "), notes_es: keep(s.notes_es, "es") };
+}
+
+/** A school's own calendar entry on the district meeting's days that ends by the time the meeting starts. */
+function beforeMeeting(s, meeting) {
+  if (!s || !meeting || !s.recurring || !meeting.recurring) return false;
+  if (!byDay(s) || byDay(s) !== byDay(meeting) || freqOf(s) !== freqOf(meeting)) return false;
+  return hhmm(s.end) !== "" && hhmm(s.end) <= hhmm(meeting.start);
+}
+
+/**
+ * The district's GSR School Chair from data/trusted-servants.csv (position "GSR School Chair"), or null while
+ * the seat is open or not provided yet. Reads servants.byDistrict when the page passes it, else d.servants.
+ */
+function gsrChair(d, servants) {
+  if (!d) return null;
+  const roster = (servants && servants.byDistrict && servants.byDistrict[d.slug]) || d.servants || [];
+  const s = roster.find((x) => x && /^gsr school chair\b/i.test(String(x.position_en || x.role_en || "").trim()));
+  if (!s || s.open || s.unknown) return null;
+  const name = s.name || "";
+  if (!name && !s.email) return null;
+  return { name, email: s.email || "", unconfirmed: Boolean(s.unconfirmed) };
+}
+
+/**
+ * Who to ask about one item: a row (or calendar entry) with its own role address keeps it; else the chair;
+ * else the district. A chair without an address of their own gets the district's, marked viaDistrict so the
+ * card says it is the district's (it is not the chair's own mailbox).
+ */
+function gsrContact(own, chair, d) {
+  const district = (d && d.email) || "";
+  if (own && own.toLowerCase() !== district.toLowerCase()) return { chair: false, name: "", email: own };
+  if (chair) return { chair: true, name: chair.name, unconfirmed: chair.unconfirmed, email: chair.email || district, viaDistrict: !chair.email && Boolean(district) };
+  return { chair: false, name: "", email: district };
+}
+
+/** A school held on the district meeting's days at start / end (24-hour) ends by the time the meeting starts:
+ *  the calendar meeting's start, else data/districts.csv meeting_start. Unknown → false (not claimed). */
+function endsBeforeMeeting(start, end, meeting, d) {
+  const until = pad(end || start);
+  const meets = (meeting && hhmm(meeting.start)) || pad(d && d.meeting && d.meeting.start);
+  return Boolean(until && meets && until <= meets);
+}
+
+/** The GSR School section of a district: { items, links, kind: "school" | "orientation" | "", chair }. */
+export function gsrInfo(d, calendar, servants) {
+  if (!d) return { items: [], links: [], kind: "", chair: null };
+  // once per calendar, roster and district object (all three are rebuilt when their files change)
+  let byCal = gsrCache.get(calendar || gsrCache);
+  if (!byCal) gsrCache.set(calendar || gsrCache, (byCal = new WeakMap()));
+  let bySrv = byCal.get(servants || gsrCache);
+  if (!bySrv) byCal.set(servants || gsrCache, (bySrv = new WeakMap()));
+  if (bySrv.has(d)) return bySrv.get(d);
+
+  const rows = d.gsr || [];
+  const allSeries = (calendar && calendar.series) || [];
+  const own = (calendar && calendar.byDistrict && calendar.byDistrict[d.slug] && calendar.byDistrict[d.slug].series) || [];
+  const meeting = districtSeries(calendar, d);
+  const chair = gsrChair(d, servants);
+  const used = new Set();
+  const items = [];
+  const fromCalendar = (row, s) => {
+    const x = gsrSeries(s, row);
+    return {
+      ...row,
+      mode: "calendar",
+      series: x,
+      // the day rule ("Every 3rd Sunday"), or a one-off entry's date (calendar.js dateLabel_*: the rule when recurring)
+      rule_en: s.dateLabel_en || "",
+      rule_es: s.dateLabel_es || s.dateLabel_en || "",
+      time_en: s.timeLabel_en || "",
+      time_es: s.timeLabel_es || s.timeLabel_en || "",
+      dates: s.recurring ? (s.upcomingDates || []).filter((o) => o && o.status !== "cancelled").slice(0, 4) : [],
+      before: beforeMeeting(s, meeting),
+      format: s.format || row.format || "",
+      contact: gsrContact(row.email || s.email, chair, d),
+    };
+  };
+  for (const row of rows.filter((r) => r.kind !== "link")) {
+    const s = row.calendar_uid ? allSeries.find((x) => uidKey(x.uid) === uidKey(row.calendar_uid)) : null;
+    if (row.calendar_uid && !s) warnOnce(`${d.slug}: data/gsr-schools.csv names calendar entry ${row.calendar_uid}, which is not in the Area calendar — the page shows the row's own words.`);
+    else if (s && s.ended) warnOnce(`${d.slug}: the calendar entry ${row.calendar_uid} in data/gsr-schools.csv has ended — put the new entry's UID in calendar_uid.`);
+    if (s && !s.ended) {
+      used.add(s.uid);
+      items.push(fromCalendar(row, s));
+    } else if (row.start && !row.when_en && !row.when_es) {
+      // the business meeting's next dates, at the school's own time
+      const dates = nextMeetings(meeting, d)
+        .map((o) => retime(o, pad(row.start), pad(row.end)))
+        .filter((o) => Date.parse(o.end || o.start) >= Date.now())
+        .slice(0, 4);
+      // the meeting's day rule ("Every 4th Wednesday")
+      const rule_en = meetingParts(d, "en", meeting).pattern;
+      const rule_es = meetingParts(d, "es", meeting).pattern;
+      const before = endsBeforeMeeting(row.start, row.end, meeting, d);
+      items.push({ ...row, mode: "meeting", dates, rule_en, rule_es, before, contact: gsrContact(row.email, chair, d) });
+    } else {
+      // its own day in words ("Last Thursday of the month"); start / end, when given, are its time
+      items.push({ ...row, mode: "text", rule_en: row.when_en, rule_es: row.when_es || row.when_en, dates: [], before: false, contact: gsrContact(row.email, chair, d) });
+    }
+  }
+  for (const s of own) {
+    if (used.has(s.uid) || !s.recurring || s.ended || s.type !== "Service School") continue;
+    if (!/\b(gsr|rsg)\b/i.test(`${s.title || ""} ${s.title_es || ""}`)) continue;
+    used.add(s.uid);
+    items.push(fromCalendar({ kind: "school", title_en: "", title_es: "", email: "" }, s));
+  }
+  const out = {
+    items,
+    links: rows.filter((r) => r.kind === "link"),
+    kind: items.some((i) => i.kind === "school") ? "school" : items.length ? "orientation" : "",
+    chair,
+  };
+  bySrv.set(d, out);
+  return out;
+}
+
+/** "Every 3rd Sunday · 3:00–3:50 PM · before the district meeting · Online" — one line for a GSR School item. */
+export function gsrLine(item, lang) {
+  if (!item) return "";
+  const L = code(lang);
+  const fmt = fmtKey(item.format);
+  const fmtWord = fmt === "Hybrid" ? "format.hybrid" : fmt === "Virtual" ? "format.virtual" : fmt === "In person" ? "format.in_person" : "";
+  return [
+    loc(item, "rule", L) || t("districts.gsr.ask_when", L),
+    (L === "es" ? item.time_es || item.time_en : item.time_en) || "",
+    item.before ? t("districts.gsr.line_before", L) : "",
+    fmtWord ? t(fmtWord, L) : "",
+  ]
+    .filter(Boolean)
+    .join(" · ");
+}
+
+/** "GSR School Chair: Francine W." for /committees/gsr-school/, the name kept on one line (no-break spaces). */
+export function gsrChairLine(chair, lang) {
+  if (!chair || !chair.name) return "";
+  return t("districts.gsr.list_chair", code(lang), { name: String(chair.name).trim().replace(/\s+/g, "\u00a0") });
+}
+
+/** Active districts with a GSR School or orientation, in district order: [{ d, info }]. skipEmail (optional): the
+ *  schools whose row e-mail is this address are left out (on /committees/gsr-school/, the committee's own study,
+ *  shown there under "When we meet"), and so is a district with nothing left. Empty skipEmail leaves out nothing. */
+export function gsrList(list, calendar, servants, skipEmail) {
+  const skip = String(skipEmail || "").trim().toLowerCase();
+  return (list || [])
+    .map((d) => {
+      const info = gsrInfo(d, calendar, servants);
+      // gsrInfo's result is cached: a filtered copy, never the original
+      if (!skip) return { d, info };
+      return { d, info: { ...info, items: info.items.filter((it) => String(it.email || "").trim().toLowerCase() !== skip) } };
+    })
+    .filter((x) => x.info.items.length);
+}
+
+/** Upcoming Inter-District / Intradistrict meetings of the Spanish-speaking districts. */
+export function interdistrictEvents(calendar) {
+  const up = (calendar && calendar.upcoming) || [];
+  return up.filter((o) => /inter-?distri|intra-?distri/i.test(`${o.title || ""} ${o.title_es || ""}`));
+}
+
+/** "2nd Monday of the month · 7:00–8:30 PM" — from the calendar series when there is one. */
+export function meetingLine(d, lang, series) {
+  const L = code(lang);
+  if (series) {
+    const p = L === "es" ? series.pattern_es || series.pattern_en : series.pattern_en;
+    if (p) return p;
+  }
+  if (!d || !d.meeting) return "";
+  const pattern = loc(d.meeting, "pattern", L);
+  const time = L === "es" ? d.meeting.time_es : d.meeting.time_en;
+  return [pattern, time].filter(Boolean).join(" · ");
+}
+
+// ---------------------------------------------------------------- search results
+// The page heading stays the district's name; search results and link previews say more (metaTitle, description).
+const countySlug = (c) =>
+  String(c || "")
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+const textIf = (key, lang) => (Object.prototype.hasOwnProperty.call(dictionary(), key) ? t(key, lang) : "");
+
+/** "Orange County" / "condado de Orange", "Riverside & San Bernardino counties" / "condados de Riverside y San Bernardino",
+ *  from the counties column of data/districts.csv (a county whose Spanish name differs has a districts.meta_county_name row). */
+function countyPlace(counties, lang) {
+  const names = (counties || []).map((c) => textIf(`districts.meta_county_name.${countySlug(c)}`, lang) || c).filter(Boolean);
+  if (!names.length) return "";
+  if (names.length === 1) return t("districts.meta_county_one", lang, { c: names[0] });
+  const list = `${names.slice(0, -1).join(", ")} ${t("districts.meta_and", lang)} ${names[names.length - 1]}`;
+  return t("districts.meta_county_many", lang, { list });
+}
+
+/**
+ * Search-result title of a district page: the name, whether it is Spanish-speaking (kind = linguistic) and its place —
+ * title_area_en / title_area_es from data/districts.csv when filled in, else its counties:
+ * "District 5 – Orange County", "Distrito 20 de habla hispana – condado de Orange" (districts.meta_title, meta_title_ling).
+ */
+export function districtMetaTitle(d, lang) {
+  if (!d) return "";
+  const L = code(lang);
+  const name = loc(d, "name", L);
+  const place = loc(d, "title_area", L) || countyPlace(d.counties, L);
+  if (!place) return name;
+  return t(d.linguistic ? "districts.meta_title_ling" : "districts.meta_title", L, { name, place });
+}
+
+/**
+ * Search-result description of a district page: its region (region_en / region_es). A short one (under 100 characters)
+ * also gets the business meeting, from the calendar series like the page: "… A.A. district business meeting: Every 2nd
+ * Tuesday, Costa Mesa." (districts.meta_meeting; an online-only meeting districts.meta_meeting_online).
+ */
+export function districtMetaDescription(d, lang, calendar) {
+  if (!d) return "";
+  const L = code(lang);
+  const region = String(loc(d, "region", L) || "").trim();
+  if (region.length >= 100) return region;
+  const series = districtSeries(calendar, d);
+  const { pattern } = meetingParts(d, L, series);
+  if (!pattern) return region;
+  const place = series ? series.location : null;
+  const city = series ? (place && !place.tba && place.city) || "" : (d.meeting && d.meeting.city) || "";
+  const online = !city && !place && /virtual|online/i.test(String((series && series.format) || (d.meeting && d.meeting.format) || ""));
+  if (!city && !online) return region;
+  const sentence = online ? t("districts.meta_meeting_online", L, { rule: pattern }) : t("districts.meta_meeting", L, { rule: pattern, city });
+  return [region && (/[.!?]$/.test(region) ? region : `${region}.`), sentence].filter(Boolean).join(" ");
+}
+
+/** Map pins (with a small popup) for the Leaflet map. */
+export function districtPoints(list, lang, base, calendar) {
+  const L = code(lang);
+  return (list || [])
+    .filter((d) => d && d.lat != null && d.lng != null)
+    .map((d) => {
+      const url = withBase(lurl(`/districts/${d.slug}/`, L), base);
+      const name = loc(d, "name", L);
+      const series = districtSeries(calendar, d);
+      const line = meetingLine(d, L, series);
+      const kind = t(d.linguistic ? "districts.kind.spanish" : "districts.kind.english", L);
+      const where = series ? series.location : null;
+      const place = (where ? [where.name, where.city] : [d.meeting.venue, d.meeting.city]).filter(Boolean).join(", ");
+      const html =
+        `<div style="min-width:12rem">` +
+        `<p style="margin:0;font:600 11px/1.2 var(--font-sans);letter-spacing:.08em;text-transform:uppercase;color:var(--color-${esc(d.color)}-700)">${esc(kind)}</p>` +
+        `<p style="margin:.15rem 0 .35rem;font:800 17px/1.15 var(--font-display);color:var(--color-ink-950)">${esc(name)}</p>` +
+        (line ? `<p style="margin:0;font-size:13px;color:var(--color-ink-600)">${esc(line)}</p>` : "") +
+        (place ? `<p style="margin:.15rem 0 0;font-size:12px;color:var(--color-ink-500)">${esc(place)}</p>` : "") +
+        `<a href="${esc(url)}" style="display:inline-block;margin-top:.5rem;font-weight:700;color:var(--color-${esc(d.color)}-700)">${esc(t("districts.card.open", L))} →</a>` +
+        `</div>`;
+      return { lat: d.lat, lng: d.lng, label: name, url, color: d.color, num: L === "es" ? d.number_es || d.number : d.number, html };
+    });
+}
+
+/**
+ * Everything the "Which district am I in?" search needs, in the page's language:
+ *   cities: districts.cityIndex ({ c: city, d: [{ s: slug, q, qes }], a?: other names, m?: misspellings })
+ *   districts: { slug: { n, nums, name, kind, …, counties, area, spanish, covers } } — nums include the numbers
+ *   of districts merged into it ("13" → District 2), area = the region's area names ("Coachella Valley"),
+ *   spanish = the Spanish-speaking districts that cover it, covers = the districts a Spanish-speaking one covers.
+ */
+export function finderData(D, lang, base, calendar) {
+  const L = code(lang);
+  const districts = {};
+  for (const d of (D && D.list) || []) {
+    districts[d.slug] = {
+      n: L === "es" ? d.number_es || d.number : d.number,
+      nums: d.allNums || d.nums,
+      name: loc(d, "name", L),
+      kind: d.linguistic ? "es" : "en",
+      kindLabel: t(d.linguistic ? "districts.finder.serves_es" : "districts.finder.serves_en", L),
+      url: withBase(lurl(`/districts/${d.slug}/`, L), base),
+      line: meetingLine(d, L, districtSeries(calendar, d)),
+      style: accentVars(d.color),
+      counties: d.counties || [],
+      area: d.area || "",
+      spanish: d.spanish || [],
+      covers: d.linguistic ? d.covers || [] : [],
+    };
+  }
+  return { cities: (D && D.cityIndex) || [], districts };
+}
+
+/** [{ kind, counties }] per card, so the filter can count matches. */
+export function cardMeta(list) {
+  return (list || []).map((d) => ({ kind: d.kind, counties: d.counties }));
+}
+
+/** Documents grouped by year, newest first: [{ year, items }]. */
+export function docsByYear(docs) {
+  const map = new Map();
+  for (const doc of docs || []) {
+    if (!doc) continue;
+    const y = String(doc.year || (doc.date ? String(doc.date).slice(0, 4) : "") || "—");
+    if (!map.has(y)) map.set(y, []);
+    map.get(y).push(doc);
+  }
+  for (const items of map.values()) items.sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")));
+  const undated = (y) => !/\d/.test(y);
+  return [...map]
+    .sort((a, b) => undated(a[0]) - undated(b[0]) || String(b[0]).localeCompare(String(a[0]), undefined, { numeric: true }))
+    .map(([year, items]) => ({ year, items }));
+}
+
+/** Trusted servants with the DCMC first. Accepts rows from servants.byDistrict or districts.js. */
+export function servantOrder(list) {
+  const rank = (s) => {
+    const r = `${s.role_en || s.position_en || s.position || ""}`;
+    if (/^(dcmc|d\.c\.m\.c|cmcd)/i.test(r)) return 0;
+    // the Alternate DCMC only: "Alternate DCM Sub-District C" is a sub-district alternate and sorts with the DCMs
+    if (/alt(ernate)?\.?\s*(dcmc|cmcd)\b|\b(dcmc|cmcd)\b.*\b(alt(ernate)?|suplente)\b/i.test(r)) return 1;
+    if (/^(alt(ernate)?\.?\s*)?(dcms?|mcds?)\b/i.test(r)) return 2;
+    if (/secretar/i.test(r)) return 3;
+    if (/treasurer|tesorer/i.test(r)) return 4;
+    if (/registrar|registrador/i.test(r)) return 5;
+    return 6;
+  };
+  return [...(list || [])].filter(Boolean).sort((a, b) => rank(a) - rank(b));
+}
+
+/** Does a template exist under src/_includes? (lets pages use another agent's macros only once they exist) */
+export function templateExists(rel) {
+  try {
+    return fs.existsSync(path.join(INCLUDES, String(rel)));
+  } catch {
+    return false;
+  }
+}
+
+export default function (eleventyConfig) {
+  eleventyConfig.addFilter("dxBase", withBase);
+  eleventyConfig.addFilter("dxSeries", districtSeries);
+  eleventyConfig.addFilter("dxEvents", districtEvents);
+  eleventyConfig.addFilter("dxRecent", districtRecent);
+  eleventyConfig.addFilter("dxMeetingParts", meetingParts);
+  // a new build (or a --serve rebuild) logs calendar/CSV differences again
+  eleventyConfig.on("eleventy.before", () => warned.clear());
+  eleventyConfig.addFilter("dxNextMeetings", nextMeetings);
+  eleventyConfig.addFilter("dxInterEvents", interdistrictEvents);
+  eleventyConfig.addFilter("dxUpcoming", upcomingDistrictMeetings);
+  eleventyConfig.addFilter("dxExtraNote", extraNote);
+  eleventyConfig.addFilter("dxGsrNote", gsrNote);
+  eleventyConfig.addFilter("dxNoteOverride", noteOverride);
+  eleventyConfig.addFilter("dxGsr", gsrInfo);
+  eleventyConfig.addFilter("dxGsrLine", gsrLine);
+  eleventyConfig.addFilter("dxGsrChairLine", gsrChairLine);
+  eleventyConfig.addFilter("dxGsrList", gsrList);
+  eleventyConfig.addFilter("dxPoints", districtPoints);
+  eleventyConfig.addFilter("dxMeetingLine", meetingLine);
+  eleventyConfig.addFilter("dxMetaTitle", districtMetaTitle);
+  eleventyConfig.addFilter("dxMetaDescription", districtMetaDescription);
+  eleventyConfig.addFilter("dxFinderData", finderData);
+  eleventyConfig.addFilter("dxCardMeta", cardMeta);
+  eleventyConfig.addFilter("dxDocsByYear", docsByYear);
+  eleventyConfig.addFilter("dxServantOrder", servantOrder);
+  eleventyConfig.addFilter("dxTemplateExists", templateExists);
+  // Servants whose position matches a pattern, e.g. servants.current | roleMatch("inter-?distri")
+  eleventyConfig.addFilter("dxRoleMatch", (list, pattern) => {
+    const re = new RegExp(pattern, "i");
+    return (list || []).filter((s) => s && re.test(`${s.position_en || ""} ${s.role_en || ""} ${s.position || ""}`));
+  });
+  // "1 & 3" → "1 y 3" on Spanish pages.
+  eleventyConfig.addFilter("dxNum", (d, lang) => (d ? (code(lang) === "es" ? d.number_es || d.number : d.number) : ""));
+  // Short date label for a meeting date in the page's language ("Tue, Oct 6").
+  eleventyConfig.addFilter("dxMeetDate", (iso, lang) => formatDate(iso, "date", lang));
+  // Lookup helper: list of slugs → district objects.
+  eleventyConfig.addFilter("dxFor", (slugs, bySlug) => (slugs || []).map((s) => bySlug && bySlug[s]).filter(Boolean));
+}

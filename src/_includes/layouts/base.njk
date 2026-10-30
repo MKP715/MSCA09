@@ -1,0 +1,199 @@
+{#-
+  The outer shell of every page: <head>, header, footer.
+  Page front matter it understands:
+    title / title_key, description / description_key
+    meta_title_key / metaTitle  a longer title for search results and link previews (<title>, og:title); the page's
+                  heading, breadcrumbs, share buttons and site search keep `title` (see _data/eleventyComputed.js)
+    title_suffix_key  the text key added after the title in <title> (default site.title_suffix, "A.A. Area 09");
+                  no suffix when the title is longer than 55 characters, so search results don't cut it off.
+                  A section's own suffix (the Forum pages' prf.title_suffix) also follows og:title, whatever the length
+    accent        colour name for the page (ocean, coral, sage, iris, …)
+    styles        extra stylesheets   e.g. ["/assets/vendor/leaflet/leaflet.css"]
+    headInclude   a partial rendered inside <head> (e.g. image preloads): "partials/home-head.njk"
+    jsText        extra data/text keys the page's scripts read from MSCA.t
+    scripts       extra scripts (loaded with defer, before Alpine starts)
+    bodyClass     extra classes on <body>
+    noindex       true to keep a page out of search engines (and out of the site search); such a page (and the
+                  404 page) gets no canonical or hreflang links
+    altNoindex    true when the same page in the other language is noindex: no hreflang alternates are linked
+                  (set automatically for the English Delegate's Corner posts, see _data/eleventyComputed.js)
+    searchExclude true to keep a page out of the site search only (past one-off events are left out automatically)
+    source        the file volunteers edit to change this page, for the footer's "Edit" link (see _data/eleventyComputed.js)
+    ogImage       path to a link-preview image (default: the site's picture, social-card.jpg, or social-card-es.jpg on
+                  Spanish pages)
+    ogImageWidth / ogImageHeight / ogImageType  that image's size in pixels and type (image/jpeg), when known: the
+                  first share of a link then shows the picture at once
+    ogImageAlt / og_image_alt_key  what that image shows (or the text key that says it), for screen readers on social
+                  sites (the default picture uses site.og_image_alt)
+  Site search (Pagefind): the page title and any extra words in data/text/common.csv under
+  "search.kw.<English path>" (e.g. search.kw./newcomers/) are weighted so the page itself ranks first,
+  together with searchAlso (front matter, and the short forms of a district's number: _data/eleventyComputed.js).
+-#}
+{%- set L = lang -%}
+{%- set lc = L.code -%}
+{%- set siteName = "site.name" | t(L) -%}
+{%- set isHome = page.url == "/" or page.url == "/es/" -%}
+{%- set homeTitle = "site.home_title" | t(L) -%}
+{#- Search results and link previews: the meta title (or the page title); the home page has its own. A short title gets
+    " · A.A. Area 09" (or the page's title_suffix_key); one over 55 characters stands alone, so it is not cut off. -#}
+{%- set coreTitle = metaTitle or title -%}
+{%- set titleSuffix = (title_suffix_key or "site.title_suffix") | t(L) -%}
+{%- set shortCore = (coreTitle | strip | length) <= 55 -%}
+{%- set pageTitle = (coreTitle + (" · " + titleSuffix if (shortCore and titleSuffix) else "")) if (coreTitle and not isHome) else homeTitle -%}
+{#- Link previews show og:title as the card's headline: a section's own suffix stays on it ("Save the date · Pacific
+    Regional Forum 2028"), while the generic " · A.A. Area 09" is left to og:site_name. -#}
+{%- set ogTitle = ((coreTitle + (" · " + titleSuffix if (title_suffix_key and titleSuffix) else "")) if (coreTitle and not isHome) else homeTitle) | strip -%}
+{%- set enPath = page.url if lc == "en" else (page.url | altUrl(L)) -%}
+{%- set searchable = not (noindex or searchSkip) -%}
+{%- set searchTitle = ((title if (title and not isHome) else homeTitle)) | strip -%}
+{#- For the site search: Pagefind reads a straight apostrophe as part of the word ("Delegate's" → "delegates") and a
+    typographic one as a break ("Delegate’s" → "delegate"). A page's own name is indexed with the typographic one, so
+    "delegate" finds the Delegate's Corner; an archived post's title with the straight one, so for a single word
+    ("delegate", "delegado") the 57 posts do not all come before the hub pages. A post is still found by its title. -#}
+{%- set indexTitle = (searchTitle | replace("’", "'")) if searchType == "post" else (searchTitle | replace("'", "’")) -%}
+{%- set desc = description or ("site.description" | t(L)) -%}
+{%- set alt = page.url | altUrl(L) -%}
+{#- Search engines: a noindex page (and the 404 page) names no canonical address and no language alternates;
+    a page whose other-language copy is noindex names only itself. -#}
+{%- set indexable = not (noindex or page.url == "/404.html") -%}
+<!doctype html>
+<html lang="{{ L.htmlLang }}" data-lang="{{ lc }}" data-base="{{ site.base }}" class="scroll-smooth">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{{ pageTitle | strip }}</title>
+  <meta name="description" content="{{ desc | strip | truncate(300) }}">
+  {%- if not indexable %}
+  <meta name="robots" content="noindex">
+  {%- else %}
+  {#- lets search results and Discover show the page's picture (a flyer, the Forum photo) large, not as a small thumbnail #}
+  <meta name="robots" content="max-image-preview:large">
+  <link rel="canonical" href="{{ page.url | absUrl(site.url + '/') }}">
+  {%- if not altNoindex %}
+  <link rel="alternate" hreflang="{{ L.htmlLang }}" href="{{ page.url | absUrl(site.url + '/') }}">
+  <link rel="alternate" hreflang="{{ 'es' if lc == 'en' else 'en' }}" href="{{ alt | absUrl(site.url + '/') }}">
+  <link rel="alternate" hreflang="x-default" href="{{ (alt if lc == 'es' else page.url) | absUrl(site.url + '/') }}">
+  {%- endif %}
+  {%- endif %}
+  <meta name="theme-color" content="#2ea3dd">
+  {#- Drive serves flyer images reliably only without a Referer; also keeps visitors' paths private. #}
+  <meta name="referrer" content="no-referrer">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="{{ siteName }}">
+  <meta property="og:title" content="{{ ogTitle }}">
+  <meta property="og:description" content="{{ desc | strip | truncate(200) }}">
+  <meta property="og:url" content="{{ page.url | absUrl(site.url + '/') }}">
+  <meta property="og:locale" content="{{ 'es_US' if lc == 'es' else 'en_US' }}">
+  {#- a page without a picture of its own gets the site's picture in the page's language #}
+  <meta property="og:image" content="{{ (ogImage or ('/assets/img/social-card-es.jpg' if lc == 'es' else '/assets/img/social-card.jpg')) | absUrl(site.url + '/') }}">
+  {%- if not ogImage %}
+  {#- the default picture: scripts/build-social-card.py draws it at 1200 × 630, so previews need not fetch it first #}
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:type" content="image/jpeg">
+  {%- else %}
+  {%- if ogImageWidth and ogImageHeight %}
+  <meta property="og:image:width" content="{{ ogImageWidth }}">
+  <meta property="og:image:height" content="{{ ogImageHeight }}">
+  {%- endif %}
+  {%- if ogImageType %}
+  <meta property="og:image:type" content="{{ ogImageType }}">
+  {%- endif %}
+  {%- endif %}
+  {%- set ogImageText = ogImageAlt or ("" if ogImage else ("site.og_image_alt" | t(L))) %}
+  {%- if ogImageText %}
+  <meta property="og:image:alt" content="{{ ogImageText | strip }}">
+  {%- endif %}
+  <meta name="twitter:card" content="summary_large_image">
+  {%- if ogImageText %}
+  <meta name="twitter:image:alt" content="{{ ogImageText | strip }}">
+  {%- endif %}
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" href="/favicon-32.png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="preload" href="/assets/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/assets/css/site.css?v={{ site.build.ms }}">
+  {%- for href in styles %}
+  <link rel="stylesheet" href="{{ href }}">
+  {%- endfor %}
+  {#- The shared search matcher, then page scripts, then the site script, then Alpine plugins, then Alpine: all deferred, so they run in this order. #}
+  <script defer src="/assets/js/search.js?v={{ site.build.ms }}"></script>
+  {%- for src in scripts %}
+  {#- the site's own scripts carry the build time too, so a visitor's browser never keeps an old copy after a deploy;
+      `npm run build` then swaps it for a hash of each file (scripts/asset-hash.mjs), so an unchanged file keeps its address #}
+  <script defer src="{{ src }}{% if src.startsWith('/') and not src.startsWith('//') %}{{ '&' if '?' in src else '?' }}v={{ site.build.ms }}{% endif %}"></script>
+  {%- endfor %}
+  <script defer src="/assets/js/app.js?v={{ site.build.ms }}"></script>
+  <script defer src="/assets/vendor/alpine-collapse.min.js"></script>
+  <script defer src="/assets/vendor/alpine-focus.min.js"></script>
+  <script defer src="/assets/vendor/alpine-intersect.min.js"></script>
+  <script defer src="/assets/vendor/alpine-persist.min.js"></script>
+  <script defer src="/assets/vendor/alpine.min.js"></script>
+  {#- Structured data for search engines. The Organization on every page: one @id, and its name in the other language
+      among the alternate names, so the English and Spanish pages describe the same Area; its registered name (the one
+      the About page shows, about.glance_legal_value) ties it to "Alcoholics Anonymous"; the address only when
+      mailing_city in data/settings.csv reads "City, ST 12345" (_data/site.js). The WebSite, which tells search results
+      the site's name, only on the English home page: Google reads it at the root of the domain only. -#}
+  {%- set altNames = [] -%}
+  {%- for n in ("site.alt_names" | t(L)).split("|") %}{% if n | trim %}{% set _ = altNames.push(n | trim) %}{% endif %}{% endfor %}
+  <script type="application/ld+json">{{ {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": site.url + "/#organization",
+    "name": siteName,
+    "legalName": "about.glance_legal_value" | t(L),
+    "alternateName": [("site.name" | t(L.other))].concat(altNames),
+    "url": site.url + "/",
+    "description": "site.description" | t(L),
+    "logo": site.url + "/assets/img/logo/logo-en-512.png",
+    "email": site.email_webmaster,
+    "address": site.postalAddress
+  } | json | safe }}</script>
+  {%- if page.url == "/" %}
+  <script type="application/ld+json">{{ {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": site.url + "/#website",
+    "url": site.url + "/",
+    "name": siteName,
+    "alternateName": altNames,
+    "inLanguage": ["en", "es"],
+    "publisher": { "@id": site.url + "/#organization" }
+  } | json | safe }}</script>
+  {%- endif %}
+  {%- include "partials/i18n-js.njk" %}
+  {#- Always include (an empty partial when there is none): async shortcodes such as the home hero
+      preload are dropped when the include sits inside {% if %}. #}
+  {%- include (headInclude or "partials/empty.njk") %}
+</head>
+<body class="min-h-dvh bg-white {{ bodyClass }}" style="{{ (accent or 'ocean') | accent }}">
+  <a href="#main" class="skip-link">{{ "a11y.skip" | t(L) }}</a>
+
+  {% include "partials/header.njk" %}
+
+  {#- Site search: archived delegate posts (2020–2023) and event pages count a little less, so the hub page
+      (a district, a committee, Minutes …) comes first for general words; they are still found by their own names.
+      Meta "type" keeps the internal word (district, committee …): Pagefind also matches meta, so "district 22"
+      finds the Spanish district pages too; the search box shows it translated (app.js). The filter of the same
+      kind is in the page's language: filters are not matched against the words typed. #}
+  {%- set searchKind = (("search.type." + searchType) | tOpt(L)) or ("search.type.page" | t(L)) %}
+  <main id="main" tabindex="-1" class="outline-none" {% if searchable %}data-pagefind-body{% if searchType == "post" %} data-pagefind-weight="0.3"{% elif searchType == "event" %} data-pagefind-weight="0.6"{% endif %}{% endif %}
+        data-pagefind-meta="title[data-search-title], type[data-search-type]" data-search-title="{{ indexTitle }}" data-search-type="{{ searchType }}"
+        data-pagefind-filter="{{ 'search.meta_type' | t(L) }}[data-search-kind]" data-search-kind="{{ searchKind }}">
+    {{ content | safe }}
+    {%- if searchable and searchType != "event" and searchType != "post" %}
+    {#- Not shown: lets the site search rank this hub page (district, committee, documents …) above the many
+        event pages and archived posts that mention it, for its own name and keywords. #}
+    {%- set searchKw = ("search.kw." + enPath) | tOpt(L) %}
+    <div hidden data-pagefind-weight="10">{{ indexTitle }}{% if searchKw %} · {{ searchKw | replace("'", "’") }}{% endif %}{% if searchAlso %} · {{ searchAlso }}{% endif %}</div>
+    {%- endif %}
+  </main>
+
+  {% include "partials/footer.njk" %}
+  {% include "partials/mobile-bar.njk" %}
+  {% include "partials/search.njk" %}
+  {% include "partials/share-menu.njk" %}
+</body>
+</html>

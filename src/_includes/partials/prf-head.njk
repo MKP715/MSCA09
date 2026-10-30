@@ -1,0 +1,50 @@
+{#- Inside <head> of the Forum overview (/service/prf-2028/, front matter headInclude): schema.org Event data for the
+    2028 Pacific Regional Forum, from data/prf/forum.csv (dates, hotel and its address) and data/text/prf.csv (name,
+    description). Left out once the Forum has begun, and while its start or the hotel's street address is not known.
+    The Forum's own calendar entry gives no Event data (calJsonLd in _lib/plugins/calendar.js), so search engines
+    find the event at one address only.
+    The price (offers) comes from registration_fee in forum.csv (0 = free; left out when it is empty or not a number),
+    and links to G.S.O.'s registration page once registration_url is filled.
+    The organizer is organizers in forum.csv (names from data/organizers.csv, via calOrganizers); empty = Area 09. -#}
+{%- set P = prf -%}
+{%- set S = P.set -%}
+{%- if S.start and S.venue_street and P.startMs > site.build.ms %}
+{%- set cityParts = (S.venue_city or "").split(",") %}
+{%- set fee = (S.registration_fee or "") | replace("$", "") | trim %}
+{%- set price = fee | float(-1) %}
+{%- if fee and price >= 0 %}
+{%- if S.registration_url %}
+{%- set offers = { "@type": "Offer", "price": price, "priceCurrency": "USD", "url": S.registration_url } %}
+{%- else %}
+{%- set offers = { "@type": "Offer", "price": price, "priceCurrency": "USD" } %}
+{%- endif %}
+{%- endif %}
+{%- set organizer = (S.organizers or "Area 09") | calOrganizers(lang) %}
+{%- if not organizer %}{% set organizer = { "@type": "Organization", "@id": site.url + "/#organization", "name": "site.name" | t(lang), "url": site.url + "/" } %}{% endif %}
+  <script type="application/ld+json">{{ {
+    "@context": "https://schema.org",
+    "@type": "Event",
+    "name": "prf.home.title_plain" | t(lang),
+    "startDate": P.start,
+    "endDate": P.end,
+    "eventStatus": "https://schema.org/EventScheduled",
+    "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+    "location": {
+      "@type": "Place",
+      "name": S.venue_name,
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": S.venue_street,
+        "addressLocality": cityParts[0] | trim,
+        "addressRegion": (cityParts[1] or "") | trim,
+        "postalCode": S.venue_zip,
+        "addressCountry": "US"
+      }
+    },
+    "image": [(ogImage or ("/assets/img/social-card-es.jpg" if lang.code == "es" else "/assets/img/social-card.jpg")) | absUrl(site.url + "/")],
+    "description": description | strip,
+    "organizer": organizer,
+    "offers": offers,
+    "url": page.url | absUrl(site.url + "/")
+  } | json | safe }}</script>
+{%- endif -%}

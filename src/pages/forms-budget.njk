@@ -1,0 +1,359 @@
+---
+pagination: { data: langs, size: 1, alias: lang, addAllPagesToCollections: true }
+permalink: "{{ lang.prefix }}/service/forms/budget/"
+layout: page.njk
+title_key: forms.budget.title
+description_key: forms.budget.description
+eyebrow_key: forms.budget.eyebrow
+lead_key: forms.budget.lead
+heroIcon: calculator
+accent: teal
+crumbs: [{ label_key: "forms.crumb_service", url: "/service/" }, { label_key: "forms.hub.crumb", url: "/service/forms/" }]
+bare: true
+bodyClass: ff-page
+source: data/finance-forms.csv
+scripts: ["/assets/js/forms.js"]
+jsText: ["forms.js.line_n", "forms.js.remove_line", "forms.js.line_added", "forms.js.line_removed", "forms.js.confirm_reset", "forms.js.reset_done", "forms.js.copied", "forms.js.restored", "forms.js.forgotten", "forms.js.printed_from",
+  "forms.js.e_date", "forms.js.e_year", "forms.js.e_name", "forms.js.e_contact", "forms.js.e_email", "forms.js.e_pick", "forms.js.e_lang",
+  "forms.js.e_item_desc", "forms.js.e_item_amt", "forms.js.e_item_money", "forms.js.e_item_money1", "forms.js.e_item_miles", "forms.js.e_total",
+  "forms.js.bud_subject", "forms.js.bud_file", "forms.js.bud_heading", "forms.js.bud_attach", "forms.js.miles_at", "forms.js.mail_short", "forms.js.mail_footer", "forms.js.mail_after_deadline",
+  "forms.budget.date", "forms.budget.year", "forms.budget.requested", "forms.contact.name", "forms.budget.phone", "forms.contact.email", "forms.budget.line_title",
+  "forms.budget.committee", "forms.budget.officer", "forms.budget.chair_en", "forms.budget.chair_es", "forms.budget.items_title", "forms.budget.total_all"]
+---
+{#- The Annual Budget Request, online. Every field of the official paper form, in its order: date · budget year ·
+    requested amount · contact information · committee budget line (committee or officer, English or Spanish chair)
+    · estimated annual budget expenses (1)–(7) · total. Choices and lines: data/finance-forms.csv; the budget year,
+    deadline and mileage rate: data/settings.csv; wording: data/text/forms.csv. The page sends nothing anywhere
+    (src/assets/js/forms.js). The printed copy (.ffp, at the end) is the only thing that prints. -#}
+{%- from "macros/forms.njk" import ffOfficial, ffCard, ffMoney, ffField, ffForget, ffpBox with context -%}
+{%- from "macros/ui.njk" import emailLink with context -%}
+{%- set L = lang -%}
+{%- set F = financeForms -%}
+{%- set B = F.budget -%}
+{%- set to = B.send.to -%}
+{%- set cc = B.send.cc -%}
+{%- set rateText = "$" + F.rate.toFixed(2) -%}
+{%- set deadlineText = (F.deadline | dt("full", L)) if F.deadline else "" -%}
+{%- set chair = ((committees.bySlug[to.slug].chairs if (to and to.slug and committees.bySlug[to.slug]) else []) | where("filled", true) | first) -%}
+
+<script type="application/json" id="ff-data">{{ {
+  form: "budget",
+  rate: F.rate,
+  year: F.year,
+  deadline: F.deadline,
+  to: to.email if to else "",
+  cc: cc.email if cc else "",
+  groups: B.groups,
+  officers: B.officers,
+  items: B.items
+} | json | safe }}</script>
+
+<div class="ff-root wrap pt-8 pb-16 lg:pt-12 lg:pb-24" x-data="ffBudget" style="{{ 'teal' | accent }}">
+  <div class="ff-screen grid grid-cols-1 gap-8 xl:grid-cols-12 xl:gap-10 2xl:gap-12">
+
+    <form class="min-w-0 space-y-6 xl:col-span-8 2xl:space-y-8" novalidate @submit.prevent="send()" aria-labelledby="ff-form-title">
+      <h2 id="ff-form-title" class="sr-only">{{ "forms.budget.title" | t(L) }}</h2>
+
+      {#- ---------------------------------------------------------- before you start -#}
+      <div id="ff-top" tabindex="-1" class="ff-intro outline-none">
+        {%- if F.deadline %}
+        {#- before the deadline: when it is due; after it: what to do instead (app.js removes the one that no longer applies) -#}
+        <div class="ff-deadline" data-hide-after="{{ F.deadlineEnd }}" style="{{ 'sun' | accent }}">
+          <span class="icon-tile size-11 rounded-xl">{% icon "calendar-clock", "size-5" %}</span>
+          <p><strong>{{ "forms.budget.due_title" | t(L, { year: F.year, date: deadlineText }) }}</strong> {{ "forms.budget.due_body" | t(L) }}</p>
+        </div>
+        <div class="ff-deadline is-past" data-show-after="{{ F.deadlineEnd }}" style="{{ 'coral' | accent }}">
+          <span class="icon-tile size-11 rounded-xl">{% icon "hourglass", "size-5" %}</span>
+          <p><strong>{{ "forms.budget.past_title" | t(L, { year: F.year, date: deadlineText }) }}</strong> {{ "forms.budget.past_body" | t(L) }}</p>
+        </div>
+        {%- endif %}
+        <ul class="ff-rules ff-rules-2" role="list">
+          <li class="ff-rule" style="{{ 'ocean' | accent }}">
+            <span class="icon-tile size-11 rounded-xl">{% icon "car", "size-5" %}</span>
+            <span><strong>{{ "forms.rule.mileage_title" | t(L, { rate: rateText }) }}</strong> {{ "forms.budget.rule_mileage" | t(L, { rate: rateText }) }}</span>
+          </li>
+          <li class="ff-rule" style="{{ 'sage' | accent }}">
+            <span class="icon-tile size-11 rounded-xl">{% icon "calculator", "size-5" %}</span>
+            <span><strong>{{ "forms.budget.rule_total_title" | t(L) }}</strong> {{ "forms.budget.rule_total_body" | t(L) }}</span>
+          </li>
+        </ul>
+        <p class="ff-private">{% icon "lock", "size-4 mt-0.5 shrink-0" %}<span>{{ "forms.private" | t(L) }}</span></p>
+        <div class="ff-restored" x-cloak x-show="restored" role="status">
+          {% icon "rotate-ccw", "size-4 mt-0.5 shrink-0" %}
+          <p class="min-w-0 flex-[1_1_14rem]" x-text="t('forms.js.restored', { date: restored })"></p>
+          <button type="button" class="btn btn-white btn-sm max-sm:ml-7" @click="startOver()">{{ "forms.start_over" | t(L) }}</button>
+        </div>
+      </div>
+
+      {#- ---------------------------------------------------------- error summary -#}
+      <div class="ff-summary" x-ref="summary" tabindex="-1" role="alert" x-cloak x-show="summary.length" aria-labelledby="ff-summary-h">
+        <h2 id="ff-summary-h" class="flex items-center gap-2 font-display text-lg font-bold">{% icon "circle-alert", "size-5 shrink-0" %}<span>{{ "forms.errors_title" | t(L) }}</span></h2>
+        <ul class="mt-3 space-y-1.5" role="list">
+          <template x-for="e in summary" :key="e.id + e.text"><li><a :href="'#' + e.id" @click.prevent="jump(e.id)" x-text="e.text"></a></li></template>
+        </ul>
+        <div class="mt-4" x-show="pending === 'print'"><button type="button" class="btn btn-white btn-sm" @click="printAnyway()">{% icon "printer", "size-4" %}{{ "forms.print_anyway" | t(L) }}</button></div>
+      </div>
+
+      {#- ---------------------------------------------------------- 1. date, year, amount -#}
+      {% call ffCard({ id: "ff-s-head", num: 1, title: "forms.budget.head_title" | t(L) }) %}
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {{ ffField({ id: "ff-date", model: "f.date", label: "forms.budget.date" | t(L), type: "date", err: "date", required: true }) }}
+          {{ ffField({ id: "ff-year", model: "f.year", label: "forms.budget.year" | t(L), inputmode: "numeric", err: "year", required: true }) }}
+          <div class="ff-field sm:col-span-2 lg:col-span-1">
+            <span class="ff-label" id="ff-requested-l">{{ "forms.budget.requested" | t(L) }}</span>
+            <output class="ff-calc ff-calc-lg" aria-labelledby="ff-requested-l" aria-describedby="ff-requested-hint" x-text="money(total())">$0.00</output>
+            <p class="ff-hint" id="ff-requested-hint">{{ "forms.budget.requested_hint" | t(L) }}</p>
+          </div>
+        </div>
+      {% endcall %}
+
+      {#- ---------------------------------------------------------- 2. contact information -#}
+      {% call ffCard({ id: "ff-s-contact", num: 2, title: "forms.contact.title" | t(L), lead: "forms.contact.lead_budget" | t(L) }) %}
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+          {{ ffField({ id: "ff-name", model: "f.name", label: "forms.contact.name" | t(L), autocomplete: "name", err: "name", required: true }) }}
+          {{ ffField({ id: "ff-phone", model: "f.phone", label: "forms.budget.phone" | t(L), type: "tel", autocomplete: "tel", err: "phone" }) }}
+          {{ ffField({ id: "ff-email", model: "f.email", label: "forms.contact.email" | t(L), type: "email", autocomplete: "email", err: "email" }) }}
+        </div>
+        <p class="ff-hint mt-2">{{ "forms.contact.reach_hint" | t(L) }}</p>
+      {% endcall %}
+
+      {#- ---------------------------------------------------------- 3. committee budget line -#}
+      {% call ffCard({ id: "ff-s-line", num: 3, title: "forms.budget.line_title" | t(L), lead: "forms.budget.line_lead" | t(L) }) %}
+        {%- for g in B.groups %}
+        <fieldset class="ff-group" :aria-describedby="err('pick') ? errId('pick') : null">
+          <legend class="ff-group-h">{{ ("forms.budget.group." + g.key) | t(L) }}</legend>
+          <div class="ff-choices {{ 'ff-choices-3' if g.items.length > 2 else 'ff-choices-2' }}">
+            {%- for o in g.items %}
+            <label class="ff-choice ff-choice-sm"><input type="radio" class="ff-radio" name="ff-pick" id="ff-pick-{{ o.key }}" value="{{ o.key }}" x-model="f.pick"><span>{{ o | loc("label", L) }}</span></label>
+            {%- endfor %}
+          </div>
+        </fieldset>
+        {%- endfor %}
+        {%- if B.officers.length %}
+        <fieldset class="ff-group">
+          <legend class="ff-group-h">{{ "forms.budget.group.officer" | t(L) }}</legend>
+          <div class="ff-choices ff-choices-3">
+            {%- for o in B.officers %}
+            <label class="ff-choice ff-choice-sm"><input type="radio" class="ff-radio" name="ff-pick" id="ff-pick-{{ o.key }}" value="{{ o.key }}" x-model="f.pick"><span>{{ o | loc("label", L) }}</span></label>
+            {%- endfor %}
+          </div>
+        </fieldset>
+        {%- endif %}
+        <p class="ff-err" x-cloak x-show="err('pick')" :id="errId('pick')" x-text="err('pick')"></p>
+
+        {#- English or Spanish chair: asked for a committee designated in both languages, set for the others -#}
+        <fieldset class="ff-group ff-lang" x-cloak x-show="f.pick && group() !== 'officer'" :aria-describedby="err('lang') ? errId('lang') : null">
+          <legend class="ff-group-h">{{ "forms.budget.lang_q" | t(L) }}</legend>
+          <div class="ff-choices ff-choices-2">
+            <label class="ff-choice"><input type="radio" class="ff-radio" name="ff-lang" id="ff-lang-en" value="en" x-model="f.lang" :disabled="group() === 'spanish'"><span>{{ "forms.budget.chair_en" | t(L) }}</span></label>
+            <label class="ff-choice"><input type="radio" class="ff-radio" name="ff-lang" id="ff-lang-es" value="es" x-model="f.lang" :disabled="group() === 'english'"><span>{{ "forms.budget.chair_es" | t(L) }}</span></label>
+          </div>
+          <p class="ff-hint mt-2" x-show="group() === 'english' || group() === 'spanish'">{{ "forms.budget.lang_auto" | t(L) }}</p>
+          <p class="ff-err" x-cloak x-show="err('lang')" :id="errId('lang')" x-text="err('lang')"></p>
+        </fieldset>
+      {% endcall %}
+
+      {#- ---------------------------------------------------------- 4. estimated annual budget expenses -#}
+      {% call ffCard({ id: "ff-s-items", num: 4, title: "forms.budget.items_title" | t(L), lead: "forms.budget.items_lead" | t(L) }) %}
+        <ol class="ff-items" role="list">
+          {%- for it in B.items %}
+          {%- set itLabel = it | loc("label", L) %}
+          <li class="ff-item" aria-labelledby="ff-item-{{ it.key }}-h">
+            <div class="ff-item-head">
+              <span class="ff-item-n" aria-hidden="true">({{ it.code }})</span>
+              <div class="min-w-0 flex-1">
+                <h3 class="ff-item-title" id="ff-item-{{ it.key }}-h">{{ itLabel }}</h3>
+                {%- set hint = it | loc("hint", L) %}{% if hint %}<p class="ff-hint">{{ hint }}</p>{% endif %}
+              </div>
+              {%- if it.kind != "amount" %}<p class="ff-item-total"><span class="sr-only">{{ "forms.budget.total_of" | t(L, { name: itLabel }) }}</span><span x-text="money(itemTotal(item('{{ it.key }}')))">$0.00</span></p>{% endif %}
+            </div>
+
+            {%- if it.kind == "lines" %}
+            <ul class="ff-lines" role="list">
+              <template x-for="(r, i) in f.items['{{ it.key }}'].rows" :key="r.id">
+                <li class="ff-line pop-in">
+                  <span class="ff-line-n" aria-hidden="true" x-text="i + 1"></span>
+                  <div class="ff-field min-w-0 flex-1">
+                    <label :for="'ff-{{ it.key }}-' + r.id + '-desc'" class="ff-label" x-text="t('forms.js.line_n', { n: i + 1 }) + ' · ' + {{ ('forms.budget.desc' | t(L)) | json }}"></label>
+                    <input type="text" class="field ff-input" :id="'ff-{{ it.key }}-' + r.id + '-desc'" x-model="r.desc" autocomplete="off"
+                           :aria-invalid="!!err('{{ it.key }}-' + r.id + '-desc')" :aria-describedby="err('{{ it.key }}-' + r.id + '-desc') ? errId('{{ it.key }}-' + r.id + '-desc') : null">
+                    <p class="ff-err" x-cloak x-show="err('{{ it.key }}-' + r.id + '-desc')" :id="errId('{{ it.key }}-' + r.id + '-desc')" x-text="err('{{ it.key }}-' + r.id + '-desc')"></p>
+                  </div>
+                  <div class="ff-line-amt">
+                    {{ ffMoney({ idExpr: "'ff-" + it.key + "-' + r.id + '-amt'", model: "r.amt", label: "forms.budget.amount" | t(L), err: "'" + it.key + "-' + r.id + '-amt'" }) }}
+                  </div>
+                  <button type="button" class="ff-icon-btn ff-line-rm" @click="removeLine('{{ it.key }}', i)" :aria-label="t('forms.js.remove_line', { n: i + 1 }) + ' · ' + {{ itLabel | json }}">{% icon "trash-2", "size-4" %}</button>
+                </li>
+              </template>
+            </ul>
+            <button type="button" id="ff-{{ it.key }}-add" class="btn btn-ghost btn-sm mt-3 bg-white" @click="addLine('{{ it.key }}')">{% icon "plus", "size-4" %}{{ "forms.add_line_to" | t(L, { name: itLabel }) }}</button>
+            <p class="ff-item-sub">{{ "forms.budget.total_of" | t(L, { name: itLabel }) }}: <strong x-text="money(itemTotal(item('{{ it.key }}')))">$0.00</strong></p>
+
+            {%- elif it.kind == "mileage" %}
+            <div class="ff-mileage">
+              <div class="ff-field w-36">
+                <label for="ff-{{ it.key }}" class="ff-label">{{ "forms.budget.miles" | t(L) }}</label>
+                <input type="text" inputmode="decimal" autocomplete="off" id="ff-{{ it.key }}" class="field ff-input" x-model="f.items['{{ it.key }}'].miles"
+                       :aria-invalid="!!err('{{ it.key }}')" :aria-describedby="err('{{ it.key }}') ? errId('{{ it.key }}') : null">
+              </div>
+              <p class="ff-times" aria-hidden="true">× {{ rateText }} =</p>
+              <div class="ff-field">
+                <span class="ff-label" id="ff-{{ it.key }}-out-l">{{ "forms.budget.per_mile" | t(L, { rate: rateText }) }}</span>
+                <output class="ff-calc" aria-labelledby="ff-{{ it.key }}-out-l" x-text="money(itemTotal(item('{{ it.key }}')))">$0.00</output>
+              </div>
+            </div>
+            <p class="ff-err" x-cloak x-show="err('{{ it.key }}')" :id="errId('{{ it.key }}')" x-text="err('{{ it.key }}')"></p>
+
+            {%- else %}
+            <div class="max-w-[14rem]">
+              {{ ffMoney({ id: "ff-" + it.key, model: "f.items['" + it.key + "'].amt", label: "forms.budget.amount" | t(L), err: "'" + it.key + "'" }) }}
+            </div>
+            {%- endif %}
+          </li>
+          {%- endfor %}
+        </ol>
+        <p class="ff-err mt-3" x-cloak x-show="err('total')" :id="errId('total')" x-text="err('total')"></p>
+        <div class="ff-totals mt-6">
+          <p class="ff-grand"><span>{{ "forms.budget.total_all" | t(L) }}</span><strong x-text="money(total())">$0.00</strong></p>
+          <p class="mt-2 text-sm text-ink-600">{{ "forms.budget.total_note" | t(L) }}</p>
+        </div>
+      {% endcall %}
+
+      {#- ---------------------------------------------------------- 5. send -#}
+      {% call ffCard({ id: "ff-s-send", num: 5, title: "forms.send_title" | t(L), lead: "forms.budget.send_lead" | t(L) }) %}
+        <ol class="ff-steps" role="list">
+          <li><span class="ff-step-n" aria-hidden="true">1</span><span>{{ "forms.step.print" | t(L) }}</span></li>
+          <li><span class="ff-step-n" aria-hidden="true">2</span><span>{{ "forms.budget.step_mail" | t(L, { to: to.email if to else "", cc: cc.email if cc else "" }) }}</span></li>
+        </ol>
+        <div class="ff-actions mt-6">
+          <button type="submit" class="btn btn-accent btn-lg">{% icon "mail", "size-5" %}{{ "forms.budget.mail_cta" | t(L) }}</button>
+          <button type="button" class="btn btn-ghost btn-lg bg-white" @click="print()">{% icon "printer", "size-5" %}{{ "forms.print_cta" | t(L) }}</button>
+          <button type="button" class="btn btn-ghost bg-white" @click="copy()">
+            <span x-show="!copied" class="inline-flex items-center gap-2">{% icon "clipboard-copy", "size-4" %}{{ "forms.copy_cta" | t(L) }}</span>
+            <span x-cloak x-show="copied" class="copy-done inline-flex items-center gap-2 text-sage-700">{% icon "check", "size-4" %}{{ "forms.copied" | t(L) }}</span>
+          </button>
+          <button type="button" class="btn btn-ghost bg-white text-coral-800" @click="startOver()">{% icon "rotate-ccw", "size-4" %}{{ "forms.start_over" | t(L) }}</button>
+        </div>
+        <div class="ff-sent pop-in" x-cloak x-show="sent" role="status">
+          {% icon "circle-check", "size-5 mt-0.5 shrink-0" %}
+          <p>{{ "forms.budget.sent" | t(L) }} {% if to %}{{ emailLink({ email: to.email, lang: L }) }}{% endif %}</p>
+        </div>
+        {{ ffForget({ lang: L }) }}
+        <label class="ff-keep mt-6">
+          <input type="checkbox" class="check mt-1" x-model="keep">
+          <span><strong class="font-semibold text-ink-900">{{ "forms.keep_title" | t(L) }}</strong> {{ "forms.keep_body" | t(L) }}</span>
+        </label>
+      {% endcall %}
+    </form>
+
+    {#- ---------------------------------------------------------- aside -#}
+    <aside class="min-w-0 xl:col-span-4" aria-label="{{ 'forms.aside_label' | t(L) }}">
+      <div class="space-y-5 xl:sticky xl:top-28">
+        <div class="ff-sum-card">
+          <p class="text-xs font-bold tracking-[0.16em] text-white/85 uppercase">{{ "forms.budget.requested" | t(L) }}</p>
+          <p class="mt-1 font-display text-4xl font-extrabold tabular-nums" x-text="money(total())">$0.00</p>
+          <p class="mt-1 text-sm text-white/90" x-text="pickText() || {{ ('forms.budget.no_line' | t(L)) | json }}"></p>
+          <div class="mt-5 flex flex-wrap gap-2">
+            <button type="button" class="btn btn-white" @click="send()">{% icon "mail", "size-4" %}{{ "forms.mail_short" | t(L) }}</button>
+            <button type="button" class="btn btn-glass" @click="print()">{% icon "printer", "size-4" %}{{ "forms.print_short" | t(L) }}</button>
+          </div>
+        </div>
+        <section class="card p-5" aria-labelledby="ff-official-h">
+          <h2 id="ff-official-h" class="font-display text-lg font-bold text-ink-950">{{ "forms.official_title" | t(L) }}</h2>
+          <p class="mt-1 text-sm text-ink-600">{{ "forms.official_lead_word" | t(L) }}</p>
+          <div class="mt-3">{{ ffOfficial({ ids: B.official, lang: L }) }}</div>
+        </section>
+        <section class="card p-5" aria-labelledby="ff-help-h">
+          <h2 id="ff-help-h" class="font-display text-lg font-bold text-ink-950">{{ "forms.help_title" | t(L) }}</h2>
+          <p class="mt-1 text-sm text-ink-600">{{ "forms.budget.help_body" | t(L) }}</p>
+          {%- if to %}<p class="mt-3 text-sm">{{ emailLink({ email: to.email, lang: L }) }}</p>{% endif %}
+          <p class="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm">
+            <a href="{{ '/service/forms/' | lurl(L) }}" class="font-semibold text-ocean-700 hover:underline">{{ "forms.hub.all_forms" | t(L) }}</a>
+            {%- if to and to.url %}<a href="{{ to.url | lurl(L) }}" class="font-semibold text-ocean-700 hover:underline">{{ "forms.budget.committee_page" | t(L, { name: to | loc("name", L) }) }}</a>{% endif %}
+            <a href="{{ '/documents/finances/' | lurl(L) }}" class="font-semibold text-ocean-700 hover:underline">{{ "forms.hub.finances_shelf" | t(L) }}</a>
+          </p>
+        </section>
+      </div>
+    </aside>
+  </div>
+
+  {#- ============================================================ the printed copy -#}
+  {#- Only this prints (forms.css). On screen it is laid out off-screen at the paper's width (x-ref="paper"), so
+      forms.js can measure it: Software and Other get empty lines (data-ffp-blank) up to the paper form's 2 and 6
+      (paper_rows in data/finance-forms.csv) only while they fit on one page. -#}
+  <section class="ffp" x-ref="paper" aria-hidden="true" data-pagefind-ignore>
+    <header class="ffp-head">
+      <p class="ffp-area">{{ "forms.paper.area" | t(L) }}</p>
+      <p class="ffp-title">{{ "forms.budget.paper_title" | t(L) }}</p>
+      <p class="ffp-instr">{{ ("forms.budget.paper_instr_named" if chair and chair.name else "forms.budget.paper_instr") | t(L, { name: chair.name if chair else "", to: to.email if to else "", cc: cc.email if cc else "", date: deadlineText }) }}</p>
+    </header>
+    <table class="ffp-t">
+      <tr>
+        <td><span class="ffp-lab">{{ "forms.budget.date" | t(L) | upper }}:</span> <span class="ffp-fill" x-text="day(f.date)"></span></td>
+        <td><span class="ffp-lab">{{ "forms.budget.year" | t(L) | upper }}:</span> <span class="ffp-fill" x-text="f.year"></span></td>
+        <td><span class="ffp-lab">{{ "forms.budget.requested" | t(L) | upper }}:</span> <span class="ffp-fill ffp-strong" x-text="money(total())"></span><br><span class="ffp-small">{{ "forms.budget.requested_hint" | t(L) }}</span></td>
+      </tr>
+      <tr><th colspan="3" class="ffp-band">{{ "forms.contact.title" | t(L) | upper }}</th></tr>
+      <tr>
+        <td><span class="ffp-lab">{{ "forms.contact.name" | t(L) | upper }}:</span> <span class="ffp-fill" x-text="f.name"></span></td>
+        <td><span class="ffp-lab">{{ "forms.budget.phone" | t(L) | upper }}:</span> <span class="ffp-fill" x-text="f.phone"></span></td>
+        <td><span class="ffp-lab">{{ "forms.contact.email" | t(L) | upper }}:</span> <span class="ffp-fill" x-text="f.email"></span></td>
+      </tr>
+      <tr><th colspan="3" class="ffp-band">{{ "forms.budget.line_title" | t(L) | upper }}</th></tr>
+      <tr><td colspan="3">
+        <p class="ffp-small">{{ "forms.budget.paper_line_instr" | t(L) }}</p>
+        <p class="ffp-line ffp-center">{{ ffpBox("f.lang === 'en'") }} <span class="ffp-lab">{{ "forms.budget.chair_en" | t(L) | upper }}</span> &nbsp;&nbsp;&nbsp; {{ ffpBox("f.lang === 'es'") }} <span class="ffp-lab">{{ "forms.budget.chair_es" | t(L) | upper }}</span></p>
+      </td></tr>
+      <tr><td colspan="3">
+        <p class="ffp-lab">{{ "forms.budget.committee" | t(L) | upper }}</p>
+        <div class="ffp-groups">
+          {%- for g in B.groups %}
+          <div class="ffp-group {{ 'is-wide' if g.items.length > 4 }}">
+            <p class="ffp-group-h">{{ ("forms.budget.group." + g.key) | t(L) | upper }}</p>
+            <ul>{% for o in g.items %}<li>{{ ffpBox("f.pick === '" + o.key + "'") }} {{ o | loc("label", L) }}</li>{% endfor %}</ul>
+          </div>
+          {%- endfor %}
+        </div>
+      </td></tr>
+      <tr><td colspan="3">
+        <p class="ffp-lab">{{ "forms.budget.officer" | t(L) | upper }}</p>
+        <ul class="ffp-officers">{% for o in B.officers %}<li>{{ ffpBox("f.pick === '" + o.key + "'") }} {{ o | loc("label", L) }}</li>{% endfor %}</ul>
+      </td></tr>
+    </table>
+    <p class="ffp-instr ffp-center">{{ "forms.budget.items_lead" | t(L) }}</p>
+    <table class="ffp-t ffp-items">
+      <colgroup><col class="ffp-c-n"><col><col class="ffp-c-total"></colgroup>
+      <tr><th colspan="3" class="ffp-band">{{ "forms.budget.items_title" | t(L) | upper }}</th></tr>
+      <tr><th colspan="2">{{ "forms.budget.desc_col" | t(L) | upper }}</th><th>{{ "forms.budget.amount_col" | t(L) | upper }}</th></tr>
+      {%- for it in B.items %}
+      {%- set itLabel = it | loc("label", L) %}
+      <tr>
+        <td class="ffp-center ffp-strong">({{ it.code }})</td>
+        <td>
+          <span class="ffp-lab">{{ itLabel }}:</span>
+          {%- if it.kind == "lines" %}
+          {%- set hint = it | loc("hint", L) %}{% if hint %} <span class="ffp-small">{{ hint }}</span>{% endif %}
+          <table class="ffp-subt">
+            <template x-for="(r, i) in printLines('{{ it.key }}')" :key="r.id">
+              <tr :data-ffp-blank="r.blank || null"><td class="ffp-c-n" x-text="i + 1"></td><td x-text="r.desc"></td><td class="ffp-num ffp-c-total" x-text="cents(r.amt) ? money(cents(r.amt)) : '$'"></td></tr>
+            </template>
+          </table>
+          {%- elif it.kind == "mileage" %}
+          <span>{{ "forms.budget.miles_paper" | t(L, { rate: rateText }) | replace("{miles}", "<span class=\"ffp-fill ffp-w4\" x-text=\"miles(f.items['" + it.key + "'].miles) ? num(miles(f.items['" + it.key + "'].miles)) : ''\"></span>") | safe }}</span>
+          {%- endif %}
+        </td>
+        <td class="ffp-num" x-text="money(itemTotal(item('{{ it.key }}')))"></td>
+      </tr>
+      {%- endfor %}
+      <tr class="ffp-grandrow"><td colspan="2" class="text-right"><span class="ffp-lab">{{ "forms.budget.total_all" | t(L) | upper }}:</span><br><span class="ffp-small">{{ "forms.budget.total_paper_note" | t(L) }}</span></td><td class="ffp-num ffp-strong" x-text="money(total())"></td></tr>
+    </table>
+    {#- kept together, and with the total above -#}
+    <div class="ffp-end">
+      <div class="ffp-sign">
+        <p><span class="ffp-sigline"></span><span class="ffp-small">{{ "forms.paper.signature" | t(L) }}</span></p>
+        <p><span class="ffp-sigline ffp-short"></span><span class="ffp-small">{{ "forms.paper.date" | t(L) }}</span></p>
+      </div>
+      <p class="ffp-foot">{{ "forms.budget.paper_version" | t(L) }} · <span x-text="t('forms.js.printed_from', { url: location.host + location.pathname, date: day(today()) })"></span></p>
+    </div>
+  </section>
+</div>

@@ -1,0 +1,102 @@
+/* Share buttons and the page's share menu.
+   Markup: shareButton in macros/ui.njk (one button per thing shared) and partials/share-menu.njk (one menu per page);
+   behaviour: app.js "share". Plain CSS + Tailwind @apply, in the components layer so a utility class on the button
+   can still change it. Colours come from the --a-* accent of the element the button sits in (every page sets one on
+   <body>). Nothing here is printed. */
+
+@layer components {
+  /* the wrapper the menu is moved into while it is open (so a list's spacing or a row's gap never changes);
+     above a card's full-size link (documents, announcements) so the button gets the click */
+  .share {
+    @apply relative z-[1] inline-flex shrink-0;
+  }
+
+  /* "pill": icon + "Share" (the word from 640px) at the top right of a page band, beside the breadcrumbs.
+     44px to the touch below 1024px; the negative margin keeps the breadcrumb row's height. */
+  .share-pill {
+    @apply -my-3 inline-flex min-h-11 min-w-11 items-center justify-center gap-1.5 rounded-full bg-white/70 px-3 text-sm font-semibold text-ink-700 ring-1 ring-ink-900/10 backdrop-blur transition hover:bg-white hover:text-ink-950 sm:px-3.5 lg:my-0 lg:min-h-9;
+  }
+  .share-pill[aria-expanded="true"] { @apply bg-white text-ink-950 ring-ink-900/20; }
+  /* on a dark or coloured band (white words) */
+  .share-pill--dark { @apply bg-ink-950/20 text-white ring-white/40 hover:bg-ink-950/35 hover:text-white; }
+  .share-pill--dark[aria-expanded="true"] { @apply bg-ink-950/35 text-white ring-white/60; }
+
+  /* "icon": a small round button in a card, a list row or beside a heading; 44px to the touch below 1024px
+     (the negative margin keeps the row's height), 32px with a mouse */
+  .share-ico {
+    @apply -m-1.5 grid size-11 shrink-0 place-items-center rounded-full text-ink-500 transition hover:bg-(--a-50) hover:text-(--a-700) lg:m-0 lg:size-8;
+  }
+  .share-ico[aria-expanded="true"] { @apply bg-(--a-100) text-(--a-800); }
+  /* on a coloured card (white words) */
+  .share-ico--dark { @apply text-white/85 hover:bg-white/15 hover:text-white; }
+  .share-ico--dark[aria-expanded="true"] { @apply bg-white/20 text-white; }
+  /* a document card in the library (documents.njk): after the card's title in the page, so keyboard and screen-reader
+     users reach the document first, and drawn in the card's top-right corner, where the badges leave room for it */
+  .share.doc-card-share { @apply absolute top-[1.15rem] right-[1.15rem]; }
+  /* a document row with a share button (docList pairs + share, macros/documents.njk), in a narrow list (the latest
+     strip's cards on /documents/, 300–380px wide from 640px up): the language buttons go on a line of their own, as on
+     phones, so the title keeps its room. A row is measured by its list item (a query container). */
+  .doc-list-share > li { container-type: inline-size; }
+  @container (width < 27rem) {
+    .doc-row-share { flex-wrap: wrap; row-gap: 0.4rem; }
+    .doc-row-share .doc-versions { width: 100%; justify-content: flex-start; padding-left: 3.35rem; }
+  }
+
+  /* home page banner: "Share this site", under the facts (from 640px) or under the two big buttons (phones) */
+  .hm-hero-share { @apply mt-3 max-sm:col-span-full max-sm:mt-2; }
+  .hm-hero-share-btn {
+    @apply -ml-2 inline-flex min-h-11 items-center gap-2 rounded-full px-2 text-sm font-semibold text-white/90 transition hover:text-white hover:underline lg:min-h-9;
+    text-shadow: 0 2px 14px rgb(0 0 0 / 0.35);
+  }
+  .hm-hero-share-btn svg { color: var(--color-sun-300); }
+
+  /* ---------------------------------------------------------------- the menu */
+  /* Shown in the browser's top layer (popover) so no card, band or dialog clips or covers it; app.js places it under
+     the button (above it when there is no room below). Without popover support it is a fixed box on top of the page. */
+  .share-menu {
+    @apply fixed z-[95] m-0 hidden w-64 overflow-y-auto rounded-2xl border-0 bg-white p-1.5 text-ink-900 shadow-lift ring-1 ring-ink-900/10;
+    inset: auto;
+    max-width: calc(100vw - 1rem);
+    max-height: calc(100dvh - 1rem);
+  }
+  .share-menu.is-open {
+    display: block;
+    animation: share-in 0.14s ease-out;
+  }
+  .share-menu.is-open.is-up { animation-name: share-in-up; }
+  /* "Pause animations" (footer) pauses every animation where it is: the menu would stay invisible, so it just appears */
+  html[data-motion="paused"] .share-menu.is-open { animation: none; }
+  .share-menu::backdrop { background: transparent; }
+
+  .share-menu__head { @apply px-3 pt-2 pb-2; }
+  .share-menu__eyebrow { @apply block text-[11px] font-bold tracking-[0.16em] text-ink-500 uppercase; }
+  .share-menu__what { @apply mt-0.5 line-clamp-2 block text-sm leading-snug font-semibold text-ink-900; }
+  .share-menu__list { @apply border-t border-ink-100 pt-1.5; }
+
+  .share-menu__item {
+    @apply flex min-h-11 w-full items-center gap-3 rounded-xl px-2.5 text-left text-[15px] font-semibold text-ink-800 transition-colors hover:bg-ink-50 hover:text-ink-950 lg:min-h-10;
+  }
+  .share-menu__item:focus-visible { @apply bg-ink-50 text-ink-950; outline-offset: -2px; }
+  .share-menu__ico {
+    @apply grid size-8 shrink-0 place-items-center rounded-lg;
+    background: var(--a-100);
+    color: var(--a-700);
+  }
+  .share-menu__item.is-done { @apply text-sage-800; }
+  .share-menu__item.is-done .share-menu__ico { @apply bg-sage-100 text-sage-700; }
+  .share-menu__ext { @apply ml-auto size-3.5 shrink-0 text-ink-400; }
+
+  /* shown only when the browser would not copy: the link, selected, to copy by hand */
+  .share-menu__url { @apply mx-1 mt-1.5 mb-1 block w-[calc(100%-0.5rem)] rounded-lg bg-ink-50 px-2.5 py-2 font-mono text-xs text-ink-800 ring-1 ring-ink-200; }
+}
+
+@keyframes share-in {
+  from { opacity: 0; transform: translateY(-4px) scale(0.98); }
+}
+@keyframes share-in-up {
+  from { opacity: 0; transform: translateY(4px) scale(0.98); }
+}
+
+@media print {
+  .share, .share-menu { display: none !important; }
+}

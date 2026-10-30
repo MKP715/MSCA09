@@ -1,0 +1,263 @@
+---
+pagination:
+  data: langs
+  size: 1
+  alias: lang
+  addAllPagesToCollections: true
+permalink: "{{ lang.prefix }}/calendar/flyers/"
+layout: base.njk
+title_key: calendar.flyers.title
+meta_title_key: calendar.flyers.meta_title
+description_key: calendar.flyers.description
+accent: coral
+scripts: ["/assets/js/flyers.js"]
+jsText: ["calendar.flyers.count_one", "calendar.flyers.count_n", "calendar.flyers.count_of"]
+---
+{#-
+  /calendar/flyers/ — every upcoming event and meeting flyer (calendar.flyerWall, src/_data/calendar.js: the whole build
+  window, 550 days ahead, and the one-time events further ahead that have a flyer: the "Further ahead" list of /events/).
+  Reached from the "All event flyers" button and the "See every upcoming event flyer" link of /calendar/'s event
+  flyers, and from the quick links of /events/. From the top:
+    1. a slim header in the calendar's style: breadcrumbs (Home › Area calendar › Event flyers, also given to search
+       engines), title, share
+    2. the filters (flyers.js, Alpine "flyerWall"): search, When (all upcoming · next 30 days · next 90 days · a month),
+       Show (everything · events · regular meetings), Type, Language, Format, District. Nothing chosen = every card, and
+       the choice is kept in the address (?when=90&type=workshop&lang=es&format=hybrid&district=d14&show=events&q=…), so
+       a filtered view can be shared. Phones and tablets: the search box and a Filters button that opens the rest, and a
+       "Show results" button (or Escape) at its foot that folds it again; from 1024px everything is open. Without JavaScript the bar is not shown (html:not(.js), until flyers.js marks the page
+       .fw-ready) and every card is.
+    3. Upcoming events, by month (Pacific time): one-time events, the repeating YPAA committees at their next date, and a
+       single date with a flyer of its own. Every month in which one of the dates they carry falls has its group; the
+       groups with no card at build time are sent hidden (and kept out of site search), for a repeating event that the
+       browser moves on into them, or shows at its date in the month chosen in the When list.
+    4. Regular meetings with flyers, each at its next date with its pattern ("Every 3rd Sunday").
+  Cards: macros/events.njk eventCard, flyer variant with `gallery` — the picture opens the card's flyers full size
+  (PhotoSwipe, app.js), the text links to the event page. Each card carries its coming dates (data-dates): flyers.js
+  shows the next one as they pass, and app.js removes the card once its last date is over (data-hide-after), so the page
+  stays right between builds. No build time is printed: an unchanged calendar gives the same page all day.
+-#}
+{%- from "macros/events.njk" import eventCard -%}
+{%- from "macros/ui.njk" import breadcrumbLd, shareButton, emptyState -%}
+{%- set L = lang -%}
+{%- set W = calendar.flyerWall -%}
+{%- set all = W.events.concat(W.meetings) -%}
+{%- set firstKey = all[0].key if all.length else "" -%}
+{#- the grid: one column on phones, 2 from 480px, 3 from 1024px, 4 from 1536px, 5 from 1920px (.ev-grid--flyer).
+    Phones take the 640px file (the default): the 800px one (phoneMax: 800) is a little sharper on a phone's one card,
+    but the first flyer then shows about a second later on a slow connection (owner's choice, Oct 30, 2026: speed) -#}
+{%- set sizes = "(min-width: 1920px) 18vw, (min-width: 1536px) 22vw, (min-width: 1024px) 30vw, (min-width: 480px) 45vw, 92vw" -%}
+
+{#- one card. first: the page's first picture (loaded at once, with high priority; the others lazily) -#}
+{%- macro wallCard(c, L, sizes, level, first) -%}
+{{ eventCard({ occ: c, lang: L, variant: "flyer", tag: "li", sizes: sizes, prio: "high" if first else "", level: level,
+               gallery: c | calLoc("flyers", L), details: true, dates: c.dates, hideAfter: c.lastEnd,
+               data: { "fw-card": c.key, "fw-kind": c.kind, "fw-type": c.typeSlug, "fw-lang": c.langKey, "fw-format": c.formatKey,
+                       "fw-districts": (c.districts or []) | join(" "), "search": c.search } }) }}
+{%- endmacro -%}
+
+{#- ---------------------------------------------------------- slim page header -#}
+<section class="cal-hero relative isolate overflow-hidden" style="{{ 'coral' | accent }}">
+  <div class="cal-hero__bg absolute inset-0 -z-10" aria-hidden="true"></div>
+  <div class="bg-confetti absolute inset-0 -z-10 opacity-60" aria-hidden="true"></div>
+  <img src="/assets/img/logo/logo-{{ L.code }}-256.webp" alt="" aria-hidden="true" width="256" height="256" loading="lazy"
+       class="pointer-events-none absolute -top-10 right-6 -z-10 hidden size-56 rotate-12 opacity-[0.07] lg:block 2xl:right-16">
+  <div class="wrap pt-4 pb-6 sm:pt-5 lg:pt-6 lg:pb-8">
+    <div class="mb-3 flex items-center justify-between gap-3">
+      <nav aria-label="{{ 'nav.breadcrumb' | t(L) }}" class="min-w-0 text-sm">
+        <ol class="-my-3 flex flex-wrap items-center gap-x-1.5 text-ink-600 lg:my-0 lg:gap-y-1.5">
+          <li><a href="{{ '/' | lurl(L) }}" class="-ml-3.5 inline-flex size-11 items-center justify-center hover:text-ink-900 lg:ml-0 lg:size-auto">{% icon "house", "size-4" %}<span class="sr-only">{{ "nav.home" | t(L) }}</span></a></li>
+          <li class="flex items-center gap-1.5">{% icon "chevron-right", "size-3.5 text-ink-300" %}<a href="{{ '/calendar/' | lurl(L) }}" class="inline-flex min-h-11 min-w-11 items-center justify-center hover:text-ink-900 lg:min-h-0 lg:min-w-0">{{ "calendar.title" | t(L) }}</a></li>
+          <li class="flex min-h-11 min-w-0 items-center gap-1.5 lg:min-h-0">{% icon "chevron-right", "size-3.5 text-ink-300" %}<span class="truncate font-medium text-ink-800" aria-current="page">{{ title }}</span></li>
+        </ol>
+      </nav>
+      {{ shareButton({ lang: L, title: title, style: "pill" }) }}
+    </div>
+    {{ breadcrumbLd({ lang: L, crumbs: [{ label_key: "calendar.title", url: "/calendar/" }], title: title, base: site.url }) }}
+    <div class="flex flex-wrap items-center justify-between gap-x-10 gap-y-4">
+      <div class="flex min-w-0 flex-1 basis-[20rem] items-center gap-4">
+        <span class="icon-tile hidden size-12 shrink-0 rounded-2xl sm:grid lg:size-14">{% icon "images", "size-6 lg:size-7" %}</span>
+        <div class="min-w-0">
+          <h1 class="font-display text-3xl font-extrabold tracking-tight text-balance text-ink-950 sm:text-4xl 2xl:text-5xl" data-pagefind-weight="10">{{ title }}</h1>
+          <p class="mt-1 text-[15px] leading-snug text-pretty text-ink-600 sm:text-base">{{ "calendar.flyers.lead" | t(L) }}</p>
+        </div>
+      </div>
+      <a href="{{ '/calendar/' | lurl(L) }}" class="btn btn-white shrink-0 max-sm:hidden">{% icon "calendar-days", "size-4 text-ocean-600" %}{{ "calendar.open_calendar" | t(L) }}</a>
+    </div>
+  </div>
+</section>
+
+{%- if all.length %}
+<div x-data="flyerWall" class="fw-page wrap pt-6 pb-16 sm:pt-8 lg:pt-10 lg:pb-20">
+  {#- ---------------------------------------------------------- filters (with JavaScript only) -#}
+  <form class="fw-bar" role="search" aria-label="{{ 'calendar.flyers.filters_label' | t(L) }}" @submit.prevent data-pagefind-ignore>
+    <div class="fw-bar__top">
+      <label class="cal-search fw-search">
+        {% icon "search", "size-5 shrink-0 text-ink-500" %}
+        <span class="sr-only">{{ "calendar.flyers.search_label" | t(L) }}</span>
+        <input type="search" x-model.debounce.250ms="f.q" placeholder="{{ 'calendar.flyers.search' | t(L) }}" autocomplete="off" enterkeyhint="search">
+      </label>
+      <button type="button" class="cal-filter-btn fw-toggle" @click="open = !open" aria-expanded="false" :aria-expanded="open.toString()" aria-controls="fw-panel">
+        {% icon "sliders-horizontal", "size-4" %}{{ "ui.filters" | t(L) }}<span class="cal-filter-btn__n" x-cloak x-show="activeCount() > 0" x-text="activeCount()"></span>
+      </button>
+      <p class="fw-count"><strong x-text="countText()">{{ ("calendar.flyers.count_one" | t(L)) if all.length == 1 else ("calendar.flyers.count_n" | t(L, { n: all.length })) }}</strong></p>
+      <button type="button" class="cal-clear" x-cloak x-show="activeCount() > 0" @click="clear()">{{ "calendar.flyers.clear" | t(L) }}</button>
+    </div>
+    <p class="sr-only" role="status" aria-live="polite" x-text="announce"></p>
+
+    <div id="fw-panel" class="fw-panel" :class="open && 'is-open'" @keydown.escape="if (open) { $event.stopPropagation(); done() }">
+      {#- ---- when: all upcoming (default) · next 30 / 90 days · a month with an event -#}
+      <fieldset class="fw-group">
+        <legend class="flt-legend">{{ "calendar.flyers.when" | t(L) }}</legend>
+        <div class="flt-pills">
+          {%- for w in [{ v: "", key: "calendar.flyers.when_all", icon: "calendar-days" }, { v: "30", key: "calendar.flyers.when_30", icon: "calendar-clock" }, { v: "90", key: "calendar.flyers.when_90", icon: "calendar-range" }] %}
+          <label class="flt-pill" style="{{ 'ocean' | accent }}">
+            <input type="radio" class="sr-only" name="fw-when" value="{{ w.v }}" x-model="f.when"{% if not w.v %} checked{% endif %}>
+            <span class="flt-pill__in">{% icon w.icon, "size-3.5" %}{{ w.key | t(L) }}<span class="flt-pill__n" x-text="facet('when', {{ w.v | json }})">{{ all.length if not w.v }}</span></span>
+          </label>
+          {%- endfor %}
+          {%- if W.months.length %}
+          <label class="fw-month-pick">
+            <span class="sr-only">{{ "calendar.flyers.month" | t(L) }}</span>
+            <select class="flt-select" data-fw-months :value="monthValue()" @change="f.when = $event.target.value">
+              <option value="">{{ "calendar.flyers.any_month" | t(L) }}</option>
+              {%- for m in W.months %}
+              {#- a choice starts with a capital ("Octubre de 2026"), as the month headings do -#}
+              {%- set ml = m.key | dt("month", L) | capitalize %}
+              <option value="{{ m.key }}" :disabled="facet('month', {{ m.key | json }}) === 0 && f.when !== {{ m.key | json }}" x-text="optLabel({{ ml | json }}, 'month', {{ m.key | json }})">{{ ml }}</option>
+              {%- endfor %}
+            </select>
+          </label>
+          {%- endif %}
+        </div>
+      </fieldset>
+
+      {#- ---- show: everything (default) · events · regular meetings -#}
+      <fieldset class="fw-group">
+        <legend class="flt-legend">{{ "calendar.flyers.show" | t(L) }}</legend>
+        <div class="flt-pills">
+          {%- for s in [{ v: "", key: "calendar.flyers.show_all", icon: "images", color: "iris" }, { v: "events", key: "calendar.flyers.show_events", icon: "sparkles", color: "coral" }, { v: "meetings", key: "calendar.events.meetings", icon: "repeat", color: "sea" }] %}
+          <label class="flt-pill" style="{{ s.color | accent }}">
+            <input type="radio" class="sr-only" name="fw-show" value="{{ s.v }}" x-model="f.show"{% if not s.v %} checked{% endif %}>
+            <span class="flt-pill__in">{% icon s.icon, "size-3.5" %}{{ s.key | t(L) }}<span class="flt-pill__n" x-text="facet('show', {{ s.v | json }})">{{ (all.length if not s.v else (W.events.length if s.v == "events" else W.meetings.length)) }}</span></span>
+          </label>
+          {%- endfor %}
+        </div>
+      </fieldset>
+
+      {#- ---- language and format: any of the chosen -#}
+      <fieldset class="fw-group">
+        <legend class="flt-legend">{{ "calendar.filters.language" | t(L) }}</legend>
+        <div class="flt-pills">
+          {%- for lg in [{ k: "en", key: "language.english", color: "sea" }, { k: "es", key: "language.spanish", color: "coral" }, { k: "bi", key: "language.bilingual", color: "sun" }] %}
+          <label class="flt-pill" style="{{ lg.color | accent }}">
+            <input type="checkbox" class="sr-only" value="{{ lg.k }}" x-model="f.langs">
+            <span class="flt-pill__in">{% icon "languages", "size-3.5" %}{{ lg.key | t(L) }}<span class="flt-pill__n" x-text="facet('langs', {{ lg.k | json }})">{{ all | where("langKey", lg.k) | length }}</span></span>
+          </label>
+          {%- endfor %}
+        </div>
+      </fieldset>
+      <fieldset class="fw-group">
+        <legend class="flt-legend">{{ "calendar.filters.format" | t(L) }}</legend>
+        <div class="flt-pills">
+          {%- for fm in [{ k: "in-person", key: "format.in_person", icon: "map-pin", color: "sage" }, { k: "hybrid", key: "format.hybrid", icon: "monitor-smartphone", color: "iris" }, { k: "online", key: "format.virtual", icon: "video", color: "ocean" }] %}
+          <label class="flt-pill" style="{{ fm.color | accent }}">
+            <input type="checkbox" class="sr-only" value="{{ fm.k }}" x-model="f.formats">
+            <span class="flt-pill__in">{% icon fm.icon, "size-3.5" %}{{ fm.key | t(L) }}<span class="flt-pill__n" x-text="facet('formats', {{ fm.k | json }})">{{ all | where("formatKey", fm.k) | length }}</span></span>
+          </label>
+          {%- endfor %}
+        </div>
+      </fieldset>
+
+      {#- ---- type and district: only those the flyers have -#}
+      <div class="fw-group fw-selects">
+        <label class="block min-w-0">
+          <span class="flt-legend">{{ "calendar.flyers.type" | t(L) }}</span>
+          <select class="flt-select" data-fw-types x-model="f.type">
+            <option value="">{{ "calendar.flyers.all_types" | t(L) }}</option>
+            {%- for ty in W.types %}
+            {%- set tl = ty | calLoc("label", L) %}
+            <option value="{{ ty.slug }}" x-text="optLabel({{ tl | json }}, 'type', {{ ty.slug | json }})">{{ tl }}</option>
+            {%- endfor %}
+          </select>
+        </label>
+        {%- if W.districts.length %}
+        <label class="block min-w-0">
+          <span class="flt-legend">{{ "calendar.filters.district" | t(L) }}</span>
+          <select class="flt-select" data-fw-districts x-model="f.district">
+            <option value="">{{ "calendar.filters.all_districts" | t(L) }}</option>
+            {%- for d in W.districts %}
+            {%- set dlab = d | calLoc("label", L) %}
+            <option value="{{ d.slug }}" x-text="optLabel({{ dlab | json }}, 'district', {{ d.slug | json }})">{{ dlab }}</option>
+            {%- endfor %}
+          </select>
+        </label>
+        {%- endif %}
+      </div>
+
+      {#- phones and tablets: fold the filters away and go back to the flyers (Escape does the same) -#}
+      <div class="fw-panel__foot">
+        <button type="button" class="btn btn-ocean flex-1" @click="done()">
+          {{ "calendar.filters.show" | t(L) }} <span class="rounded-full bg-white/25 px-2 py-0.5 text-xs" x-text="Math.max(shown, 0)">{{ all.length }}</span>
+        </button>
+      </div>
+    </div>
+  </form>
+
+  {#- the target of "Clear filters" in the empty state (the button goes away) -#}
+  <div x-ref="results" tabindex="-1" class="fw-results">
+    {#- ---------------------------------------------------------- events, by month -#}
+    <section id="events" class="fw-section scroll-mt-28" aria-labelledby="fw-events-title" data-fw-section{% if not W.events.length %} hidden{% endif %}>
+      <div class="fw-section__head">
+        <h2 id="fw-events-title" class="h-section text-balance">{{ "calendar.events.upcoming" | t(L) }}</h2>
+        <p class="lead mt-2 text-pretty">{{ "calendar.flyers.events_lead" | t(L) }}</p>
+      </div>
+      <div class="fw-months">
+      {%- for m in W.months %}
+      {#- the heading is the month alone (its name for screen readers and its title in site search); the count beside it
+          is for the eye (a list says how many items it has) -#}
+      <section class="fw-month" data-fw-month="{{ m.key }}" aria-labelledby="fw-m-{{ m.key }}"{% if not m.cards.length %} hidden data-pagefind-ignore="all"{% endif %}>
+        <div class="fw-month__title"><h3 id="fw-m-{{ m.key }}" class="first-letter:uppercase">{{ m.key | dt("month", L) }}</h3><span class="chip chip-accent" data-fw-n aria-hidden="true" data-pagefind-ignore>{{ m.cards.length }}</span></div>
+        <ul class="ev-grid ev-grid--flyer" role="list" data-fw-list>
+          {%- for c in m.cards %}
+          {{ wallCard(c, L, sizes, 4, c.key == firstKey) }}
+          {%- endfor %}
+        </ul>
+      </section>
+      {%- endfor %}
+      </div>
+    </section>
+
+    {#- ---------------------------------------------------------- regular meetings -#}
+    <section id="meetings" class="fw-section scroll-mt-28" aria-labelledby="fw-meetings-title" data-fw-section{% if not W.meetings.length %} hidden{% endif %}>
+      <div class="fw-section__head">
+        <h2 id="fw-meetings-title" class="h-section text-balance">{{ "calendar.flyers.meetings_title" | t(L) }}</h2>
+        <p class="lead mt-2 text-pretty">{{ "calendar.flyers.meetings_lead" | t(L) }}</p>
+      </div>
+      <ul class="ev-grid ev-grid--flyer" role="list" data-fw-list>
+        {%- for c in W.meetings %}
+        {{ wallCard(c, L, sizes, 3, c.key == firstKey) }}
+        {%- endfor %}
+      </ul>
+    </section>
+
+    {#- nothing matches the filters -#}
+    <div class="ev-empty" x-cloak x-show="shown === 0">
+      <span class="icon-tile-soft size-11">{% icon "search-x", "size-5" %}</span>
+      <p><strong class="block text-ink-900">{{ "calendar.flyers.empty_title" | t(L) }}</strong>{{ "calendar.flyers.empty_body" | t(L) }}</p>
+      <button type="button" class="btn btn-ghost btn-sm" @click="clear(true)">{% icon "x", "size-4" %}{{ "calendar.flyers.clear" | t(L) }}</button>
+    </div>
+  </div>
+
+  <div class="mt-14 flex flex-wrap justify-center gap-3">
+    <a href="{{ '/calendar/' | lurl(L) }}" class="btn btn-ghost">{% icon "calendar-days", "size-4" %}{{ "calendar.open_calendar" | t(L) }}</a>
+    <a href="{{ '/events/' | lurl(L) }}" class="btn btn-ghost">{% icon "list", "size-4" %}{{ "calendar.featured.all" | t(L) }}</a>
+  </div>
+</div>
+{%- else %}
+<div class="wrap py-16 lg:py-20">
+  {{ emptyState({ icon: "images", title: "calendar.flyers.none" | t(L), color: "coral" }) }}
+  <div class="mt-8 flex justify-center">
+    <a href="{{ '/calendar/' | lurl(L) }}" class="btn btn-ghost">{% icon "calendar-days", "size-4" %}{{ "calendar.open_calendar" | t(L) }}</a>
+  </div>
+</div>
+{%- endif %}

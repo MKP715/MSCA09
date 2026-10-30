@@ -1,0 +1,234 @@
+old_path,new_path,note
+"# old_path = an address on the old msca09aa.org WordPress site (start and end with /). new_path = the page on this site that replaces it. Each row becomes a small page that forwards visitors (and Google) to the new address, so links on flyers, QR codes, district websites and aa.org keep working.",,
+"# An old_path ending in * matches every address that starts with it (e.g. /event/*); those are forwarded by the ""page not found"" page instead. Never use the address of a page that exists on this site (e.g. /calendar/): the site check stops with an error. Old Delegate's Corner posts are forwarded automatically from the old_url in src/content/delegate/*.md. A new short address of this site (for a flyer or an e-mail) gets a note starting with ""Short address"": its page then says ""Taking you to the page…"" instead of ""This page has moved"".",,
+/msca-officers/,/about/panel/,Officers page
+/msca-09-officers-copy/,/about/panel/,Old copy of the officers page (2023)
+/contacts/,/contact/,Contacts page (trusted servants and DCMs)
+/contact-us/,/contact/,
+/dcmc-standing-committee/,/about/panel/,"Was password-protected; the DCMCs are listed with the trusted servants"
+/website-policy/,/about/policy/,
+/aa-meetings/,/newcomers/#find,Meeting Guide page: points to the meeting-finder section of the newcomers page
+/aa-service-manual/,/resources/,
+/gso/,/resources/,General Service Office page
+/third-legacy-procedure-2/,/about/structure/,Election procedure
+/registrar/,/contact/,Registrar: group registration
+/pai-proposed-agenda-item-information/,/service/delegate/,Proposed Conference agenda items
+/conference-agenda-item-response-form/,/service/delegate/,
+/area-calendar/,/calendar/,
+/my-calendar/,/calendar/,
+/my-calendar-business-meetings/,/service/area-meetings/,
+/area-09-business/,/service/,
+/services/,/service/,
+/agendas-and-motions/,/service/motions/,
+/motions-book/,/documents/motions/,
+/area-09-minutes/,/documents/minutes/,
+/committee-reports/,/documents/reports/,
+/district-reports/,/documents/districts/,
+/pacific-regional-trustee-reports/,/documents/reports/,
+/area-09-finances/,/documents/finances/,
+/bylaws/,/documents/guidelines/,
+/area-committee-guidelines/,/documents/guidelines/,
+/forms/,/documents/forms/,
+/workbooks/,/documents/workbooks/,
+/news/,/documents/newsletters/,Area newsletter archive
+/conference-materials/,/documents/conference/,
+/general-service-conference/,/documents/conference/,
+/general-service-conference-2/,/documents/conference/,
+/general-service-conference/gsc2024-74th-gsc-post-conference-report/,/documents/conference/,
+/general-service-conference-2/gsc2025-75th-gsc-materials/,/documents/conference/,
+/panel-76-delegate-page/,/service/delegate/,
+/alternate-delegate/,/service/delegate/,
+/panel-74-delegates-corner/,/service/delegate/,
+/gso-announcements/,/service/delegate/,
+/gso-announcements-copy/,/service/delegate/,
+/delegate/,/service/delegate/,Old Delegate's Corner list (2023)
+/delegate-page/,/service/delegate/,Panel 76 Delegate page (2024)
+/7th-tradition/,/contribute/,
+/donations/group-contributions/,/contribute/,
+/donation-confirmation/,/contribute/,
+/donation-failed/,/contribute/,
+/donation-history/,/contribute/,
+/donor-dashboard/,/contribute/,
+/foro/,/committees/foro/,
+/xxv-la-vina/,/committees/grapevine-la-vina/,
+/accessibilities/,/committees/accessibilities/,
+/archives/,/committees/archives/,
+/archives-2/,/committees/archives/,
+/communications/,/committees/communications/,
+/convention/,/committees/convention-liaison/,
+/cooperation-with-elder-community/,/committees/cec/,
+/cooperation-with-professional-community/,/committees/cpc/,
+/corrections/,/committees/corrections/,
+/district-committee-member-dcm-school/,/committees/dcm-school/,
+/finance-committee/,/committees/finance/,
+/general-service-representative-gsr-school/,/committees/gsr-school/,
+/grapevine-la-vina/,/committees/grapevine-la-vina/,
+/guidelines-and-policies/,/committees/guidelines-policies/,
+/hospitals-institutions/,/committees/hospitals-institutions/,
+/literature/,/committees/literature/,
+/public-information/,/committees/public-information/,
+/registration/,/committees/registration/,
+/remote-communities/,/committees/remote-communities/,
+/technology/,/committees/technology/,
+/treatment/,/committees/treatment/,
+/young-people-in-a-a/,/committees/ypaa/,
+/district-1-and-3/,/districts/d01-03/,
+/district-1/,/districts/d01-03/,
+/district-2-2/,/districts/d02/,
+/district-2/,/districts/d02/,
+/district-3/,/districts/d01-03/,District 3 merged into District 1 & 3
+/district-4/,/districts/d04/,
+/district-5/,/districts/d05/,
+/district-6/,/districts/d06/,
+/district-7/,/districts/d07/,
+/district-8/,/districts/d08/,
+/district-9/,/districts/d09/,
+/district-10/,/districts/d10/,
+/district-11/,/districts/d08/,District 11 (inactive) joined District 8
+/district-12/,/districts/d12/,
+/district-14/,/districts/d14/,
+/district-15/,/districts/d15/,
+/district-17/,/districts/d17/,
+/district-18/,/districts/d18/,
+/district-19/,/districts/d19/,
+/district-20/,/districts/d20/,
+/district-21/,/districts/d21/,
+/district-22/,/districts/d22/,
+/district-23/,/districts/d23/,
+/district-24/,/districts/d24/,
+/district-25/,/districts/d25/,
+/district-30/,/districts/d30/,
+/2024/02/plbb-english/,/service/delegate/,Alternate Delegate post (2024)
+/2024/04/aaws-highlights-2024-04-03/,/service/delegate/,Alternate Delegate post (2024)
+/2024/04/box-4-5-9-winter-2023/,/service/delegate/,Alternate Delegate post (2024)
+/2024/04/box-459-reader-survey/,/service/delegate/,Alternate Delegate post (2024)
+/2024/04/quarterly-report-from-gso/,/service/delegate/,Alternate Delegate post (2024)
+/2024/04/a-celebration-of-the-big-book-flash-sale-may-1-july-31-2024/,/service/delegate/,Alternate Delegate post (2024)
+/praasa-2024-recordings/,/documents/praasa/,Old PRAASA 2024 recordings page: the PRAASA shelf of the document library
+/event/*,/calendar/,Old event pages (The Events Calendar plugin)
+"# Old event pages that Google and other sites still link to (Common Crawl, 2025-2026), each forwarded to the page that replaced it: the same event, its repeating meeting, or the page of the committee or meeting it belonged to. A forward to an event page that the calendar no longer has goes to the calendar instead (the build warns). Any other /event/ address goes to the calendar (row above).",,
+/event/msca-area-09-panel-76-servathon/,/events/msca-area-09-panel-76-servathon-2026-11-14/,Old event page
+/event/2026-pacific-regional-forum/,/events/2026-pacific-regional-forum-2026-12-04/,Old event page
+/event/acypaa-53/,/events/acypaa-53-2026-03-19/,Old event page
+/event/37th-inland-empire-a-a-convention/,/events/37th-inland-empire-a-a-convention-2026-04-17/,Old event page
+/event/41st-orange-county-a-a-convention/,/events/41st-orange-county-a-a-convention-2026-05-01/,Old event page
+/event/20th-mountain-aa-conference/,/events/20th-mountain-aa-conference-2026-08-28/,Old event page
+/event/cupids-reds-flags/,/events/cupids-reds-flags-2026-02-28/,Old event page
+/event/interdistrict-meeting-english-and-spanish/,/events/interdistrict-meeting-english-and-spanish-2026-03-29/,Old event page
+/event/soberfest-alcoholic-family-feud/,/events/soberfest-alcoholic-family-feud-2026-10-02/,Old event page
+/event/district-61218-pre-conference-agenda-item-bootcamp-in-person/,/events/district-6-12-18-pre-conference-agenda-item-bootcamp-in-pers-2026-03-22/,Old event page
+/event/rocypaa-business-meeting/,/events/rocypaa-business-meeting/,Old event page (a repeating meeting: its calendar page)
+/event/rocypaa-business-meeting-2/,/events/rocypaa-business-meeting/,Old event page (a repeating meeting: its calendar page)
+/event/d09-gsr-school-2/,/events/d09-gsr-school/,Old event page (a repeating meeting: its calendar page)
+/event/d09-gsr-school-3/,/events/d09-gsr-school/,Old event page (a repeating meeting: its calendar page)
+/event/gsr-school-virtual/,/committees/gsr-school/,Old event page (GSR School Virtual)
+/event/gsr-school-virtual-2/,/committees/gsr-school/,Old event page (GSR School Virtual)
+/event/gsr-school-virtual-3/,/committees/gsr-school/,Old event page (GSR School Virtual)
+/event/gsr-school-virtual-10/,/committees/gsr-school/,Old event page (GSR School Virtual)
+/event/gsr-school-virtual-11/,/committees/gsr-school/,Old event page (GSR School Virtual)
+/event/gsr-school-virtual-12/,/committees/gsr-school/,Old event page (GSR School Virtual)
+/event/2025-msca-09-monthly-service-study-and-committee-sharing-1-16/,/committees/monthly-service-study/,Old event page (Monthly Service Study)
+/event/2025-msca-09-monthly-service-study-and-committee-sharing-2-20/,/committees/monthly-service-study/,Old event page (Monthly Service Study)
+/event/2025-msca-09-monthly-service-study-and-committee-sharing-3-20/,/committees/monthly-service-study/,Old event page (Monthly Service Study)
+/event/2025-msca-09-monthly-service-study-and-committee-sharing-4-17/,/committees/monthly-service-study/,Old event page (Monthly Service Study)
+/event/2025-msca-09-monthly-service-study-and-committee-sharing-9-18/,/committees/monthly-service-study/,Old event page (Monthly Service Study)
+/event/2025-msca-09-monthly-service-study-and-committee-sharing-10-16/,/committees/monthly-service-study/,Old event page (Monthly Service Study)
+/event/2025-msca-09-monthly-service-study-and-committee-sharing-11-20/,/committees/monthly-service-study/,Old event page (Monthly Service Study)
+/event/monthly-service-study-and-sharing-session-3/,/committees/monthly-service-study/,Old event page (Monthly Service Study)
+/event/monthly-service-study-and-sharing-session-5/,/committees/monthly-service-study/,Old event page (Monthly Service Study)
+/event/monthly-service-study-and-sharing-session-6/,/committees/monthly-service-study/,Old event page (Monthly Service Study)
+/event/monthly-service-study-and-sharing-session-copy/,/committees/monthly-service-study/,Old event page (Monthly Service Study)
+/event/service-manual-study-5-16-2024/,/committees/monthly-service-study/,Old event page (Monthly Service Study: Service Manual workshop 2024)
+/event/service-manual-workshop-6-20-2024/,/committees/monthly-service-study/,Old event page (Monthly Service Study: Service Manual workshop 2024)
+/event/service-manual-study-9-19-2024/,/committees/monthly-service-study/,Old event page (Monthly Service Study: Service Manual workshop 2024)
+/event/service-manual-study-11-14-2024/,/committees/monthly-service-study/,Old event page (Monthly Service Study: Service Manual workshop 2024)
+/event/msca-area-09-service-workshop-6/,/committees/monthly-service-study/,Old event page (Monthly Service Study: Area 09 Service Workshop 2022)
+/event/msca-area-09-service-workshop-7/,/committees/monthly-service-study/,Old event page (Monthly Service Study: Area 09 Service Workshop 2022)
+/event/msca-area-09-service-workshop-8/,/committees/monthly-service-study/,Old event page (Monthly Service Study: Area 09 Service Workshop 2022)
+/event/msca-area-09-service-workshop-9/,/committees/monthly-service-study/,Old event page (Monthly Service Study: Area 09 Service Workshop 2022)
+/event/msca-area-09-service-workshop-10/,/committees/monthly-service-study/,Old event page (Monthly Service Study: Area 09 Service Workshop 2022)
+/event/a09-workshop-a-a-around-the-world/,/committees/monthly-service-study/,Old event page (Monthly Service Study 2023)
+/event/a09-workshop-how-to-teach-anyone-anywhere/,/committees/monthly-service-study/,Old event page (Monthly Service Study 2023)
+/event/area-09-service-workshop-committee-sharing-session/,/committees/monthly-service-study/,Old event page (Monthly Service Study)
+/event/area-service-assembly/,/service/area-meetings/,Old event page (Area Service Assembly)
+/event/jan-12-2025-area-service-assembly-asa/,/service/area-meetings/,Old event page (Area Service Assembly)
+/event/june-8th-area-service-assembly-online-only/,/service/area-meetings/,Old event page (Area Service Assembly)
+/event/msca09-area-assembly-20240908/,/service/area-meetings/,Old event page (Area Service Assembly)
+/event/area-service-committee-2/,/service/area-meetings/,Old event page (Area Service Committee)
+/event/area-service-committee-asc-10/,/service/area-meetings/,Old event page (Area Service Committee)
+/event/area-service-committee-asc-13/,/service/area-meetings/,Old event page (Area Service Committee)
+/event/area-service-committee-asc-16/,/service/area-meetings/,Old event page (Area Service Committee)
+/event/area-service-committee-asc-20240310/,/service/area-meetings/,Old event page (Area Service Committee)
+/event/area-service-committee-asc-20240609/,/service/area-meetings/,Old event page (Area Service Committee)
+/event/area-service-committee-asc-20240811/,/service/area-meetings/,Old event page (Area Service Committee)
+/event/area-service-committee-asc-copy/,/service/area-meetings/,Old event page (Area Service Committee)
+/event/area-service-committee-asc-copy-2/,/service/area-meetings/,Old event page (Area Service Committee)
+/event/march-2025-asc/,/service/area-meetings/,Old event page (Area Service Committee)
+/event/preconference-area-service-committee/,/service/area-meetings/,Old event page (Area Service Committee)
+/event/budget-setting-meeting/,/service/area-meetings/,Old event page (Area budget-setting meeting)
+/event/area-09-pre-conference-mock-conference/,/committees/pre-conference/,Old event page (Pre-Conference)
+/event/pre-conference-mock-general-service-conference-apr-6th-and-7th/,/committees/pre-conference/,Old event page (Pre-Conference)
+/event/pre-conference-mock-general-service-conference-apr-6th-online-apr-7th-hybrid/,/committees/pre-conference/,Old event page (Pre-Conference)
+/event/pre-conference-sharing-session-and-mock-conference-prep-at-the-area-meeting/,/committees/pre-conference/,Old event page (Pre-Conference)
+/event/pre-conference-boot-camp-d61812/,/committees/pre-conference/,Old event page (Pre-Conference boot camp)
+/event/pre-conference-boot-camp-put-on-by-d6-d12-d18/,/committees/pre-conference/,Old event page (Pre-Conference boot camp)
+/event/spanish-interdistrict-pre-conference-hosted-by-d21/,/committees/pre-conference/,Old event page (Spanish Inter-District Pre-Conference)
+/event/district-17-pre-conference-workshop/,/committees/pre-conference/,Old event page (Pre-Conference)
+/event/chat-with-the-delegate-2/,/service/delegate/,Old event page (Chat with the Delegate)
+/event/chat-with-the-delegate-4/,/service/delegate/,Old event page (Chat with the Delegate)
+/event/delegate-report-back-to-area-09/,/service/delegate/,Old event page (Delegate's report back)
+/event/delegates-report-back/,/service/delegate/,Old event page (Delegate's report back)
+/event/general-service-conferencenew-york-hilton-midtown/,/service/delegate/,Old event page (General Service Conference)
+/event/prassa-2025/,/service/delegate/,Old event page (PRAASA 2025)
+/event/panel-75-conferencia-de-servicios-generales-trabajando-juntos-aumentando-la-confianza/,/es/service/delegate/,Old event page (in Spanish: General Service Conference)
+/event/servathon-of-2023/,/committees/servathon/,Old event page (Servathon)
+/event/servathon-of-2024/,/committees/servathon/,Old event page (Servathon)
+/event/4-area-dcm-sharing-session-2/,/committees/four-area-dcm-sharing/,Old event page (Four-Area DCM Sharing Session)
+/event/4-area-dcm-sharing-session-2024/,/committees/four-area-dcm-sharing/,Old event page (Four-Area DCM Sharing Session)
+/event/dcmc-school-3/,/committees/dcm-school/,Old event page (DCMC School)
+/event/msca09-archives-open-house/,/committees/archives/,Old event page (Archives Open House)
+/event/literature-committee-meeting-2/,/committees/literature/,Old event page (Literature Committee meeting)
+/event/remote-communities-meeting-10/,/committees/remote-communities/,Old event page (Remote Communities meeting)
+/event/treatment-committee-meeting-6/,/committees/treatment/,Old event page (Treatment Committee meeting)
+/event/treatment-committee-meeting-8/,/committees/treatment/,Old event page (Treatment Committee meeting)
+/event/treatment-committee-meeting-copy/,/committees/treatment/,Old event page (Treatment Committee meeting)
+/event/msca09-treatment-committee-2/,/committees/treatment/,Old event page (Treatment Committee meeting)
+/event/msca09-treatment-committee-3/,/committees/treatment/,Old event page (Treatment Committee meeting)
+/event/la-vina-workshop-held-by-the-grapevine-board/,/committees/grapevine-la-vina/,Old event page (Grapevine / La Viña)
+/event/november-2-grapevine-lavina-event/,/committees/grapevine-la-vina/,Old event page (Grapevine / La Viña)
+/event/la-zona-maravilla-desvelando-los-misterios-de-aa-org-y-aagrapevine-org/,/es/committees/grapevine-la-vina/,Old event page (in Spanish: Grapevine / La Viña)
+/event/hispanic-hi-conference-of-southern-california/,/committees/hospitals-institutions/,Old event page (H&I conference)
+/event/42nd-annual-southern-california-hi-conference/,/committees/hospitals-institutions/,Old event page (H&I conference)
+/event/72nd-southern-california-a-a-convention/,/committees/convention-liaison/,Old event page (a convention: the Convention Liaison page lists the coming ones)
+/event/southern-california-aa-convention/,/committees/convention-liaison/,Old event page (a convention: the Convention Liaison page lists the coming ones)
+/event/2024-40th-south-bay-roundup/,/committees/convention-liaison/,Old event page (a convention: the Convention Liaison page lists the coming ones)
+/event/traditions-day-2024-district-12/,/districts/d12/,Old event page (District 12)
+/event/district-08-delegate-report-back-workshop/,/districts/d08/,Old event page (District 8)
+/event/gsrs-get-a-bad-rap-district-09-gsr-workshop/,/districts/d09/,Old event page (District 9)
+/event/aa-service-commitments-workshop-hosted-by-district-10/,/districts/d10/,Old event page (District 10)
+/events/11th-hispanic-woman-s-workshop-2026-12-12/,/events/11th-hispanic-women-s-workshop-2026-12-12/,"Event renamed on Oct 7, 2026 (Woman's → Women's)"
+/es/events/11th-hispanic-woman-s-workshop-2026-12-12/,/es/events/11th-hispanic-women-s-workshop-2026-12-12/,"Spanish twin of the event renamed on Oct 7, 2026"
+/events/*,/calendar/,"Old event lists, categories and day views"
+/es/events/*,/es/calendar/,"Spanish event addresses that no longer exist (renamed, moved or deleted entries)"
+/venue/*,/calendar/,
+/organizer/*,/calendar/,
+/donor-dashboard*,/contribute/,Old donation plugin pages
+/donations/*,/contribute/,
+/category/*,/service/delegate/,Old post categories
+/tag/*,/service/delegate/,Old post tags
+/2020/*,/service/delegate/,Old posts by date
+/2021/*,/service/delegate/,
+/2022/*,/service/delegate/,
+/2023/*,/service/delegate/,
+/2024/*,/service/delegate/,
+/2025/*,/service/delegate/,
+/2026/*,/service/delegate/,
+/panel-76-delegate-page/*,/service/delegate/,
+/delegate/*,/service/delegate/,Old Delegate's Corner list pages (page/2/ and later)
+/general-service-conference-2/*,/documents/conference/,
+/general-service-conference/*,/documents/conference/,
+/wp-content/uploads/*,/documents/,"Old files: the visitor lands in the document library with the file name already searched"
+/prf2028/,/service/prf-2028/,Short address on the PRF 2028 Save the Date flyer (QR code)
+/es/prf2028/,/es/service/prf-2028/,Short address on the Spanish PRF 2028 flyer (QR code)
+/report/,/service/reports/,"Short address for sending reports to the Secretary (agendas, e-mails, flyers)"
+/es/informe/,/es/service/reports/,"Short address for sending reports to the Secretary, in Spanish"

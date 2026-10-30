@@ -1,0 +1,284 @@
+﻿panel,level,body_en,body_es,body_sort,position_en,position_es,position_sort,name,email,email_alt,district,committee,language,status,notes
+"# Every trusted servant of the current panel (and the previous one). ANONYMITY: first name + last initial only; only service e-mail addresses (role mailboxes) — never a personal e-mail or phone. The one exception: a servant's own address that the servant and the Area asked to publish, listed as kind email-approved in data/contact-allowlist.csv (today only the Grapevine Chair's email_alt).",,,,,,,,,,,,,,,
+"# level: area | committee | coordinate | subcommittee | ad-hoc | district. district = district slug (d01-03, d02 …). committee = committee slug from committees.csv. DISTRICT ROWS: six seats only — the five district officers (DCMC, Alternate DCMC, Secretary, Treasurer, Registrar) and the district's GSR School Chair — one row each for every active district, in that order (position_sort 1–6; position_es of the sixth: Coordinador(a) de Escuela de RSG); a seat without details stays as an empty row with status Unknown so every district page looks the same. Other district committee chairs, DCMs and alternates of other seats are not listed.",,,,,,,,,,,,,,,
+"# status: Filled | Open (vacant — leave name empty) | Unnamed (role mailbox known, name not published) | Unconfirmed (someone serves but the name is not confirmed yet: the site marks the name 'to be confirmed', or shows 'name to be confirmed' when name is empty) | Unknown (not provided yet: the district has not told the Area who holds the seat or that it is open — leave name and email empty) | Completed. email = the @msca09aa.org role address when there is one; email_alt = another role mailbox (a gmail/outlook… email_alt is not shown when the seat has an @msca09aa.org address — unless data/contact-allowlist.csv lists it as kind email-approved: a servant's own address published at the servant's and the Area's request).",,,,,,,,,,,,,,,
+76,area,Area officers,Oficiales del Área,10,Delegate,Delegado(a),1,Debra L.,delegate@msca09aa.org,p76delegatemsca09@gmail.com,,delegate,English,Filled,email_alt (free-mail) is not shown on the site; the @msca09aa.org address is the one that stays with the position.
+76,area,Area officers,Oficiales del Área,10,Alternate Delegate,Delegado(a) Alterno(a),2,Tara F.,delegatealt@msca09aa.org,msca09.altdelegate@gmail.com,,alternate-delegate,English,Filled,email_alt (free-mail) is not shown on the site; the @msca09aa.org address is the one that stays with the position.
+76,area,Area officers,Oficiales del Área,10,Area Chair,Coordinador(a) del Área,3,Eric G.,chair@msca09aa.org,msca09chair@gmail.com,,chair,English,Filled,email_alt (free-mail) is not shown on the site; the @msca09aa.org address is the one that stays with the position.
+76,area,Area officers,Oficiales del Área,10,Secretary,Secretario(a),4,Brian S.,secretary@msca09aa.org,msca09secretary@gmail.com,,secretary,English,Filled,email_alt (free-mail) is not shown on the site; the @msca09aa.org address is the one that stays with the position.
+76,area,Area officers,Oficiales del Área,10,Treasurer – Accounts Payable,Tesorero(a) – Cuentas por Pagar,5,Vicki R.,treasurerap@msca09aa.org,p76treasurerap@outlook.com,,treasurer-ap,English,Filled,email_alt (free-mail) is not shown on the site; the @msca09aa.org address is the one that stays with the position.
+76,area,Area officers,Oficiales del Área,10,Treasurer – Accounts Receivable,Tesorero(a) – Cuentas por Cobrar,6,Martin J.,treasurerar@msca09aa.org,,,treasurer-ar,English,Filled,
+76,area,Area officers,Oficiales del Área,10,Registrar,Registrador(a),7,Charles A.,registrar@msca09aa.org,mscaa09p76registrar@gmail.com,,registrar,English,Unconfirmed,"UNCONFIRMED: Charles A. is printed in the Panel 76 roster, the old site, the approved May 17, 2026 Assembly minutes (EN and ES), the Aug 9, 2026 ASC draft minutes and the Treasurers' 7th Tradition flyer (Aug 2026); only the Panel 76 Committee Chair Tool Kits (Feb 2026) say Charles R. The site marks the name 'to be confirmed' until the Registrar or Area Chair confirms it; then set status to Filled."
+76,committee,Standing committees,Comités permanentes,20,Accessibilities Chair,Coordinador(a) de Accesibilidades,100,Bob K.,accessibilitieschair@msca09aa.org,,,accessibilities,English,Filled,
+76,committee,Standing committees,Comités permanentes,20,Accessibilities Chair (Spanish),Coordinador(a) de Accesibilidades (español),101,,accessibilitieschair-es@msca09aa.org,,,accessibilities,Spanish,Open,
+76,committee,Standing committees,Comités permanentes,20,Archives Chair,Coordinador(a) de Archivos Históricos,110,Todd W.,archiveschair@msca09aa.org,,,archives,English,Filled,
+76,committee,Standing committees,Comités permanentes,20,Archivist,Archivista,116,Mitchell B.,archivist@msca09aa.org,,,archives,,Filled,
+76,committee,Standing committees,Comités permanentes,20,Communications Chair,Coordinador(a) de Comunicaciones,120,,communicationschair@msca09aa.org,,,communications,English,Open,
+76,committee,Standing committees,Comités permanentes,20,Communications Chair (Spanish),Coordinador(a) de Comunicaciones (español),121,Maria P.,communicationschair-es@msca09aa.org,,,communications,Spanish,Filled,
+76,committee,Standing committees,Comités permanentes,20,Newsletter Editor,Editor(a) del Boletín,127,,editor@msca09aa.org,,,communications,,Open,
+76,committee,Standing committees,Comités permanentes,20,Convention Liaison Co-chair,Cocoordinador(a) de Enlace de Convenciones,130,Cyndi B.,conventionliaison@msca09aa.org,,,convention-liaison,English,Filled,
+76,committee,Standing committees,Comités permanentes,20,Convention Liaison Co-chair (Spanish),Cocoordinador(a) de Enlace de Convenciones (español),131,Leandro C.,conventionliaison-es@msca09aa.org,,,convention-liaison,Spanish,Filled,
+76,committee,Standing committees,Comités permanentes,20,CEC Chair,Coordinador(a) de Cooperación con la Comunidad de la Tercera Edad,140,Lisa Marie P.,cecchair@msca09aa.org,,,cec,English,Filled,
+76,committee,Standing committees,Comités permanentes,20,CEC Chair (Spanish),Coordinador(a) de Cooperación con la Comunidad de la Tercera Edad (español),141,Jose F.,cecchair@msca09aa.org,,,cec,Spanish,Filled,Shares cecchair@ with the English chair.
+76,committee,Standing committees,Comités permanentes,20,CPC Chair,Coordinador(a) de Cooperación con la Comunidad Profesional,150,Louis T.,cpcchair@msca09aa.org,,,cpc,English,Filled,
+76,committee,Standing committees,Comités permanentes,20,CPC Co-chair (Spanish),Cocoordinador(a) de CCP (español),151,Dario D.,cpcchair-es@msca09aa.org,,,cpc,Spanish,Filled,
+76,committee,Standing committees,Comités permanentes,20,Corrections Chair,Coordinador(a) de Instituciones Correccionales,160,Erika D.,correctionschair@msca09aa.org,,,corrections,English,Filled,
+76,committee,Standing committees,Comités permanentes,20,Corrections Chair (Spanish),Coordinador(a) de Instituciones Correccionales (español),161,,correctionschair@msca09aa.org,,,corrections,Spanish,Open,Shares the English chair's address until a Spanish chair serves.
+76,committee,Standing committees,Comités permanentes,20,Finance Chair,Coordinador(a) de Finanzas,180,Alan D.,financechair@msca09aa.org,,,finance,English,Filled,
+76,committee,Standing committees,Comités permanentes,20,Grapevine Chair,Coordinador(a) de Grapevine,190,Alex L.,grapevinechair@msca09aa.org,sobrietyroks@gmail.com,,grapevine-la-vina,English,Filled,"Entered 2026-10-17 at the owner's request. email_alt is the chair's own address (not a role mailbox), published at the Area web servant's explicit request of 2026-10-17 (data/contact-allowlist.csv, kind email-approved): the site shows it next to grapevinechair@msca09aa.org, labelled as an own e-mail. No phone number is published."
+76,committee,Standing committees,Comités permanentes,20,La Viña Chair,Coordinador(a) de La Viña,191,Ursula F.,lavinachair@msca09aa.org,,,grapevine-la-vina,Spanish,Filled,
+76,committee,Standing committees,Comités permanentes,20,GAP Chair,Coordinador(a) de Guías y Políticas,210,Spencer D.,gapchair@msca09aa.org,,,guidelines-policies,English,Filled,Roster title: Guidelines & Procedures.
+76,committee,Standing committees,Comités permanentes,20,Literature Chair,Coordinador(a) de Literatura,220,,literaturechair@msca09aa.org,,,literature,English,Open,Seat open (help wanted) since 2026-10-17.
+76,committee,Standing committees,Comités permanentes,20,Literature Chair (Spanish),Coordinador(a) de Literatura (español),221,Abel,literaturechair-es@msca09aa.org,,,literature,Spanish,Filled,
+76,committee,Standing committees,Comités permanentes,20,Public Information Chair,Coordinador(a) de Información Pública,230,,pichair@msca09aa.org,,,public-information,English,Open,
+76,committee,Standing committees,Comités permanentes,20,Public Information Chair (Spanish),Coordinador(a) de Información Pública (español),231,,pichair-es@msca09aa.org,,,public-information,Spanish,Open,
+76,committee,Standing committees,Comités permanentes,20,Registration Chair,Coordinador(a) de Registro,240,Teddi P.,registrationchair@msca09aa.org,,,registration,English,Filled,
+76,committee,Standing committees,Comités permanentes,20,Registration Chair (Spanish),Coordinador(a) de Registro (español),241,Leopoldo E.,registrationchair@msca09aa.org,,,registration,Spanish,Filled,Shares registrationchair@ with the English chair.
+76,committee,Standing committees,Comités permanentes,20,Remote Communities Chair,Coordinador(a) de Comunidades Remotas,250,Tony P.,remotecommunitieschair@msca09aa.org,,,remote-communities,English,Filled,
+76,committee,Standing committees,Comités permanentes,20,Remote Communities Chair (Spanish),Coordinador(a) de Comunidades Remotas (español),251,Mauricio T.,remotecommunitieschair-es@msca09aa.org,,,remote-communities,Spanish,Filled,
+76,committee,Standing committees,Comités permanentes,20,Technology Chair,Coordinador(a) de Tecnología,260,Teri M.,technologychair@msca09aa.org,,,technology,English,Filled,
+76,committee,Standing committees,Comités permanentes,20,Web Servant,Servidor(a) Web,266,Devin B.,webmaster@msca09aa.org,,,technology,,Filled,"Initial as printed in the Treasurer A/P report of Oct 11, 2026 (A9 Webmaster)."
+76,committee,Standing committees,Comités permanentes,20,Treatment Facilities Chair,Coordinador(a) de Centros de Tratamiento,270,Daisy F.,treatmentchair@msca09aa.org,,,treatment,English,Filled,
+76,committee,Standing committees,Comités permanentes,20,Treatment Facilities Chair (Spanish),Coordinador(a) de Centros de Tratamiento (español),271,,treatmentchair@msca09aa.org,,,treatment,Spanish,Open,Shares the English chair's address until a Spanish chair serves.
+76,committee,Standing committees,Comités permanentes,20,YPAA Chair,Coordinador(a) de Jóvenes en A.A.,280,Marissa S.,ypchair@msca09aa.org,,,ypaa,English,Unconfirmed,UNCONFIRMED: the Panel 76 roster says Marissa S.; the old YPAA page says Marissa M. The site marks the name 'to be confirmed' until the YPAA chair or Area Chair confirms it; then set status to Filled.
+76,committee,Standing committees,Comités permanentes,20,YPAA Chair (Spanish),Coordinador(a) de Jóvenes en A.A. (español),281,Tony C.,ypchair@msca09aa.org,,,ypaa,Spanish,Filled,"Confirmed by the Area web servant on 2026-10-17 (first listed on the old YPAA page, 2025). Shares ypchair@ with the English chair."
+76,committee,Service schools,Escuelas de servicio,25,DCM School Chair,Coordinador(a) de Escuela de MCD,170,,dcmschoolchair@msca09aa.org,,,dcm-school,English,Open,
+76,committee,Service schools,Escuelas de servicio,25,DCM School Chair (Spanish),Coordinador(a) de Escuela de MCD (español),171,Gildardo B.,dcmschoolchair-es@msca09aa.org,,,dcm-school,Spanish,Filled,
+76,committee,Service schools,Escuelas de servicio,25,GSR School Chair,Coordinador(a) de Escuela de RSG,200,Scott B.,gsrschoolchair@msca09aa.org,,,gsr-school,English,Filled,
+76,committee,Service schools,Escuelas de servicio,25,GSR School Chair (Spanish),Coordinador(a) de Escuela de RSG (español),201,Alejandro G.,gsrschoolchair-es@msca09aa.org,,,gsr-school,Spanish,Filled,
+76,subcommittee,Sub-committees & support,Subcomités y apoyo,30,Area Sound,Sonido del Área,500,Hugo N.,chair@msca09aa.org,,,sound,English,Filled,No dedicated Area address yet — reaches the Area Chair.
+76,subcommittee,Sub-committees & support,Subcomités y apoyo,30,Hospitality / Coffee,Hospitalidad / Café,510,Hypatia L.,chair@msca09aa.org,,,hospitality,English,Filled,No dedicated Area address yet — reaches the Area Chair.
+76,subcommittee,Sub-committees & support,Subcomités y apoyo,30,Hospitality / Coffee (Spanish),Hospitalidad / Café (español),511,Demetrio T.,chair@msca09aa.org,,,hospitality,Spanish,Filled,No dedicated Area address yet — reaches the Area Chair.
+76,subcommittee,Sub-committees & support,Subcomités y apoyo,30,Hispanic Women's Committee Chair,Coordinadora del Comité de Mujeres Hispanas,520,Claudia N.,chair@msca09aa.org,,,hispanic-womens,Spanish,Filled,No dedicated Area address yet — reaches the Area Chair.
+76,subcommittee,Sub-committees & support,Subcomités y apoyo,30,Inter-District Hispanic Chair,Coordinador(a) Interdistrital Hispano(a),530,Adrian G.,chair@msca09aa.org,,,inter-district-hispanic,Spanish,Filled,No dedicated Area address yet — reaches the Area Chair.
+76,committee,Young People in A.A. committee,Comité de Jóvenes en A.A.,35,Committee member,Miembro del comité,900,Matt,,,,ypaa,English,Filled,Reach the committee at ypchair@msca09aa.org.
+76,committee,Young People in A.A. committee,Comité de Jóvenes en A.A.,35,Committee member,Miembro del comité,901,Hailie W.,,,,ypaa,English,Filled,Reach the committee at ypchair@msca09aa.org.
+76,committee,Young People in A.A. committee,Comité de Jóvenes en A.A.,35,Committee member,Miembro del comité,902,Kevin,,,,ypaa,English,Filled,Reach the committee at ypchair@msca09aa.org.
+76,committee,Young People in A.A. committee,Comité de Jóvenes en A.A.,35,Committee member,Miembro del comité,903,James,,,,ypaa,English,Filled,Reach the committee at ypchair@msca09aa.org.
+76,committee,Young People in A.A. committee,Comité de Jóvenes en A.A.,35,Committee member,Miembro del comité,904,Teddi G.,,,,ypaa,English,Filled,Reach the committee at ypchair@msca09aa.org.
+76,ad-hoc,Ad hoc committees,Comités ad hoc,38,Ad Hoc Website Committee Chair,Coordinador del Comité Ad Hoc del Sitio Web,610,Mitchell B.,technologychair@msca09aa.org,,,ad-hoc-website,English,Completed,
+76,district,District 1 & 3,Distrito 1 y 3,101,DCMC,CMCD,1,Richie S.,d01dcmc@msca09aa.org,,d01-03,,English,Filled,
+76,district,District 1 & 3,Distrito 1 y 3,101,Alternate DCMC,CMCD alterno(a),2,Scott B.,d01dcmcalt@msca09aa.org,,d01-03,,English,Filled,
+76,district,District 1 & 3,Distrito 1 y 3,101,Secretary,Secretario(a),3,Hugo N.,d01secretary@msca09aa.org,,d01-03,,English,Filled,
+76,district,District 1 & 3,Distrito 1 y 3,101,Treasurer,Tesorero(a),4,Amy L.,d01treasurer@msca09aa.org,,d01-03,,English,Filled,
+76,district,District 1 & 3,Distrito 1 y 3,101,Registrar,Registrador(a),5,Alex L.,dist1.3panel76registrar@gmail.com,,d01-03,,English,Filled,Panel-numbered free-mail mailbox: confirm with the district that it passes to the next servant (or move to a dNN…@msca09aa.org address).
+76,district,District 1 & 3,Distrito 1 y 3,101,GSR School Chair,Coordinador(a) de Escuela de RSG,6,,,,d01-03,,English,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 2,Distrito 2,102,DCMC,CMCD,1,Carolyne H.,d02dcmc@msca09aa.org,,d02,,English,Filled,
+76,district,District 2,Distrito 2,102,Alternate DCMC,CMCD alterno(a),2,Erin R.,,,d02,,English,Filled,
+76,district,District 2,Distrito 2,102,Secretary,Secretario(a),3,,,,d02,,English,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 2,Distrito 2,102,Treasurer,Tesorero(a),4,Chris I.,,,d02,,English,Filled,
+76,district,District 2,Distrito 2,102,Registrar,Registrador(a),5,Suzie C.,,,d02,,English,Filled,
+76,district,District 2,Distrito 2,102,GSR School Chair,Coordinador(a) de Escuela de RSG,6,,,,d02,,English,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 4,Distrito 4,104,DCMC,CMCD,1,Titus D.,d04dcmc@msca09aa.org,dcmc@longbeachaa.org,d04,,English,Filled,
+76,district,District 4,Distrito 4,104,Alternate DCMC,CMCD alterno(a),2,Samantha C.,altdcmc@longbeachaa.org,,d04,,English,Filled,
+76,district,District 4,Distrito 4,104,Secretary,Secretario(a),3,Matthew L.,secretary@longbeachaa.org,,d04,,English,Filled,
+76,district,District 4,Distrito 4,104,Treasurer,Tesorero(a),4,Kim S.,treasurer@longbeachaa.org,,d04,,English,Filled,
+76,district,District 4,Distrito 4,104,Registrar,Registrador(a),5,Marilyn E.,registrar@longbeachaa.org,,d04,,English,Filled,
+76,district,District 4,Distrito 4,104,GSR School Chair,Coordinador(a) de Escuela de RSG,6,,,,d04,,English,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 5,Distrito 5,105,DCMC,CMCD,1,Joshua O.,d05dcmc@msca09aa.org,,d05,,English,Filled,District site: Josh O.
+76,district,District 5,Distrito 5,105,Alternate DCMC,CMCD alterno(a),2,Matt D.,,,d05,,English,Filled,
+76,district,District 5,Distrito 5,105,Secretary,Secretario(a),3,Lisa H.,,,d05,,English,Filled,
+76,district,District 5,Distrito 5,105,Treasurer,Tesorero(a),4,Vicki R.,district5treasurer@district5msca09.com,,d05,,English,Filled,
+76,district,District 5,Distrito 5,105,Registrar,Registrador(a),5,Joey P.,,,d05,,English,Filled,
+76,district,District 5,Distrito 5,105,GSR School Chair,Coordinador(a) de Escuela de RSG,6,,,,d05,,English,Open,"Open: the district website (district5msca09.com, checked 2026-10-17) shows the G.S.R. School chair as unfilled and lists it among its open positions (as of June 8, 2026)."
+76,district,District 6,Distrito 6,106,DCMC,CMCD,1,Cathy L.,district06.dcmc@gmail.com,,d06,,English,Filled,"District e-mail as given by the Area web servant on 2026-10-17 (district06.dcmc@gmail.com, the district's DCMC role mailbox); d06dcmc@msca09aa.org is no longer shown. Free-mail role mailbox published by the district: confirm with the district that it is a shared service mailbox that passes to the next servant."
+76,district,District 6,Distrito 6,106,Alternate DCMC,CMCD alterno(a),2,Tony P.,district06.alt.dcmc@gmail.com,,d06,,English,Filled,Free-mail role mailbox published by the district: confirm with the district that it is a shared service mailbox that passes to the next servant.
+76,district,District 6,Distrito 6,106,Secretary,Secretario(a),3,Leif J.,district06.sec@gmail.com,,d06,,English,Filled,Free-mail role mailbox published by the district: confirm with the district that it is a shared service mailbox that passes to the next servant.
+76,district,District 6,Distrito 6,106,Treasurer,Tesorero(a),4,Jennifer L.,district06.treas@gmail.com,,d06,,English,Filled,Free-mail role mailbox published by the district: confirm with the district that it is a shared service mailbox that passes to the next servant.
+76,district,District 6,Distrito 6,106,Registrar,Registrador(a),5,Cindy M.,district06.registrar@gmail.com,,d06,,English,Filled,Free-mail role mailbox published by the district: confirm with the district that it is a shared service mailbox that passes to the next servant.
+76,district,District 6,Distrito 6,106,GSR School Chair,Coordinador(a) de Escuela de RSG,6,,,,d06,,English,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 7,Distrito 7,107,DCMC,CMCD,1,Lisa Marie P.,d07dcmc@msca09aa.org,,d07,,English,Filled,
+76,district,District 7,Distrito 7,107,Alternate DCMC,CMCD alterno(a),2,Bob K.,,,d07,,English,Filled,
+76,district,District 7,Distrito 7,107,Secretary,Secretario(a),3,David S.,,,d07,,English,Filled,
+76,district,District 7,Distrito 7,107,Treasurer,Tesorero(a),4,Mike D.,,,d07,,English,Filled,
+76,district,District 7,Distrito 7,107,Registrar,Registrador(a),5,Justin,,,d07,,English,Filled,
+76,district,District 7,Distrito 7,107,GSR School Chair,Coordinador(a) de Escuela de RSG,6,,,,d07,,English,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 8,Distrito 8,108,DCMC,CMCD,1,Alan D.,d08dcmc@msca09aa.org,,d08,,English,Filled,
+76,district,District 8,Distrito 8,108,Alternate DCMC,CMCD alterno(a),2,Teri M.,,,d08,,English,Filled,
+76,district,District 8,Distrito 8,108,Secretary,Secretario(a),3,Daisy F.,d08secretary@msca09aa.org,,d08,,English,Filled,
+76,district,District 8,Distrito 8,108,Treasurer,Tesorero(a),4,Steve R.,d08treasurer@msca09aa.org,,d08,,English,Filled,
+76,district,District 8,Distrito 8,108,Registrar,Registrador(a),5,Rebecca S.,d08registrar@msca09aa.org,,d08,,English,Filled,
+76,district,District 8,Distrito 8,108,GSR School Chair,Coordinador(a) de Escuela de RSG,6,,,,d08,,English,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 9,Distrito 9,109,DCMC,CMCD,1,Jodi B.,d09dcmc@msca09aa.org,,d09,,English,Filled,
+76,district,District 9,Distrito 9,109,Alternate DCMC,CMCD alterno(a),2,Stacey S.,,,d09,,English,Filled,
+76,district,District 9,Distrito 9,109,Secretary,Secretario(a),3,Victoria,,,d09,,English,Filled,
+76,district,District 9,Distrito 9,109,Treasurer,Tesorero(a),4,Cindy K.,,,d09,,English,Filled,Last initial corrected by the Area web servant on 2026-10-17.
+76,district,District 9,Distrito 9,109,Registrar,Registrador(a),5,,d09-registrar@outlook.com,,d09,,English,Unnamed,Role mailbox published by the district; the name is not listed. Free-mail role mailbox published by the district: confirm with the district that it is a shared service mailbox that passes to the next servant.
+76,district,District 9,Distrito 9,109,GSR School Chair,Coordinador(a) de Escuela de RSG,6,Francine W.,,,d09,,English,Filled,Given by the Area web servant on 2026-10-17; no service e-mail yet.
+76,district,District 10,Distrito 10,110,DCMC,CMCD,1,Heather S.,d10dcmc@msca09aa.org,,d10,,English,Filled,
+76,district,District 10,Distrito 10,110,Alternate DCMC,CMCD alterno(a),2,,,,d10,,English,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 10,Distrito 10,110,Secretary,Secretario(a),3,,,,d10,,English,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 10,Distrito 10,110,Treasurer,Tesorero(a),4,,,,d10,,English,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 10,Distrito 10,110,Registrar,Registrador(a),5,,,,d10,,English,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 10,Distrito 10,110,GSR School Chair,Coordinador(a) de Escuela de RSG,6,,,,d10,,English,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 12,Distrito 12,112,DCMC,CMCD,1,Trish G.,d12dcmc@msca09aa.org,dcmc@mscadistrict12.org,d12,,English,Filled,
+76,district,District 12,Distrito 12,112,Alternate DCMC,CMCD alterno(a),2,Tom K.,altdcmc@mscadistrict12.org,,d12,,English,Filled,
+76,district,District 12,Distrito 12,112,Secretary,Secretario(a),3,Stan M.,secretary@mscadistrict12.org,,d12,,English,Filled,
+76,district,District 12,Distrito 12,112,Treasurer,Tesorero(a),4,Cyndi C.,treasurer@mscadistrict12.org,,d12,,English,Filled,
+76,district,District 12,Distrito 12,112,Registrar,Registrador(a),5,Dawn M.,registrar@mscadistrict12.org,,d12,,English,Filled,
+76,district,District 12,Distrito 12,112,GSR School Chair,Coordinador(a) de Escuela de RSG,6,,,,d12,,English,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 14,Distrito 14,114,DCMC,CMCD,1,Cyndi B.,d14dcmc@msca09aa.org,,d14,,English,Filled,
+76,district,District 14,Distrito 14,114,Alternate DCMC,CMCD alterno(a),2,,,,d14,,English,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 14,Distrito 14,114,Secretary,Secretario(a),3,,,,d14,,English,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 14,Distrito 14,114,Treasurer,Tesorero(a),4,,,,d14,,English,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 14,Distrito 14,114,Registrar,Registrador(a),5,,,,d14,,English,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 14,Distrito 14,114,GSR School Chair,Coordinador(a) de Escuela de RSG,6,,,,d14,,English,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 15,Distrito 15,115,DCMC,CMCD,1,Todd W.,d15dcmc@msca09aa.org,,d15,,English,Filled,
+76,district,District 15,Distrito 15,115,Alternate DCMC,CMCD alterno(a),2,,,,d15,,English,Open,
+76,district,District 15,Distrito 15,115,Secretary,Secretario(a),3,Jennifer L.,,,d15,,English,Filled,
+76,district,District 15,Distrito 15,115,Treasurer,Tesorero(a),4,Meredith L.,,,d15,,English,Filled,
+76,district,District 15,Distrito 15,115,Registrar,Registrador(a),5,,,,d15,,English,Open,
+76,district,District 15,Distrito 15,115,GSR School Chair,Coordinador(a) de Escuela de RSG,6,,,,d15,,English,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 17,Distrito 17,117,DCMC,CMCD,1,Marissa S.,d17dcmc@msca09aa.org,,d17,,English,Filled,
+76,district,District 17,Distrito 17,117,Alternate DCMC,CMCD alterno(a),2,Kara S.,,,d17,,English,Filled,
+76,district,District 17,Distrito 17,117,Secretary,Secretario(a),3,Laura L.,,,d17,,English,Filled,
+76,district,District 17,Distrito 17,117,Treasurer,Tesorero(a),4,Vanessa B.,,,d17,,English,Filled,
+76,district,District 17,Distrito 17,117,Registrar,Registrador(a),5,Joyce R.,,,d17,,English,Filled,
+76,district,District 17,Distrito 17,117,GSR School Chair,Coordinador(a) de Escuela de RSG,6,,,,d17,,English,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 18,Distrito 18,118,DCMC,CMCD,1,Spencer D.,d18dcmc@msca09aa.org,district18dcmc@gmail.com,d18,,English,Filled,email_alt (free-mail) is not shown on the site; the @msca09aa.org address is.
+76,district,District 18,Distrito 18,118,Alternate DCMC,CMCD alterno(a),2,Julia B.,district18altdcmc@gmail.com,,d18,,English,Filled,Free-mail role mailbox published by the district: confirm with the district that it is a shared service mailbox that passes to the next servant.
+76,district,District 18,Distrito 18,118,Secretary,Secretario(a),3,Taylor S.,district18gsr@gmail.com,,d18,,English,Filled,Uses the district's GSR mailbox (district18gsr@…). Free-mail role mailbox published by the district: confirm with the district that it is a shared service mailbox that passes to the next servant.
+76,district,District 18,Distrito 18,118,Treasurer,Tesorero(a),4,Phil G.,district18treasurerarea09@gmail.com,,d18,,English,Filled,Free-mail role mailbox published by the district: confirm with the district that it is a shared service mailbox that passes to the next servant.
+76,district,District 18,Distrito 18,118,Registrar,Registrador(a),5,Marco A.,district18registrar@gmail.com,,d18,,English,Filled,Free-mail role mailbox published by the district: confirm with the district that it is a shared service mailbox that passes to the next servant.
+76,district,District 18,Distrito 18,118,GSR School Chair,Coordinador(a) de Escuela de RSG,6,,,,d18,,English,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 19,Distrito 19,119,DCMC,CMCD,1,Daniel H.,d19dcmc@msca09aa.org,,d19,,English,Filled,
+76,district,District 19,Distrito 19,119,Alternate DCMC,CMCD alterno(a),2,Bob O.,,,d19,,English,Filled,Given by the Area web servant on 2026-10-17; no service e-mail yet.
+76,district,District 19,Distrito 19,119,Secretary,Secretario(a),3,Courtney Q.,,,d19,,English,Filled,
+76,district,District 19,Distrito 19,119,Treasurer,Tesorero(a),4,Stacy H.,,,d19,,English,Filled,
+76,district,District 19,Distrito 19,119,Registrar,Registrador(a),5,,,,d19,,English,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 19,Distrito 19,119,GSR School Chair,Coordinador(a) de Escuela de RSG,6,,,,d19,,English,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 20,Distrito 20,120,DCMC (MCD),MCD,1,Juan M.,d20dcmc@msca09aa.org,,d20,,Spanish,Filled,
+76,district,District 20,Distrito 20,120,Alternate DCMC (Alt. MCD),MCD alterno(a),2,Luciano G.,,,d20,,Spanish,Filled,
+76,district,District 20,Distrito 20,120,Secretary,Secretario(a),3,,,,d20,,Spanish,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 20,Distrito 20,120,Treasurer,Tesorero(a),4,,,,d20,,Spanish,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 20,Distrito 20,120,Registrar,Registrador(a),5,,,,d20,,Spanish,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 20,Distrito 20,120,GSR School Chair,Coordinador(a) de Escuela de RSG,6,,,,d20,,Spanish,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 21,Distrito 21,121,DCMC (MCD),MCD,1,Jorge M.,d21dcmc@msca09aa.org,,d21,,Spanish,Filled,
+76,district,District 21,Distrito 21,121,Alternate DCMC (Alt. MCD),MCD alterno(a),2,,,,d21,,Spanish,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 21,Distrito 21,121,Secretary,Secretario(a),3,,,,d21,,Spanish,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 21,Distrito 21,121,Treasurer,Tesorero(a),4,,,,d21,,Spanish,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 21,Distrito 21,121,Registrar,Registrador(a),5,,,,d21,,Spanish,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 21,Distrito 21,121,GSR School Chair,Coordinador(a) de Escuela de RSG,6,,,,d21,,Spanish,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 22,Distrito 22,122,DCMC (MCD),MCD,1,Maria P.,d22dcmc@msca09aa.org,,d22,,Spanish,Filled,
+76,district,District 22,Distrito 22,122,Alternate DCMC (Alt. MCD),MCD alterno(a),2,Leopoldo E.,,,d22,,Spanish,Filled,
+76,district,District 22,Distrito 22,122,Secretary,Secretario(a),3,Aurelio M.,,,d22,,Spanish,Filled,
+76,district,District 22,Distrito 22,122,Treasurer,Tesorero(a),4,Miguel Z.,,,d22,,Spanish,Filled,
+76,district,District 22,Distrito 22,122,Registrar,Registrador(a),5,Alejo G.,,,d22,,Spanish,Filled,
+76,district,District 22,Distrito 22,122,GSR School Chair,Coordinador(a) de Escuela de RSG,6,,,,d22,,Spanish,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 23,Distrito 23,123,DCMC (MCD),MCD,1,Ramon D.,d23dcmc@msca09aa.org,,d23,,Spanish,Filled,
+76,district,District 23,Distrito 23,123,Alternate DCMC (Alt. MCD),MCD alterno(a),2,Demetrio T.,,,d23,,Spanish,Filled,
+76,district,District 23,Distrito 23,123,Secretary,Secretario(a),3,Gabriela S.,,,d23,,Spanish,Filled,
+76,district,District 23,Distrito 23,123,Treasurer,Tesorero(a),4,Alfredo V.,,,d23,,Spanish,Filled,
+76,district,District 23,Distrito 23,123,Registrar,Registrador(a),5,,,,d23,,Spanish,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 23,Distrito 23,123,GSR School Chair,Coordinador(a) de Escuela de RSG,6,,,,d23,,Spanish,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 24,Distrito 24,124,DCMC (MCD),MCD,1,Jose E.,d24dcmc@msca09aa.org,,d24,,Spanish,Filled,
+76,district,District 24,Distrito 24,124,Alternate DCMC (Alt. MCD),MCD alterno(a),2,,,,d24,,Spanish,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 24,Distrito 24,124,Secretary,Secretario(a),3,Gabriel T.,,,d24,,Spanish,Filled,
+76,district,District 24,Distrito 24,124,Treasurer,Tesorero(a),4,Mario C.,,,d24,,Spanish,Filled,
+76,district,District 24,Distrito 24,124,Registrar,Registrador(a),5,Elvia A.,,,d24,,Spanish,Filled,
+76,district,District 24,Distrito 24,124,GSR School Chair,Coordinador(a) de Escuela de RSG,6,,,,d24,,Spanish,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 25,Distrito 25,125,DCMC (MCD),MCD,1,Ruben G.,d25dcmc@msca09aa.org,,d25,,Spanish,Filled,
+76,district,District 25,Distrito 25,125,Alternate DCMC (Alt. MCD),MCD alterno(a),2,Benigno M.,,,d25,,Spanish,Filled,
+76,district,District 25,Distrito 25,125,Secretary,Secretario(a),3,Mirian R.,,,d25,,Spanish,Filled,
+76,district,District 25,Distrito 25,125,Treasurer,Tesorero(a),4,Juan H.,,,d25,,Spanish,Filled,
+76,district,District 25,Distrito 25,125,Registrar,Registrador(a),5,Alfredo A.,,,d25,,Spanish,Filled,
+76,district,District 25,Distrito 25,125,GSR School Chair,Coordinador(a) de Escuela de RSG,6,,,,d25,,Spanish,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 30,Distrito 30,130,DCMC,CMCD,1,Ernesto M.,d30dcmc@msca09aa.org,,d30,,English,Filled,
+76,district,District 30,Distrito 30,130,Alternate DCMC,CMCD alterno(a),2,,,,d30,,English,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+76,district,District 30,Distrito 30,130,Secretary,Secretario(a),3,Celia H.,d30secretary@msca09aa.org,,d30,,English,Filled,
+76,district,District 30,Distrito 30,130,Treasurer,Tesorero(a),4,Jeff M.,,,d30,,English,Filled,
+76,district,District 30,Distrito 30,130,Registrar,Registrador(a),5,Katy P.,d30registrar@msca09aa.org,,d30,,English,Filled,
+76,district,District 30,Distrito 30,130,GSR School Chair,Coordinador(a) de Escuela de RSG,6,,,,d30,,English,Unknown,Not provided yet: the district has not sent the name and service e-mail for this position (or said that it is open).
+74,area,Area officers,Oficiales del Área,10,Delegate,Delegado(a),1,Alex W.,,,,delegate,English,Filled,
+74,area,Area officers,Oficiales del Área,10,Alternate Delegate,Delegado(a) Alterno(a),2,Manya W.,,,,alternate-delegate,English,Filled,
+74,area,Area officers,Oficiales del Área,10,Area Chair,Coordinador(a) del Área,3,Rozanne P.,,,,chair,English,Filled,
+74,area,Area officers,Oficiales del Área,10,Secretary,Secretario(a),4,Ramon R.,,,,secretary,English,Filled,
+74,area,Area officers,Oficiales del Área,10,Treasurer – Accounts Payable,Tesorero(a) – Cuentas por Pagar,5,Louis T.,,,,treasurer-ap,English,Filled,
+74,area,Area officers,Oficiales del Área,10,Treasurer – Accounts Receivable,Tesorero(a) – Cuentas por Cobrar,6,Ryan W.,,,,treasurer-ar,English,Filled,
+74,area,Area officers,Oficiales del Área,10,Registrar,Registrador(a),7,Martin J.,,,,registrar,English,Filled,
+74,committee,Standing committees,Comités permanentes,20,Accessibilities Chair,Coordinador(a) de Accesibilidades,100,,,,,accessibilities,English,Open,
+74,committee,Standing committees,Comités permanentes,20,Accessibilities Chair (Spanish),Coordinador(a) de Accesibilidades (español),101,Mauricio L.,,,,accessibilities,Spanish,Filled,
+74,committee,Standing committees,Comités permanentes,20,Archives Chair,Coordinador(a) de Archivos Históricos,110,Robert H.,,,,archives,English,Filled,
+74,committee,Standing committees,Comités permanentes,20,Communications Chair,Coordinador(a) de Comunicaciones,120,Vicki R.,,,,communications,English,Filled,
+74,committee,Standing committees,Comités permanentes,20,Convention Liaison Co-chair,Cocoordinador(a) de Enlace de Convenciones,130,Angela B.,,,,convention-liaison,English,Filled,
+74,committee,Standing committees,Comités permanentes,20,CEC Chair,Coordinador(a) de Cooperación con la Comunidad de la Tercera Edad,140,Cynthia B.,,,,cec,English,Filled,
+74,committee,Standing committees,Comités permanentes,20,CPC Chair,Coordinador(a) de Cooperación con la Comunidad Profesional,150,Katherine C.,,,,cpc,English,Filled,
+74,committee,Standing committees,Comités permanentes,20,Corrections Chair,Coordinador(a) de Instituciones Correccionales,160,Erica D.,,,,corrections,English,Filled,
+74,committee,Standing committees,Comités permanentes,20,Finance Chair,Coordinador(a) de Finanzas,180,Carmen M.,,,,finance,English,Filled,
+74,committee,Standing committees,Comités permanentes,20,Grapevine Chair,Coordinador(a) de Grapevine,190,Francine W.,,,,grapevine-la-vina,English,Filled,
+74,committee,Standing committees,Comités permanentes,20,La Viña Chair,Coordinador(a) de La Viña,191,Hector R.,,,,grapevine-la-vina,Spanish,Filled,
+74,committee,Standing committees,Comités permanentes,20,GAP Chair,Coordinador(a) de Guías y Políticas,210,Don S.,,,,guidelines-policies,English,Filled,
+74,committee,Standing committees,Comités permanentes,20,Literature Chair,Coordinador(a) de Literatura,220,Debra L.,,,,literature,English,Filled,
+74,committee,Standing committees,Comités permanentes,20,Literature Chair (Spanish),Coordinador(a) de Literatura (español),221,Gildardo B.,,,,literature,Spanish,Filled,
+74,committee,Standing committees,Comités permanentes,20,Public Information Chair,Coordinador(a) de Información Pública,230,,,,,public-information,English,Open,
+74,committee,Standing committees,Comités permanentes,20,Public Information Chair (Spanish),Coordinador(a) de Información Pública (español),231,Blanca L.,,,,public-information,Spanish,Filled,
+74,committee,Standing committees,Comités permanentes,20,Registration Chair,Coordinador(a) de Registro,240,Charles A.,,,,registration,English,Filled,
+74,committee,Standing committees,Comités permanentes,20,Remote Communities Chair,Coordinador(a) de Comunidades Remotas,250,Rob A.,,,,remote-communities,English,Filled,
+74,committee,Standing committees,Comités permanentes,20,Technology Chair,Coordinador(a) de Tecnología,260,Eric G.,,,,technology,English,Filled,
+74,committee,Standing committees,Comités permanentes,20,Treatment Facilities Chair,Coordinador(a) de Centros de Tratamiento,270,Teri M.,,,,treatment,English,Filled,
+74,committee,Standing committees,Comités permanentes,20,Treatment Facilities Chair (Spanish),Coordinador(a) de Centros de Tratamiento (español),271,,,,,treatment,Spanish,Open,
+74,committee,Standing committees,Comités permanentes,20,YPAA Chair,Coordinador(a) de Jóvenes en A.A.,280,Lauren C.,,,,ypaa,English,Filled,
+74,committee,Service schools,Escuelas de servicio,25,DCM School Chair,Coordinador(a) de Escuela de MCD,170,Deborah A.,,,,dcm-school,English,Filled,
+74,committee,Service schools,Escuelas de servicio,25,DCM School Chair (Spanish),Coordinador(a) de Escuela de MCD (español),171,Rolando T.,,,,dcm-school,Spanish,Filled,
+74,committee,Service schools,Escuelas de servicio,25,GSR School Chair,Coordinador(a) de Escuela de RSG,200,Scott B.,,,,gsr-school,English,Filled,
+74,committee,Service schools,Escuelas de servicio,25,GSR School Chair (Spanish),Coordinador(a) de Escuela de RSG (español),201,Adrian G.,,,,gsr-school,Spanish,Filled,
+74,coordinate,Coordinate committees,Comités coordinados,28,H&I Liaison,Enlace de H&I,400,,,,,hospitals-institutions,English,Open,
+74,subcommittee,Sub-committees & support,Subcomités y apoyo,30,Area Sound,Sonido del Área,500,Mauricio T.,,,,sound,Spanish,Filled,
+74,subcommittee,Sub-committees & support,Subcomités y apoyo,30,Area Coffee,Café del Área,510,Ed L.,,,,hospitality,English,Filled,
+74,district,District 1 & 3,Distrito 1 y 3,101,DCMC,CMCD,1,Eric G.,,,d01-03,,English,Filled,
+74,district,District 2,Distrito 2,102,DCMC,CMCD,1,Jane E.,,,d02,,English,Filled,
+74,district,District 4,Distrito 4,104,DCMC,CMCD,1,Angela B.,,,d04,,English,Filled,
+74,district,District 5,Distrito 5,105,DCMC,CMCD,1,Vicki R.,,,d05,,English,Filled,
+74,district,District 6,Distrito 6,106,DCMC,CMCD,1,Rob A.,,,d06,,English,Filled,
+74,district,District 7,Distrito 7,107,DCMC,CMCD,1,Erica D.,,,d07,,English,Filled,
+74,district,District 8,Distrito 8,108,DCMC,CMCD,1,Sharon K.,,,d08,,English,Filled,
+74,district,District 8,Distrito 8,108,Alternate DCMC,CMCD alterno(a),2,Stacey J.,,,d08,,English,Filled,
+74,district,District 8,Distrito 8,108,Alternate DCMC,CMCD alterno(a),2,Aran B.,,,d08,,English,Filled,
+74,district,District 9,Distrito 9,109,DCMC,CMCD,1,Larry B.,,,d09,,English,Filled,
+74,district,District 9,Distrito 9,109,Alternate DCMC,CMCD alterno(a),2,Juanita Q.,,,d09,,English,Filled,
+74,district,District 10,Distrito 10,110,DCMC,CMCD,1,Alicia B.,,,d10,,English,Filled,
+74,district,District 10,Distrito 10,110,Alternate DCMC,CMCD alterno(a),2,Alicia B.,,,d10,,English,Filled,
+74,district,District 12,Distrito 12,112,DCMC,CMCD,1,Tara F.,,,d12,,English,Filled,
+74,district,District 12,Distrito 12,112,Alternate DCMC,CMCD alterno(a),2,Joseph S.,,,d12,,English,Filled,
+74,district,District 12,Distrito 12,112,Secretary,Secretario(a),3,Rodrigo C.,,,d12,,English,Filled,
+74,district,District 12,Distrito 12,112,Treasurer,Tesorero(a),4,Alice R.,,,d12,,English,Filled,
+74,district,District 12,Distrito 12,112,Registrar,Registrador(a),5,Heather D.,,,d12,,English,Filled,
+74,district,District 14,Distrito 14,114,DCMC,CMCD,1,Dawn C.,,,d14,,English,Filled,
+74,district,District 14,Distrito 14,114,DCMC,CMCD,1,Dawn W.,,,d14,,English,Filled,
+74,district,District 14,Distrito 14,114,Alternate DCMC,CMCD alterno(a),2,Dawn W.,,,d14,,English,Filled,
+74,district,District 14,Distrito 14,114,Secretary,Secretario(a),3,Aimee R.,,,d14,,English,Filled,
+74,district,District 14,Distrito 14,114,Treasurer,Tesorero(a),4,Tracy S.,,,d14,,English,Filled,
+74,district,District 14,Distrito 14,114,Registrar,Registrador(a),5,Char M.,,,d14,,English,Filled,
+74,district,District 15,Distrito 15,115,DCMC,CMCD,1,Allen T.,,,d15,,English,Filled,
+74,district,District 17,Distrito 17,117,DCMC,CMCD,1,Teddi P.,,,d17,,English,Filled,
+74,district,District 18,Distrito 18,118,DCMC,CMCD,1,Brian S.,,,d18,,English,Filled,
+74,district,District 20,Distrito 20,120,DCMC (MCD),MCD,1,Erika R.,,,d20,,Spanish,Filled,
+74,district,District 20,Distrito 20,120,Alternate DCMC (Alt. MCD),MCD alterno(a),2,Juan M.,,,d20,,Spanish,Filled,
+74,district,District 20,Distrito 20,120,Secretary,Secretario(a),3,Hector R.,,,d20,,Spanish,Filled,
+74,district,District 20,Distrito 20,120,Treasurer,Tesorero(a),4,E. Jaime A.,,,d20,,Spanish,Filled,
+74,district,District 20,Distrito 20,120,Registrar,Registrador(a),5,Alejandro G.,,,d20,,Spanish,Filled,
+74,district,District 21,Distrito 21,121,DCMC (MCD),MCD,1,Abel G.,,,d21,,Spanish,Filled,
+74,district,District 21,Distrito 21,121,Alternate DCMC (Alt. MCD),MCD alterno(a),2,Mauricio L.,,,d21,,Spanish,Filled,
+74,district,District 21,Distrito 21,121,Secretary,Secretario(a),3,Sandra O.,,,d21,,Spanish,Filled,
+74,district,District 21,Distrito 21,121,Treasurer,Tesorero(a),4,Aurelia R.,,,d21,,Spanish,Filled,
+74,district,District 21,Distrito 21,121,Registrar,Registrador(a),5,Nelson M.,,,d21,,Spanish,Filled,
+74,district,District 22,Distrito 22,122,DCMC (MCD),MCD,1,Miguel Z.,,,d22,,Spanish,Filled,
+74,district,District 22,Distrito 22,122,Alternate DCMC (Alt. MCD),MCD alterno(a),2,Maria P.,,,d22,,Spanish,Filled,
+74,district,District 22,Distrito 22,122,Secretary,Secretario(a),3,Julieta C.,,,d22,,Spanish,Filled,
+74,district,District 22,Distrito 22,122,Treasurer,Tesorero(a),4,Hypatia L.,,,d22,,Spanish,Filled,
+74,district,District 23,Distrito 23,123,DCMC (MCD),MCD,1,Luis J.,,,d23,,Spanish,Filled,
+74,district,District 23,Distrito 23,123,Alternate DCMC (Alt. MCD),MCD alterno(a),2,Hermanino S.,,,d23,,Spanish,Filled,
+74,district,District 23,Distrito 23,123,Secretary,Secretario(a),3,Aaron P.,,,d23,,Spanish,Filled,
+74,district,District 23,Distrito 23,123,Treasurer,Tesorero(a),4,Demetrio T.,,,d23,,Spanish,Filled,
+74,district,District 23,Distrito 23,123,Registrar,Registrador(a),5,Dario D.,,,d23,,Spanish,Filled,
+74,district,District 24,Distrito 24,124,DCMC (MCD),MCD,1,Victor D.,,,d24,,Spanish,Filled,
+74,district,District 24,Distrito 24,124,Secretary,Secretario(a),3,Camilo M.,,,d24,,Spanish,Filled,
+74,district,District 24,Distrito 24,124,Treasurer,Tesorero(a),4,Luis M.,,,d24,,Spanish,Filled,
+74,district,District 24,Distrito 24,124,Registrar,Registrador(a),5,Camilo M.,,,d24,,Spanish,Filled,
+74,district,District 25,Distrito 25,125,DCMC (MCD),MCD,1,Felipe O.,,,d25,,Spanish,Filled,
+74,district,District 25,Distrito 25,125,Alternate DCMC (Alt. MCD),MCD alterno(a),2,Modesto R.,,,d25,,Spanish,Filled,
+74,district,District 25,Distrito 25,125,Secretary,Secretario(a),3,Rudy A.,,,d25,,Spanish,Filled,
+74,district,District 25,Distrito 25,125,Treasurer,Tesorero(a),4,Adrian G.,,,d25,,Spanish,Filled,
+74,district,District 25,Distrito 25,125,Registrar,Registrador(a),5,Dalila S.,,,d25,,Spanish,Filled,
+74,district,District 30,Distrito 30,130,DCMC,CMCD,1,Ernesto M.,,,d30,,English,Filled,
+74,district,District 30,Distrito 30,130,Secretary,Secretario(a),3,Mary R.,,,d30,,English,Filled,

@@ -1,0 +1,82 @@
+{#-
+  A.A.'s upside-down service triangle — the one drawing used on Home, About, Districts and How service works,
+  so the shape, the order of the levels, their colours and their words are always the same.
+  Import with: {% from "macros/triangle.njk" import triangle, triangleKey with context %}
+  Levels (top to bottom, with their colours): src/_data/serviceTriangle.js. Words: data/text/triangle.csv
+  (triangle.<level>.band = the words inside the band, as on the Panel logo — "|" starts a second line;
+  triangle.<level>.name = the full name, which must contain the band's words). Styles: src/assets/css/pages/triangle.css.
+  The bands are red like the logo. A band lights up in its own colour when its line in a list is hovered (o.on),
+  when it is the chosen tab (o.tabs) or when it is the page's own level (o.here).
+  Narrower than 27rem the bands show their numbers instead of words, so wherever the triangle can be that narrow
+  put triangleKey (or the page's own numbered list) beside it.
+-#}
+
+{#- The triangle and its "the groups' voice travels down / information comes back up" caption, with moving dashes
+    beside the point that show the same two directions (left: down, right: up).
+    o: { lang,
+         class   – classes for the wrapper (size, .reveal for the band-by-band entrance, visibility)
+         dark    – on a dark background (Home)
+         mini    – a small triangle without words, caption or moving dashes
+         caption – false leaves the caption (and the moving dashes) out
+         hidden  – the caption too is for the eye only (Home, where the words beside it say the same)
+         here    – a level key: that band is lit, with a pin (Districts)
+         on      – an Alpine variable holding the index of the band to light (hover on a list, Home and About)
+         tabs    – { label, panel } the bands become the tabs of an Alpine svcTriangle tablist (sel, pick, key);
+                   panel = the id of each tab panel without its number ("level-panel-") }
+    Drawn for the eye only (aria-hidden), except as tabs: pages give screen readers the list beside it. -#}
+{% macro triangle(o) %}
+{%- set L = o.lang -%}
+{%- set tabs = o.tabs -%}
+<div class="tri-wrap{{ ' tri-wrap--dark' if o.dark }}{{ ' tri-wrap--mini' if o.mini }}{{ (' ' + o.class) if o.class }}"{% if o.hidden %} aria-hidden="true"{% endif %} data-pagefind-ignore>
+  <div class="tri-shadow">
+    <div class="tri"{% if tabs %} role="tablist" aria-orientation="vertical" aria-label="{{ tabs.label }}" @keydown="key($event)"{% else %} aria-hidden="true"{% endif %}>
+      {%- for lv in serviceTriangle %}
+      {%- set i = loop.index0 %}
+      {%- set words = (("triangle." + lv.key + ".band") | t(L) | string).split("|") %}
+      {%- set cls = "tri-band" + (" tri-tip" if loop.last else "") + (" is-here" if o.here == lv.key else "") %}
+      {#- as tabs, a tab's name is what it shows plus its full name (WCAG "label in name": a speech-input user can say
+          "click GSB" or "click 6"): the band's words are left out because the full name contains them
+          (triangle.<level>.name, e.g. "General Service Board (GSB)"), the number counts only while it is shown -#}
+      {%- set inner %}<span class="tri-in">{% if o.here == lv.key %}{% icon "map-pin", "tri-pin" %}{% endif %}<span class="tri-words"{% if tabs %} aria-hidden="true"{% endif %}>{% for w in words %}<span class="tri-line">{{ w | trim }}</span>{% endfor %}</span><span class="tri-num">{{ loop.index }}</span>{% if tabs %}<span class="sr-only">{{ ("triangle." + lv.key + ".name") | t(L) }}</span>{% endif %}</span>{% endset %}
+      {%- if tabs %}
+      <button type="button" role="tab" id="band-{{ lv.key }}" data-band="{{ i }}" class="{{ cls }}" style="--i: {{ i }}; {{ lv.color | accent }}"
+              aria-selected="{{ 'true' if loop.first else 'false' }}" tabindex="{{ 0 if loop.first else -1 }}" :aria-selected="(sel === {{ i }}).toString()" :tabindex="sel === {{ i }} ? 0 : -1"
+              aria-controls="{{ tabs.panel }}{{ loop.index }}" @click="pick({{ i }})">{{ inner | safe }}</button>
+      {%- else %}
+      <div class="{{ cls }}" style="--i: {{ i }}; {{ lv.color | accent }}"{% if o.on %} :class="{{ o.on }} === {{ i }} && 'is-on'"{% endif %}>{{ inner | safe }}</div>
+      {%- endif %}
+      {%- endfor %}
+    </div>
+  </div>
+  {%- if not o.mini and o.caption !== false %}
+  {#- the flow beside the point, as the caption says: dashes run down on the left, back up on the right (decoration) -#}
+  <div class="tri-flow" aria-hidden="true"><span class="tri-flow-path tri-flow-down"><span class="tri-flow-track"></span>{% icon "chevron-down", "tri-flow-head" %}</span><span class="tri-flow-path tri-flow-up">{% icon "chevron-up", "tri-flow-head" %}<span class="tri-flow-track"></span></span></div>
+  <p class="tri-caption"><span>{% icon "arrow-down", "size-4" %}{{ "triangle.down" | t(L) }}</span> <span>{% icon "arrow-up", "size-4" %}{{ "triangle.up" | t(L) }}</span></p>
+  {%- endif %}
+</div>
+{% endmacro %}
+
+{#- The numbered list of the levels that goes with a triangle — the full names, and what screen readers read.
+    o: { lang, class (tri-key--cols: two columns on tablets, 640–1023px), label (default: triangle.label),
+         notes – a text-key prefix: <prefix><level> is a short line under the name, when the key exists (e.g. "about.tri.");
+         vars  – values for {placeholders} in those lines, more – { level key: a longer note in small print },
+         here  – a level key: that row is marked "you are here",
+         on    – the same Alpine variable as the triangle's: hovering a row lights its band } -#}
+{% macro triangleKey(o) %}
+{%- set L = o.lang -%}
+<ol class="tri-key{{ (' ' + o.class) if o.class }}" aria-label="{{ o.label or ('triangle.label' | t(L)) }}">
+  {%- for lv in serviceTriangle %}
+  {%- set i = loop.index0 %}
+  <li class="tri-key-row{{ ' is-here' if o.here == lv.key }}" style="{{ lv.color | accent }}"{% if o.on %} @mouseenter="{{ o.on }} = {{ i }}" @mouseleave="{{ o.on }} = -1" :class="{{ o.on }} === {{ i }} && 'is-on'"{% endif %}>
+    <span class="tri-key-num" aria-hidden="true">{{ loop.index }}</span>
+    <span class="min-w-0 flex-1">
+      <span class="tri-key-name">{{ ("triangle." + lv.key + ".name") | t(L) }}</span>
+      {%- if o.here == lv.key %} <span class="tri-key-here">{% icon "map-pin", "size-3" %}{{ "triangle.here" | t(L) }}</span>{% endif %}
+      {%- set note = ((o.notes + lv.key) | tOpt(L, o.vars)) if o.notes else "" %}
+      {%- if note %} <span class="tri-key-note">{{ note }}</span>{% endif %}
+      {%- if o.more and o.more[lv.key] %} <span class="tri-key-more">{{ o.more[lv.key] }}</span>{% endif %}
+    </span>
+  </li>
+  {%- endfor %}
+</ol>
+{% endmacro %}

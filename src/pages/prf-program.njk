@@ -1,0 +1,106 @@
+---
+pagination: { data: langs, size: 1, alias: lang, addAllPagesToCollections: true }
+permalink: "{{ lang.prefix }}/service/prf-2028/program/"
+layout: page.njk
+title_key: prf.prog.title
+title_suffix_key: prf.title_suffix
+description_key: prf.prog.description
+eyebrow_key: prf.dates_long
+lead_key: prf.prog.lead
+heroIcon: calendar-days
+accent: sea
+crumbs: [{ label_key: "prf.crumb_service", url: "/service/" }, { label_key: "prf.crumb", url: "/service/prf-2028/" }]
+bare: true
+prfPage: program
+ogImage: /assets/img/prf/long-beach-1024.jpg
+# the photo's size and type, so a link preview can show it on the first share
+ogImageWidth: 1024
+ogImageHeight: 553
+ogImageType: image/jpeg
+og_image_alt_key: prf.flyer.photo_alt
+source: data/prf/schedule.csv
+scripts: ["/assets/js/prf.js"]
+---
+{#- The tentative Forum weekend, one tab per day (Thursday early arrivals to Sunday), registration desk hours and the
+    extras the host committee is exploring. Without JavaScript every day is listed in turn. Data: data/prf/schedule.csv,
+    cards.csv (hours, extras); wording: data/text/prf.csv. -#}
+{%- from "macros/ui.njk" import sectionHead with context -%}
+{%- set L = lang -%}
+{%- set P = prf -%}
+{%- set S = P.set -%}
+{%- set KINDS = [["session", "sea"], ["service", "sun"], ["meeting", "iris"], ["social", "coral"]] -%}
+{%- set kindColor = { session: "sea", service: "sun", meeting: "iris", social: "coral" } -%}
+
+{% include "partials/prf-nav.njk" %}
+
+<div class="wrap space-y-16 py-12 lg:space-y-20 lg:py-16 2xl:py-20">
+
+  <div class="prf-note" style="{{ 'sun' | accent }}">
+    <span class="icon-tile size-12 shrink-0">{% icon "triangle-alert", "size-6" %}</span>
+    <p class="text-ink-700"><strong class="text-ink-950">{{ "prf.prog.tent_title" | t(L) }}</strong> {{ "prf.prog.tent_body" | t(L) }}
+      <a href="{{ S.sample_program_url }}" target="_blank" rel="noopener" class="font-semibold text-(--a-800) underline">{{ "prf.prog.sample" | t(L) }}</a></p>
+  </div>
+
+  {#- ============================================================ the weekend, day by day -#}
+  <section aria-labelledby="prf-days-h" x-data="prfDays({{ P.days | pluck('key') | json }}, {{ P.days | pluck('date') | json }})">
+    <h2 id="prf-days-h" class="sr-only">{{ "prf.prog.days_title" | t(L) }}</h2>
+    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <div class="prf-daytabs no-scrollbar" role="tablist" aria-label="{{ 'prf.prog.days_title' | t(L) }}" x-cloak x-show="ready">
+        {%- for d in P.days %}
+        <button type="button" role="tab" id="prf-tab-{{ d.key }}" aria-controls="prf-day-{{ d.key }}" class="prf-daytab"
+                :aria-selected="(day === '{{ d.key }}').toString()" :tabindex="day === '{{ d.key }}' ? 0 : -1" @click="pick('{{ d.key }}')" @keydown="keys($event)">
+          <span class="font-display font-bold">{{ ("prf.day." + d.key) | t(L) }}</span><span class="text-sm opacity-75">{{ d.date | dt("short", L) }}</span>
+        </button>
+        {%- endfor %}
+      </div>
+      <ul class="flex flex-wrap gap-x-4 gap-y-2 text-sm text-ink-600" role="list" aria-label="{{ 'prf.prog.key' | t(L) }}">
+        {%- for k in KINDS %}<li class="inline-flex items-center gap-1.5" style="{{ k[1] | accent }}"><span class="size-3 rounded-sm bg-(--a-500)"></span>{{ ("prf.prog.kind_" + k[0]) | t(L) }}</li>{% endfor %}
+      </ul>
+    </div>
+
+    {%- for d in P.days %}
+    <div id="prf-day-{{ d.key }}" class="prf-day mt-6" role="tabpanel" aria-labelledby="prf-tab-{{ d.key }}" x-show="!ready || day === '{{ d.key }}'">
+      <h3 class="prf-day__head" :class="ready && 'sr-only'">{{ ("prf.day." + d.key) | t(L) }} · {{ d.date | dt("long", L) }}</h3>
+      <ol class="space-y-2.5" role="list">
+        {%- for it in d.items %}
+        <li class="prf-slot" style="{{ (kindColor[it.kind] or 'ink') | accent }}">
+          <p class="prf-slot__time">{{ it | loc("time", L) }}</p>
+          <div class="min-w-0 flex-1">
+            <p class="font-display text-lg font-bold text-ink-950">{{ it | loc("title", L) }}
+              {%- if it.proposed %} <span class="chip chip-accent align-middle text-xs" style="{{ 'coral' | accent }}">{{ "prf.prog.proposed" | t(L) }}</span>{% endif %}</p>
+            {%- if it.body_en %}<p class="mt-0.5 text-ink-600">{{ it | loc("body", L) }}</p>{% endif %}
+            <p class="sr-only">{{ ("prf.prog.kind_" + it.kind) | t(L) }}</p>
+          </div>
+        </li>
+        {%- endfor %}
+      </ol>
+    </div>
+    {%- endfor %}
+  </section>
+
+  {#- ============================================================ registration desk + ideas -#}
+  <section class="grid grid-cols-1 gap-6 lg:grid-cols-12" aria-label="{{ 'prf.prog.more_label' | t(L) }}">
+    <div class="card p-6 sm:p-8 lg:col-span-5" style="{{ 'sun' | accent }}">
+      <h2 class="flex items-center gap-3 font-display text-2xl font-bold text-ink-950"><span class="icon-tile size-11">{% icon "id-card", "size-5" %}</span>{{ "prf.prog.reg_title" | t(L) }}</h2>
+      <dl class="mt-5 divide-y divide-ink-100">
+        {%- for h in P.cards.hours %}
+        <div class="flex items-baseline justify-between gap-4 py-2.5"><dt class="font-semibold text-ink-900">{{ h | loc("title", L) }}</dt><dd class="text-right text-ink-700 tabular-nums">{{ h | loc("body", L) }}</dd></div>
+        {%- endfor %}
+      </dl>
+      <p class="mt-4 text-sm leading-relaxed text-ink-600">{{ "prf.prog.reg_note" | t(L) }}</p>
+    </div>
+    <div class="card p-6 sm:p-8 lg:col-span-7" style="{{ 'coral' | accent }}">
+      <h2 class="flex items-center gap-3 font-display text-2xl font-bold text-ink-950"><span class="icon-tile size-11">{% icon "sparkles", "size-5" %}</span>{{ "prf.prog.extras_title" | t(L) }}</h2>
+      <p class="mt-3 leading-relaxed text-ink-600">{{ "prf.prog.extras_lead" | t(L) }}</p>
+      <ul class="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2" role="list">
+        {%- for c in P.cards.extras %}
+        <li class="flex items-start gap-3">
+          <span class="icon-tile-soft size-10 shrink-0 rounded-xl">{% icon c.icon, "size-5" %}</span>
+          <span><span class="block font-semibold text-ink-900">{{ c | loc("title", L) }}</span><span class="block text-sm text-ink-600">{{ c | loc("body", L) }}</span></span>
+        </li>
+        {%- endfor %}
+      </ul>
+      <p class="mt-6 flex items-center gap-2 text-sm text-ink-600">{% icon "message-circle", "size-4 shrink-0" %}<span>{{ "prf.prog.extras_idea" | t(L) }} <a href="{{ (P.base + 'contact/') | lurl(L) }}#question" class="font-semibold text-(--a-700) hover:underline">{{ "prf.nav.contact" | t(L) }}</a></span></p>
+    </div>
+  </section>
+</div>

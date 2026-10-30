@@ -1,0 +1,20 @@
+---
+permalink: /sitemap-old-addresses.xml
+eleventyExcludeFromCollections: true
+---
+{#-
+  The old msca09aa.org WordPress addresses that have a forwarding page (legacyRedirects.pages:
+  data/redirects.csv rows without * plus the old Delegate's Corner posts; see src/pages/legacy-redirects.njk).
+  During the move to the new site, the owner submits this file in Google Search Console (Sitemaps) so
+  search engines crawl the old addresses sooner and see where each one went. Search Console reporting
+  "Page with redirect" for them is expected. It is deliberately not named in robots.txt, and it can be
+  deleted about six months after the move.
+-#}
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{%- for r in legacyRedirects.pages %}
+  <url>
+    <loc>{{ r.from | absUrl(site.url + "/") }}</loc>
+  </url>
+{%- endfor %}
+</urlset>

@@ -1,0 +1,11 @@
+sort,icon,color,title_en,title_es,body_en,body_es,url
+"# The big quick-action tiles on the home page, in 'sort' order (steps of 10 leave room to add a tile in between). icon = a name from lucide.dev/icons. color = ocean, iris, coral, sun, sage, copper, blush, lilac or sea.",,,,,,,
+"# url = a page of this site (e.g. /calendar/) or a full https:// address. {panel} and {years} in any text are filled in from data/settings.csv (e.g. 76 and 2026–2027), so the tiles need no edit when the panel changes. _en = English, _es = Spanish.",,,,,,,
+10,heart-handshake,coral,Find a meeting,Buscar una reunión,Call a local A.A. office or use the free Meeting Guide app. There are meetings every day.,Llama a una oficina local de A.A. o usa la aplicación gratuita Meeting Guide. Hay reuniones todos los días.,/newcomers/
+20,calendar-days,ocean,Area calendar,Calendario del Área,"Assemblies, ASCs, district and committee meetings, workshops and events.","Asambleas, CSA, reuniones de distritos y comités, talleres y eventos.",/calendar/
+30,map,sage,Find your district,Encuentra tu distrito,"When and where your district meets, who serves, and its documents.","Cuándo y dónde se reúne tu distrito, quién sirve y sus documentos.",/districts/
+40,users,iris,Committees,Comités,"Archives, Public Information, CPC, Corrections, Treatment, Literature and more.","Archivos Históricos, Información Pública, CCP, Correccionales, Centros de Tratamiento, Literatura y más.",/committees/
+50,file-text,sea,Minutes & documents,Actas y documentos,"Area minutes, reports, guidelines, motions and the archive.","Actas, informes, guías y mociones del Área, y el archivo.",/documents/
+60,hand-coins,copper,Contribute,Contribuir,"Seventh Tradition contributions by Zelle, check or in person.","Contribuciones de la Séptima Tradición por Zelle, cheque o en persona.",/contribute/
+70,mic,lilac,Delegate's corner,Rincón del delegado,"General Service Conference news, reports and the delegate's shareback.",Noticias e informes de la Conferencia de Servicios Generales y el informe del delegado.,/service/delegate/
+80,users-round,blush,Panel {panel},Panel {panel},"Officers, committee chairs and DCMCs serving {years}.","Oficiales, coordinadores de comité y CMCD que sirven en {years}.",/about/panel/

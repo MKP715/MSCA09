@@ -1,0 +1,38 @@
+{#-
+  The page's one share menu, opened by any share button (shareButton in macros/ui.njk) on a computer, or on a phone
+  that has no share sheet of its own. app.js ("share") moves it next to the button that opened it, writes the
+  links for what that button shares, and puts it back here when it closes.
+  Plain links only: nothing is loaded from WhatsApp, Facebook or X, and nothing is counted or tracked.
+  rel=nofollow: until app.js writes them, the WhatsApp/Facebook/X addresses are bare placeholders that crawlers must not follow.
+  data-site-en / data-site-es: added to a shared title that does not name the Area yet ("District 5" → "District 5 ·
+  A.A. Area 09"), in the language of the button (the Spanish section of the English Newcomers page shares in Spanish).
+  lang: the menu speaks the page's language wherever it is moved (also inside that Spanish section).
+-#}
+{%- set L = lang -%}
+{%- set newTab = "share.new_tab" | t(L) -%}
+<div id="share-menu" class="share-menu" popover="manual" lang="{{ L.htmlLang }}" data-pagefind-ignore="all"
+  {%- for l in langs %} data-site-{{ l.code }}="{{ 'site.title_suffix' | t(l) }}"{% endfor %}>
+  <p class="share-menu__head" aria-hidden="true"><span class="share-menu__eyebrow">{{ "ui.share" | t(L) }}</span><span class="share-menu__what" data-share-what></span></p>
+  <ul id="share-menu-list" class="share-menu__list" role="menu" aria-label="{{ 'share.menu_label' | t(L) }}">
+    <li role="none">
+      <button type="button" role="menuitem" class="share-menu__item" data-share-act="copy" style="{{ 'ocean' | accent }}">
+        <span class="share-menu__ico" data-share-ico="link">{% icon "link-2", "size-4" %}</span>
+        <span class="share-menu__ico copy-done" data-share-ico="done" hidden>{% icon "check", "size-4" %}</span>
+        <span data-share-copy="{{ 'share.copy' | t(L) }}" data-share-copied="{{ 'ui.link_copied' | t(L) }}">{{ "share.copy" | t(L) }}</span>
+      </button>
+    </li>
+    <li role="none"><a role="menuitem" class="share-menu__item" data-share-act="email" href="mailto:" style="{{ 'iris' | accent }}"><span class="share-menu__ico">{% icon "mail", "size-4" %}</span>{{ "share.email" | t(L) }}</a></li>
+    <li role="none"><a role="menuitem" class="share-menu__item" data-share-act="sms" href="sms:" style="{{ 'sea' | accent }}"><span class="share-menu__ico">{% icon "message-square-text", "size-4" %}</span>{{ "share.sms" | t(L) }}</a></li>
+    {#- brand marks: Simple Icons (CC0), drawn in the item's colour like every other icon on the site -#}
+    <li role="none"><a role="menuitem" class="share-menu__item" data-share-act="whatsapp" href="https://wa.me/" target="_blank" rel="nofollow noopener noreferrer" style="{{ 'sage' | accent }}">
+      <span class="share-menu__ico"><svg viewBox="0 0 24 24" class="size-4" fill="currentColor" aria-hidden="true" focusable="false"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg></span>WhatsApp<span class="sr-only"> {{ newTab }}</span>{% icon "external-link", "share-menu__ext" %}</a></li>
+    <li role="none"><a role="menuitem" class="share-menu__item" data-share-act="facebook" href="https://www.facebook.com/sharer/sharer.php" target="_blank" rel="nofollow noopener noreferrer" style="{{ 'ocean' | accent }}">
+      <span class="share-menu__ico"><svg viewBox="0 0 24 24" class="size-4" fill="currentColor" aria-hidden="true" focusable="false"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></span>Facebook<span class="sr-only"> {{ newTab }}</span>{% icon "external-link", "share-menu__ext" %}</a></li>
+    <li role="none"><a role="menuitem" class="share-menu__item" data-share-act="x" href="https://x.com/intent/post" target="_blank" rel="nofollow noopener noreferrer" style="{{ 'slate' | accent }}">
+      <span class="share-menu__ico"><svg viewBox="0 0 24 24" class="size-3.5" fill="currentColor" aria-hidden="true" focusable="false"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg></span>{{ "share.x" | t(L) }}<span class="sr-only"> {{ newTab }}</span>{% icon "external-link", "share-menu__ext" %}</a></li>
+  </ul>
+  {#- only when the browser would not copy: the link, selected, to copy by hand -#}
+  <input type="text" readonly class="share-menu__url" data-share-url-box hidden aria-label="{{ 'share.copy_by_hand' | t(L) }}">
+  {#- "Link copied", read out; inside the menu so it is heard in a modal dialog too (whose x-trap.inert hides the rest of the page) -#}
+  <p class="sr-only" role="status" aria-live="polite" data-share-status></p>
+</div>

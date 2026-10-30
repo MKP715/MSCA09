@@ -1,0 +1,49 @@
+{#-
+  /committees/gsr-school/: the districts that hold their own GSR School or new-GSR orientation, each
+  linking to the GSR School section of its district page (/districts/<slug>/#gsr). Every school or
+  orientation gets the same two lines as on the district page: its name, then day · time · "before the
+  district meeting" · format (dxGsrLine); the district's GSR School Chair under them when the roster names one.
+  A school whose address is the committee's own (the Area's weekly study, presented with Districts 1 & 3) is
+  left out here, and a district with nothing else drops out too: the committee page shows it under "When we meet"
+  (the district page keeps it). dxGsrList does that, and only when the committee row has an address (c.email).
+  Content: data/gsr-schools.csv + the Area calendar + the roster (dxGsrList in src/_lib/plugins/districts.js);
+  wording: data/text/districts.csv (districts.gsr.list_*). Expects: L, calendar, districts, servants, c.
+-#}
+{%- from "macros/districts.njk" import numTile with context -%}
+{%- from "macros/ui.njk" import emailLink with context -%}
+{%- set gl = (districts.list if districts else []) | dxGsrList(calendar, servants, c.email) -%}
+{%- if gl.length %}
+<div class="mt-10">
+  <h3 id="gsr-districts-title" class="flex items-center gap-2 font-display text-xl font-bold text-ink-950">{% icon "map-pinned", "size-5 text-[var(--a-600)]" %}{{ "districts.gsr.list_title" | t(L) }}</h3>
+  <p class="mt-2 max-w-3xl text-ink-600">{{ "districts.gsr.list_lead" | t(L) }}</p>
+  <ul class="gsr-dlist" role="list">
+    {%- for x in gl %}
+    {%- set dd = x.d %}
+    <li style="{{ dd.color | accent }}">
+      <a href="{{ ('/districts/' + dd.slug + '/') | lurl(L) }}#gsr" class="gsr-drow group">
+        {{ numTile({ d: dd, lang: L, size: "sm" }) }}
+        <span class="min-w-0 flex-1">
+          <span class="block font-display text-lg leading-snug font-bold text-ink-950 group-hover:text-(--a-800)">{{ dd | loc("name", L) }}</span>
+          {%- for it in x.info.items %}
+          {#- "District 9 GSR School" under "District 9" says the name twice: the kind is enough -#}
+          {%- set tt = (it | loc("title", L)) or (it.series | calTitle(L)) %}
+          {%- if (dd | loc("name", L)) in tt %}{% set tt = ("districts.gsr.kind_school" if it.kind == "school" else "districts.gsr.label_orientation") | t(L) %}{% endif %}
+          <span class="gsr-dline">
+            <span class="block font-semibold text-ink-800">{{ tt }}</span>
+            {#- each part stays whole on a narrow screen; a line breaks only after a "·" -#}
+            <span class="block text-ink-600">{% for part in (it | dxGsrLine(L)).split(" · ") %}<span class="whitespace-nowrap">{{ part }}</span>{% if not loop.last %}&nbsp;· {% endif %}{% endfor %}</span>
+          </span>
+          {%- endfor %}
+          {%- if x.info.chair and x.info.chair.name %}
+          {#- the name never splits across two lines (dxGsrChairLine joins it with no-break spaces) -#}
+          <span class="mt-2 flex items-center gap-1.5 text-sm text-ink-600">{% icon "user-round", "size-4 shrink-0 text-(--a-600)" %}<span>{{ x.info.chair | dxGsrChairLine(L) }}</span></span>
+          {%- endif %}
+        </span>
+        {% icon "arrow-right", "size-4 mt-1 shrink-0 text-ink-300 transition group-hover:translate-x-0.5 group-hover:text-(--a-600)" %}
+      </a>
+    </li>
+    {%- endfor %}
+  </ul>
+  <p class="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-ink-600">{% icon "info", "size-4 shrink-0 text-ink-400" %}<span>{{ "districts.gsr.list_more" | t(L) }}</span>{{ emailLink({ email: c.email_es if (L.code == "es" and c.email_es) else c.email, lang: L }) }}</p>
+</div>
+{%- endif %}

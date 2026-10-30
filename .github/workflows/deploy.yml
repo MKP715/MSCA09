@@ -1,0 +1,358 @@
+name: Build and publish the website
+
+# The site rebuilds itself:
+#  - whenever anything is committed to main (e.g. a CSV edited on github.com)
+#  - every three hours, to pick up Google Calendar changes and new Drive files,
+#    and so "upcoming" lists roll forward on their own. A scheduled build identical to the
+#    last published site is not published again (GitHub Pages would re-date every file, and
+#    returning visitors would download them all again); pushes and manual runs always publish.
+#  - on demand: Actions tab → "Build and publish the website" → Run workflow
+#
+# One-time setup: Settings → Pages → Build and deployment → Source: GitHub Actions.
+# Optional: Settings → Secrets and variables → Actions → New secret GOOGLE_API_KEY
+# (lets the site list new files dropped into the Drive folder automatically —
+# see README "Documents appear automatically"), together with
+# Settings → Secrets and variables → Actions → New secret DRIVE_FOLDER_ID
+# (the id of that Drive folder; a secret, so it is kept out of the repository and masked in the public build logs).
+# Optional: Settings → Secrets and variables → Actions → Variables → SITE_URL
+# (the public address, e.g. https://msca09aa.org, once the domain points here).
+#
+# Staying switched on: GitHub pauses scheduled workflows in a public repository after
+# 60 days without a commit. Once a day the "keep" job below re-enables this workflow and the
+# weekly media check (GitHub's API resets the 60-day clock), so a quiet summer cannot
+# stop the calendar updates. If it ever does stop: Actions → the workflow → "Enable workflow".
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "11 */3 * * *"
+  workflow_dispatch:
+
+# Each job gets only what it needs (below); nothing by default. The build job runs some 330 outside npm packages, so
+# it can only read: it cannot push to the repository or call the Pages deploy API (the deploy job publishes the files
+# it builds). Pushing the data copies and re-enabling the schedule happen in the separate "keep" job, which runs no
+# package code at all.
+permissions: {}
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: read # "Pages settings" reads the site's address
+    outputs:
+      skip: ${{ steps.fingerprint.outputs.skip }}
+      hash: ${{ steps.fingerprint.outputs.hash }}
+      indexnow-urls: ${{ steps.indexnow.outputs.urls }}
+      indexnow-host: ${{ steps.indexnow.outputs.host }}
+      indexnow-key: ${{ steps.indexnow.outputs.key }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false # nothing in this job pushes
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        # --ignore-scripts: no package runs its own install script (the build needs none: its native tools come as
+        # ready-made packages), so a tampered package release cannot run code at install time
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Pages settings
+        id: pages
+        uses: actions/configure-pages@v6
+
+      - name: Export the path prefix
+        # "/" on a custom domain; "/<repository>/" on https://<user>.github.io/<repository>/.
+        # Exported for every later step, so the build and the check agree on it.
+        run: echo "ELEVENTY_PATH_PREFIX=${{ steps.pages.outputs.base_path }}/" >> "$GITHUB_ENV"
+
+      - name: Fetch the Area calendar and Drive file list
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+          DRIVE_FOLDER_ID: ${{ secrets.DRIVE_FOLDER_ID }}
+        run: npm run fetch
+
+      - name: List the Area 09 Archives' collections (at most once a day; never blocks)
+        # Reads the Archives Committee's public Google Drive folders listed in data/archives/collections.csv
+        # (no key needed), so files the Archives add appear in the document library by themselves.
+        # A folder Google does not answer keeps its last list. See scripts/archives-index.mjs.
+        # ARCHIVES-DRIVE-LINKS.md (every Drive link of the Archives site, with file counts) is regenerated from the same data.
+        run: |
+          node scripts/archives-index.mjs || echo "::warning::Could not refresh the Area 09 Archives file list; the copy in the repository is used."
+          node scripts/archives-links-md.mjs || echo "::warning::Could not regenerate ARCHIVES-DRIVE-LINKS.md."
+
+      - name: Report calendar entries that need fixing in Google Calendar (never blocks)
+        run: node scripts/check-calendar.mjs || true
+
+      - name: Reuse resized banner photos from the last run
+        uses: actions/cache@v6
+        with:
+          path: _site/assets/img/gen
+          key: hero-images-${{ hashFiles('src/assets/img/hero/**') }}
+
+      - name: Hand the calendar copy to the keep job (only when it passes the anonymity check)
+        # A copy of the calendar is kept in the repository, so the site still builds if Google is unreachable one
+        # day; the "keep" job below commits it ([skip ci] stops a rebuild loop).
+        # The copy becomes permanent public history, so it is handed over only when
+        # scripts/check-calendar.mjs --all passes its anonymity check (no personal e-mail address anywhere
+        # in any entry, past or upcoming) and reports no phone number in any entry (W_PHONE_BODY /
+        # W_PHONE_ENTRY) other than the public lines in data/contact-allowlist.csv, central-offices.csv
+        # and resources.csv. Otherwise the repository keeps its last clean copy until the entry is fixed in
+        # Google Calendar, and the site is still built from today's download (the site leaves personal
+        # e-mail addresses out by itself). The log names the entries only (title and date), never the details.
+        # (A build artifact of a public repository can be downloaded by anyone signed in to GitHub: a copy that
+        # failed the check is never put in it.)
+        run: |
+          if git diff --quiet -- data/calendar.ics; then
+            echo "The calendar has not changed."
+            exit 0
+          fi
+          status=0
+          node scripts/check-calendar.mjs --all --json > "$RUNNER_TEMP/calendar-check.json" || status=$?
+          verdict=$(node --input-type=module -e '
+            import fs from "node:fs";
+            import { readCsv } from "./src/_lib/csv.js";
+            try {
+              const { findings } = JSON.parse(fs.readFileSync(process.argv[1], "utf8"));
+              const digits = (s) => String(s || "").replace(/\D/g, "").replace(/^1(?=\d{10}$)/, "");
+              const PHONE = /\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}/g;
+              const allowed = new Set(readCsv("contact-allowlist.csv").filter((r) => r.kind === "phone").map((r) => digits(r.value)));
+              for (const f of ["central-offices.csv", "resources.csv"])
+                for (const row of readCsv(f)) for (const v of Object.values(row)) for (const m of String(v).matchAll(PHONE)) allowed.add(digits(m[0]));
+              const bad = findings.filter((f) =>
+                f.severity === "anonymity" ||
+                (/^W_PHONE_(BODY|ENTRY)$/.test(f.code) && !allowed.has(digits((String(f.message).match(PHONE) || [""])[0]))));
+              if (!bad.length) { console.log("ok"); process.exit(0); }
+              console.log(bad.length + " problem(s) in: " + [...new Set(bad.map((f) => `${f.summary} (${f.when})`))].join("; "));
+            } catch (e) {
+              console.log("the check gave no result");
+            }
+          ' "$RUNNER_TEMP/calendar-check.json" || echo "the check could not run")
+          if [ "$status" -ne 0 ] || [ "$verdict" != "ok" ]; then
+            echo "::warning::The calendar copy was NOT committed: personal contact details in Google Calendar (check-calendar exit $status: $verdict). Fix those entries in Google Calendar (role e-mails and public office numbers only); the next run commits the copy. Details: npm run check:calendar -- --all"
+            exit 0
+          fi
+          mkdir -p "$RUNNER_TEMP/keep/data"
+          cp data/calendar.ics "$RUNNER_TEMP/keep/data/calendar.ics"
+          echo "Calendar copy handed to the keep job."
+
+      - name: Hand the Area 09 Archives file list to the keep job
+        # So the library still lists the Archives' files if Google is unreachable one day; the "keep" job commits it.
+        # The list holds file names and Drive links the Archives already publish on their own site.
+        run: |
+          if git diff --quiet -- data/archives/files.json ARCHIVES-DRIVE-LINKS.md; then
+            echo "The Archives file list has not changed."
+            exit 0
+          fi
+          mkdir -p "$RUNNER_TEMP/keep/data/archives"
+          cp data/archives/files.json "$RUNNER_TEMP/keep/data/archives/files.json"
+          cp ARCHIVES-DRIVE-LINKS.md "$RUNNER_TEMP/keep/ARCHIVES-DRIVE-LINKS.md"
+          echo "Archives file list handed to the keep job."
+
+      - name: Upload the copies for the keep job
+        # Only what the two steps above handed over (often nothing but this note); kept for one day
+        run: |
+          mkdir -p "$RUNNER_TEMP/keep"
+          (cd "$RUNNER_TEMP/keep" && find . -type f | sort) > "$RUNNER_TEMP/keep/handed-over.txt"
+          cat "$RUNNER_TEMP/keep/handed-over.txt"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: keep
+          path: ${{ runner.temp }}/keep
+          retention-days: 1
+
+      - uses: actions/setup-python@v7
+        # Only for the link-preview picture below, which is optional: never fails the build.
+        continue-on-error: true
+        with:
+          python-version: "3.12"
+
+      - name: Draw the link-preview picture (current panel from data/settings.csv)
+        # Never blocks: if it fails, the picture already in the repository is used. Pillow is pinned to one version
+        # and checked against its published fingerprints (scripts/requirements-social-card.txt).
+        run: |
+          pip install --quiet --require-hashes -r scripts/requirements-social-card.txt \
+            && python scripts/build-social-card.py \
+            || echo "::warning::Could not redraw the link-preview picture; using the one in the repository."
+
+      - name: Build
+        env:
+          SITE_URL: ${{ vars.SITE_URL || steps.pages.outputs.base_url }}
+        run: npm run build
+
+      - name: Check the built site (anonymity, links, data files, missing text)
+        run: npm run check
+
+      # The fingerprint of the last site that was published (saved by the deploy job below, only after a
+      # successful deploy). None yet, or the cache expired: the site is published as usual.
+      - name: Recall the last published site
+        uses: actions/cache/restore@v6
+        continue-on-error: true
+        with:
+          path: .site-hash
+          key: site-hash-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: site-hash-
+
+      - name: Compare with the last published site
+        # One SHA-1 over every file's name and content. The search index (pagefind*) is left out: Pagefind writes
+        # the same index in a different byte order each time, and it is made from the pages, which are counted.
+        # Only a scheduled run may skip publishing; a push or a manual run always publishes.
+        id: fingerprint
+        run: |
+          hash=$(cd _site && find . -type f -not -path './pagefind/*' -not -path './pagefind-posts/*' -print0 | LC_ALL=C sort -z | xargs -0 sha1sum | sha1sum | cut -d' ' -f1)
+          last=$(cat .site-hash/sha1 2>/dev/null || true)
+          echo "hash=$hash" >> "$GITHUB_OUTPUT"
+          if [ "${{ github.event_name }}" = "schedule" ] && [ -n "$last" ] && [ "$hash" = "$last" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "The built site is the same as the one published last ($hash): not publishing it again."
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+            echo "Publishing (site $hash, last published ${last:-unknown})."
+          fi
+
+      - name: List the changed pages for Bing and other IndexNow search engines (never blocks)
+        # Pages that are new, gone or have a new <lastmod> compared with the sitemap on the live site
+        # (scripts/indexnow-urls.mjs); the deploy job announces them once this build is published. The list is
+        # empty when the live sitemap cannot be read, and for a build that is not the site at the root of
+        # site_url in data/settings.csv (e.g. on https://<user>.github.io/<repository>/).
+        id: indexnow
+        if: steps.fingerprint.outputs.skip != 'true'
+        continue-on-error: true
+        env:
+          SITE_URL: ${{ vars.SITE_URL || steps.pages.outputs.base_url }}
+        run: |
+          live="$RUNNER_TEMP/live-sitemap.xml"
+          curl -fsS --max-time 20 -o "$live" "${SITE_URL%/}/sitemap.xml" || rm -f "$live"
+          urls=$(node scripts/indexnow-urls.mjs "$live" _site/sitemap.xml) || urls="[]"
+          key=$(cd _site && ls | grep -xE '[0-9a-f]{32}\.txt' | head -n 1 || true)
+          if [ -z "$key" ]; then
+            echo "::warning::The IndexNow key file (src/static/<32 characters 0-9 and a-f>.txt) is missing: changed pages are not announced to Bing."
+            urls="[]"
+          fi
+          host=${SITE_URL#*://}
+          echo "host=${host%%/*}" >> "$GITHUB_OUTPUT"
+          echo "key=${key%.txt}" >> "$GITHUB_OUTPUT"
+          echo "urls=$urls" >> "$GITHUB_OUTPUT"
+
+      # upload-pages-artifact v4+ leaves out dot files (_site/.nojekyll): a GitHub Actions deployment does not need it.
+      - uses: actions/upload-pages-artifact@v5
+        if: steps.fingerprint.outputs.skip != 'true'
+        with:
+          path: _site
+
+  # Commits the copies the build handed over and keeps the schedule switched on. It has the write token, so it runs
+  # no package code: no npm install, only git and gh on files the build checked.
+  keep:
+    needs: build
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # commit the calendar copy and the Archives file list
+      actions: write # "Keep the scheduled runs switched on"
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false # the token is passed to the one push below only
+
+      - name: Download the copies from the build
+        # always there unless the build stopped before handing them over (then there is nothing to keep)
+        uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: keep
+          path: ${{ runner.temp }}/keep
+
+      - name: Keep the calendar copy and the Archives file list in the repository
+        # Only these three files are taken from the build's hand-over, and only when they differ from the repository.
+        # [skip ci] stops a rebuild loop.
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          k="$RUNNER_TEMP/keep"
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -f "$k/data/calendar.ics" ]; then
+            cp "$k/data/calendar.ics" data/calendar.ics
+            git add data/calendar.ics
+            git diff --cached --quiet || git commit -m "Refresh calendar mirror from Google Calendar [skip ci]"
+          fi
+          if [ -f "$k/data/archives/files.json" ] && [ -f "$k/ARCHIVES-DRIVE-LINKS.md" ]; then
+            cp "$k/data/archives/files.json" data/archives/files.json
+            cp "$k/ARCHIVES-DRIVE-LINKS.md" ARCHIVES-DRIVE-LINKS.md
+            git add data/archives/files.json ARCHIVES-DRIVE-LINKS.md
+            git diff --cached --quiet || git commit -m "Refresh the Area 09 Archives file list [skip ci]"
+          fi
+          if [ "$(git rev-parse HEAD)" = "$GITHUB_SHA" ]; then
+            echo "Nothing to keep."
+            exit 0
+          fi
+          # GitHub hides the token in the log
+          git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:${GITHUB_REF_NAME}" \
+            || echo "::warning::Could not push the calendar copy / Archives file list (not fatal)."
+
+      - name: Keep the scheduled runs switched on
+        # Once a day (the first run after midnight UTC), even when the build failed; never fatal.
+        # See "Staying switched on" at the top of this file.
+        if: always() && github.event_name == 'schedule'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ $((10#$(date -u +%H))) -lt 3 ]; then
+            gh workflow enable deploy.yml --repo "$GITHUB_REPOSITORY" || true
+            gh workflow enable media-check.yml --repo "$GITHUB_REPOSITORY" || true
+          fi
+
+  deploy:
+    needs: build
+    if: needs.build.outputs.skip != 'true'
+    runs-on: ubuntu-latest
+    # what actions/deploy-pages needs, and nothing else (this job runs no package code)
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
+
+      # Only after a successful deploy: the next scheduled run compares its build with this one.
+      - name: Remember the published site
+        run: mkdir -p .site-hash && echo "${{ needs.build.outputs.hash }}" > .site-hash/sha1
+
+      - name: Save it for the next run
+        uses: actions/cache/save@v6
+        continue-on-error: true
+        with:
+          path: .site-hash
+          key: site-hash-${{ github.run_id }}-${{ github.run_attempt }}
+
+      # Only after a successful deploy, and only when the build job listed pages (see "List the changed pages").
+      # Bing, Yandex, Seznam, Naver and the other IndexNow search engines share the list; Google ignores it and
+      # reads the sitemap. Never fatal: the log shows only the number of pages and the answer (200 or 202 = received).
+      - name: Announce the changed pages to Bing and other IndexNow search engines (never blocks)
+        if: needs.build.outputs.indexnow-urls != '' && needs.build.outputs.indexnow-urls != '[]'
+        continue-on-error: true
+        env:
+          URLS: ${{ needs.build.outputs.indexnow-urls }}
+          HOST: ${{ needs.build.outputs.indexnow-host }}
+          KEY: ${{ needs.build.outputs.indexnow-key }}
+        run: |
+          count=$(node -e 'console.log(JSON.parse(process.env.URLS).length)' || echo "?")
+          status=$(node -e '
+              const { HOST: host, KEY: key, URLS } = process.env;
+              process.stdout.write(JSON.stringify({ host, key, keyLocation: `https://${host}/${key}.txt`, urlList: JSON.parse(URLS) }));
+            ' | curl -sS --max-time 30 -o /dev/null -w '%{http_code}' \
+                -H 'Content-Type: application/json; charset=utf-8' --data-binary @- https://api.indexnow.org/indexnow) || true
+          echo "IndexNow: $count page(s) sent; HTTP status ${status:-none} (000 = no answer)."

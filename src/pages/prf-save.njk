@@ -1,0 +1,123 @@
+---
+pagination: { data: langs, size: 1, alias: lang, addAllPagesToCollections: true }
+permalink: "{{ lang.prefix }}/service/prf-2028/save-the-date/"
+layout: page.njk
+title_key: prf.save.title
+title_suffix_key: prf.title_suffix
+description_key: prf.save.description
+eyebrow_key: prf.dates_long
+lead_key: prf.save.lead
+heroIcon: calendar-heart
+accent: coral
+crumbs: [{ label_key: "prf.crumb_service", url: "/service/" }, { label_key: "prf.crumb", url: "/service/prf-2028/" }]
+bare: true
+bodyClass: prf-save-page
+prfPage: save
+ogImage: /assets/img/prf/long-beach-1024.jpg
+# the photo's size and type, so a link preview can show it on the first share
+ogImageWidth: 1024
+ogImageHeight: 553
+ogImageType: image/jpeg
+og_image_alt_key: prf.flyer.photo_alt
+source: data/prf/forum.csv
+scripts: ["/assets/js/prf.js"]
+---
+{#- The Save the Date flyer, in English and in Spanish (the visitor picks; the page's language first), to print or
+    save as a PDF — printing this page prints only the flyer (prf.css) — with a QR code to the short address
+    /prf2028/ (/es/prf2028/), made when the site is built (src/_data/prf.js). Then Add to calendar, a short
+    announcement to copy for group meetings and newsletters, and a checklist to help spread the word (kept in this
+    browser only). Wording: data/text/prf.csv; checklist: data/prf/cards.csv (spread). -#}
+{%- from "macros/ui.njk" import shareButton with context -%}
+{%- from "macros/prf.njk" import prfAddCal with context -%}
+{%- set L = lang -%}
+{%- set P = prf -%}
+{%- set S = P.set -%}
+{%- set langs2 = [{ code: "en" }, { code: "es" }] -%}
+
+{% include "partials/prf-nav.njk" %}
+
+<div class="prf-save-wrap wrap py-12 lg:py-16 2xl:py-20" x-data="prfFlyer('{{ L.code }}')">
+  <div class="prf-save-grid grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10">
+
+    {#- ============================================================ the flyers -#}
+    <section class="lg:col-span-6 xl:col-span-5" aria-labelledby="prf-flyer-h">
+      <h2 id="prf-flyer-h" class="sr-only">{{ "prf.save.flyer_title" | t(L) }}</h2>
+      {%- for F in langs2 %}
+      {%- set FL = F.code -%}
+      <article class="prf-flyer" lang="{{ FL }}" :class="flyer === '{{ FL }}' && 'is-shown'" x-show="flyer === '{{ FL }}'" {% if FL != L.code %}x-cloak{% endif %} aria-label="{{ ('prf.save.flyer_' + FL) | t(L) }}">
+        <header class="prf-flyer__top">
+          <p class="prf-flyer__std">{{ "prf.flyer.std" | t(F) }}</p>
+          <p class="prf-flyer__name">{{ "prf.flyer.name" | t(F) }}</p>
+          <p class="prf-flyer__host">{{ "prf.flyer.host" | t(F) }}</p>
+        </header>
+        <p class="prf-flyer__dates">{{ "prf.flyer.dates" | t(F) }}</p>
+        <img src="/assets/img/prf/long-beach-1024.jpg" alt="{{ 'prf.flyer.photo_alt' | t(F) }}" width="1024" height="553" class="prf-flyer__photo">
+        <div class="prf-flyer__body">
+          <div class="min-w-0 flex-1">
+            <p class="prf-flyer__label">{{ "prf.flyer.hotel" | t(F) }}</p>
+            <p class="prf-flyer__hotel">{{ S.venue_name }}</p>
+            <p>{{ S.venue_street }}<br>{{ S.venue_city }} {{ S.venue_zip }}</p>
+            <p class="mt-3 font-bold">{{ "prf.flyer.open" | t(F) }}</p>
+            <p>{{ ("prf.flyer.reg_open" if P.registrationOpen else "prf.flyer.reg") | t(F) }}</p>
+          </div>
+          <figure class="prf-qr">
+            {{ P.qr[FL] | safe }}
+            <figcaption>{{ "prf.flyer.scan" | t(F) }}</figcaption>
+          </figure>
+        </div>
+        <footer class="prf-flyer__foot">
+          <p class="prf-flyer__miss">{{ "prf.flyer.miss" | t(F) }}</p>
+          <p>{{ "prf.flyer.info" | t(F) }} {{ S.email }}</p>
+          <p class="prf-flyer__url">{{ P.short[FL] | replace("https://", "") }}</p>
+        </footer>
+      </article>
+      {%- endfor %}
+    </section>
+
+    {#- ============================================================ download · share · calendar -#}
+    <div class="prf-save-side space-y-6 lg:col-span-6 xl:col-span-7">
+      <section class="card p-6 sm:p-8" style="{{ 'coral' | accent }}" aria-labelledby="prf-get-h">
+        <h2 id="prf-get-h" class="flex items-center gap-3 font-display text-2xl font-bold text-ink-950"><span class="icon-tile size-11">{% icon "printer", "size-5" %}</span>{{ "prf.save.get_title" | t(L) }}</h2>
+        <p class="mt-4 text-sm font-semibold text-ink-700" id="prf-flyer-lang">{{ "prf.save.lang_label" | t(L) }}</p>
+        <div class="prf-seg mt-2" role="radiogroup" aria-labelledby="prf-flyer-lang">
+          {%- for F in langs2 %}
+          <button type="button" role="radio" class="prf-seg__btn" :aria-checked="(flyer === '{{ F.code }}').toString()" @click="flyer = '{{ F.code }}'">{{ ("language." + ("english" if F.code == "en" else "spanish")) | t(L) }}</button>
+          {%- endfor %}
+        </div>
+        <div class="mt-5 flex flex-wrap gap-2">
+          <button type="button" class="btn btn-accent" @click="print()">{% icon "printer", "size-4" %}{{ "prf.save.print" | t(L) }}</button>
+          {{ shareButton({ lang: L, title: "prf.flyer.share" | t(L), style: "btn btn-white", label: "ui.share" | t(L) }) }}
+        </div>
+        <p class="mt-3 text-sm text-ink-500">{{ "prf.save.print_hint" | t(L) }}</p>
+        <div class="mt-6 border-t border-ink-100 pt-5">
+          {{ prfAddCal({ lang: L }) }}
+        </div>
+      </section>
+
+      <section class="card p-6 sm:p-8" style="{{ 'sea' | accent }}" aria-labelledby="prf-msg-h">
+        <h2 id="prf-msg-h" class="flex items-center gap-3 font-display text-2xl font-bold text-ink-950"><span class="icon-tile size-11">{% icon "megaphone", "size-5" %}</span>{{ "prf.save.msg_title" | t(L) }}</h2>
+        <p class="mt-3 text-ink-600">{{ "prf.save.msg_lead" | t(L) }}</p>
+        {%- for F in langs2 %}
+        {%- set msg = "prf.flyer.announcement" | t(F, { url: (P.short[F.code]) }) %}
+        <div x-show="flyer === '{{ F.code }}'" {% if F.code != L.code %}x-cloak{% endif %} x-data="copyText({{ msg | json }})" class="mt-4" lang="{{ F.code }}">
+          <pre class="prf-announce">{{ msg }}</pre>
+          <button type="button" class="btn btn-white btn-sm mt-3" @click="copy()">
+            <span x-show="!copied" class="inline-flex items-center gap-1.5">{% icon "copy", "size-4" %}{{ "prf.save.copy" | t(L) }}</span>
+            <span x-cloak x-show="copied" class="copy-done inline-flex items-center gap-1.5 text-sage-700">{% icon "check", "size-4" %}{{ "ui.copied" | t(L) }}</span>
+          </button>
+        </div>
+        {%- endfor %}
+      </section>
+
+      <section class="card p-6 sm:p-8" style="{{ 'iris' | accent }}" aria-labelledby="prf-spread-h" x-data="prfChecklist('prf2028-spread', {{ P.cards.spread.length }})">
+        <h2 id="prf-spread-h" class="flex items-center gap-3 font-display text-2xl font-bold text-ink-950"><span class="icon-tile size-11">{% icon "list-checks", "size-5" %}</span>{{ "prf.save.spread_title" | t(L) }}</h2>
+        <ul class="mt-4 space-y-2" role="list">
+          {%- for c in P.cards.spread %}
+          <li><label class="prf-choice"><input type="checkbox" :checked="done[{{ loop.index0 }}]" @change="set({{ loop.index0 }}, $event.target.checked)"><span>{{ c | loc("body", L) }}</span></label></li>
+          {%- endfor %}
+        </ul>
+        <p class="mt-4 flex items-center gap-2 text-sm text-ink-500">{% icon "info", "size-4 shrink-0" %}{{ "prf.save.spread_note" | t(L) }}</p>
+      </section>
+    </div>
+  </div>
+</div>

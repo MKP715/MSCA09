@@ -1,0 +1,217 @@
+---
+pagination: { data: langs, size: 1, alias: lang, addAllPagesToCollections: true }
+permalink: "{{ lang.prefix }}/service/prf-2028/"
+layout: base.njk
+title_key: prf.home.title_plain
+description_key: prf.home.description
+accent: sea
+prfPage: overview
+ogImage: /assets/img/prf/long-beach-1024.jpg
+# the photo's size and type, so a link preview can show it on the first share
+ogImageWidth: 1024
+ogImageHeight: 553
+ogImageType: image/jpeg
+og_image_alt_key: prf.flyer.photo_alt
+headInclude: partials/prf-head.njk
+source: data/prf/forum.csv
+scripts: ["/assets/js/prf.js"]
+jsText: ["prf.js.days", "prf.js.hours", "prf.js.minutes", "prf.js.seconds"]
+---
+{#- The 2028 Pacific Regional Forum, hosted by Area 09 in Long Beach: the overview. A photo band with the dates, the
+    hotel and a countdown, then the quick facts, what a Forum is, the numbers, the ten host committee positions, the
+    road to Long Beach, and the Forums Area 09 has hosted before. Data: data/prf/*.csv (src/_data/prf.js); wording:
+    data/text/prf.csv. The other Forum pages share the tab row (partials/prf-nav.njk). -#}
+{%- from "macros/ui.njk" import shareButton, sectionHead, breadcrumbLd with context -%}
+{%- from "macros/content.njk" import factTile with context -%}
+{%- from "macros/prf.njk" import prfAddCal with context -%}
+{%- set L = lang -%}
+{#- the breadcrumb trail between Home and this page: shown in the hero and given to search engines (breadcrumbLd) -#}
+{%- set crumbs = [{ label_key: "prf.crumb_service", url: "/service/" }] -%}
+{%- set P = prf -%}
+{%- set S = P.set -%}
+{%- set es = L.code == "es" -%}
+
+{#- ============================================================ photo band -#}
+<section class="prf-hero relative isolate overflow-hidden text-white">
+  <picture class="absolute inset-0 -z-20">
+    <source type="image/webp" srcset="/assets/img/prf/long-beach-640.webp 640w, /assets/img/prf/long-beach-1024.webp 1024w" sizes="100vw">
+    <img src="/assets/img/prf/long-beach-1024.jpg" alt="" width="1024" height="553" class="size-full object-cover" fetchpriority="high">
+  </picture>
+  <div class="prf-hero__shade absolute inset-0 -z-10" aria-hidden="true"></div>
+  <div class="wrap pt-6 pb-12 sm:pt-8 lg:pt-10 lg:pb-16 2xl:pb-20">
+    <div class="mb-8 flex items-center justify-between gap-3">
+      <nav aria-label="{{ 'nav.breadcrumb' | t(L) }}" class="min-w-0 text-sm">
+        <ol class="-my-3 flex flex-wrap items-center gap-x-1.5 text-white/80 lg:my-0">
+          <li><a href="{{ '/' | lurl(L) }}" class="-ml-3.5 inline-flex size-11 items-center justify-center hover:text-white lg:ml-0 lg:size-auto">{% icon "house", "size-4" %}<span class="sr-only">{{ "nav.home" | t(L) }}</span></a></li>
+          {%- for c in crumbs %}
+          <li class="flex items-center gap-1.5">{% icon "chevron-right", "size-3.5 text-white/50" %}<a href="{{ c.url | lurl(L) }}" class="inline-flex min-h-11 items-center hover:text-white lg:min-h-0">{{ c.label_key | t(L) }}</a></li>
+          {%- endfor %}
+          <li class="flex min-h-11 min-w-0 items-center gap-1.5 lg:min-h-0">{% icon "chevron-right", "size-3.5 text-white/50" %}<span class="truncate font-medium text-white" aria-current="page">{{ "prf.crumb" | t(L) }}</span></li>
+        </ol>
+      </nav>
+      {{ breadcrumbLd({ lang: L, crumbs: crumbs, title: "prf.crumb" | t(L), base: site.url }) }}
+      {{ shareButton({ lang: L, title: "prf.home.title_plain" | t(L), style: "pill", dark: true }) }}
+    </div>
+
+    <div class="max-w-4xl">
+      <p class="prf-hero__eyebrow">{{ "prf.home.eyebrow" | t(L) }}</p>
+      <h1 class="mt-3 font-display text-5xl leading-[0.95] font-extrabold tracking-tight text-balance sm:text-6xl 2xl:text-7xl" data-pagefind-weight="10">
+        {{ "prf.home.title_1" | t(L) }} <span class="text-sun-300">2028</span>
+      </h1>
+      <ul class="mt-6 space-y-2 text-lg font-semibold sm:text-xl" role="list">
+        <li class="flex items-start gap-2.5">{% icon "calendar-days", "size-6 shrink-0 mt-0.5 text-sun-300" %}<span>{{ "prf.dates_long" | t(L) }}</span></li>
+        <li class="flex items-start gap-2.5">{% icon "map-pin", "size-6 shrink-0 mt-0.5 text-sun-300" %}<span>{{ S.venue_name }} · {{ S.venue_street }}, {{ S.venue_city }}</span></li>
+      </ul>
+
+      {#- countdown: filled in by prf.js; before it runs (or without it) the dates above say it all. The four tiles are in
+          the page from the start, invisible until prf.js fills them, so they take their room (one row, smaller under 375px
+          wide: pages/prf.css) at once and the buttons below never move. -#}
+      <div x-data="prfCountdown({{ P.startMs }}, {{ P.endMs }})" class="invisible mt-8" :class="{ invisible: !ready }" data-pagefind-ignore>
+        <p class="sr-only" x-text="spoken"></p>
+        <div x-show="!over" class="flex flex-wrap gap-2.5 sm:gap-3" aria-hidden="true">
+          <span class="prf-count"><span class="prf-count__n" x-text="units[0] && units[0].v">000</span><span class="prf-count__l">{{ "prf.js.days" | t(L) }}</span></span>
+          <span class="prf-count"><span class="prf-count__n" x-text="units[1] && units[1].v">00</span><span class="prf-count__l">{{ "prf.js.hours" | t(L) }}</span></span>
+          <span class="prf-count"><span class="prf-count__n" x-text="units[2] && units[2].v">00</span><span class="prf-count__l">{{ "prf.js.minutes" | t(L) }}</span></span>
+          <span class="prf-count" x-show="!calm"><span class="prf-count__n" x-text="units[3] && units[3].v">00</span><span class="prf-count__l">{{ "prf.js.seconds" | t(L) }}</span></span>
+        </div>
+        <p x-cloak x-show="over" class="font-display text-2xl font-bold text-sun-200">{{ "prf.home.over" | t(L) }}</p>
+      </div>
+
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="{{ (P.base + 'save-the-date/') | lurl(L) }}" class="btn btn-lg prf-btn-sun">{% icon "calendar-heart", "size-5" %}{{ "prf.home.cta_save" | t(L) }}</a>
+        <a href="{{ (P.base + 'volunteer/') | lurl(L) }}" class="btn btn-white btn-lg">{% icon "hand-heart", "size-5" %}{{ "prf.home.cta_volunteer" | t(L) }}</a>
+        <a href="{{ (P.base + 'about/') | lurl(L) }}" class="btn btn-glass btn-lg">{% icon "info", "size-5" %}{{ "prf.home.cta_learn" | t(L) }}</a>
+      </div>
+      {{ prfAddCal({ lang: L, dark: true, cls: "mt-6" }) }}
+    </div>
+  </div>
+</section>
+
+{% include "partials/prf-nav.njk" %}
+
+<div class="wrap space-y-20 py-12 lg:space-y-24 lg:py-16 2xl:py-20">
+
+  {#- ============================================================ quick facts + registration -#}
+  <section aria-labelledby="prf-facts-h">
+    <h2 id="prf-facts-h" class="sr-only">{{ "prf.home.facts_title" | t(L) }}</h2>
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      {{ factTile({ value: "prf.fact.when_value" | t(L), label: "prf.fact.when" | t(L), icon: "calendar-heart", color: "sea" }) }}
+      {{ factTile({ value: S.venue_name, label: "prf.fact.where" | t(L), sub: S.venue_city, icon: "building-2", color: "coral" }) }}
+      {{ factTile({ value: "prf.fact.cost_value" | t(L), label: "prf.fact.cost" | t(L), icon: "hand-coins", color: "sun" }) }}
+      {{ factTile({ value: "prf.fact.who_value" | t(L), label: "prf.fact.who" | t(L), icon: "users", color: "iris" }) }}
+    </div>
+    {%- if P.registrationOpen %}
+    <div class="prf-note prf-note--go mt-6" style="{{ 'sage' | accent }}">
+      <span class="icon-tile size-12 shrink-0">{% icon "ticket", "size-6" %}</span>
+      <div>
+        <p class="font-display text-lg font-bold text-ink-950">{{ "prf.reg.open_title" | t(L) }}</p>
+        <p class="mt-1 text-ink-700">{{ "prf.reg.open_body" | t(L) }}</p>
+      </div>
+      <a href="{{ S.registration_url }}" target="_blank" rel="noopener" class="btn btn-accent">{{ "prf.reg.open_cta" | t(L) }}{% icon "external-link", "size-4" %}</a>
+    </div>
+    {%- else %}
+    <div class="prf-note mt-6" style="{{ 'sun' | accent }}">
+      <span class="icon-tile size-12 shrink-0">{% icon "megaphone", "size-6" %}</span>
+      <div>
+        <p class="font-display text-lg font-bold text-ink-950">{{ "prf.reg.closed_title" | t(L) }}</p>
+        <p class="mt-1 text-ink-700">{{ "prf.reg.closed_body" | t(L) }}</p>
+      </div>
+      <a href="{{ (P.base + 'contact/') | lurl(L) }}#updates" class="btn btn-white">{% icon "bell", "size-4" %}{{ "prf.reg.closed_cta" | t(L) }}</a>
+    </div>
+    {%- endif %}
+  </section>
+
+  {#- ============================================================ what is a Regional Forum -#}
+  <section class="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:items-center" aria-labelledby="prf-what-h">
+    <div class="lg:col-span-5">
+      <p class="eyebrow mb-2" style="{{ 'sea' | accent }}">{{ "prf.home.what_eyebrow" | t(L) }}</p>
+      <h2 id="prf-what-h" class="h-section text-balance">{{ "prf.home.what_title" | t(L) }}</h2>
+      <p class="lead mt-4 text-pretty">{{ "prf.home.what_body" | t(L) }}</p>
+      <div class="mt-6 flex flex-wrap items-center gap-3">
+        <a href="{{ (P.base + 'about/') | lurl(L) }}" class="btn btn-ocean">{{ "prf.home.what_cta" | t(L) }}{% icon "arrow-right", "size-4" %}</a>
+        <a href="{{ S.video_url }}" target="_blank" rel="noopener" class="btn btn-ghost">{% icon "circle-play", "size-4" %}{{ "prf.home.video" | t(L) }}</a>
+      </div>
+    </div>
+    <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:col-span-7" role="list">
+      {%- for c in P.cards.pillars %}
+      <li class="card reveal p-6" style="{{ ['sea', 'iris', 'sun', 'coral'][loop.index0 % 4] | accent }}; --reveal-delay: {{ loop.index0 * 70 }}ms">
+        <span class="icon-tile size-12">{% icon c.icon, "size-6" %}</span>
+        <h3 class="mt-4 font-display text-xl font-bold text-ink-950">{{ c | loc("title", L) }}</h3>
+        <p class="mt-2 leading-relaxed text-ink-600">{{ c | loc("body", L) }}</p>
+      </li>
+      {%- endfor %}
+    </ul>
+  </section>
+</div>
+
+{#- ============================================================ the numbers -#}
+<section class="prf-band" aria-labelledby="prf-stats-h">
+  <div class="wrap py-12 lg:py-14">
+    <h2 id="prf-stats-h" class="sr-only">{{ "prf.home.stats_title" | t(L) }}</h2>
+    <dl class="grid grid-cols-2 gap-x-6 gap-y-8 text-center sm:grid-cols-3 lg:grid-cols-5">
+      {%- for c in P.cards.stats %}
+      <div class="reveal flex flex-col gap-1" style="--reveal-delay: {{ loop.index0 * 60 }}ms"><dt class="order-2 text-sm font-medium text-white/75">{{ c | loc("body", L) }}</dt><dd class="order-1 font-display text-4xl font-extrabold text-sun-300 2xl:text-5xl">{{ c | loc("title", L) }}</dd></div>
+      {%- endfor %}
+    </dl>
+  </div>
+</section>
+
+<div class="wrap space-y-20 py-16 lg:space-y-24 lg:py-20">
+
+  {#- ============================================================ positions + road to Long Beach -#}
+  <section class="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10" aria-labelledby="prf-vol-h">
+    <div class="prf-vol-card reveal self-start lg:col-span-6 xl:col-span-5">
+      <p class="eyebrow mb-2 !text-sun-200">{{ "prf.home.vol_eyebrow" | t(L) }}</p>
+      <h2 id="prf-vol-h" class="font-display text-3xl font-extrabold text-balance text-white sm:text-4xl">{{ "prf.home.vol_title" | t(L, { n: P.positions.length }) }}</h2>
+      <p class="mt-3 leading-relaxed text-white/85">{{ "prf.home.vol_body" | t(L) }}</p>
+      <ul class="mt-6 grid grid-cols-1 gap-x-5 gap-y-2 sm:grid-cols-2" role="list">
+        {%- for p in P.positions %}
+        <li class="flex items-start gap-2 text-sm text-white">
+          {%- if p.open %}{% icon "circle-check", "size-4 mt-0.5 shrink-0 text-sun-300" %}{% else %}{% icon "user-check", "size-4 mt-0.5 shrink-0 text-white/60" %}{% endif %}
+          <span>{{ p | loc("title", L) }}{% if not p.open %} <span class="text-white/60">· {{ "prf.vol.filled" | t(L) }}</span>{% endif %}</span>
+        </li>
+        {%- endfor %}
+      </ul>
+      <a href="{{ (P.base + 'volunteer/') | lurl(L) }}" class="btn btn-white mt-8">{% icon "hand-heart", "size-4" %}{{ "prf.home.cta_volunteer" | t(L) }}</a>
+    </div>
+
+    <div class="reveal lg:col-span-6 xl:col-span-7" style="--reveal-delay: 100ms">
+      {{ sectionHead({ eyebrow: "prf.home.road_eyebrow" | t(L), title: "prf.home.road_title" | t(L), id: "prf-road-h", accent: "coral" }) }}
+      <ol class="prf-timeline" role="list" aria-labelledby="prf-road-h">
+        {%- for m in P.timeline.road %}
+        <li class="prf-timeline__item{{ (' is-' + m.state) if m.state }}">
+          <p class="prf-timeline__when">{{ m | loc("when", L) }}</p>
+          <p class="prf-timeline__title">{{ m | loc("title", L) }}</p>
+          {%- if m.body_en %}<p class="prf-timeline__body">{{ m | loc("body", L) }}</p>{% endif %}
+        </li>
+        {%- endfor %}
+      </ol>
+    </div>
+  </section>
+
+  {#- ============================================================ hosted before + the 2026 Forum -#}
+  <section class="grid grid-cols-1 gap-6 lg:grid-cols-2" aria-label="{{ 'prf.home.more_label' | t(L) }}">
+    <div class="card reveal p-6 sm:p-8" style="{{ 'coral' | accent }}">
+      <h2 class="flex items-center gap-3 font-display text-2xl font-bold text-ink-950"><span class="icon-tile size-11">{% icon "history", "size-5" %}</span>{{ "prf.home.hosted_title" | t(L) }}</h2>
+      <p class="mt-3 leading-relaxed text-ink-600">{{ "prf.home.hosted_body" | t(L) }}</p>
+      <ul class="mt-5 space-y-3" role="list">
+        {%- for h in P.timeline.hosted %}
+        {%- set doc = (documents.all | find("id", S[h.doc])) if h.doc and S[h.doc] else null %}
+        <li class="flex items-start gap-3">
+          <span class="chip shrink-0 {{ 'chip-accent' if h.state == 'highlight' else 'chip-soft' }}">{{ h | loc("when", L) }}</span>
+          <span class="min-w-0"><strong class="text-ink-900">{{ h | loc("title", L) }}</strong> — <span class="text-ink-600">{{ h | loc("body", L) }}</span>
+            {%- if doc and doc.url %} <a href="{{ doc.url }}" target="_blank" rel="noopener" class="font-semibold text-(--a-700) hover:underline">{{ "prf.home.hosted_flyer" | t(L) }}</a>{% endif %}</span>
+        </li>
+        {%- endfor %}
+      </ul>
+    </div>
+    <div class="card reveal flex flex-col p-6 sm:p-8" style="{{ 'iris' | accent }}; --reveal-delay: 90ms" data-hide-after="2026-12-06T23:59:59-08:00">
+      <h2 class="flex items-center gap-3 font-display text-2xl font-bold text-ink-950"><span class="icon-tile size-11">{% icon "binoculars", "size-5" %}</span>{{ "prf.home.preview_title" | t(L) }}</h2>
+      <p class="mt-3 flex-1 leading-relaxed text-ink-600">{{ "prf.home.preview_body" | t(L) }}</p>
+      <div class="mt-5 flex flex-wrap gap-2">
+        <a href="{{ S.prf2026_url }}" target="_blank" rel="noopener" class="btn btn-accent btn-sm">{{ "prf.home.preview_cta" | t(L) }}{% icon "external-link", "size-3.5" %}</a>
+        <a href="{{ '/service/delegate/' | lurl(L) }}#coming" class="btn btn-ghost btn-sm">{% icon "mic", "size-4" %}{{ "prf.home.preview_delegate" | t(L) }}</a>
+      </div>
+    </div>
+  </section>
+</div>

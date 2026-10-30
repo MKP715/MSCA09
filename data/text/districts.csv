@@ -1,0 +1,312 @@
+key,en,es,notes
+"# Wording of the /districts/ pages. key = where the text is used (do not change it); en = English; es = Spanish (A.A. usage: RSG, MCD, CMCD, CSA, Asamblea…; tú, as on the rest of the site); notes = help for editors, never shown.",,,
+"# Words in {braces} are filled in by the page (a number, a city, a website…): keep them, unchanged, in both languages. Rows starting with # are ignored.",,,
+districts.title,Districts,Distritos,
+districts.hub_meta_title,"A.A. districts in Orange, Riverside & San Bernardino counties","Distritos de A.A. en los condados de Orange, Riverside y San Bernardino","Search-result and link-preview title of /districts/ (the page heading stays districts.title). Over 55 characters, so nothing is added after it; keep it under about 70"
+districts.meta_title,{name} – {place},{name} – {place},"Search-result and link-preview title of a district page (the heading stays the name): District 5 – Orange County. {place} = title_area_en / title_area_es in data/districts.csv, or the district's counties when those are empty"
+districts.meta_title_ling,"{name}, Spanish-speaking A.A. – {place}",{name} de A.A. de habla hispana – {place},"Same, for a Spanish-speaking district (kind = linguistic): Distrito 20 de A.A. de habla hispana – condado de Orange. Keep A.A. in it: a title over 55 characters gets nothing after it"
+districts.meta_county_one,{c} County,condado de {c},"The place in a district's search title when it has one county ({c} = the county, from the counties column of data/districts.csv)"
+districts.meta_county_many,{list} counties,condados de {list},The place in a district's search title when it has several counties: Riverside & San Bernardino counties
+districts.meta_and,&,y,Joins the last two counties in a district's search title
+districts.meta_county_name.los-angeles,Los Angeles,Los Ángeles,"A county's name in a district's search title, only where the Spanish differs from the counties column of data/districts.csv (add a row districts.meta_county_name.<county-name> for another one)"
+districts.meta_meeting,"A.A. district business meeting: {rule}, {city}.","Reunión de negocios del distrito de A.A.: {rule}, {city}.","Added to a district page's search-result description when its region text is short (under 100 characters); {rule} and {city} come from the calendar: Every 2nd Tuesday, Costa Mesa"
+districts.meta_meeting_online,"A.A. district business meeting: {rule}, online.","Reunión de negocios del distrito de A.A.: {rule}, en línea.","Same, for a district whose business meeting is online only"
+districts.description,"Find your A.A. district in Mid-Southern California Area 09: business meetings, cities, trusted servants and contacts for every English- and Spanish-speaking district.","Encuentra tu distrito de A.A. en el Área 09: reuniones de negocios, ciudades, servidores de confianza y contactos de cada distrito de habla inglesa o hispana.",
+districts.eyebrow,Service close to home,El servicio cerca de ti,
+districts.lead,"Area 09 has {n} districts — {en} English-speaking and {es} Spanish-speaking. Each one links the A.A. groups of its cities to the Area. Find yours, see when its GSRs meet and who to write to.","El Área 09 tiene {n} distritos: {en} de habla inglesa y {es} de habla hispana. Cada uno une a los grupos de A.A. de sus ciudades con el Área. Encuentra el tuyo, cuándo se reúnen sus RSG y a quién escribir.",{n} {en} {es} are counted from data/districts.csv
+districts.kind.english,English-speaking district,Distrito de habla inglesa,
+districts.kind.spanish,Spanish-speaking district,Distrito de habla hispana,
+districts.county.los-angeles,Los Angeles County,Condado de Los Ángeles,
+districts.county.orange,Orange County,Condado de Orange,
+districts.county.riverside,Riverside County,Condado de Riverside,
+districts.county.san-bernardino,San Bernardino County,Condado de San Bernardino,
+districts.finder.label,Which district am I in?,¿En qué distrito estoy?,
+districts.finder.placeholder,"Type your city, e.g. Torrance","Escribe tu ciudad, p. ej. Santa Ana",
+districts.finder.results,Matching cities,Ciudades encontradas,
+districts.finder.none,"No city found. Try a nearby city or a district number, or use the map.","No encontramos esa ciudad. Prueba con una ciudad cercana o con un número de distrito, o usa el mapa.",
+districts.finder.hint,"You can also type a district number, an area (Coachella Valley) or a county.","También puedes escribir un número de distrito, una zona (valle de Coachella) o un condado.",
+districts.finder.served_by,A.A. groups in {city} are served by:,Los grupos de A.A. de {city} reciben servicio de:,{city} is filled in by the page
+districts.finder.serves_en,English-speaking groups,Grupos de habla inglesa,
+districts.finder.serves_es,Spanish-speaking groups,Grupos de habla hispana,
+districts.finder.count,{n} results,{n} resultados,"Read out by screen readers while the list is open; {n} = the districts and cities listed"
+districts.finder.count_one,1 result,1 resultado,Read out by screen readers when the list shows one district or city
+districts.finder.more,+{n} more — keep typing to narrow the list,+{n} más: sigue escribiendo para acotar la lista,"Under the city list when more cities match than it shows; {n} is filled in by the page"
+districts.city_alias.01.city,Twentynine Palms,Twentynine Palms,"Repeating list of other names for a city, for the city finders (home page and Districts page): city = the name exactly as written in data/districts.csv; names = other names people type, separated by ; (the finder shows ""29 Palms (Twentynine Palms)""); misspellings = also found, never shown. Both columns are searched on both pages. Add an item with the next number. More names: content.city_alias in data/text/content.csv"
+districts.city_alias.01.names,29 Palms; Twenty Nine Palms; Twenty-Nine Palms,29 Palms,
+districts.city_alias.02.city,Big Bear Lake,Big Bear Lake,
+districts.city_alias.02.names,Big Bear Valley,valle de Big Bear,
+districts.city_alias.03.city,Big Bear City,Big Bear City,
+districts.city_alias.03.names,Big Bear Valley,valle de Big Bear,
+districts.city_alias.04.city,Huntington Beach,Huntington Beach,
+districts.city_alias.04.names,HB,,"As in District 6's sub-districts (""HB & FV"")"
+districts.city_alias.05.city,Fountain Valley,Fountain Valley,
+districts.city_alias.05.names,FV,,
+districts.city_alias.06.city,Rancho Santa Margarita,Rancho Santa Margarita,
+districts.city_alias.06.names,RSM,,
+districts.city_alias.07.city,Rancho Palos Verdes,Rancho Palos Verdes,
+districts.city_alias.07.names,RPV,,
+districts.city_alias.08.city,Palos Verdes Estates,Palos Verdes Estates,
+districts.city_alias.08.names,PV Estates; PVE,,
+districts.city_alias.09.city,Temecula,Temecula,
+districts.city_alias.09.names,Rancho California,Rancho California,"The name of the Temecula area before the city was founded (1989); still used in addresses (Rancho California Rd)"
+districts.stat.english,{n} English-speaking,{n} de habla inglesa,
+districts.stat.spanish,{n} Spanish-speaking,{n} de habla hispana,
+districts.stat.counties,{n} counties,{n} condados,
+districts.stat.cities,{n} cities & communities,{n} ciudades y comunidades,
+districts.map.title,Map of the districts,Mapa de los distritos,
+districts.map.hint,Tap a pin to see the district and its business meeting.,Toca un marcador para ver el distrito y su reunión de negocios.,
+districts.map.atlas,"Printable Area map (2024 atlas, PDF) — prints at 11 × 17 in or smaller","Mapa del Área para imprimir (atlas 2024, PDF): se imprime en 11 × 17 pulgadas o menos","Link text under the district map (src/pages/districts.njk, hero and map card); the address is districts.map.atlas.url. Atlas from the Area 09 Archives (Maps and Atlases): image only, no personal details."
+districts.map.atlas.url,https://drive.google.com/file/d/1pz_xheaRlnbZi56sIDVDab6veSw1Y9Zr/view,https://drive.google.com/file/d/1pz_xheaRlnbZi56sIDVDab6veSw1Y9Zr/view,"MSCA-Area-09-Map-72x48-2024.pdf (Area 09 Atlas 2024, 72 x 48 in)"
+districts.soon.title,Coming up at the districts,Próximas reuniones de distrito,
+districts.jump,Go to a district,Ir a un distrito,
+districts.all.eyebrow,Browse,Explora,
+districts.all.title,Every district,Todos los distritos,
+districts.filter.label,Filter districts,Filtrar distritos,
+districts.filter.showing,Showing {n} districts,Mostrando {n} distritos,
+districts.filter.all,All,Todos,
+districts.filter.english,English-speaking,De habla inglesa,
+districts.filter.spanish,Spanish-speaking,De habla hispana,
+districts.tiles.active,active districts,distritos activos,
+districts.tiles.cities,cities & communities,ciudades y comunidades,
+districts.tiles.english,English-speaking districts,distritos de habla inglesa,
+districts.tiles.spanish,Spanish-speaking districts,distritos de habla hispana,
+districts.kind.english_short,English-speaking,De habla inglesa,
+districts.kind.spanish_short,Spanish-speaking,De habla hispana,
+districts.docs.undated,Undated,Sin fecha,
+districts.docs.year_label,Choose a year,Elige un año,
+districts.card.open,Open the district page,Ver el distrito,
+districts.card.more_cities,+{n} more,y {n} más,
+districts.card.next,Next:,Próxima:,
+districts.es.eyebrow,Distritos hispanos,Distritos hispanos,Kept in Spanish on both pages
+districts.es.title,Spanish-speaking districts,Distritos de habla hispana,
+districts.es.lead,"Six linguistic districts (20–25) serve the Spanish-speaking A.A. groups of the whole Area. Each one meets in person, every week or several times a month.","Seis distritos lingüísticos (20–25) atienden a los grupos de A.A. de habla hispana de toda el Área. Cada uno se reúne en persona, cada semana o varias veces al mes.",
+districts.es.quote,“The Area is entirely covered by the Spanish-speaking Districts and also by the English-speaking Districts. Spanish-speaking Districts support the Spanish-speaking Groups and English-speaking Districts support the English-speaking Groups. Groups with other languages are supported by the English-speaking District in which they are located.”,“Toda el Área está cubierta por los distritos de habla hispana y también por los de habla inglesa. Los distritos de habla hispana apoyan a los grupos de habla hispana y los de habla inglesa a los grupos de habla inglesa. Los grupos de otros idiomas reciben apoyo del distrito de habla inglesa en el que se encuentran.”,From the Area's districts page (msca09aa.org/districts)
+districts.es.quote_source,— Area 09 districts page,— Página de distritos del Área 09,
+districts.es.history,"Area 09 has one of the largest Spanish-speaking populations in the Conference. District 20 was created in 1985 to serve every Spanish-speaking meeting in the Area; Districts 21 to 25 grew out of it, and the numbers 26 to 29 are kept for future Spanish-speaking districts. The Area's yearly Foro, started by the Spanish-speaking districts in 1992, is dedicated to general service.","El Área 09 tiene una de las poblaciones de habla hispana más grandes de la Conferencia. El Distrito 20 se creó en 1985 para atender todas las reuniones de habla hispana del Área; de él nacieron los Distritos 21 a 25, y los números 26 a 29 se reservan para futuros distritos de habla hispana. El Foro anual del Área, que iniciaron los distritos hispanos en 1992, está dedicado a los servicios generales.",Sources: The Chronicles of MSCA 09 (2009); Archives: About MSCA09 – Districts
+districts.es.to_interdistrict,The Inter-District Meeting,La Junta Interdistrital,
+districts.es.covers,Serves Spanish-speaking groups in,Atiende a los grupos de habla hispana de,
+districts.es.table,Inter-District workshop table: {topic},Mesa de trabajo interdistrital: {topic},
+districts.es.lookup,Which Spanish-speaking district serves your area?,¿Qué distrito hispano atiende tu zona?,
+districts.es.lookup_note,Some English-speaking districts are shared by two Spanish-speaking districts. The city search at the top of the page shows which one serves your city.,Algunos distritos de habla inglesa se reparten entre dos distritos hispanos. La búsqueda por ciudad al principio de la página muestra cuál atiende tu ciudad.,
+districts.inter.eyebrow,Inter-District Meeting,Junta Interdistrital,
+districts.inter.step1,Registration and breakfast,Registro y desayuno,
+districts.inter.step2,Workshop tables (mesas de trabajo),Mesas de trabajo,
+districts.inter.step3,Business meeting,Junta de negocios,
+districts.inter.read_more,Read how a meeting runs,Leer cómo se desarrolla la junta,
+districts.inter.next,Next meetings,Próximas juntas,
+districts.inter.none,The next date is announced by the host district and posted on the Area calendar.,La próxima fecha la anuncia el distrito anfitrión y se publica en el calendario del Área.,
+districts.inter.calendar,Area calendar,Calendario del Área,
+districts.inter.tables,Workshop tables,Mesas de trabajo,
+districts.inter.tables_note,"Each table is led by one Spanish-speaking district. The tables also meet at the Hispanic Intradistrict session, and their reports are read at the next Inter-District Meeting.","Cada mesa la coordina un distrito hispano. Las mesas también trabajan en la sesión intradistrital hispana, y sus informes se leen en la siguiente Junta Interdistrital.",
+districts.inter.contact,Contact,Contacto,
+districts.inter.coordinator,Inter-District Hispanic Chair,Coordinador Interdistrital Hispano,
+districts.what.eyebrow,General service in brief,Los servicios generales en breve,
+districts.what.title,What is a district? What does a DCM do?,¿Qué es un distrito? ¿Qué hace un MCD?,
+districts.what.lead,Districts are where the A.A. groups and the Area meet. This is how it works in Area 09.,Los distritos son el punto de encuentro entre los grupos de A.A. y el Área. Así funciona en el Área 09.,
+districts.tri.caption,"In A.A.'s upside-down triangle the groups are on top. Districts connect the groups' GSRs with the Area and, through the Delegate, with the General Service Conference.","En el triángulo invertido de A.A. los grupos están arriba. Los distritos conectan a los RSG de los grupos con el Área y, a través del Delegado, con la Conferencia de Servicios Generales.",
+districts.what.district.title,What is a district?,¿Qué es un distrito?,
+districts.what.district.body,"A district brings together the A.A. groups of one part of the Area or, in a linguistic district, the groups that meet in one language. The groups' General Service Representatives (GSRs) meet regularly to share their groups' experience and carry their group conscience to the Area.","Un distrito reúne a los grupos de A.A. de una parte del Área o, en un distrito lingüístico, a los grupos que sesionan en un mismo idioma. Los Representantes de Servicios Generales (RSG) de los grupos se reúnen con regularidad para compartir la experiencia de sus grupos y llevar su conciencia de grupo al Área.",
+districts.what.dcm.title,What does a DCM do?,¿Qué hace un MCD?,
+districts.what.dcm.body,"The GSRs elect a District Committee Member (DCM), who becomes part of the Area committee. The pamphlet *Your DCM* calls the DCM “the vital link between the group's GSR and the area service structure”: DCMs hold regular GSR meetings, keep GSRs informed about Conference activities and hold Seventh Tradition workshops.","Los RSG eligen a un Miembro del Comité de Distrito (MCD), que pasa a formar parte del comité de área. Según la literatura de A.A., el MCD es el enlace esencial entre el RSG del grupo y la estructura de servicio del área: celebra reuniones periódicas de RSG, mantiene informados a los RSG sobre las actividades de la Conferencia y organiza talleres sobre la Séptima Tradición.",Quote: aa.org F-12 Your DCM
+districts.what.dcmc.title,DCM or DCMC?,¿MCD o CMCD?,
+districts.what.dcmc.body,"As the Area grew, the English-speaking districts added a DCM Chair (DCMC): larger districts are divided into subdistricts, each with its own DCM, and the DCMC leads the district. In smaller districts one DCM/DCMC does both jobs. The Spanish-speaking districts do not use subdistricts; each is led by its DCM. Every district can be reached at its Area address, such as d05dcmc@msca09aa.org.","A medida que el Área creció, los distritos de habla inglesa añadieron el cargo de Coordinador(a) de Miembros de Comité de Distrito (CMCD): los distritos grandes se dividen en subdistritos, cada uno con su MCD, y el CMCD dirige el distrito. En los distritos pequeños un solo MCD/CMCD cumple ambas funciones. Los distritos de habla hispana no usan subdistritos: a cada uno lo dirige su MCD. A cada distrito se le puede escribir a su dirección del Área, como d05dcmc@msca09aa.org.",Sources: Area 09 DCM School quick reference (2018); Archives: About MSCA09 – Districts
+districts.what.linguistic.title,Linguistic districts,Distritos lingüísticos,
+districts.what.linguistic.body,"Linguistic districts are made up of groups that hold their meetings in another language, and their boundaries can differ from those of the geographic districts. In Area 09 the six Spanish-speaking districts (20–25) together cover the whole Area.","Los distritos lingüísticos están formados por grupos que sesionan en otro idioma, y sus límites pueden ser distintos de los de los distritos geográficos. En el Área 09, los seis distritos de habla hispana (20–25) cubren juntos toda el Área.",Source: A.A. Service Manual (district chapter)
+districts.what.committee.title,The district committee,El comité de distrito,
+districts.what.committee.body,"Alongside the DCMC, most districts elect an alternate, a secretary, a treasurer and a registrar for two-year terms that follow the Area's panel, plus chairs for local service committees such as Public Information, CPC, Literature, Grapevine and Archives.","Además del CMCD, la mayoría de los distritos eligen un(a) alterno(a), un(a) secretario(a), un(a) tesorero(a) y un(a) registrador(a) por dos años, al ritmo del panel del Área, y coordinadores de comités locales como Información Pública, CCP, Literatura, Grapevine y Archivos Históricos.",
+districts.what.gsr.title,Are you a GSR?,¿Eres RSG?,
+districts.what.gsr.body,Your district meeting is where your group's voice joins the rest of the Area. Come to your district's business meeting (many districts hold an orientation or GSR School just before it) and bring your group's questions and ideas.,En la reunión de tu distrito la voz de tu grupo se une al resto del Área. Ven a la reunión de negocios de tu distrito (muchos ofrecen una orientación o Escuela de RSG justo antes) y trae las preguntas e ideas de tu grupo.,
+districts.history.title,How the district numbers came about,Cómo surgieron los números de distrito,
+districts.history.h1,"The Area begins with ten districts (1–10), 105 meetings and 105 GSRs.","El Área comienza con diez distritos (1–10), 105 reuniones y 105 RSG.",1959
+districts.history.h2,"Districts 11 (from District 8), 12 and 13 are created. District 13 later merges into District 2.","Se crean los Distritos 11 (a partir del Distrito 8), 12 y 13. El Distrito 13 se une después al Distrito 2.",1961
+districts.history.h3,"Districts 14 (1972), 15 and 16 (1975), 17 (1978), 18 (1979, from District 6) and 19 (1980) are formed; 14, 17 and 19 come from District 8.","Se forman los Distritos 14 (1972), 15 y 16 (1975), 17 (1978), 18 (1979, a partir del Distrito 6) y 19 (1980); el 14, el 17 y el 19 salen del Distrito 8.",1972–1980
+districts.history.h4,District 20 is created to serve all the Spanish-speaking meetings of the Area.,Se crea el Distrito 20 para atender todas las reuniones de habla hispana del Área.,1985
+districts.history.h5,"Spanish-speaking Districts 21 (1987), 22 (1988), 23 (1991) and 24 (1995) are formed from District 20, and District 30 from District 9 (1988).","Del Distrito 20 se forman los distritos hispanos 21 (1987), 22 (1988), 23 (1991) y 24 (1995), y del Distrito 9 el Distrito 30 (1988).",1987–1995
+districts.history.h6,"District 16 merges into District 10 (1989). District 31, formed from District 30, merges into District 9 (1996).","El Distrito 16 se une al Distrito 10 (1989). El Distrito 31, formado a partir del 30, se une al Distrito 9 (1996).",1989–1996
+districts.history.h7,District 25 is formed from District 24.,Se forma el Distrito 25 a partir del Distrito 24.,2008
+districts.history.h8,District 3 begins meeting with District 1 as District 1 & 3.,El Distrito 3 empieza a reunirse con el Distrito 1 como Distrito 1 y 3.,2020
+districts.history.h9,District 11 becomes inactive and joins District 8.,El Distrito 11 queda inactivo y se une al Distrito 8.,2023
+districts.history.source,"Sources: The Chronicles of MSCA Area 09 History (Archives Committee, Revision U, 2023), the Archives' “Timeline of MSCA09” and “Notes the Year MSCA 09 Districts Formed”, and the Area's district pages.","Fuentes: The Chronicles of MSCA Area 09 History (Comité de Archivos Históricos, Revisión U, 2023), el «Timeline of MSCA09» y las «Notes the Year MSCA 09 Districts Formed» de los Archivos Históricos, y las páginas de distritos del Área.",
+districts.cta.title,Looking for an A.A. meeting?,¿Buscas una reunión de A.A.?,
+districts.cta.body,"Districts are service bodies: they don't run recovery meetings or keep meeting lists. Local central offices and intergroups do, and many of them answer the phone around the clock.","Los distritos son entidades de servicio: no organizan reuniones de recuperación ni llevan listas de reuniones. Eso lo hacen las oficinas centrales e intergrupos locales, y muchas contestan el teléfono a toda hora.",
+districts.cta.newcomers,New to A.A.?,¿Nuevo en A.A.?,
+districts.cta.offices,Central offices & hotlines,Oficinas centrales y líneas de ayuda,
+districts.learn.title,Learn more,Para saber más,
+districts.learn.f12,Your DCM — pamphlet on aa.org,"Your DCM, folleto en aa.org (en inglés)",
+districts.learn.kit,DCM kit — aa.org,Paquete del MCD en aa.org (en inglés),
+districts.learn.manual,The A.A. Service Manual,El Manual de Servicio de A.A.,
+districts.learn.manual_url,https://www.aa.org/aa-service-manualtwelve-concepts-world-services,https://www.aa.org/es/el-manual-de-servicio-de-aa-y-doce-conceptos-para-el-servicio-mundial,Link (one per language)
+districts.learn.structure,How A.A. service works,Cómo funciona el servicio,
+districts.learn.schools,The Area's DCM School and GSR School help new trusted servants get started:,La Escuela de MCD y la Escuela de RSG del Área ayudan a los nuevos servidores de confianza a empezar:,
+districts.detail.area,Area 09,Área 09,
+districts.detail.next_meeting,Next meeting,Próxima reunión,
+districts.detail.write,E-mail the district,Escribir al distrito,
+districts.detail.all,All districts,Todos los distritos,
+districts.fact.cities,cities & communities,ciudades y comunidades,
+districts.fact.territory,Territory,Territorio,
+districts.fact.hybrid,Hybrid,Híbrida,
+districts.fact.online,Online,En línea,
+districts.fact.in_person,In person,En persona,
+districts.fact.format,Business meeting,Reunión de negocios,
+districts.fact.since,Year formed,Año de creación,
+districts.fact.meets,District meeting,Reunión del distrito,
+districts.nav.label,On this page,En esta página,
+districts.nav.meeting,Meeting,Reunión,
+districts.nav.about,About,Acerca,
+districts.nav.cities,Cities,Ciudades,
+districts.nav.people,Trusted servants,Servidores,
+districts.nav.find,Find a meeting,Buscar reunión,
+districts.nav.events,Events,Eventos,
+districts.nav.documents,Documents,Documentos,
+districts.nav.neighbors,Neighbors,Vecinos,
+districts.nav.gsr,GSR School,Escuela de RSG,Section link to the GSR School section (data/gsr-schools.csv)
+districts.nav.gsr_orientation,GSR orientation,Orientación para RSG,Same link when the district has only a new-GSR orientation
+districts.meeting.title,District business meeting,Reunión de negocios del distrito,
+districts.meeting.lead,"The GSRs of the district's groups meet with the DCMC and the district officers to share news from the groups, the Area and the General Service Conference.","Los RSG de los grupos del distrito se reúnen con el CMCD y los oficiales del distrito para compartir noticias de los grupos, del Área y de la Conferencia de Servicios Generales.",English-speaking districts
+districts.meeting.lead_es,"The GSRs of the district's Spanish-speaking groups meet with the district's DCM and officers to share news from the groups, the Area and the General Service Conference.","Los RSG de los grupos de habla hispana del distrito se reúnen con el MCD y los oficiales del distrito para compartir noticias de los grupos, del Área y de la Conferencia de Servicios Generales.",Spanish-speaking districts
+districts.meeting.good_to_know,Good to know:,Para tener en cuenta:,
+districts.meeting.gsr,For new GSRs:,Para RSG nuevos:,
+districts.meeting.upcoming,Next dates,Próximas fechas,
+districts.meeting.flyer,Meeting flyer,Volante de la reunión,Over the meeting's flyer on a district page (from the calendar entry's IMG: line)
+districts.meeting.no_dates,No upcoming dates are listed. Please check with the district.,No hay fechas próximas publicadas. Consulta con el distrito.,
+districts.meeting.source_cal,Dates and times come from the Area calendar (Pacific time).,Las fechas y horas vienen del calendario del Área (hora del Pacífico).,
+districts.meeting.source_csv,Dates follow the district's usual schedule (Pacific time). Please confirm with the district.,Las fechas siguen el horario habitual del distrito (hora del Pacífico). Confírmalas con el distrito.,
+districts.meeting.when,When,Cuándo,
+districts.meeting.where,Where,Dónde,
+districts.meeting.directions,Directions,Cómo llegar,
+districts.meeting.zoom_id,Zoom meeting ID,ID de reunión de Zoom,
+districts.meeting.passcode,Passcode,Código de acceso,
+districts.meeting.no_passcode,No passcode needed,No necesita código de acceso,
+districts.meeting.join,Join on Zoom,Entrar por Zoom,
+districts.aside.label,District contact and meeting place,Contacto y lugar de reunión del distrito,
+districts.aside.approx,Approximate location: ask the district for the exact address.,Ubicación aproximada: pregunta al distrito la dirección exacta.,
+districts.aside.online_title,Meets online,Se reúne en línea,
+districts.aside.online_body,The Area calendar lists this business meeting on Zoom. Write to the district if you want to attend in person.,El calendario del Área indica que esta reunión de negocios es por Zoom. Escribe al distrito si quieres asistir en persona.,
+districts.aside.next,Next business meeting,Próxima reunión de negocios,
+districts.aside.details,Details,Detalles,
+districts.aside.contact,Contact the district,Contacto del distrito,
+districts.aside.email,DCMC (district chair),CMCD (coordinador del distrito),
+districts.aside.email_es,DCM (district chair),MCD (coordinador del distrito),
+districts.aside.website,Website,Sitio web,
+districts.aside.mail,Mailing address,Dirección postal,
+districts.aside.contribute,Seventh Tradition,Séptima Tradición,
+districts.aside.contribute_web,Groups can contribute to the district online at,Los grupos pueden contribuir al distrito en línea en,
+districts.aside.contribute_mail,"or by mail, to the address above.","o por correo, a la dirección de arriba.",
+districts.aside.contribute_mail_only,Groups can send contributions to the district by mail to the address above.,Los grupos pueden enviar sus contribuciones al distrito por correo a la dirección de arriba.,
+districts.aside.contribute_ask,Ask the district how groups can contribute.,Pregunta al distrito cómo pueden contribuir los grupos.,
+districts.aside.contribute_area,Contribute to Area 09 →,Contribuir al Área 09 →,
+districts.about.title,About this district,Acerca de este distrito,
+districts.about.history,History,Historia,
+districts.about.merged,Former district,Antiguo distrito,
+districts.about.subdistricts,{n} subdistricts,{n} subdistritos,
+districts.about.inter,"Together with the other Spanish-speaking districts, it takes part in the Inter-District Meeting.","Junto con los demás distritos hispanos, participa en la Junta Interdistrital.",
+districts.about.inter_table,It leads the workshop table on {topic}.,Coordina la mesa de trabajo de {topic}.,
+districts.about.inter_link,More about the Inter-District Meeting,Más sobre la Junta Interdistrital,Link from a Spanish-speaking district's page to the Inter-District Meeting on /districts/
+districts.about.website,District website,Sitio web del distrito,
+districts.cities.title,Cities and communities,Ciudades y comunidades,
+districts.cities.lead,The district serves the English-speaking A.A. groups (and groups in languages other than Spanish) that meet in:,El distrito atiende a los grupos de A.A. de habla inglesa (y de otros idiomas que no sean el español) que se reúnen en:,
+districts.cities.lead_es,The district serves the Spanish-speaking A.A. groups that meet in:,El distrito atiende a los grupos de A.A. de habla hispana que se reúnen en:,
+districts.cities.covers,In the territory of these English-speaking districts,En el territorio de estos distritos de habla inglesa,
+districts.cities.covers_lead,Its groups meet in the same cities as:,Sus grupos se reúnen en las mismas ciudades que:,
+districts.cities.spanish,Spanish-speaking groups,Grupos de habla hispana,
+districts.cities.spanish_lead,Spanish-speaking A.A. groups in this district are served by:,Los grupos de A.A. de habla hispana de este distrito reciben servicio de:,
+districts.cities_az.title,Cities and communities in Area 09,Ciudades y comunidades del Área 09,"/districts/: heading of the folded A to Z list of every city, each linking to the district(s) that serve it (cities from data/districts.csv)"
+districts.cities_az.lead,Find the district that serves your city.,Encuentra el distrito que sirve a tu ciudad.,/districts/: line under that heading
+districts.people.title,Trusted servants,Servidores de confianza,
+districts.people.panel,Panel {panel} · {years},Panel {panel} · {years},
+districts.people.lead,"The district's six service positions: DCMC, Alternate DCMC, Secretary, Treasurer, Registrar and GSR School Chair. Write to them at their service addresses.","Los seis puestos de servicio del distrito: CMCD, CMCD alterno(a), secretario(a), tesorero(a), registrador(a) y coordinador(a) de Escuela de RSG. Puedes escribirles a sus direcciones de servicio.","District rosters list six seats only — the five district officers and the GSR School Chair (data/trusted-servants.csv); a seat the district has not reported shows 'Not provided yet'."
+districts.people.lead_es,"The district's six service positions: DCMC (MCD), Alternate DCMC (Alt. MCD), Secretary, Treasurer, Registrar and GSR School Chair. Write to them at their service addresses.","Los seis puestos de servicio del distrito: MCD, MCD alterno(a), secretario(a), tesorero(a), registrador(a) y coordinador(a) de Escuela de RSG. Puedes escribirles a sus direcciones de servicio.",Used on the six Spanish-speaking district pages (Districts 20–25) instead of districts.people.lead.
+districts.people.dcmc,DCMC,CMCD,
+districts.people.dcmc_es,DCM (district chair),MCD (coordinador(a) del distrito),
+districts.people.none,The names for this panel have not reached the Area website yet.,Los nombres de este panel todavía no han llegado al sitio del Área.,
+districts.people.anonymity,"In keeping with Tradition Eleven we list first names and last initials only, with service e-mail addresses.","Siguiendo la Undécima Tradición, mostramos solo el nombre y la inicial del apellido, con direcciones de correo de servicio.",
+districts.find.title,Find an A.A. meeting near you,Encuentra una reunión de A.A. cerca de ti,
+districts.find.lead,"Meeting lists are kept by local central offices and intergroups, not by the district or the Area. Call or visit:","Las listas de reuniones las llevan las oficinas centrales e intergrupos locales, no el distrito ni el Área. Llama o visita:",
+districts.find.guide,Meeting Guide app,Aplicación Meeting Guide,
+districts.find.guide_url,https://www.aa.org/meeting-guide-app,https://www.aa.org/es/meeting-guide-app,Link (one per language)
+districts.find.guide_body,"A.A.'s free app, with meetings near you kept up to date by local offices.","La aplicación gratuita de A.A., con reuniones cerca de ti actualizadas por las oficinas locales.",
+districts.find.aa,Find A.A. near you (aa.org),Encuentra A.A. cerca de ti (aa.org),
+districts.find.aa_url,https://www.aa.org/find-aa,https://www.aa.org/es/find-aa,Link (one per language)
+districts.find.aa_body,Shows the nearest central office or intergroup for any address.,Muestra la oficina central o el intergrupo más cercano a cualquier dirección.,
+districts.find.online,Online meetings,Reuniones en línea,
+districts.find.online_url,https://aa-intergroup.org/,https://aa-intergroup.org/es/,Link (one per language)
+districts.find.online_body,"Online Intergroup of A.A., with meetings around the clock.","Intergrupo en Línea de A.A., con reuniones a toda hora.",
+districts.find.new,New to A.A.?,¿Nuevo en A.A.?,
+districts.find.new_body,What to expect and how to get help today.,Qué esperar y cómo conseguir ayuda hoy.,
+districts.events.title,Upcoming district events,Próximos eventos del distrito,
+districts.events.lead,"Workshops, socials and Area meetings this district hosts or co-hosts, from the Area calendar.","Talleres, convivios y reuniones del Área que organiza o coorganiza este distrito, según el calendario del Área.",
+districts.events.none,No events hosted by this district are on the Area calendar right now.,Por ahora no hay eventos de este distrito en el calendario del Área.,
+districts.events.calendar,Open the Area calendar,Abrir el calendario del Área,
+districts.docs.title,District documents,Documentos del distrito,
+districts.docs.lead,"Guidelines, minutes, newsletters and reports the district has shared with the Area.","Guías, actas, boletines e informes que el distrito ha compartido con el Área.",
+districts.docs.none,No district documents yet,Aún no hay documentos del distrito,
+districts.docs.none_body,"When the district shares its guidelines, minutes or newsletters with the Area, they will appear here.","Cuando el distrito comparta sus guías, actas o boletines con el Área, aparecerán aquí.",
+districts.docs.all,All Area documents,Todos los documentos del Área,
+districts.neighbors.title,Neighboring districts,Distritos vecinos,
+districts.fix.title,Something out of date?,¿Algo está desactualizado?,
+districts.fix.body,Write to the district or to the Area webmaster and we will fix it.,Escribe al distrito o al webmaster del Área y lo corregiremos.,
+districts.pager.label,Other districts,Otros distritos,
+districts.pager.prev,Previous district,Distrito anterior,
+districts.pager.next,Next district,Distrito siguiente,
+districts.redirect.body,{from} now meets as part of {to}.,El {from} ahora forma parte del {to}.,Old district numbers (data/districts.csv status merged/inactive)
+districts.redirect.link,Go to the {to} page,Ir a la página del {to},
+districts.as_listed,As listed by the district,Según el distrito,Shown under the business meeting when data/districts.csv corrects the Area calendar (meeting_override)
+districts.as_listed_body,"The format, place and times above come from {source}, which is more recent than the Area calendar entry.","El formato, el lugar y el horario de arriba vienen de {source}, que está más al día que el calendario del Área.",{source} = the district website or the district
+districts.as_listed_web,the district's website ({site}),el sitio web del distrito ({site}),{site} = website name
+districts.as_listed_district,the district,el distrito,
+districts.events.title_all,District events,Eventos del distrito,Events section title when nothing is coming up
+districts.events.lead_none,"Nothing this district hosts is on the Area calendar right now. Its workshops, socials and Area meetings show up here once they are posted.","Por ahora no hay en el calendario del Área eventos que organice este distrito. Sus talleres, convivios y reuniones del Área aparecen aquí en cuanto se publican.",
+districts.recent_title,Recently hosted,Organizados recientemente,Past events of the last 12 months
+districts.events.area,Coming up in the Area,Próximamente en el Área,"Next Area meetings, shown when the district has nothing coming up"
+districts.events.host_title,Hosting a workshop or event?,¿Tu distrito organiza un taller o evento?,
+districts.events.host_body,"Send the flyer and its text, in English and Spanish if you can, to the Area webmaster: it goes on the Area calendar and on this page.","Envía el volante y su texto, en inglés y en español si puedes, al webmaster del Área: se publica en el calendario del Área y en esta página.",
+districts.events.host_rules,How to send material,Cómo enviar material,Link to /about/policy/#submit
+districts.events.website,More on {site},Más en {site},{site} = district website name
+districts.docs.on_site,On the district's website,En el sitio web del distrito,Shown when the Area has no documents for the district
+districts.docs.on_site_body,"The district keeps its minutes, guidelines and other documents on its own website.","El distrito publica sus actas, guías y otros documentos en su propio sitio web.",
+districts.toc.label,Jump to,Ir a,In-page links under the hero on /districts/
+districts.toc.all,All districts,Todos los distritos,
+districts.toc.map,Map,Mapa,
+districts.toc.spanish,Spanish-speaking,De habla hispana,
+districts.toc.inter,Inter-District,Junta Interdistrital,
+districts.toc.what,What is a district?,¿Qué es un distrito?,
+districts.view.label,Show the districts as,Ver los distritos como,List / Map switch on phones and tablets
+districts.view.list,List,Lista,
+districts.view.map,Map,Mapa,
+districts.row.more,Details,Detalles,Opens a district row on phones
+districts.meeting.source_mixed,"Dates come from the Area calendar, times from the district (Pacific time).","Las fechas vienen del calendario del Área y las horas, del distrito (hora del Pacífico).",When data/districts.csv corrects the calendar times (meeting_override)
+districts.gsr.title,GSR School,Escuela de RSG,"GSR School section of a district page (partials/district-gsr.njk); content in data/gsr-schools.csv"
+districts.gsr.title_orientation,Orientation for new GSRs,Orientación para RSG nuevos,Section title when the district has only a new-GSR orientation
+districts.gsr.lead,New as your group's GSR or alternate? This is where the district helps you learn the job.,¿Eres el RSG o el RSG suplente nuevo de tu grupo? Aquí el distrito te ayuda a aprender el trabajo.,
+districts.gsr.kind_school,GSR School,Escuela de RSG,Small label above each school
+districts.gsr.study,What is studied:,Qué se estudia:,
+districts.gsr.event_page,All dates and details,Todas las fechas y detalles,Link to the school's page on the Area calendar
+districts.gsr.flyer,Flyer,Volante,
+districts.gsr.meeting_days,On district meeting days,Los días de reunión del distrito,When the district meeting has no pattern to show
+districts.gsr.ask_when,Ask the district for the next date,Pregunta al distrito por la próxima fecha,
+districts.gsr.where_meeting,Where the district meets,Donde se reúne el distrito,
+districts.gsr.source_meeting,On the same days as the district meeting. Please confirm with the district.,Los mismos días que la reunión del distrito. Confírmalo con el distrito.,
+districts.gsr.links,From the district,Del distrito,Links to the district's own GSR material
+districts.gsr.area_title,Area GSR School,Escuela de RSG del Área,Link to /committees/gsr-school/
+districts.gsr.area_body,"In English and Spanish before every Area meeting, and weekly on Zoom (in English).","En inglés y en español antes de cada reunión del Área, y cada semana por Zoom (en inglés).",The weekly Zoom study is English only (calendar entry 7t9cfrsvvuh9rdh0l14hqkq4f4)
+districts.gsr.new_title,New GSR? Start here,¿Nuevo RSG? Empieza aquí,Link to /service/#new-gsr
+districts.gsr.new_body,"First steps, the GSR kit and the GSR Preamble.","Los primeros pasos, el paquete del RSG y el Preámbulo del RSG.",
+districts.gsr.more,More below,Más abajo,After the GSR note in the business meeting panel: jumps to the GSR School section
+districts.gsr.more_school,GSR School: day and details,Escuela de RSG: día y detalles,Business meeting panel: link to the GSR School section
+districts.gsr.more_orientation,Orientation for new GSRs: details,Orientación para RSG nuevos: detalles,
+districts.gsr.list_title,GSR School in the districts,Escuela de RSG en los distritos,On /committees/gsr-school/
+districts.gsr.list_lead,"Many districts also help their own GSRs: a GSR School or a short orientation for new GSRs, most often just before the district meeting.","Muchos distritos también ayudan a sus propios RSG: una Escuela de RSG o una breve orientación para RSG nuevos, casi siempre justo antes de la reunión del distrito.",
+districts.gsr.list_more,Your district is not listed? Ask your DCMC or write to the Area GSR School.,¿Tu distrito no aparece? Pregunta a tu CMCD o escribe a la Escuela de RSG del Área.,
+districts.gsr.label_orientation,New-GSR orientation,Orientación para RSG nuevos,Small label above each orientation card (and on /committees/gsr-school/); a school uses districts.gsr.kind_school
+districts.gsr.before_meeting,Before the district meeting,Antes de la reunión del distrito,Chip on a GSR School card held just before the district business meeting
+districts.gsr.line_before,before the district meeting,antes de la reunión del distrito,The same in the one-line form on /committees/gsr-school/ (after the time)
+districts.gsr.where_zoom,On Zoom,Por Zoom,"Where, for a school that meets online only (the Zoom details are under it)"
+districts.gsr.also_zoom,And on Zoom (details below),Y por Zoom (los datos están abajo),Under the place of a hybrid school
+districts.gsr.contact_chair,GSR School Chair,Coordinador(a) de Escuela de RSG,"Label above the district's GSR School Chair on each card (data/trusted-servants.csv, position GSR School Chair)"
+districts.gsr.contact_via,Write to the district:,Escribe al distrito:,"Under the GSR School Chair's name when the roster gives no e-mail for the chair: the address under it is the district's, not the chair's own"
+districts.gsr.source_text,As announced by the district. Please confirm with the district before you go.,Según lo anuncia el distrito. Confírmalo con el distrito antes de ir.,Under a card whose day is written in data/gsr-schools.csv (when_en / when_es)
+districts.gsr.list_chair,GSR School Chair: {name},Coordinador(a) de Escuela de RSG: {name},On /committees/gsr-school/ under a district's schools; {name} = first name and last initial
+districts.county_short.los-angeles,Los Angeles,Los Ángeles,"County name without 'County', for the compact district rows on phones"
+districts.county_short.orange,Orange,Orange,
+districts.county_short.riverside,Riverside,Riverside,
+districts.county_short.san-bernardino,San Bernardino,San Bernardino,

@@ -1,0 +1,126 @@
+---
+pagination: { data: langs, size: 1, alias: lang, addAllPagesToCollections: true }
+permalink: "{{ lang.prefix }}/service/reports/"
+layout: page.njk
+title_key: service.reports.title
+description_key: service.reports.description
+eyebrow_key: service.reports.eyebrow
+lead_key: service.reports.lead
+heroIcon: file-up
+accent: sky
+crumbs: [{ label_key: "service.reports.crumb_service", url: "/service/" }]
+bare: true
+---
+{#- Where Area officers, committee chairs and DCMCs send their reports for the minutes: the Secretary's
+    Google Form (its address is the row service.reports.form.url in data/text/service.csv), the e-mail fallback
+    (email_secretary in data/settings.csv), the Secretary's name (data/trusted-servants.csv) and what happens to a
+    report afterwards. Wording: data/text/service.csv (service.reports.*). The cards reuse the look of
+    /service/forms/ (src/assets/css/pages/forms.css). -#}
+{%- from "macros/ui.njk" import emailLink, sectionHead, shareButton with context -%}
+{%- from "macros/committees.njk" import personName with context -%}
+{%- set L = lang -%}
+{%- set formUrl = "service.reports.form.url" | t(L) -%}
+{%- set mail = site.email_secretary or "secretary@msca09aa.org" -%}
+{%- set sec = committees.bySlug.secretary if committees.bySlug else null -%}
+{%- set secS = sec.chairs[0] if sec and sec.chairs.length else null -%}
+{#- the upload button and the line under it: written once, shown in one place at a time (below) -#}
+{%- set uploadBtn -%}
+<a href="{{ formUrl }}" target="_blank" rel="noopener" class="btn btn-accent btn-lg">{% icon "upload", "size-5" %}{{ "service.reports.button" | t(L) }}{% icon "external-link", "size-4 opacity-80" %}<span class="sr-only"> {{ "service.reports.new_tab" | t(L) }}</span></a>
+<p class="text-sm text-ink-500">{{ "service.reports.opens" | t(L) }}</p>
+{%- endset -%}
+
+{#- phones: the button straight under the heading, pulled up into the heading band's empty bottom space, so it is
+    on the first screen above the tab bar even on a small phone (375x667) and in Spanish; from sm up it is in the card
+    (site search reads the card's copy only) -#}
+<div class="wrap relative -mt-8 sm:hidden" style="{{ 'sky' | accent }}" data-pagefind-ignore="all">
+  <div class="flex flex-col items-start gap-2">{{ uploadBtn | safe }}</div>
+</div>
+
+<div class="wrap space-y-16 pt-10 pb-12 sm:pt-12 lg:space-y-20 lg:py-16 2xl:py-20">
+
+  {#- ============================================================ the upload form, and the other ways -#}
+  <section class="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:gap-8" aria-labelledby="rp-upload-h">
+    <article class="ff-hub-card lg:col-span-7" style="{{ 'sky' | accent }}">
+      <div class="ff-hub-band">
+        <span class="ff-hub-icon">{% icon "file-up", "size-7 sm:size-8" %}</span>
+        <div class="min-w-0">
+          <p class="ff-hub-kicker">{{ "service.reports.kicker" | t(L) }}</p>
+          <h2 id="rp-upload-h" class="ff-hub-title">{{ "service.reports.card_title" | t(L) }}</h2>
+        </div>
+      </div>
+      <div class="flex flex-1 flex-col gap-5 p-6 sm:p-8">
+        <p class="leading-relaxed text-ink-700">{{ "service.reports.card_body" | t(L) }}</p>
+        {#- the button comes before the facts (on phones it is under the heading instead, above) -#}
+        <div class="flex flex-col items-start gap-2 max-sm:hidden">{{ uploadBtn | safe }}</div>
+        <ul class="ff-facts border-t border-ink-100 pt-5" role="list">
+          <li>{% icon "calendar-clock", "size-5 shrink-0" %}<span><strong>{{ "service.reports.due_title" | t(L) }}</strong> {{ "service.reports.due_body" | t(L) }}</span></li>
+          <li>{% icon "users-round", "size-5 shrink-0" %}<span><strong>{{ "service.reports.who_title" | t(L) }}</strong> {{ "service.reports.who_body" | t(L) }}</span></li>
+          <li>{% icon "log-in", "size-5 shrink-0" %}<span><strong>{{ "service.reports.signin_title" | t(L) }}</strong> {{ "service.reports.signin_body" | t(L) }}</span></li>
+        </ul>
+      </div>
+    </article>
+
+    <aside class="card p-6 sm:p-8 lg:col-span-5" style="{{ 'ocean' | accent }}" aria-labelledby="rp-other-h">
+      <h2 id="rp-other-h" class="flex items-center gap-3 font-display text-2xl font-bold text-ink-950"><span class="icon-tile size-11 rounded-xl">{% icon "mail", "size-5" %}</span>{{ "service.reports.other_title" | t(L) }}</h2>
+      <dl class="mt-6 space-y-5">
+        <div>
+          <dt class="text-xs font-bold tracking-wide text-ink-500 uppercase">{{ "service.reports.email_title" | t(L) }}</dt>
+          <dd class="mt-1 space-y-1"><p class="text-[15px] leading-relaxed text-ink-700">{{ "service.reports.email_body" | t(L) }}</p>{{ emailLink({ email: mail, lang: L }) }}</dd>
+        </div>
+        <div>
+          <dt class="text-xs font-bold tracking-wide text-ink-500 uppercase">{{ "service.reports.hand_title" | t(L) }}</dt>
+          <dd class="mt-1 text-[15px] leading-relaxed text-ink-700">{{ "service.reports.hand_body" | t(L) }}</dd>
+        </div>
+      </dl>
+      {%- if secS and secS.name and not secS.open %}
+      <a href="{{ '/about/panel/#secretary' | lurl(L) }}" class="group mt-6 flex items-center gap-3 border-t border-ink-100 pt-5" style="{{ (sec.color or 'sky') | accent }}">
+        <span class="icon-tile size-11 rounded-xl">{% icon sec.icon or "notebook-pen", "size-5" %}</span>
+        <span class="min-w-0 flex-1">
+          <span class="block text-xs font-bold tracking-wide text-[var(--a-700)] uppercase">{{ "service.reports.secretary" | t(L) }}</span>
+          <span class="block font-semibold text-ink-900 group-hover:underline">{{ personName({ s: secS, lang: L }) }}</span>
+        </span>
+        {% icon "chevron-right", "size-4 shrink-0 text-ink-300 transition group-hover:translate-x-0.5" %}
+      </a>
+      {%- endif %}
+    </aside>
+  </section>
+
+  {#- ============================================================ what happens next -#}
+  <section aria-labelledby="rp-how-h">
+    {{ sectionHead({ eyebrow: "service.reports.how_eyebrow" | t(L), title: "service.reports.how_title" | t(L), lead: "service.reports.how_lead" | t(L), id: "rp-how-h", accent: "ocean" }) }}
+    <ol class="grid grid-cols-1 gap-5 md:grid-cols-3 2xl:gap-6" role="list">
+      {%- for st in [["send", "file-up", "sky"], ["minutes", "notebook-pen", "iris"], ["approved", "badge-check", "sage"]] %}
+      <li class="card-accent reveal flex flex-col gap-3 p-6 2xl:p-7" style="{{ st[2] | accent }}; --reveal-delay: {{ loop.index0 * 90 }}ms">
+        <div class="flex items-center gap-3">
+          <span class="icon-tile">{% icon st[1], "size-6" %}</span>
+          <span class="font-display text-sm font-bold tracking-[0.16em] text-[var(--a-800)] uppercase">{{ "service.reports.step_n" | t(L, { n: loop.index }) }}</span>
+        </div>
+        <h3 class="font-display text-xl font-bold text-ink-950">{{ ("service.reports.how_" + st[0] + "_title") | t(L) }}</h3>
+        <p class="leading-relaxed text-ink-600">{{ ("service.reports.how_" + st[0] + "_body") | t(L) }}</p>
+      </li>
+      {%- endfor %}
+    </ol>
+    <p class="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
+      <a href="{{ '/documents/minutes/' | lurl(L) }}" class="inline-flex min-h-11 items-center gap-1.5 font-semibold text-ocean-700 hover:underline lg:min-h-0">{% icon "notebook-pen", "size-4" %}{{ "service.reports.minutes_link" | t(L) }}</a>
+      <a href="{{ '/documents/reports/' | lurl(L) }}" class="inline-flex min-h-11 items-center gap-1.5 font-semibold text-ocean-700 hover:underline lg:min-h-0">{% icon "clipboard-list", "size-4" %}{{ "service.reports.reports_link" | t(L) }}</a>
+    </p>
+  </section>
+
+  {#- ============================================================ before you send it -#}
+  <section class="card p-6 sm:p-8" style="{{ 'sun' | accent }}" aria-labelledby="rp-tips-h">
+    <h2 id="rp-tips-h" class="flex items-center gap-3 font-display text-2xl font-bold text-ink-950"><span class="icon-tile size-11 rounded-xl">{% icon "list-checks", "size-5" %}</span>{{ "service.reports.tips_title" | t(L) }}</h2>
+    <dl class="ff-rule-list mt-6">
+      {%- for k in ["label", "anonymity", "late"] %}
+      <div>
+        <dt>{{ ("service.reports.tip_" + k + "_title") | t(L) }}</dt>
+        <dd>{{ ("service.reports.tip_" + k + "_body") | t(L, { email: mail }) | mdi | safe }}</dd>
+      </div>
+      {%- endfor %}
+    </dl>
+  </section>
+
+  <div class="flex flex-col gap-4 rounded-3xl bg-ink-50 p-6 sm:flex-row sm:items-center sm:justify-between">
+    <p class="flex items-start gap-3 text-sm text-ink-600">{% icon "pencil-line", "size-5 shrink-0 text-ink-400" %}<span>{{ "service.reports.correction" | t(L) }} <a class="font-semibold text-ocean-700 hover:underline" href="mailto:{{ site.email_webmaster }}">{{ site.email_webmaster }}</a></span></p>
+    {{ shareButton({ lang: L, title: "service.reports.title" | t(L), style: "btn btn-white", wrap: "shrink-0" }) }}
+  </div>
+</div>

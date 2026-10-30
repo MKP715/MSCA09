@@ -1,0 +1,421 @@
+---
+pagination: { data: langs, size: 1, alias: lang, addAllPagesToCollections: true }
+permalink: "{{ lang.prefix }}/service/forms/expense/"
+layout: page.njk
+title_key: forms.expense.title
+description_key: forms.expense.description
+eyebrow_key: forms.expense.eyebrow
+lead_key: forms.expense.lead
+heroIcon: receipt
+accent: emerald
+crumbs: [{ label_key: "forms.crumb_service", url: "/service/" }, { label_key: "forms.hub.crumb", url: "/service/forms/" }]
+bare: true
+bodyClass: ff-page
+source: data/finance-forms.csv
+scripts: ["/assets/js/forms.js"]
+jsText: ["forms.js.line_n", "forms.js.remove_line", "forms.js.line_added", "forms.js.line_removed", "forms.js.confirm_reset", "forms.js.reset_done", "forms.js.copied", "forms.js.restored", "forms.js.forgotten",
+  "forms.js.e_line", "forms.js.e_other", "forms.js.e_committee", "forms.js.e_by", "forms.js.e_district", "forms.js.e_officer", "forms.js.e_name", "forms.js.e_address", "forms.js.e_contact", "forms.js.e_email",
+  "forms.js.e_pay", "forms.js.e_payee", "forms.js.e_zelle", "forms.js.e_rows", "forms.js.e_row_date", "forms.js.e_row_future", "forms.js.e_row_desc", "forms.js.e_row_amount", "forms.js.e_miles", "forms.js.e_money",
+  "forms.js.exp_subject", "forms.js.exp_file", "forms.js.exp_heading", "forms.js.exp_attach", "forms.js.miles_at", "forms.js.mail_lines", "forms.js.mail_late", "forms.js.mail_short", "forms.js.mail_footer", "forms.js.printed_from",
+  "forms.expense.budget_line", "forms.expense.date", "forms.expense.location", "forms.expense.requested_by", "forms.contact.name", "forms.contact.address", "forms.contact.phone", "forms.contact.email",
+  "forms.expense.pay_title", "forms.expense.check", "forms.expense.payable_to", "forms.expense.zelle", "forms.expense.zelle_info", "forms.expense.expenses_title", "forms.expense.subtotals", "forms.expense.grand_total"]
+---
+{#- The Expense Reimbursement Request, online. Every field of the official paper form, in its order:
+    budget line · requested by · contact information · preferred way of reimbursement · expenses (columns A–H)
+    · Treasurer A/P section. Choices, columns and the official PDFs: data/finance-forms.csv; the mileage rate:
+    mileage_rate in data/settings.csv; wording: data/text/forms.csv. The page sends nothing anywhere: the visitor
+    prints it (or saves it as a PDF) and e-mails it from their own e-mail program (src/assets/js/forms.js).
+    The printed copy (.ffp, at the end) is drawn from the same answers and is the only thing that prints. -#}
+{%- from "macros/forms.njk" import ffOfficial, ffCard, ffMoney, ffField, ffForget, ffpBox with context -%}
+{%- from "macros/ui.njk" import emailLink with context -%}
+{%- set L = lang -%}
+{%- set F = financeForms -%}
+{%- set X = F.expense -%}
+{%- set to = X.send.to -%}
+{%- set rateText = "$" + F.rate.toFixed(2) -%}
+{%- set exampleText = "$" + (F.rate * 10).toFixed(2) -%}
+{%- set cols = X.columns -%}
+{%- set amountCols = cols | where("kind", "amount") -%}
+{%- set milesCol = cols | find("kind", "miles") -%}
+{%- set mileageCol = cols | find("kind", "mileage") -%}
+{%- set catOrder = ["standing", "school", "subcommittee", "ad-hoc", "service-event"] -%}
+
+<script type="application/json" id="ff-data">{{ {
+  form: "expense",
+  rate: F.rate,
+  to: to.email if to else "",
+  cc: X.send.cc.email if X.send.cc else "",
+  lines: X.lines,
+  by: X.by,
+  columns: X.columns,
+  committees: F.committees,
+  officers: F.officers,
+  districts: F.districts
+} | json | safe }}</script>
+
+<div class="ff-root wrap pt-8 pb-16 lg:pt-12 lg:pb-24" x-data="ffExpense" style="{{ 'emerald' | accent }}">
+  <div class="ff-screen grid grid-cols-1 gap-8 xl:grid-cols-12 xl:gap-10 2xl:gap-12">
+
+    <form class="min-w-0 space-y-6 xl:col-span-8 2xl:space-y-8" novalidate @submit.prevent="send()" aria-labelledby="ff-form-title">
+      <h2 id="ff-form-title" class="sr-only">{{ "forms.expense.title" | t(L) }}</h2>
+
+      {#- ---------------------------------------------------------- before you start -#}
+      <div id="ff-top" tabindex="-1" class="ff-intro outline-none">
+        <ul class="ff-rules" role="list">
+          <li class="ff-rule" style="{{ 'sun' | accent }}">
+            <span class="icon-tile size-11 rounded-xl">{% icon "calendar-clock", "size-5" %}</span>
+            <span><strong>{{ "forms.rule.days_title" | t(L) }}</strong> {{ "forms.rule.days_body" | t(L) }}</span>
+          </li>
+          <li class="ff-rule" style="{{ 'coral' | accent }}">
+            <span class="icon-tile size-11 rounded-xl">{% icon "receipt", "size-5" %}</span>
+            <span><strong>{{ "forms.rule.receipts_title" | t(L) }}</strong> {{ "forms.rule.receipts_body" | t(L) }}</span>
+          </li>
+          <li class="ff-rule" style="{{ 'ocean' | accent }}">
+            <span class="icon-tile size-11 rounded-xl">{% icon "car", "size-5" %}</span>
+            <span><strong>{{ "forms.rule.mileage_title" | t(L, { rate: rateText }) }}</strong> {{ "forms.rule.mileage_body" | t(L, { rate: rateText, example: exampleText }) }}</span>
+          </li>
+        </ul>
+        <p class="ff-private">{% icon "lock", "size-4 mt-0.5 shrink-0" %}<span>{{ "forms.private" | t(L) }}</span></p>
+        <div class="ff-restored" x-cloak x-show="restored" role="status">
+          {% icon "rotate-ccw", "size-4 mt-0.5 shrink-0" %}
+          <p class="min-w-0 flex-[1_1_14rem]" x-text="t('forms.js.restored', { date: restored })"></p>
+          <button type="button" class="btn btn-white btn-sm max-sm:ml-7" @click="startOver()">{{ "forms.start_over" | t(L) }}</button>
+        </div>
+      </div>
+
+      {#- ---------------------------------------------------------- error summary -#}
+      <div class="ff-summary" x-ref="summary" tabindex="-1" role="alert" x-cloak x-show="summary.length" aria-labelledby="ff-summary-h">
+        <h2 id="ff-summary-h" class="flex items-center gap-2 font-display text-lg font-bold">{% icon "circle-alert", "size-5 shrink-0" %}<span>{{ "forms.errors_title" | t(L) }}</span></h2>
+        <ul class="mt-3 space-y-1.5" role="list">
+          <template x-for="e in summary" :key="e.id + e.text"><li><a :href="'#' + e.id" @click.prevent="jump(e.id)" x-text="e.text"></a></li></template>
+        </ul>
+        <div class="mt-4" x-show="pending === 'print'"><button type="button" class="btn btn-white btn-sm" @click="printAnyway()">{% icon "printer", "size-4" %}{{ "forms.print_anyway" | t(L) }}</button></div>
+      </div>
+
+      {#- ---------------------------------------------------------- 1. budget line -#}
+      {% call ffCard({ id: "ff-s-line", num: 1, title: "forms.expense.budget_line" | t(L), lead: "forms.expense.budget_line_lead" | t(L) }) %}
+        <fieldset :aria-describedby="err('line') ? errId('line') : null">
+          <legend class="sr-only">{{ "forms.expense.budget_line" | t(L) }}</legend>
+          <div class="ff-choices ff-choices-4">
+            {%- for o in X.lines %}
+            <label class="ff-choice"><input type="radio" class="ff-radio" name="ff-line" id="ff-line-{{ o.key }}" value="{{ o.key }}" x-model="f.line"><span>{{ o | loc("label", L) }}</span></label>
+            {%- endfor %}
+          </div>
+          <p class="ff-err" x-cloak x-show="err('line')" :id="errId('line')" x-text="err('line')"></p>
+        </fieldset>
+        {%- for o in X.lines %}{% if o.kind == "other" %}
+        <div class="mt-4 max-w-xl" x-cloak x-show="lineKind() === 'other'">
+          {{ ffField({ id: "ff-other", model: "f.other", label: (o | loc("label", L)) + ":", hint: o | loc("hint", L), err: "other", required: true }) }}
+        </div>
+        {%- endif %}{% endfor %}
+        <div class="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-[minmax(0,14rem)_minmax(0,1fr)]">
+          {{ ffField({ id: "ff-date", model: "f.date", label: "forms.expense.date" | t(L), hint: "forms.expense.date_hint" | t(L), type: "date", err: "date" }) }}
+          {{ ffField({ id: "ff-location", model: "f.location", label: "forms.expense.location" | t(L), hint: "forms.expense.location_hint" | t(L), err: "location" }) }}
+        </div>
+      {% endcall %}
+
+      {#- ---------------------------------------------------------- 2. requested by -#}
+      {% call ffCard({ id: "ff-s-by", num: 2, title: "forms.expense.requested_by" | t(L) }) %}
+        <fieldset :aria-describedby="err('by') ? errId('by') : null">
+          <legend class="sr-only">{{ "forms.expense.requested_by" | t(L) }}</legend>
+          <div class="ff-choices ff-choices-3">
+            {%- for o in X.by %}
+            <label class="ff-choice"><input type="radio" class="ff-radio" name="ff-by" id="ff-by-{{ o.key }}" value="{{ o.key }}" x-model="f.by"><span>{{ o | loc("label", L) }}</span></label>
+            {%- endfor %}
+          </div>
+          <p class="ff-err" x-cloak x-show="err('by')" :id="errId('by')" x-text="err('by')"></p>
+        </fieldset>
+        {%- for o in X.by %}{% if o.kind == "district" %}
+        <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2" x-cloak x-show="byKind() === 'district'">
+          <div class="ff-field">
+            <label for="ff-district" class="ff-label">{{ o | loc("label", L) }}<span class="ff-req" aria-hidden="true">*</span></label>
+            <select id="ff-district" class="field ff-input" x-model="f.district" aria-required="true" :aria-invalid="!!err('district')" :aria-describedby="err('district') ? errId('district') : null">
+              <option value="">{{ "forms.choose" | t(L) }}</option>
+              {%- for d in F.districts %}<option value="{{ d.slug }}">{{ d | loc("name", L) }}</option>{% endfor %}
+            </select>
+            <p class="ff-err" x-cloak x-show="err('district')" :id="errId('district')" x-text="err('district')"></p>
+          </div>
+          {{ ffField({ id: "ff-host-position", model: "f.hostPosition", label: "forms.expense.host_position" | t(L) }) }}
+        </div>
+        {%- elif o.kind == "officer" %}
+        <div class="ff-field mt-4 max-w-sm" x-cloak x-show="byKind() === 'officer'">
+          <label for="ff-officer" class="ff-label">{{ o | loc("label", L) }}<span class="ff-req" aria-hidden="true">*</span></label>
+          <select id="ff-officer" class="field ff-input" x-model="f.officer" aria-required="true" :aria-invalid="!!err('officer')" :aria-describedby="err('officer') ? errId('officer') : null">
+            <option value="">{{ "forms.choose" | t(L) }}</option>
+            {%- for c in F.officers %}<option value="{{ c.slug }}">{{ c | loc("name", L) }}</option>{% endfor %}
+          </select>
+          <p class="ff-err" x-cloak x-show="err('officer')" :id="errId('officer')" x-text="err('officer')"></p>
+        </div>
+        {%- elif o.kind == "committee" %}
+        <div class="ff-field mt-4 max-w-xl" x-cloak x-show="byKind() === 'committee'">
+          <label for="ff-committee" class="ff-label">{{ "forms.expense.committee_label" | t(L) }}<span class="ff-req" aria-hidden="true">*</span></label>
+          <select id="ff-committee" class="field ff-input" x-model="f.committee" aria-required="true" :aria-invalid="!!err('committee')" :aria-describedby="err('committee') ? errId('committee') : null">
+            <option value="">{{ "forms.choose" | t(L) }}</option>
+            {%- for cat in catOrder %}{% set inCat = F.committees | where("category", cat) %}{% if inCat.length %}
+            <optgroup label="{{ ('forms.cat.' + cat) | t(L) }}">{% for c in inCat %}<option value="{{ c.slug }}">{{ c | loc("name", L) }}</option>{% endfor %}</optgroup>
+            {%- endif %}{% endfor %}
+          </select>
+          <p class="ff-err" x-cloak x-show="err('committee')" :id="errId('committee')" x-text="err('committee')"></p>
+        </div>
+        {%- endif %}{% endfor %}
+      {% endcall %}
+
+      {#- ---------------------------------------------------------- 3. contact information -#}
+      {% call ffCard({ id: "ff-s-contact", num: 3, title: "forms.contact.title" | t(L), lead: "forms.contact.lead_expense" | t(L) }) %}
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+          {#- the paper form's order: name, address, telephone, e-mail -#}
+          {{ ffField({ id: "ff-name", model: "f.name", label: "forms.contact.name" | t(L), autocomplete: "name", err: "name", required: true }) }}
+          {{ ffField({ id: "ff-address", model: "f.address", label: "forms.contact.address" | t(L), autocomplete: "street-address", err: "address", rows: 2, hint: "forms.contact.address_hint" | t(L) }) }}
+          {{ ffField({ id: "ff-phone", model: "f.phone", label: "forms.contact.phone" | t(L), type: "tel", autocomplete: "tel", err: "phone" }) }}
+          {{ ffField({ id: "ff-email", model: "f.email", label: "forms.contact.email" | t(L), type: "email", autocomplete: "email", err: "email" }) }}
+        </div>
+        <p class="ff-hint mt-2">{{ "forms.contact.reach_hint" | t(L) }}</p>
+      {% endcall %}
+
+      {#- ---------------------------------------------------------- 4. reimbursement -#}
+      {% call ffCard({ id: "ff-s-pay", num: 4, title: "forms.expense.pay_title" | t(L) }) %}
+        <fieldset :aria-describedby="err('pay') ? errId('pay') : null">
+          <legend class="sr-only">{{ "forms.expense.pay_title" | t(L) }}</legend>
+          <div class="ff-choices ff-choices-2">
+            <label class="ff-choice"><input type="radio" class="ff-radio" name="ff-pay" id="ff-pay-check" value="check" x-model="f.pay">{% icon "banknote", "size-5 shrink-0 text-[var(--a-700)]" %}<span>{{ "forms.expense.check" | t(L) }}</span></label>
+            <label class="ff-choice"><input type="radio" class="ff-radio" name="ff-pay" id="ff-pay-zelle" value="zelle" x-model="f.pay">{% icon "smartphone", "size-5 shrink-0 text-[var(--a-700)]" %}<span>{{ "forms.expense.zelle" | t(L) }}</span></label>
+          </div>
+          <p class="ff-err" x-cloak x-show="err('pay')" :id="errId('pay')" x-text="err('pay')"></p>
+        </fieldset>
+        <div class="mt-4 max-w-xl" x-cloak x-show="f.pay === 'check'">
+          {{ ffField({ id: "ff-payee", model: "f.payee", label: "forms.expense.payable_to" | t(L), err: "payee", required: true }) }}
+        </div>
+        <div class="mt-4 max-w-xl" x-cloak x-show="f.pay === 'zelle'">
+          {{ ffField({ id: "ff-zelle", model: "f.zelle", label: "forms.expense.zelle_info" | t(L), hint: "forms.expense.zelle_hint" | t(L), err: "zelle", required: true }) }}
+        </div>
+      {% endcall %}
+
+      {#- ---------------------------------------------------------- 5. expenses -#}
+      {% call ffCard({ id: "ff-s-rows", num: 5, title: "forms.expense.expenses_title" | t(L), lead: "forms.expense.expenses_lead" | t(L, { rate: rateText, example: exampleText }) }) %}
+        <p class="ff-err mb-3" x-cloak x-show="err('rows')" :id="errId('rows')" x-text="err('rows')"></p>
+        <ol class="ff-rows" role="list">
+          <template x-for="(r, i) in f.rows" :key="r.id">
+            <li class="ff-row pop-in" :aria-labelledby="'ff-r' + r.id + '-h'">
+              <div class="ff-row-head">
+                <h3 class="ff-row-title" :id="'ff-r' + r.id + '-h'" x-text="t('forms.js.line_n', { n: i + 1 })"></h3>
+                <span class="ff-row-total" x-show="rowTotal(r)"><span class="sr-only">{{ "forms.expense.line_total" | t(L) }}</span><span x-text="money(rowTotal(r))"></span></span>
+                <button type="button" class="ff-icon-btn" @click="removeRow(i)" :aria-label="t('forms.js.remove_line', { n: i + 1 })">{% icon "trash-2", "size-4" %}</button>
+              </div>
+              <div class="ff-row-main">
+                <div class="ff-field">
+                  <label :for="'ff-r' + r.id + '-date'" class="ff-label">{{ "forms.expense.col_date" | t(L) }}</label>
+                  <input type="date" class="field ff-input" :id="'ff-r' + r.id + '-date'" x-model="r.date"
+                         :aria-invalid="!!err('r' + r.id + '-date') || (i === 0 && !!err('rows'))" :aria-describedby="[err('r' + r.id + '-date') ? errId('r' + r.id + '-date') : null, i === 0 && err('rows') ? errId('rows') : null, isLate(r) ? 'ff-r' + r.id + '-late' : null].filter(Boolean).join(' ') || null">
+                  <p class="ff-err" x-cloak x-show="err('r' + r.id + '-date')" :id="errId('r' + r.id + '-date')" x-text="err('r' + r.id + '-date')"></p>
+                </div>
+                <div class="ff-field">
+                  <label :for="'ff-r' + r.id + '-desc'" class="ff-label">{{ "forms.expense.col_desc" | t(L) }}</label>
+                  <input type="text" class="field ff-input" :id="'ff-r' + r.id + '-desc'" x-model="r.desc" autocomplete="off"
+                         :aria-invalid="!!err('r' + r.id + '-desc')" :aria-describedby="err('r' + r.id + '-desc') ? errId('r' + r.id + '-desc') : null">
+                  <p class="ff-err" x-cloak x-show="err('r' + r.id + '-desc')" :id="errId('r' + r.id + '-desc')" x-text="err('r' + r.id + '-desc')"></p>
+                </div>
+              </div>
+              <p class="ff-late" x-cloak x-show="isLate(r)" :id="'ff-r' + r.id + '-late'">{% icon "hourglass", "size-4 mt-0.5 shrink-0" %}<span>{{ "forms.expense.late" | t(L) }}</span></p>
+              <div class="ff-row-amts">
+                {%- if milesCol %}
+                <div class="ff-field">
+                  <label :for="'ff-r' + r.id + '-miles'" class="ff-label ff-label-col"><span class="ff-code" aria-hidden="true">{{ milesCol.code }}</span><span>{{ milesCol | loc("label", L) }}</span></label>
+                  <input type="text" inputmode="decimal" autocomplete="off" class="field ff-input" :id="'ff-r' + r.id + '-miles'" x-model="r.miles"
+                         :aria-invalid="!!err('r' + r.id + '-miles')" :aria-describedby="err('r' + r.id + '-miles') ? errId('r' + r.id + '-miles') : null">
+                  <p class="ff-err" x-cloak x-show="err('r' + r.id + '-miles')" :id="errId('r' + r.id + '-miles')" x-text="err('r' + r.id + '-miles')"></p>
+                </div>
+                {%- endif %}
+                {%- if mileageCol %}
+                <div class="ff-field">
+                  <span class="ff-label ff-label-col" :id="'ff-r' + r.id + '-mileage-l'"><span class="ff-code" aria-hidden="true">{{ mileageCol.code }}</span><span>{{ mileageCol | loc("label", L) }}</span></span>
+                  <output class="ff-calc" :aria-labelledby="'ff-r' + r.id + '-mileage-l'" x-text="money(rowMileage(r))"></output>
+                </div>
+                {%- endif %}
+                {%- for c in amountCols %}
+                {{ ffMoney({ idExpr: "'ff-r' + r.id + '-" + c.key + "'", model: "r['" + c.key + "']", label: c | loc("label", L), code: c.code, labelClass: "ff-label-col", err: "'r' + r.id + '-" + c.key + "'" }) }}
+                {%- endfor %}
+              </div>
+            </li>
+          </template>
+        </ol>
+        <div class="mt-4 flex flex-wrap items-center gap-3">
+          <button type="button" id="ff-add-row" class="btn btn-ghost bg-white" @click="addRow()" :disabled="f.rows.length >= 40">{% icon "plus", "size-4" %}{{ "forms.add_line" | t(L) }}</button>
+          <p class="text-sm text-ink-600">{{ "forms.expense.mileage_example" | t(L, { rate: rateText, example: exampleText }) }}</p>
+        </div>
+
+        {#- column sub-totals and the grand total -#}
+        <div class="ff-totals mt-6">
+          <h3 class="ff-totals-h">{{ "forms.expense.subtotals" | t(L) }}</h3>
+          <dl class="ff-subtotals">
+            {%- for c in cols %}{% if c.kind != "miles" %}
+            <div><dt><span class="ff-code" aria-hidden="true">{{ c.code }}</span>{{ c | loc("label", L) }}</dt><dd x-text="money(colTotal({{ c | json }}))">$0.00</dd></div>
+            {%- endif %}{% endfor %}
+          </dl>
+          <p class="ff-grand"><span>{{ "forms.expense.grand_total" | t(L) }}</span><strong x-text="money(grand())">$0.00</strong></p>
+        </div>
+        <p class="ff-receipts">{% icon "receipt", "size-5 shrink-0" %}<span>{{ "forms.expense.receipts_line" | t(L) }}</span></p>
+      {% endcall %}
+
+      {#- ---------------------------------------------------------- 6. Treasurer A/P section (office use) -#}
+      {% call ffCard({ id: "ff-s-office", num: 6, title: "forms.expense.office_title" | t(L), lead: "forms.expense.office_lead" | t(L) }) %}
+        <dl class="ff-office">
+          {%- for k in ["notes", "approved", "paid", "date", "check", "zelle"] %}
+          <div class="{{ 'sm:col-span-2' if k == 'notes' or k == 'zelle' }}"><dt>{{ ("forms.office." + k) | t(L) }}</dt><dd aria-hidden="true"></dd></div>
+          {%- endfor %}
+        </dl>
+      {% endcall %}
+
+      {#- ---------------------------------------------------------- 7. send -#}
+      {% call ffCard({ id: "ff-s-send", num: 7, title: "forms.send_title" | t(L), lead: "forms.expense.send_lead" | t(L, { to: (to | loc("name", L)) if to else "" }) }) %}
+        <ol class="ff-steps" role="list">
+          <li><span class="ff-step-n" aria-hidden="true">1</span><span>{{ "forms.step.print" | t(L) }}</span></li>
+          <li><span class="ff-step-n" aria-hidden="true">2</span><span>{{ "forms.expense.step_mail" | t(L, { email: to.email if to else "" }) }}</span></li>
+          <li><span class="ff-step-n" aria-hidden="true">3</span><span>{{ "forms.expense.step_receipts" | t(L) }}</span></li>
+        </ol>
+        <div class="ff-actions mt-6">
+          <button type="submit" class="btn btn-accent btn-lg">{% icon "mail", "size-5" %}{{ "forms.expense.mail_cta" | t(L) }}</button>
+          <button type="button" class="btn btn-ghost btn-lg bg-white" @click="print()">{% icon "printer", "size-5" %}{{ "forms.print_cta" | t(L) }}</button>
+          <button type="button" class="btn btn-ghost bg-white" @click="copy()">
+            <span x-show="!copied" class="inline-flex items-center gap-2">{% icon "clipboard-copy", "size-4" %}{{ "forms.copy_cta" | t(L) }}</span>
+            <span x-cloak x-show="copied" class="copy-done inline-flex items-center gap-2 text-sage-700">{% icon "check", "size-4" %}{{ "forms.copied" | t(L) }}</span>
+          </button>
+          <button type="button" class="btn btn-ghost bg-white text-coral-800" @click="startOver()">{% icon "rotate-ccw", "size-4" %}{{ "forms.start_over" | t(L) }}</button>
+        </div>
+        <div class="ff-sent pop-in" x-cloak x-show="sent" role="status">
+          {% icon "circle-check", "size-5 mt-0.5 shrink-0" %}
+          <p>{{ "forms.expense.sent" | t(L) }} {% if to %}{{ emailLink({ email: to.email, lang: L }) }}{% endif %}</p>
+        </div>
+        {{ ffForget({ lang: L }) }}
+        <label class="ff-keep mt-6">
+          <input type="checkbox" class="check mt-1" x-model="keep">
+          <span><strong class="font-semibold text-ink-900">{{ "forms.keep_title" | t(L) }}</strong> {{ "forms.keep_body" | t(L) }}</span>
+        </label>
+      {% endcall %}
+    </form>
+
+    {#- ---------------------------------------------------------- aside: total, official forms, help -#}
+    <aside class="min-w-0 xl:col-span-4" aria-label="{{ 'forms.aside_label' | t(L) }}">
+      <div class="space-y-5 xl:sticky xl:top-28">
+        <div class="ff-sum-card">
+          <p class="text-xs font-bold tracking-[0.16em] text-white/85 uppercase">{{ "forms.expense.grand_total" | t(L) }}</p>
+          <p class="mt-1 font-display text-4xl font-extrabold tabular-nums" x-text="money(grand())">$0.00</p>
+          <p class="mt-1 text-sm text-white/90" x-text="t('forms.js.mail_lines', { n: usedRows().length })"></p>
+          <div class="mt-5 flex flex-wrap gap-2">
+            <button type="button" class="btn btn-white" @click="send()">{% icon "mail", "size-4" %}{{ "forms.mail_short" | t(L) }}</button>
+            <button type="button" class="btn btn-glass" @click="print()">{% icon "printer", "size-4" %}{{ "forms.print_short" | t(L) }}</button>
+          </div>
+        </div>
+        <section class="card p-5" aria-labelledby="ff-official-h">
+          <h2 id="ff-official-h" class="font-display text-lg font-bold text-ink-950">{{ "forms.official_title" | t(L) }}</h2>
+          <p class="mt-1 text-sm text-ink-600">{{ "forms.official_lead" | t(L) }}</p>
+          <div class="mt-3">{{ ffOfficial({ ids: X.official, lang: L }) }}</div>
+        </section>
+        <section class="card p-5" aria-labelledby="ff-help-h">
+          <h2 id="ff-help-h" class="font-display text-lg font-bold text-ink-950">{{ "forms.help_title" | t(L) }}</h2>
+          <p class="mt-1 text-sm text-ink-600">{{ "forms.expense.help_body" | t(L) }}</p>
+          {%- if to %}<p class="mt-3 text-sm">{{ emailLink({ email: to.email, lang: L }) }}</p>{% endif %}
+          <p class="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm">
+            <a href="{{ '/service/forms/' | lurl(L) }}" class="font-semibold text-ocean-700 hover:underline">{{ "forms.hub.all_forms" | t(L) }}</a>
+            {%- if to and to.url %}<a href="{{ to.url | lurl(L) }}" class="font-semibold text-ocean-700 hover:underline">{{ to | loc("name", L) }}</a>{% endif %}
+          </p>
+        </section>
+      </div>
+    </aside>
+  </div>
+
+  {#- ============================================================ the printed copy -#}
+  {#- Only this prints (forms.css). It follows the paper form: same sections, same order, same columns. On screen it is
+      laid out off-screen at the paper's width (x-ref="paper"), so forms.js can measure it: the empty expense lines
+      (data-ffp-blank) are only as many as still fit on one page. -#}
+  <section class="ffp" x-ref="paper" aria-hidden="true" data-pagefind-ignore>
+    <header class="ffp-head">
+      <p class="ffp-area">{{ "forms.paper.area" | t(L) }}</p>
+      <p class="ffp-title">{{ "forms.expense.paper_title" | t(L) }}</p>
+      <p class="ffp-instr">{{ "forms.expense.paper_instr" | t(L) }}</p>
+    </header>
+    <table class="ffp-t ffp-top">
+      <colgroup><col><col><col><col></colgroup>
+      <tr><th colspan="4" class="ffp-band">{{ "forms.expense.budget_line" | t(L) | upper }}</th></tr>
+      {%- for row in X.lines | batch(4) %}
+      {%- set lastRow = loop.last %}
+      <tr>
+        {%- for o in row %}
+        {#- the last choice (Other:) takes the rest of its row, like the paper form's long line -#}
+        <td {% if lastRow and loop.last and row.length < 4 %}colspan="{{ 5 - row.length }}"{% endif %}>{{ ffpBox("f.line === '" + o.key + "'") }} {{ o | loc("label", L) }}{% if o.kind == "other" %}: <span class="ffp-fill ffp-w8" x-text="f.line === '{{ o.key }}' ? f.other : ''"></span>{% endif %}</td>
+        {%- endfor %}
+        {%- if not lastRow %}{% for k in range(row.length, 4) %}<td></td>{% endfor %}{% endif %}
+      </tr>
+      {%- endfor %}
+      <tr><td colspan="4"><span class="ffp-lab">{{ "forms.expense.date" | t(L) | upper }}:</span> <span class="ffp-fill ffp-w8" x-text="day(f.date, 'long')"></span> <span class="ffp-lab ffp-ml">{{ "forms.expense.location" | t(L) | upper }}:</span> <span class="ffp-fill ffp-w20" x-text="f.location"></span></td></tr>
+      <tr><th colspan="4" class="ffp-band">{{ "forms.expense.requested_by" | t(L) | upper }}</th></tr>
+      <tr><td colspan="4">
+        <div class="ffp-opts">
+          {%- for o in X.by %}
+          <span>{{ ffpBox("f.by === '" + o.key + "'") }} {{ o | loc("label", L) }}{% if o.kind == "district" %} <span class="ffp-fill ffp-w4" x-text="f.by === '{{ o.key }}' ? label('districts', f.district) : ''"></span>{% elif o.kind == "officer" %} <span class="ffp-fill ffp-w8" x-text="f.by === '{{ o.key }}' ? label('officers', f.officer) : ''"></span>{% endif %}</span>
+          {%- endfor %}
+        </div>
+      </td></tr>
+      <tr><td colspan="4"><span class="ffp-lab">{{ "forms.expense.host_position" | t(L) | upper }}:</span> <span class="ffp-fill ffp-w8" x-text="f.by === 'host-district' ? f.hostPosition : ''"></span> <span class="ffp-lab ffp-ml">{{ "forms.expense.committee_label" | t(L) | upper }}:</span> <span class="ffp-fill ffp-w20" x-text="f.by === 'committee-chair' ? label('committees', f.committee) : ''"></span></td></tr>
+      <tr><td colspan="4" class="ffp-contact">
+        <p class="ffp-sub">{{ "forms.contact.title" | t(L) }}:</p>
+        {%- for k in ["name", "address", "phone", "email"] %}
+        <p class="ffp-line"><span class="ffp-lab">{{ ("forms.contact." + k) | t(L) }}:</span> <span class="ffp-fill" x-text="oneLine(f.{{ k }})"></span></p>
+        {%- endfor %}
+        <p class="ffp-sub">{{ "forms.expense.pay_title" | t(L) }}:</p>
+        <p class="ffp-line">{{ ffpBox("f.pay === 'check'") }} <span class="ffp-lab">{{ "forms.expense.check" | t(L) | upper }}: {{ "forms.expense.payable_to" | t(L) }}</span> <span class="ffp-fill" x-text="f.pay === 'check' ? f.payee : ''"></span></p>
+        <p class="ffp-line">{{ ffpBox("f.pay === 'zelle'") }} <span class="ffp-lab">{{ "forms.expense.zelle" | t(L) | upper }}: {{ "forms.expense.zelle_info" | t(L) }}</span> <span class="ffp-fill" x-text="f.pay === 'zelle' ? f.zelle : ''"></span></p>
+      </td></tr>
+    </table>
+
+    <table class="ffp-t ffp-x">
+      <colgroup><col class="ffp-c-date"><col class="ffp-c-desc">{% for c in cols %}<col class="ffp-c-amt">{% endfor %}</colgroup>
+      <thead>
+        <tr><th colspan="{{ 2 + cols.length }}" class="ffp-band">{{ "forms.expense.expenses_title" | t(L) | upper }}</th></tr>
+        <tr>
+          <th rowspan="2">{{ "forms.expense.col_date" | t(L) }}</th>
+          <th rowspan="2">{{ "forms.expense.col_desc" | t(L) }}</th>
+          {%- for c in cols %}<th class="ffp-letter">{{ c.code }}</th>{% endfor %}
+        </tr>
+        <tr>{% for c in cols %}<th class="ffp-colname">{% if c.kind == "miles" %}{{ c | loc("label", L) }}<br><span class="ffp-small">{{ "forms.expense.rate_note" | t(L, { rate: rateText }) }}</span>{% else %}{{ c | loc("label", L) }}{% endif %}</th>{% endfor %}</tr>
+      </thead>
+      {#- the mileage example once, not at the top of every printed page like the column heads -#}
+      <tbody>
+        <tr class="ffp-example"><td></td><td class="text-right">{{ "forms.expense.example" | t(L) }}</td>{% for c in cols %}<td>{% if c.kind == "miles" %}10{% elif c.kind == "mileage" %}{{ exampleText }}{% endif %}</td>{% endfor %}</tr>
+      </tbody>
+      <tbody>
+        <template x-for="r in printRows()" :key="r.id">
+          <tr :data-ffp-blank="r.blank || null">
+            <td class="ffp-date" x-text="r.blank ? '' : day(r.date)"></td>
+            <td x-text="r.blank ? '' : r.desc"></td>
+            {%- for c in cols %}
+            {%- if c.kind == "miles" %}<td class="ffp-num" x-text="r.blank || !miles(r.miles) ? '' : num(miles(r.miles))"></td>
+            {%- elif c.kind == "mileage" %}<td class="ffp-num" x-text="r.blank || !rowMileage(r) ? '$' : money(rowMileage(r))"></td>
+            {%- else %}<td class="ffp-num" x-text="r.blank || !cents(r['{{ c.key }}']) ? '$' : money(cents(r['{{ c.key }}']))"></td>{% endif %}
+            {%- endfor %}
+          </tr>
+        </template>
+      </tbody>
+      {#- the totals are the table's last rows (not a <tfoot>, which would repeat at the foot of every printed page) -#}
+      <tbody class="ffp-totals">
+        <tr class="ffp-subrow"><td colspan="3" class="text-right ffp-lab">{{ "forms.expense.subtotals" | t(L) }}:</td>{% for c in cols %}{% if c.kind != "miles" %}<td class="ffp-num" x-text="money(colTotal({{ c | json }}))"></td>{% endif %}{% endfor %}</tr>
+        <tr class="ffp-grandrow"><td colspan="{{ 1 + cols.length }}" class="text-right ffp-lab">{{ "forms.expense.grand_total_paper" | t(L) | upper }}:</td><td class="ffp-num ffp-strong" x-text="money(grand())"></td></tr>
+      </tbody>
+    </table>
+    {#- kept together, and with the totals above: receipts reminder, signature, the Treasurer A/P section -#}
+    <div class="ffp-end">
+      <p class="ffp-receipts">{{ "forms.expense.receipts_line" | t(L) }}</p>
+      <div class="ffp-sign">
+        <p><span class="ffp-sigline"></span><span class="ffp-small">{{ "forms.paper.signature" | t(L) }}</span></p>
+        <p><span class="ffp-sigline ffp-short"></span><span class="ffp-small">{{ "forms.paper.date" | t(L) }}</span></p>
+      </div>
+      <table class="ffp-t ffp-office">
+        <colgroup><col><col><col><col><col><col></colgroup>
+        <tr><th colspan="6" class="ffp-band">{{ "forms.expense.office_title" | t(L) | upper }}</th></tr>
+        <tr><td colspan="6"><span class="ffp-lab">{{ "forms.office.notes" | t(L) }}:</span></td></tr>
+        <tr><td colspan="3"><span class="ffp-lab">{{ "forms.office.approved" | t(L) }}:</span></td><td colspan="3"><span class="ffp-lab">{{ "forms.office.paid" | t(L) }}:</span></td></tr>
+        <tr><td colspan="2"><span class="ffp-lab">{{ "forms.office.date" | t(L) }}:</span> &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/</td><td colspan="2"><span class="ffp-lab">{{ "forms.office.check" | t(L) }}:</span></td><td colspan="2"><span class="ffp-lab">{{ "forms.office.zelle" | t(L) }}:</span></td></tr>
+      </table>
+      <p class="ffp-foot">{{ "forms.expense.paper_version" | t(L) }} · <span x-text="t('forms.js.printed_from', { url: location.host + location.pathname, date: day(today()) })"></span></p>
+    </div>
+  </section>
+</div>

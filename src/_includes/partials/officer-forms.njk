@@ -1,0 +1,15 @@
+{#- On an Area officer's card (/about/panel/): the officer's rows in data/committee-resources.csv with kind = form
+    whose url is a page of this site (e.g. the Treasurer A/P → /service/forms/expense/). Expects: o (the officer), L. -#}
+{%- set oForms = [] -%}
+{%- for r in o.resources or [] %}{% if r.kind == "form" and r.url and r.url.charAt(0) == "/" and r.url.charAt(1) != "/" %}{% set _ = oForms.push(r) %}{% endif %}{% endfor -%}
+{%- if oForms.length %}
+<ul class="mt-4 space-y-1.5" role="list" aria-label="{{ 'forms.cm.title' | t(L) }}">
+  {%- for r in oForms %}
+  <li>
+    <a href="{{ r.url | lurl(L) }}" class="flex min-h-11 items-center gap-2.5 rounded-2xl bg-[var(--a-50)] px-3 py-2 text-sm font-semibold text-[var(--a-800)] ring-1 ring-[var(--a-200)] transition hover:bg-[var(--a-100)]">
+      {% icon "file-pen-line", "size-4 shrink-0" %}<span class="min-w-0 flex-1">{{ r | loc("title", L) }}</span>{% icon "arrow-right", "size-4 shrink-0" %}
+    </a>
+  </li>
+  {%- endfor %}
+</ul>
+{%- endif %}
