@@ -1,0 +1,38 @@
+---
+pagination: { data: langs, size: 1, alias: lang }
+permalink: "{{ lang.prefix }}/offline/"
+layout: base.njk
+title_key: offline.title
+description_key: offline.lead
+# the installed app shows this page in place of a page it has not saved, when there is no internet (scripts/sw-template.js):
+# never in search engines, the sitemap or the site search
+noindex: true
+searchExclude: true
+eleventyExcludeFromCollections: true
+---
+{#- The offline page. pwa.js lists the main pages the device has saved, retries with the button, and opens the page the
+    visitor asked for by itself once the device is back online. -#}
+{%- set L = lang -%}
+<section class="relative isolate overflow-hidden" style="{{ 'ocean' | accent }}">
+  <div class="absolute inset-0 -z-10 bg-ring-soft" aria-hidden="true"></div>
+  <div class="wrap py-14 sm:py-20">
+    <div class="mx-auto max-w-2xl text-center">
+      <span class="icon-tile mx-auto grid size-16 place-items-center rounded-3xl">{% icon "wifi-off", "size-8" %}</span>
+      <h1 class="mt-6 font-display text-4xl font-extrabold tracking-tight text-balance text-ink-950 sm:text-5xl">{{ "offline.title" | t(L) }}</h1>
+      <p class="mt-4 text-lg text-pretty text-ink-600">{{ "offline.lead" | t(L) }}</p>
+      <button type="button" data-offline-retry class="btn btn-primary mt-8">{% icon "rotate-cw", "size-4" %}{{ "offline.retry" | t(L) }}</button>
+    </div>
+    <div class="mx-auto mt-12 max-w-2xl">
+      <h2 data-offline-saved hidden class="font-display text-xl font-bold text-ink-950">{{ "offline.saved" | t(L) }}</h2>
+      <p data-offline-none hidden class="text-center text-ink-600">{{ "offline.none" | t(L) }}</p>
+      <ul data-offline-list class="mt-4 grid gap-3 sm:grid-cols-2" role="list">
+        {%- for p in [["/", "nav.home", "house"], ["/calendar/", "nav.calendar", "calendar-days"], ["/events/", "app.shortcut.events", "list"],
+                      ["/newcomers/", "app.shortcut.newcomers", "heart-handshake"], ["/districts/", "nav.districts", "map-pin"],
+                      ["/committees/", "nav.committees", "users"], ["/contact/", "app.shortcut.contact", "send"]] %}
+        <li hidden><a href="{{ p[0] | lurl(L) }}" class="card card-hover flex min-h-14 items-center gap-3 p-4 font-semibold text-ink-900">
+          <span class="icon-tile-soft size-10 shrink-0">{% icon p[2], "size-5" %}</span>{{ p[1] | t(L) }}</a></li>
+        {%- endfor %}
+      </ul>
+    </div>
+  </div>
+</section>

@@ -14,7 +14,8 @@
     "build:css": "tailwindcss -i src/assets/css/site.css -o _site/assets/css/site.css --minify",
     "build:search": "node scripts/build-search.mjs",
     "build:hash": "node scripts/asset-hash.mjs",
-    "build": "npm run build:site && npm run build:css && npm run build:search && npm run build:hash",
+    "build:pwa": "node scripts/build-pwa.mjs",
+    "build": "npm run build:site && npm run build:css && npm run build:search && npm run build:hash && npm run build:pwa",
     "build:fresh": "npm run fetch && npm run build",
     "check": "node scripts/check-site.mjs",
     "test:search": "node scripts/test-search.mjs",
@@ -57,6 +58,11 @@
     "photoswipe": "^5.4.4",
     "qrcode": "^1.5.4",
     "swiper": "^14.3.0",
-    "tailwindcss": "^4.3.3"
+    "tailwindcss": "^4.3.3",
+    "workbox-core": "7.4.1",
+    "workbox-expiration": "7.4.1",
+    "workbox-precaching": "7.4.1",
+    "workbox-routing": "7.4.1",
+    "workbox-strategies": "7.4.1"
   }
 }

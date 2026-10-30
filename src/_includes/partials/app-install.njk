@@ -1,0 +1,32 @@
+{#- The window of the footer's "Install the app" button (pwa.js, Alpine store "app"): how to install the site in this
+    browser. It opens only where the browser has no install window of its own to show (Safari, Firefox, a browser that
+    has not offered one yet); the steps shown are picked by pwa.js. Wording: data/text/common.csv, app.*.
+    Inside a <template x-if>: the window and its words exist on the page only while it is open, so they are never part
+    of what search engines read on every page. -#}
+{%- set L = lang -%}
+<div x-data>
+  <template x-if="$store.app && $store.app.open">
+    <div class="fixed inset-0 z-[70]" role="dialog" aria-modal="true" aria-labelledby="app-install-title" @keydown.escape="$store.app.close()">
+      <div class="absolute inset-0 bg-ink-950/60 backdrop-blur-sm" @click="$store.app.close()"></div>
+      <div x-trap.noscroll="true" class="pop-in relative mx-auto mt-[12vh] w-[min(32rem,calc(100%-2rem))] overflow-hidden rounded-3xl bg-white shadow-2xl">
+        <div class="flex items-center justify-between gap-4 bg-ring-strong px-6 py-4 text-white">
+          <h2 id="app-install-title" class="flex items-center gap-2 font-display text-lg font-bold">{% icon "download", "size-5" %}{{ "app.install_title" | t(L) }}</h2>
+          <button type="button" @click="$store.app.close()" class="grid size-11 place-items-center rounded-full bg-white/15 ring-1 ring-white/30 transition active:brightness-95 lg:size-9" aria-label="{{ 'nav.close' | t(L) }}">{% icon "x", "size-5" %}</button>
+        </div>
+        <div class="space-y-4 p-6 text-ink-700">
+          <div class="flex items-center gap-4">
+            <img src="/assets/img/logo/logo-{{ L.code }}-96.png" alt="" width="56" height="56" decoding="async" class="size-14 shrink-0">
+            <p>{{ "app.install_lead" | t(L) }}</p>
+          </div>
+          {%- for k in ["ios", "ios_other", "inapp", "mac_safari", "firefox_android", "firefox_windows", "chromium"] %}
+          <template x-if="$store.app.steps === '{{ k }}'"><p class="rounded-2xl bg-ocean-50 p-4 font-medium text-ink-900 ring-1 ring-ocean-100">{{ ("app.steps." + k) | t(L) }}</p></template>
+          {%- endfor %}
+          {#- iPhones, iPads and Mac Safari cannot tell the browser that the app was added: the visitor can hide the button -#}
+          <template x-if="['ios', 'ios_other', 'mac_safari'].includes($store.app.steps)">
+            <button type="button" @click="$store.app.dismiss()" class="inline-flex min-h-11 items-center text-sm font-semibold text-ocean-700 underline underline-offset-2 hover:text-ocean-900">{{ "app.install_dismiss" | t(L) }}</button>
+          </template>
+        </div>
+      </div>
+    </div>
+  </template>
+</div>

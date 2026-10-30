@@ -70,7 +70,7 @@
           {%- for item in nav.top %}{% if not item.children.length %}
           <li><a href="{{ item.url | lurl(L) }}" class="{{ linkCls }}">{{ item | loc("label", L) }}</a></li>
           {%- endif %}{% endfor %}
-          <li><a href="{{ (('/es/' if lc == 'en' else '/') if page.url == '/404.html' else (page.url | altUrl(L))) }}" hreflang="{{ L.other }}" lang="{{ L.other }}" class="{{ linkCls }}">{{ "header.other_language" | t(L) }}</a></li>
+          <li><a href="{{ (('/es/' if lc == 'en' else '/') if page.url in ['/404.html', '/offline/', '/es/offline/'] else (page.url | altUrl(L))) }}" hreflang="{{ L.other }}" lang="{{ L.other }}" class="{{ linkCls }}">{{ "header.other_language" | t(L) }}</a></li>
       {%- endcall %}
     </div>
   </div>
@@ -79,7 +79,9 @@
     <div class="wrap grid gap-3 py-6 text-xs leading-relaxed text-ink-300 sm:gap-4 sm:py-8 lg:grid-cols-12 lg:items-start">
       <p class="lg:col-span-7 2xl:col-span-8">{{ "footer.legal" | t(L) }}</p>
       <div class="flex flex-wrap items-center gap-x-5 gap-y-1 lg:col-span-5 lg:justify-end lg:gap-y-2 2xl:col-span-4">
-        <span>{{ "footer.updated" | t(L, { date: site.build.iso | dt("date", L) }) }}</span>
+        {#- data-msca-volatile: the date of every build, left out of the page's fingerprint (scripts/build-pwa.mjs), so the
+            date alone never makes an open page reload -#}
+        <span data-msca-volatile>{{ "footer.updated" | t(L, { date: site.build.iso | dt("date", L) }) }}</span>
         <a href="{{ '/about/policy/' | lurl(L) }}" class="inline-flex min-h-11 items-center hover:text-white lg:min-h-0">{{ "footer.policy" | t(L) }}</a>
         {%- if site.repo %}
         {#- "Edit" goes to the file that holds this page's information (editSource, from _data/eleventyComputed.js):
@@ -101,6 +103,12 @@
                 class="inline-flex min-h-11 items-center gap-1.5 hover:text-white lg:min-h-0">
           <span x-show="!paused" class="inline-flex items-center gap-1.5">{% icon "pause", "size-3.5" %}{{ "motion.pause" | t(L) }}</span><span x-show="paused" class="inline-flex items-center gap-1.5">{% icon "play", "size-3.5" %}{{ "motion.play" | t(L) }}</span>
         </button>
+        {%- if site.appOn %}
+        {#- "Install the app" (pwa.js, Alpine store "app"; its window: partials/app-install.njk). Only where this browser
+            can install it, and not once it is installed. -#}
+        <button type="button" x-data x-cloak x-show="$store.app && $store.app.can" @click="$store.app.install($el)"
+                class="inline-flex min-h-11 items-center gap-1.5 hover:text-white lg:min-h-0">{% icon "download", "size-3.5" %}{{ "app.install" | t(L) }}</button>
+        {%- endif %}
       </div>
     </div>
   </div>

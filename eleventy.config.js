@@ -24,6 +24,7 @@ const RESERVED = new Set([
   "", "es", "assets", "pagefind", "calendar", "events", "districts", "committees", "service", "documents",
   "about", "contact", "newcomers", "resources", "contribute", "404.html", "sitemap.xml", "sitemap-old-addresses.xml", "robots.txt",
   "calendar.ics", "calendar-es.ics", "site.webmanifest", "favicon.ico", "favicon-32.png", "apple-touch-icon.png", "icon-192.png", "icon-512.png",
+  "offline", "sw.js", "version.json", // the installable app (scripts/build-pwa.mjs, src/pages/offline.njk)
 ]);
 
 /** "/Foo/bar" → "/foo/bar/" (old WordPress addresses are case-insensitive and end in /). */
@@ -244,6 +245,14 @@ export default async function (eleventyConfig) {
     [nm + "@fontsource-variable/inter/files/inter-latin-wght-normal.woff2"]: "assets/fonts/inter-latin.woff2",
     [nm + "@fontsource-variable/inter/files/inter-latin-ext-wght-normal.woff2"]: "assets/fonts/inter-latin-ext.woff2",
   });
+  // The service worker's library (Workbox runtime modules; scripts/sw-template.js loads them). The folder carries the
+  // version, so a Workbox update gives the service worker new addresses and devices fetch it again.
+  const wb = JSON.parse(fs.readFileSync(nm + "workbox-core/package.json", "utf8")).version;
+  eleventyConfig.addPassthroughCopy(
+    Object.fromEntries(["core", "routing", "strategies", "precaching", "expiration"].map((m) => [
+      `${nm}workbox-${m}/build/workbox-${m}.prod.js`, `assets/vendor/workbox-${wb}/workbox-${m}.prod.js`,
+    ])),
+  );
 
   return {
     // "/" on msca09aa.org; "/<repo>/" on a github.io project address (set by the deploy workflow).

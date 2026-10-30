@@ -42,6 +42,7 @@
 // live in data/name-allowlist.csv. Both files need a reviewer's approval (.github/CODEOWNERS).
 import fs from "node:fs";
 import path from "node:path";
+import crypto from "node:crypto";
 import { readCsv, readCsvDir, checkCsvFile, yes } from "../src/_lib/csv.js";
 import { fillSettings } from "../src/_lib/i18n.js";
 import { nameHits } from "../src/_lib/names.js";
@@ -531,6 +532,7 @@ if (longDescriptions.length) {
 for (const file of walk(SITE, [".json", ".ics"])) {
   const rel = "/" + path.relative(SITE, file).replace(/\\/g, "/");
   if (rel.startsWith("/pagefind/")) continue;
+  if (rel === "/version.json") continue; // the app's build fingerprint (letters only), checked below
   let text = fs.readFileSync(file, "utf8");
   if (rel.endsWith(".ics")) {
     text = text
@@ -605,6 +607,69 @@ try {
   }
 } catch (e) {
   warn("old addresses", `could not check data/redirects.csv: ${e.message}`);
+}
+
+// ------------------------------------------------------------- the installable app (scripts/build-pwa.mjs)
+// The pages, the manifest, the service worker and version.json must agree, and every file the service worker keeps
+// for offline use must be in the site exactly as listed: one wrong entry would make the app's install fail on every
+// device, without anything showing on the site.
+try {
+  const appRow = readCsv("settings.csv").find((r) => r.key === "app");
+  const appOn = !/^(off|no|false|0)$/i.test(String((appRow && appRow.value) || "on").trim());
+  const readSite = (rel) => fs.readFileSync(path.join(SITE, rel));
+  const sha = (alg, buf, enc = "hex") => crypto.createHash(alg).update(buf).digest(enc);
+  const version = files.has("version.json") ? JSON.parse(readSite("version.json")).v : null;
+  if (!files.has("sw.js") || !version) err("/sw.js", "sw.js or version.json is missing: run scripts/build-pwa.mjs (the last step of npm run build)");
+  else if (appOn ? !/^[a-p]{16}$/.test(version) : version !== "off") err("/version.json", `unexpected build fingerprint "${version}"`);
+  const wrong = [];
+  for (const file of pages) {
+    const html = fs.readFileSync(file, "utf8");
+    const rel = "/" + path.relative(SITE, file).replace(/\\/g, "/");
+    if (html.includes("__MSCA_BUILD__") || html.includes("__MSCA_PAGE__")) err(rel, "the app's fingerprints were not filled in: run scripts/build-pwa.mjs");
+    const b = (html.match(/<meta name="msca-build" content="([^"]*)">/) || [])[1];
+    if (b !== undefined && b !== version) wrong.push(rel);
+  }
+  if (wrong.length) err(wrong[0], `${wrong.length} page(s) carry a different build fingerprint from version.json (${version})`);
+  if (appOn && files.has("sw.js")) {
+    const sw = readSite("sw.js").toString("utf8");
+    const config = JSON.parse((sw.match(/\/\*__MSCA_CONFIG__\*\/ (\{.*\})/) || [])[1] || "null");
+    if (!config) err("/sw.js", "the service worker's settings are missing (scripts/sw-template.js lost its /*__MSCA_CONFIG__*/ marker?)");
+    else {
+      if (config.base !== prefix) err("/sw.js", `built for the path prefix ${config.base}, the site for ${prefix}`);
+      for (const m of ["core", "routing", "strategies", "precaching", "expiration"])
+        if (!files.has(`assets/vendor/workbox-${config.wb}/workbox-${m}.prod.js`)) err("/sw.js", `loads assets/vendor/workbox-${config.wb}/workbox-${m}.prod.js, which is missing`);
+      for (const e of config.precache) {
+        const built = toFile(e.url);
+        if (!built) err("/sw.js", `keeps ${e.url} for offline use, but there is no such file`);
+        else if (e.integrity ? e.integrity !== "sha256-" + sha("sha256", readSite(built), "base64")
+          : e.revision !== (readSite(built).toString("utf8").match(/<meta name="msca-page" content="([a-p]{16})">/) || [])[1])
+          err("/sw.js", `keeps ${e.url} with a fingerprint that does not match the file`);
+        const v = (e.url.match(/[?&]v=([0-9a-f]{8})$/) || [])[1];
+        if (built && v && !sha("sha1", readSite(built)).startsWith(v)) err("/sw.js", `${e.url}: the address's hash does not match the file`);
+      }
+      for (const off of ["offline/", "es/offline/"])
+        if (!config.precache.some((e) => e.url === prefix + off)) err("/sw.js", `the offline page ${prefix + off} is not kept for offline use`);
+      // the app's start page opens offline only with all its scripts and styles
+      for (const home of ["index.html", "es/index.html"])
+        for (const [, u] of readSite(home).toString("utf8").matchAll(/<(?:script|link rel="stylesheet")\b[^>]*\b(?:src|href)="([^"]+)"/gi))
+          if (u.startsWith(prefix) && !config.precache.some((e) => e.url === u)) err("/sw.js", `${u} (the home page loads it) is not kept for offline use`);
+    }
+    // the manifest: inside the site's address, every icon and shortcut there, and an icon for phones' round masks
+    const m = JSON.parse(readSite("site.webmanifest"));
+    const inside = (u) => typeof u === "string" && u.startsWith(prefix);
+    if (!inside(m.start_url) || !inside(m.scope) || !inside(m.id)) err("/site.webmanifest", "start_url, scope and id must be inside the site's address");
+    const pics = [...(m.icons || []), ...Object.values(m.icons_localized || {}).flat(), ...(m.shortcuts || []).flatMap((s) => s.icons || []), ...(m.screenshots || [])];
+    for (const i of pics) {
+      const built = toFile(i.src);
+      const v = (i.src.match(/[?&]v=([0-9a-f]{8})$/) || [])[1];
+      if (!built) err("/site.webmanifest", `${i.src} is missing`);
+      else if (v && !sha("sha1", readSite(built)).startsWith(v)) err("/site.webmanifest", `${i.src}: the address's hash does not match the file`);
+    }
+    if (!(m.icons || []).some((i) => /maskable/.test(i.purpose || ""))) err("/site.webmanifest", "no maskable icon (phones crop app icons to a circle or squircle)");
+    for (const s of m.shortcuts || []) if (!inside(s.url) || !toFile(s.url)) err("/site.webmanifest", `shortcut ${s.url} leads nowhere`);
+  }
+} catch (e) {
+  err("the app", `could not check the manifest / service worker: ${e.message}`);
 }
 
 // ------------------------------------------------------------- wording

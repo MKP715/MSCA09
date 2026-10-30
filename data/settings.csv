@@ -22,3 +22,4 @@ budget_request_deadline,2026-09-30,"When budget requests are due to the Finance 
 github_repo,MKP715/MSCA09,"Where the site's files live (owner/repository). The ""Edit this page"" links point here."
 aa_find_meeting,https://www.aa.org/find-aa,
 aa_meeting_guide,https://www.aa.org/meeting-guide-app,
+app,on,"The installable app (README ""The app""): on, or off to switch it off. Off stops the app's offline copies and automatic updates on every device at its next visit; an app icon already on a home screen, Start menu or Dock stays and simply opens the website (people remove it themselves). Never delete sw.js by hand: use off."

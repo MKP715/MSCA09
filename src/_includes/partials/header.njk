@@ -2,7 +2,7 @@
 {%- set L = lang -%}
 {%- set lc = L.code -%}
 {%- set enPath = page.url if lc == "en" else (page.url | altUrl(L)) -%}
-{%- set altHref = ("/es/" if L.code == "en" else "/") if page.url == "/404.html" else (page.url | altUrl(L)) -%}
+{%- set altHref = ("/es/" if L.code == "en" else "/") if page.url in ["/404.html", "/offline/", "/es/offline/"] else (page.url | altUrl(L)) -%}
 <header role="banner" class="sticky top-0 z-50" x-data="siteHeader" @keydown.escape.window="closeAll()">
   {#- Top strip -#}
   {#- bg-ring-strong: the darker ring gradient, so white text passes AA contrast. Taller on touch screens (44px tap target). -#}
@@ -31,6 +31,9 @@
   <div class="border-b border-ink-900/5 transition-[background-color,box-shadow] duration-300"
        :class="scrolled ? 'bg-white/90 shadow-soft backdrop-blur-xl' : 'bg-white/80 backdrop-blur-md'">
     <div class="wrap flex h-[4.5rem] items-center gap-3 transition-all duration-300 lg:h-20 lg:gap-6" :class="scrolled && '!h-14 lg:!h-16'">
+      {#- Back: only inside the installed app on iPhones and iPads, which show no back button of their own (pwa.js shows
+          it once there is a page to go back to) -#}
+      <button type="button" data-app-back hidden class="grid size-11 shrink-0 place-items-center rounded-full text-ink-700 ring-1 ring-ink-200 transition hover:bg-ink-50 active:brightness-95" aria-label="{{ 'app.back' | t(L) }}">{% icon "chevron-left", "size-5" %}</button>
       {#- Spoken name: the visible "MSCA 09" (+ the full name where shown), then "Home" (WCAG 2.5.3 label in name). -#}
       <a href="{{ '/' | lurl(L) }}" class="group flex min-w-0 shrink-0 items-center gap-3">
         <picture>

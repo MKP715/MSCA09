@@ -29,9 +29,10 @@ and announcements also update in visitors' browsers between builds.
 8. [Anonymity rules — read before editing](#anonymity-rules--read-before-editing)
 9. [When the build turns red](#when-the-build-turns-red)
 10. [Staying switched on](#staying-switched-on)
-11. [One-time setup (webmaster)](#one-time-setup-webmaster)
-12. [For developers](#for-developers)
-13. [Credits and licences](#credits-and-licences)
+11. [The app](#the-app)
+12. [One-time setup (webmaster)](#one-time-setup-webmaster)
+13. [For developers](#for-developers)
+14. [Credits and licences](#credits-and-licences)
 
 ---
 
@@ -430,7 +431,8 @@ and an optional `note`.
 3. Add the new panel's Area meetings to Google Calendar, and give repeating meetings an end date.
 4. Replace the logo files `src/assets/img/logo/logo-en*.{png,webp}` and `logo-es*` with the new panel's logo,
    keeping the same names and sizes. The link-preview pictures use `logo-en-512.png` and `logo-es-512.png`, so
-   they show the new logo from the next build.
+   they show the new logo from the next build. The app's icons are drawn from `logo-en.png` and `logo-es.png`
+   at every build too; see [The app](#the-app) for what people who installed it see.
 5. Update `data/gsc.csv` with the new Conference cycle.
 
 The link-preview pictures (what chat apps show when someone shares a link: `src/assets/img/social-card.jpg`,
@@ -533,6 +535,68 @@ press **Enable workflow** if GitHub shows it. Then press **Run workflow** once.
 
 ---
 
+## The app
+
+The website can be installed like an app on any phone, tablet or computer: it then opens from the home screen,
+Start menu or Dock in its own window, and the pages already opened work without internet. There is nothing to
+publish in an app store, and nothing to do when something changes: the app *is* the website.
+
+**Installing.** Chrome, Edge and Samsung Internet offer it themselves (an install button in the address bar, or
+in the menu). Every page also has **Install the app** at the bottom: it opens the browser's own install window, or
+shows the steps for that device (iPhone and iPad: Share → Add to Home Screen; Mac Safari: File → Add to Dock;
+Firefox on Android and Windows). It is hidden where the browser cannot install apps and once the app is installed.
+iPhones, iPads and Mac Safari keep the app apart from the browser and never tell the browser it was added, so there
+the install window has a "Don't show this again" link. One app for both languages: it opens in the language of the
+last page read on that device (an iPhone or iPad app keeps its own: the device's language at its first start, then
+the last page read inside the app).
+
+**Changes reach everyone by themselves.** Nobody needs to reload anything after an edit:
+
+- every click in the app or the website fetches the newest page while online (a copy is kept for offline use; on a
+  very slow connection a copy downloaded within the last hour may be shown first);
+- a page left open (an app in the background, a tab) checks for a newer version when it comes back on screen, when
+  the device comes back online and every 10 minutes. If *that page* changed, it reloads itself at a moment that
+  cannot disturb anyone: while it is not on screen, or the instant it comes back, at the same place on the page,
+  and only once the new page has really arrived. It never reloads while someone is typing, a window or the photo
+  viewer is open, a recording is playing, something the visitor opened (a fold, "Show more") is open, or on the
+  pages with a form (budget request, expense report, Forum volunteers): those pages update at the next click. The
+  date at the bottom of every page does not count as a change;
+- new styles, scripts and the offline copy follow at the next visit (the service worker updates itself).
+
+GitHub's servers keep a copy of each file for up to 10 minutes, so a change can take about 10 minutes after the
+build to reach everyone.
+
+What does **not** update by itself: the app's **name** (`app.name`, `app.short_name` in `data/text/common.csv`)
+and its **icon** (drawn from the panel logo). Chrome and Edge ask people who installed the app to approve a new
+name or icon (menu → *Review app update*); iPhones, iPads and Mac Safari keep the name and icon they had when the
+app was added (removing and adding it again shows the new ones). Everything else in the app follows the website.
+
+**Offline.** Pages someone has opened (the last 80, for 30 days from their last download), the home pages with their
+styles and scripts (not all their banner photos) and everything the offline page needs are kept on the device. A page
+never opened shows a short "You're offline" page listing the main pages that are saved, and opens by itself once the
+device is back online. Flyer pictures are always shown from Drive while online, so a flyer replaced or taken down on
+Drive is never shown from a saved copy; offline, the ones already seen are shown for 7 days after their last download.
+
+**Switching it off.** In `data/settings.csv`, set `app` to `off`. The next build removes the app from the site, and
+every device that installed it unregisters it and deletes its saved copies at its next visit (the website itself
+works as before). An app icon already on a home screen, Start menu or Dock stays (no website can remove it) and
+simply opens the website; people remove it themselves. Set it back to `on` to bring the app back. **Never delete `sw.js` by hand**: a device keeps the
+last service worker it has as long as the address answers, so a missing file would leave old copies in place.
+
+How it is built (for developers): `scripts/build-pwa.mjs` (the last step of `npm run build`) draws the icons from
+the logo, writes `site.webmanifest` from the `app.*` rows of `data/text/common.csv` (and stops the build when one is
+missing), gives every page a fingerprint
+of its content and the site one of all of them (`<meta name="msca-page">`, `<meta name="msca-build">`,
+`version.json`), and writes `sw.js` from `scripts/sw-template.js` with the files the offline pages need. The service
+worker uses Google's open-source Workbox library (`node_modules/workbox-*`, copied to `assets/vendor/`);
+`src/assets/js/pwa.js` registers it, keeps open pages up to date and runs the install button; `src/pages/offline.njk`
+is the offline page. Everything is made from the built files alone, so an identical build gives identical files and
+the three-hourly build still skips publishing it. `npm run check` fails the build when the pages, the manifest and
+the service worker disagree. A local `npm start` has no fingerprints, so no service worker runs there (and any left
+from testing a build on the same address is removed).
+
+---
+
 ## One-time setup (webmaster)
 
 1. **Publish with GitHub Pages:** go to *Settings → Pages → Build and deployment → Source* and choose
@@ -606,7 +670,7 @@ npm run social-card                         # redraw src/assets/img/social-card.
 | `src/_includes/` | Layouts, partials and macros (`macros/ui.njk`, `macros/events.njk`, …) |
 | `src/assets/` | CSS (Tailwind input + per-section files), browser scripts, images |
 | `src/content/delegate/` | Archived Delegate's Corner posts (Markdown) |
-| `scripts/` | Calendar fetch and check, Drive listing and id filler, Zoom recordings list, site check, flyer/PDF check, document scanner, social-card builder, CSS/JS content hashes, the IndexNow list of changed pages |
+| `scripts/` | Calendar fetch and check, Drive listing and id filler, Zoom recordings list, site check, flyer/PDF check, document scanner, social-card builder, CSS/JS content hashes, the IndexNow list of changed pages, the installable app (`build-pwa.mjs`, `sw-template.js`) |
 | `.github/workflows/deploy.yml` | Build and deploy on push, every 3 hours, and on demand (a scheduled build identical to the last published site is not deployed again); after a deploy, the changed pages are announced to IndexNow |
 | `.github/workflows/media-check.yml` | The Monday flyer and PDF check |
 
@@ -639,6 +703,7 @@ Conventions:
   Wikimedia Commons (credit and licence link required) and Unsplash photos (Unsplash License).
 - Open-source software: Eleventy, Tailwind CSS, Alpine.js, FullCalendar, Leaflet and
   Leaflet.markercluster with © OpenStreetMap contributors, PhotoSwipe, Swiper, Fuse.js, Pagefind, ical.js,
-  Luxon, markdown-it, Lucide icons, and the Inter and Outfit fonts (SIL Open Font License).
+  Luxon, markdown-it, Workbox (the app's service worker), Lucide icons, and the Inter and Outfit fonts (SIL Open
+  Font License).
 - A.A.®, Alcoholics Anonymous®, the Big Book®, Grapevine® and La Viña® are registered trademarks of
   A.A. World Services, Inc. and A.A. Grapevine, Inc. This site speaks for Area 09 only.

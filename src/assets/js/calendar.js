@@ -1064,6 +1064,8 @@
         step() { return this.lg ? 30 : 14; },
         searchStep() { return this.lg ? SEARCH_STEP.large : SEARCH_STEP.small; },
         moreAgenda() {
+          // a reload would shrink the list back: the installed app brings this page up to date at the next click instead (pwa.js)
+          document.documentElement.setAttribute("data-busy", "");
           if (this.searching()) this.agendaCap += this.searchStep();
           else this.agendaDays += this.step();
           this.buildAgenda();

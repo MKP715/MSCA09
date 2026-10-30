@@ -18,7 +18,7 @@ The site is live at **[msca09aa.org](https://msca09aa.org/)** (switched over fro
 | Finance Committee | 7 | 2027 budget fixes for Draft #2 (section 6) |
 | Delegate | 8 | Before Nov 4: the Dec 4–6 Forum's hotel cut-off |
 | Alternate Delegate | 7 | Updated Panel 76 tool kits |
-| Technology Chair | 6 | 2.4 Test every role mailbox |
+| Technology Chair | 7 | 2.4 Test every role mailbox · the new app on a real iPhone and Android phone (section 19) |
 | Webmaster | 14 | 2.9 Owner's private clean-up checklist |
 | Committee chairs | 33 | Archives: confirm the collections now on the site · YPAA: Marissa S. or M.? |
 | Districts (DCMCs / MCDs) | 40 | **District 17: your website sends visitors to other sites** · Your six district seats — five officers and the GSR School Chair (table) · Districts 10 & 15: Dec 13 ASC venue |
@@ -956,6 +956,27 @@ The Area Google Calendar was checked against every district, intergroup and cent
   Grapevine & La Viña Workshop (Nov 21):** is it free? If so, the entry gets `Cost: Free`.
 - [ ] **Calendar keeper:** add `Cost:` to the 43rd South Bay Family Roundup and Desert Roundup 2027 once their 2027
   prices are posted (Desert Roundup registration opens January 2, 2027).
+
+## 19. Done on October 30, 2026 (evening) — the website is now an app
+
+- **Install it like an app** on any phone, tablet or computer: with the browser's own install button, or with
+  **Install the app** at the bottom of every page (on iPhones, iPads, Macs and Firefox it shows the steps). It opens
+  from the home screen, Start menu or Dock in its own window, in the language of the last page read on that device,
+  with shortcuts to the Calendar, Meetings & events, New to A.A.? and Contact (long-press or right-click the icon).
+- **Always up to date, nothing to reload:** every page is fetched fresh while online. A page left open brings itself up
+  to date when it comes back on screen, only if that page changed, and never while someone is typing, watching a
+  recording or filling in a form. A change reaches everyone within about 10 minutes of the build.
+- **Works offline:** pages already opened (and the home pages) open without internet; any other page shows a short
+  "You're offline" page that opens the real page by itself once the device is back online.
+- The switch is the `app` row of `data/settings.csv` (`off` turns off the app's offline copies and updates on every
+  device at its next visit; icons already installed stay and simply open the website). How it works: README, "The app".
+
+**Still to do**
+- [ ] **Technology Chair (or Webmaster): Test** the app on a real iPhone and a real Android phone: install it, open it
+  from the home screen, switch on airplane mode and open a page visited before, then (online again) tap an event's
+  "Add to calendar" file and the calendar's subscribe link inside the app. On the iPhone, also check which language
+  the app opens in, and that "Don't show this again" in Safari's install window hides the footer button. Report
+  anything odd to webmaster@msca09aa.org.
 
 ## How to send information to the webmaster
 

@@ -57,10 +57,20 @@
     a page whose other-language copy is noindex names only itself. -#}
 {%- set indexable = not (noindex or page.url == "/404.html") -%}
 <!doctype html>
-<html lang="{{ L.htmlLang }}" data-lang="{{ lc }}" data-base="{{ site.base }}" class="scroll-smooth">
+{#- data-alt: this page in the other language (the installed app's start below); data-no-auto-reload: a page with a form
+    the app never reloads by itself (front matter noAutoReload, pwa.js) -#}
+<html lang="{{ L.htmlLang }}" data-lang="{{ lc }}" data-base="{{ site.base }}"{% if alt and page.url not in ["/404.html", "/offline/", "/es/offline/"] %} data-alt="{{ alt }}"{% endif %}{% if noAutoReload %} data-no-auto-reload{% endif %} class="scroll-smooth">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  {#- The installed app starts at …?source=app (site.webmanifest: its start page and shortcuts; nothing else carries it):
+      it opens in the language of the last page read on this device (pwa.js keeps it; the browser's language at the first start),
+      then the ?source=app is dropped from the address. -#}
+  <script>(function(){try{var h=document.documentElement,s=location.search;if(!/[?&]source=app(&|$)/.test(s))return;var w=null;try{w=localStorage.getItem("msca-lang")}catch(e){}if(w!=="en"&&w!=="es")w=/^es\b/i.test((navigator.languages&&navigator.languages[0])||navigator.language||"")?"es":"en";var a=h.getAttribute("data-alt");if(w!==h.getAttribute("data-lang")&&a){location.replace((h.getAttribute("data-base")||"/").replace(/\/$/,"")+a);return}history.replaceState(history.state,"",location.pathname+s.replace(/([?&])source=app(&|$)/,function(m,p,n){return n?p:""}).replace(/[?&]$/,"")+location.hash)}catch(e){}})();</script>
+  {#- the page's and the whole site's fingerprints (scripts/build-pwa.mjs fills them in): an open page compares them with
+      the published ones to bring itself up to date (pwa.js) -#}
+  <meta name="msca-build" content="__MSCA_BUILD__">
+  <meta name="msca-page" content="__MSCA_PAGE__">
   <title>{{ pageTitle | strip }}</title>
   <meta name="description" content="{{ desc | strip | truncate(300) }}">
   {%- if not indexable %}
@@ -110,13 +120,22 @@
   {%- endif %}
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="icon" type="image/png" href="/favicon-32.png" sizes="32x32">
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  {%- if site.appOn %}
+  {#- The installable app (README "The app"): one manifest for both languages; the home-screen icon of iPhones and
+      iPads in the page's language (scripts/build-pwa.mjs draws it and swaps the build time for its hash); the same
+      short name under the icon whatever the language -#}
+  <link rel="apple-touch-icon" href="/assets/img/app/apple-touch-icon-{{ lc }}.png?v={{ site.build.ms }}">
   <link rel="manifest" href="/site.webmanifest">
+  <meta name="apple-mobile-web-app-title" content="{{ 'app.short_name' | t(L) }}">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  {%- else %}
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  {%- endif %}
   <link rel="preload" href="/assets/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/assets/css/site.css?v={{ site.build.ms }}">
   {%- for href in styles %}
-  <link rel="stylesheet" href="{{ href }}">
+  <link rel="stylesheet" href="{{ href }}{% if href.startsWith('/') and not href.startsWith('//') %}{{ '&' if '?' in href else '?' }}v={{ site.build.ms }}{% endif %}">
   {%- endfor %}
   {#- The shared search matcher, then page scripts, then the site script, then Alpine plugins, then Alpine: all deferred, so they run in this order. #}
   <script defer src="/assets/js/search.js?v={{ site.build.ms }}"></script>
@@ -126,11 +145,14 @@
   <script defer src="{{ src }}{% if src.startsWith('/') and not src.startsWith('//') %}{{ '&' if '?' in src else '?' }}v={{ site.build.ms }}{% endif %}"></script>
   {%- endfor %}
   <script defer src="/assets/js/app.js?v={{ site.build.ms }}"></script>
-  <script defer src="/assets/vendor/alpine-collapse.min.js"></script>
-  <script defer src="/assets/vendor/alpine-focus.min.js"></script>
-  <script defer src="/assets/vendor/alpine-intersect.min.js"></script>
-  <script defer src="/assets/vendor/alpine-persist.min.js"></script>
-  <script defer src="/assets/vendor/alpine.min.js"></script>
+  {#- the installable app: service worker, updating open pages, "Install the app" (also switches an installed copy off) #}
+  <script defer src="/assets/js/pwa.js?v={{ site.build.ms }}"></script>
+  {#- the libraries too: asset-hash.mjs gives each the hash of its file, so a library update never meets an old copy #}
+  <script defer src="/assets/vendor/alpine-collapse.min.js?v={{ site.build.ms }}"></script>
+  <script defer src="/assets/vendor/alpine-focus.min.js?v={{ site.build.ms }}"></script>
+  <script defer src="/assets/vendor/alpine-intersect.min.js?v={{ site.build.ms }}"></script>
+  <script defer src="/assets/vendor/alpine-persist.min.js?v={{ site.build.ms }}"></script>
+  <script defer src="/assets/vendor/alpine.min.js?v={{ site.build.ms }}"></script>
   {#- Structured data for search engines. The Organization on every page: one @id, and its name in the other language
       among the alternate names, so the English and Spanish pages describe the same Area; its registered name (the one
       the About page shows, about.glance_legal_value) ties it to "Alcoholics Anonymous"; the address only when
@@ -195,5 +217,8 @@
   {% include "partials/mobile-bar.njk" %}
   {% include "partials/search.njk" %}
   {% include "partials/share-menu.njk" %}
+  {%- if site.appOn %}
+  {% include "partials/app-install.njk" %}
+  {%- endif %}
 </body>
 </html>

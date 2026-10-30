@@ -115,7 +115,7 @@ scripts: ["/assets/js/calendar.js"]
 
       {#- filters: sticky sidebar from 1280px, a drawer below -#}
       <div x-cloak x-show="drawer" x-transition.opacity class="fixed inset-0 z-[60] bg-ink-950/45 backdrop-blur-sm xl:hidden" @click="closeDrawer()" aria-hidden="true"></div>
-      <aside id="cal-filters" class="cal-filters" :class="drawer && 'is-open'" aria-label="{{ 'ui.filters' | t(L) }}"
+      <aside id="cal-filters" data-reload-safe class="cal-filters" :class="drawer && 'is-open'" aria-label="{{ 'ui.filters' | t(L) }}"
              x-trap.inert.noscroll="drawer && !xl" :aria-modal="(drawer && !xl) ? 'true' : null" :role="(!xl) ? 'dialog' : null">
         {% include "partials/calendar-filters.njk" %}
       </aside>

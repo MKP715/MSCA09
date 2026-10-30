@@ -42,6 +42,8 @@ export default function () {
       sha: (process.env.GITHUB_SHA || "").slice(0, 7),
       run: process.env.GITHUB_RUN_ID || "",
     },
+    // The installable app (settings.csv "app"; scripts/build-pwa.mjs): on unless the row says off
+    appOn: !/^(off|no|false|0)$/i.test(String(settings.app || "on").trim()),
     repo: settings.github_repo || process.env.GITHUB_REPOSITORY || "",
     // Branch the footer's "Edit this page" links open (optional github_branch row in settings.csv).
     branch: settings.github_branch || "main",

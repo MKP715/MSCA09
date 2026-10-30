@@ -102,3 +102,4 @@ outfit,software,1212,policy,Outfit (typeface),Outfit (tipografía),https://fonts
 luxon,software,1213,policy,Luxon,Luxon,https://moment.github.io/luxon/,,Dates and times in Pacific time.,Fechas y horas en hora del Pacífico.,layers-3,slate,,MIT,,
 icaljs,software,1214,policy,ical.js,ical.js,https://github.com/kewisch/ical.js,,Reads the Area's Google Calendar feed.,Lee el calendario de Google del Área.,layers-3,slate,,MPL-2.0,,
 markdown-it,software,1215,policy,markdown-it,markdown-it,https://github.com/markdown-it/markdown-it,,Formats longer text written in the CSV files.,Da formato a los textos largos escritos en los archivos CSV.,layers-3,slate,,MIT,,
+workbox,software,1216,policy,Workbox,Workbox,https://developer.chrome.com/docs/workbox,,The installable app: works offline and keeps itself up to date.,La aplicación instalable: funciona sin conexión y se mantiene al día sola.,layers-3,slate,,MIT,,
