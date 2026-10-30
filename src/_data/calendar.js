@@ -181,7 +181,8 @@ function cleanOnline(z) {
   if (!z || !(z.idDigits || z.joinUrl)) return null;
   return { zoomId: z.id || null, passcode: z.passcode || null, joinUrl: z.joinUrl || null };
 }
-const GENERIC_LINK = /^(click here|here|link|flyer|english|spanish|español|espanol|ingles|inglés|document|pdf|en|sp|es)$/i;
+// "Flyer", "Program", "FAQ" … (with the language in brackets): the wording of data/text/calendar.csv in each language
+const GENERIC_LINK = /^(click here|here|link|flyer|program|programa|faq|english|spanish|español|espanol|ingles|inglés|document|pdf|en|sp|es)$/i;
 function cleanLinks(links) {
   return (links || []).map((k) => {
     let en = k.label, es = k.label;
@@ -193,7 +194,7 @@ function cleanLinks(links) {
     // "Flyer (English)": a generic word with its language in brackets is translated like a bare "Flyer"
     const bare = (k.label || "").replace(/\s*\((english|spanish|español|espanol|ingles|inglés)\)\s*$/i, "");
     if (GENERIC_LINK.test(bare) || (tl.fileName && !tl.text)) {
-      const key = tl.kind === "flyer" || /flyer/i.test(k.label) ? "calendar.link.flyer" : tl.kind === "program" ? "calendar.link.program" : "calendar.link.document";
+      const key = tl.kind === "flyer" || /flyer/i.test(k.label) ? "calendar.link.flyer" : tl.kind === "program" ? "calendar.link.program" : tl.kind === "faq" ? "calendar.link.faq" : "calendar.link.document";
       en = t(key, "en") + sufEn;
       es = t(key, "es") + sufEs;
     } else if (tl.fileName) {

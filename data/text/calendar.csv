@@ -1,16 +1,17 @@
 key,en,es,notes
-"# Wording of the calendar pages, the event pages and the event cards. key = the name the pages use (do not change it); en / es = the text in English and Spanish; notes = where it appears. {name} placeholders are filled in by the site.",,,
+"# Wording of the Events page (/calendar/), its Event flyers page (/calendar/flyers/), the Happenings page (/events/), the event pages and the event cards. key = the name the pages use (do not change it); en / es = the text in English and Spanish; notes = where it appears. {name} placeholders are filled in by the site.",,,
 "# A calendar entry without a Título: line gets its Spanish title from a row calendar.title_es.<page slug> (the slug is the last part of the event's address, e.g. 74th-scaa-convention-2026-10-16).",,,
 "# A row calendar.title_en.<page slug> changes the name an entry shows on the site (its heading, search-result title, lists and calendar files) without changing its address: en = the English name; es = the Spanish name, used when the entry has no Título: line and no calendar.title_es row. For a name typed with times, an address or a misspelling.",,,
 "# Rows calendar.note_es.<page slug> translate an entry's Note: lines (several lines separated by | ) until Google Calendar has Nota: lines. They are used only while the en column still matches the calendar word for word; scripts/check-calendar.mjs reports the ones that went out of date.",,,
-calendar.title,Area calendar,Calendario del Área,Page title of /calendar/
-calendar.meta_title,A.A. events & service calendar – Orange County & Inland Empire,Calendario de eventos de A.A. – condado de Orange e Inland Empire,"Search-result and link-preview title of /calendar/ (the page heading stays calendar.title). Over 55 characters, so nothing is added after it; keep it under about 65"
+calendar.title,Events,Eventos,Page title of /calendar/
+calendar.meta_title,A.A. events & service calendar – Orange County & Inland Empire,Eventos y calendario de A.A. – condado de Orange e Inland Empire,"Search-result and link-preview title of /calendar/ (the page heading stays calendar.title). Over 55 characters, so nothing is added after it; keep it under about 65"
 calendar.eyebrow,Meetings & events,Reuniones y eventos,
 calendar.lead,"Every Area, district and committee meeting, workshop and event — in Pacific time.","Todas las reuniones del Área, de distrito y de comité, talleres y eventos — en hora del Pacífico.",One line under the page title
 calendar.skip,Skip to the calendar,Ir al calendario,Keyboard link at the top of /calendar/: jumps past the event flyers to the calendar
 calendar.sticky.label,Calendar tools,Herramientas del calendario,Bar that stays at the top of the screen on phones
 calendar.sticky.top,Back to search and views,Volver a la búsqueda y las vistas,
 calendar.ics_description,"Meetings and events of Mid-Southern California Area 09 (MSCA09) of Alcoholics Anonymous, from the Area calendar. All times are Pacific time.","Reuniones y eventos del Área 09 del Centro-Sur de California (MSCA09) de Alcohólicos Anónimos, tomados del calendario del Área. Todas las horas están en hora del Pacífico.",Description inside the downloadable .ics file
+calendar.ics_name,Area calendar,Calendario del Área,"Name of the downloadable calendar files /calendar.ics and /calendar-es.ics, after ""MSCA09 – ""; kept apart from the page title calendar.title, so subscribers' calendars keep the name they know"
 calendar.registration,Registration from {time},Inscripción desde las {time},"From a Registration: line in the calendar"
 calendar.note_in_english,(in English),(en inglés),Next to a note that has no Spanish version yet
 calendar.copy_id,Copy the meeting ID,Copiar el ID de reunión,Button for screen readers
@@ -19,7 +20,8 @@ calendar.copied_id,Meeting ID copied,ID de reunión copiado,Announced to screen 
 calendar.copied_passcode,Passcode copied,Código de acceso copiado,Announced to screen readers
 calendar.filters.only_hint,Press Enter to show only this category. Space turns it on or off.,Pulsa Intro para mostrar solo esta categoría. La barra espaciadora la activa o la desactiva.,For screen readers on each category checkbox
 calendar.link.program,Program,Programa,Name for a link to a program or agenda file
-calendar.description,"The MSCA09 Area calendar: Area meetings and assemblies, district and committee meetings, workshops and A.A. service events across Area 09, in English and Spanish.","El calendario del Área 09 (MSCA09): reuniones y asambleas del Área, reuniones de distrito y de comité, talleres y eventos de servicio de A.A., en inglés y en español.",For search engines
+calendar.link.faq,Frequently asked questions,Preguntas frecuentes,"Name for a link the calendar calls 'FAQ' (Link: FAQ (English, PDF) https://…)"
+calendar.description,"A.A. events and calendar of Area 09 (MSCA09): assemblies and Area meetings, district and committee meetings, workshops and service gatherings, in English and Spanish.","Eventos y calendario de A.A. del Área 09 (MSCA09): asambleas y reuniones del Área, de distrito y de comité, talleres y encuentros de servicio, en inglés y en español.",For search engines
 calendar.stats.label,The calendar at a glance,El calendario en cifras,
 calendar.stats.next30,in the next 30 days,en los próximos 30 días,after a number
 calendar.stats.regular,regular meetings,reuniones periódicas,after a number
@@ -145,8 +147,8 @@ calendar.flyer_open_lang,Open flyer {n} ({language}) full size,Ver el volante {n
 calendar.flyer_in.en,in English,en inglés,Added to a flyer's image description when its IMG: line is labelled English
 calendar.flyer_in.es,in Spanish,en español,Added to a flyer's image description when its IMG: line is labelled Spanish
 calendar.flyers,Flyers,Volantes,
-calendar.upcoming_empty,Nothing is scheduled right now — the calendar shows what's coming.,Por ahora no hay nada programado — el calendario muestra lo que viene.,
-calendar.open_calendar,Open the calendar,Abrir el calendario,
+calendar.upcoming_empty,Nothing is scheduled right now — the Events page shows what's coming.,Por ahora no hay nada programado — la página de Eventos muestra lo que viene.,
+calendar.open_calendar,Go to Events,Ir a Eventos,
 calendar.add.title,Add to your calendar,Agregar a tu calendario,
 calendar.add.short,Add to calendar,Agregar al calendario,
 calendar.add.google,Google Calendar,Google Calendar,
@@ -201,9 +203,9 @@ calendar.help.newcomers,New to A.A.?,¿Eres nuevo en A.A.?,
 calendar.featured.eyebrow,Save the date,Reserva la fecha,
 calendar.featured.title,Coming up: Area events & gatherings,Próximamente: eventos y encuentros,
 calendar.featured.lead,"Assemblies, workshops, conventions and fellowship — open a flyer for the details.","Asambleas, talleres, convenciones y compañerismo — abre un volante para ver los detalles.",
-calendar.featured.all,All meetings & events,Todas las reuniones y eventos,
+calendar.featured.all,All happenings,Todas las actividades,
 calendar.featured.more,Show more events,Mostrar más eventos,"Button under the row of event flyers on /calendar/ (laptops and wider): opens them to three full rows (9, 12 or 15 flyers, by screen width); all of them are on /calendar/flyers/"
-calendar.flyers.all,All event flyers,Todos los volantes,"Button beside ""All meetings & events"" at the top of the event flyers on /calendar/: opens /calendar/flyers/"
+calendar.flyers.all,All event flyers,Todos los volantes,"Button beside ""All happenings"" (calendar.featured.all, to /events/) at the top of the event flyers on /calendar/: opens /calendar/flyers/"
 calendar.flyers.see_all,See every upcoming event flyer,Ver todos los volantes de los próximos eventos,"Link under the event flyers on /calendar/ (beside ""Show more events"" on laptops; alone on phones and tablets): opens /calendar/flyers/"
 calendar.flyers.title,Event flyers,Volantes de eventos,"Page title of /calendar/flyers/, its breadcrumb, and its quick link on /events/"
 calendar.flyers.meta_title,Upcoming A.A. event flyers – Orange County & Inland Empire,Volantes de eventos de A.A. – condado de Orange e Inland Empire,"Search-result and link-preview title of /calendar/flyers/ (the page heading stays calendar.flyers.title). Over 55 characters, so nothing is added after it; keep it under about 65"
@@ -229,7 +231,7 @@ calendar.flyers.count_n,{n} flyers,{n} volantes,
 calendar.flyers.count_of,{n} of {total} flyers,{n} de {total} volantes,While a filter is on
 calendar.flyers.empty_title,No flyers match these filters.,Ningún volante coincide con estos filtros.,
 calendar.flyers.empty_body,"Try another month or type, or clear the filters to see every flyer.","Prueba otro mes u otro tipo, o quita los filtros para ver todos los volantes.",
-calendar.flyers.none,"No upcoming event has a flyer right now. The calendar lists every meeting and event.","Por ahora ningún evento próximo tiene volante. El calendario muestra todas las reuniones y eventos.",/calendar/flyers/ when the calendar has no upcoming flyer at all
+calendar.flyers.none,No upcoming event has a flyer right now. The Events page lists every meeting and event.,Por ahora ningún evento próximo tiene volante. La página de Eventos muestra todas las reuniones y eventos.,/calendar/flyers/ when the calendar has no upcoming flyer at all
 calendar.flyers.events_lead,"Assemblies, workshops, conventions and fellowship, month by month.","Asambleas, talleres, convenciones y compañerismo, mes a mes.",Under the Upcoming events heading of /calendar/flyers/
 calendar.flyers.meetings_title,Regular meetings with flyers,Reuniones periódicas con volante,Second section of /calendar/flyers/
 calendar.flyers.meetings_lead,"Committees, service schools, districts and H&I that meet on a regular schedule. Each card shows the next date.","Comités, escuelas de servicio, distritos y H&I que se reúnen con horario fijo. Cada tarjeta muestra la próxima fecha.",
@@ -245,11 +247,11 @@ calendar.browse.google_body,"The same calendar, in Google's own view.","El mismo
 calendar.browse.area,Assemblies & Area meetings,Asambleas y reuniones del Área,
 calendar.browse.area_body,"Agendas, flyers and minutes for every Area meeting.","Agendas, volantes y actas de cada reunión del Área.",
 calendar.footnote,"All times are Pacific time. This page was built from the Area's Google Calendar on {date} and refreshes every few hours. To add or correct an entry, write to the webmaster.","Todas las horas están en hora del Pacífico. Esta página se generó a partir del Google Calendar del Área el {date} y se actualiza cada pocas horas. Para agregar o corregir una entrada, escribe al webmaster.","Note under /calendar/. {date} = the day the page was built, with no time of day: an unchanged calendar then gives the same page all day, and the 3-hourly build does not publish it again (.github/workflows/deploy.yml)"
-calendar.events.crumb,All meetings & events,Todas las reuniones y eventos,Breadcrumb
-calendar.events.title,All meetings & events,Todas las reuniones y eventos,Page title of /events/
-calendar.events.meta_title,A.A. service meetings & events,Reuniones de servicio y eventos,"Search-result and link-preview title of /events/ (the page heading stays calendar.events.title); "" · A.A. Area 09"" is added after it while it is 55 characters or shorter"
+calendar.events.crumb,Happenings,Actividades,Breadcrumb
+calendar.events.title,Happenings,Actividades,Page title of /events/
+calendar.events.meta_title,Happenings: A.A. service meetings & events,Actividades: reuniones de servicio y eventos,"Search-result and link-preview title of /events/ (the page heading stays calendar.events.title); "" · A.A. Area 09"" is added after it while it is 55 characters or shorter"
 calendar.events.description,"Every regular service meeting in Area 09 — districts, committees, H&I and intergroups — plus upcoming events and an archive of past events with their flyers.","Todas las reuniones periódicas de servicio del Área 09 — distritos, comités, H&I e intergrupos — además de los próximos eventos y un archivo de eventos pasados con sus volantes.",
-calendar.events.eyebrow,Area calendar,Calendario del Área,
+calendar.events.eyebrow,Service meetings & events,Reuniones de servicio y eventos,
 calendar.events.lead,"The regular meetings, what's coming up, and everything that has already happened — in one directory.","Las reuniones periódicas, lo que viene y todo lo que ya pasó — en un solo directorio.",
 calendar.events.jump,Jump to,Ir a,
 calendar.events.meetings,Regular meetings,Reuniones periódicas,
@@ -286,7 +288,7 @@ calendar.event.role_committee,Committee,Comité,
 calendar.event.role_related,Related,Relacionado,
 calendar.event.serves_districts,Also serves groups in:,También atiende a los grupos de:,
 calendar.event.subscribe_hint,Want every meeting and event?,¿Quieres todas las reuniones y eventos?,
-calendar.event.back,Back to the calendar,Volver al calendario,
+calendar.event.back,Back to Events,Volver a Eventos,
 calendar.event.related_eyebrow,Keep exploring,Sigue explorando,
 calendar.event.related,Coming up next,Lo que viene,
 "# Event pages in search results. The description of an event page is one sentence built from the calendar entry with the calendar.meta.* rows below ({title} {type} {rule} {date} {time} {place} {mode}); the build fills them in, so keep the {words} as they are.",,,

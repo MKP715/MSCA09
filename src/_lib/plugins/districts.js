@@ -411,15 +411,15 @@ function gsrChair(d, servants) {
 }
 
 /**
- * Who to ask about one item: a row (or calendar entry) with its own role address keeps it; else the chair;
- * else the district. A chair without an address of their own gets the district's, marked viaDistrict so the
- * card says it is the district's (it is not the chair's own mailbox).
+ * Who to ask about one item: a row (or calendar entry) with its own role address keeps it; else the GSR School
+ * Chair (with their own address, when they have one). Never the district's address (the DCMC's): it is on the
+ * district's trusted-servants list already, and repeated here it read as the school's own contact (owner, Oct 30, 2026).
  */
 function gsrContact(own, chair, d) {
   const district = (d && d.email) || "";
   if (own && own.toLowerCase() !== district.toLowerCase()) return { chair: false, name: "", email: own };
-  if (chair) return { chair: true, name: chair.name, unconfirmed: chair.unconfirmed, email: chair.email || district, viaDistrict: !chair.email && Boolean(district) };
-  return { chair: false, name: "", email: district };
+  if (chair) return { chair: true, name: chair.name, unconfirmed: chair.unconfirmed, email: chair.email && chair.email.toLowerCase() !== district.toLowerCase() ? chair.email : "" };
+  return { chair: false, name: "", email: "" };
 }
 
 /** A school held on the district meeting's days at start / end (24-hour) ends by the time the meeting starts:

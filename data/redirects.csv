@@ -106,7 +106,7 @@ old_path,new_path,note
 /2024/04/a-celebration-of-the-big-book-flash-sale-may-1-july-31-2024/,/service/delegate/,Alternate Delegate post (2024)
 /praasa-2024-recordings/,/documents/praasa/,Old PRAASA 2024 recordings page: the PRAASA shelf of the document library
 /event/*,/calendar/,Old event pages (The Events Calendar plugin)
-"# Old event pages that Google and other sites still link to (Common Crawl, 2025-2026), each forwarded to the page that replaced it: the same event, its repeating meeting, or the page of the committee or meeting it belonged to. A forward to an event page that the calendar no longer has goes to the calendar instead (the build warns). Any other /event/ address goes to the calendar (row above).",,
+"# Old event pages that Google and other sites still link to (Common Crawl, 2025-2026), each forwarded to the page that replaced it: the same event, its repeating meeting, or the page of the committee or meeting it belonged to. A forward to an event page that the calendar no longer has goes to the Events page (/calendar/) instead (the build warns). Any other /event/ address goes to the Events page too (row above).",,
 /event/msca-area-09-panel-76-servathon/,/events/msca-area-09-panel-76-servathon-2026-11-14/,Old event page
 /event/2026-pacific-regional-forum/,/events/2026-pacific-regional-forum-2026-12-04/,Old event page
 /event/acypaa-53/,/events/acypaa-53-2026-03-19/,Old event page

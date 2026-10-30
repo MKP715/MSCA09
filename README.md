@@ -164,7 +164,7 @@ and the site is still built and published from the fresh calendar. Fix the entry
 e-mails and office numbers only) and the next run saves the copy again.
 
 > **The Area calendar is public.** People subscribe to it directly (the *Subscribe* buttons on the
-> calendar page), so they see everything typed in an entry, **including the text under the `--` line**.
+> Events page, `/calendar/`), so they see everything typed in an entry, **including the text under the `--` line**.
 > Never type a member's last name, personal phone number or personal e-mail anywhere in an entry.
 
 Every entry keeps its details in the **description**, in this shape. You can type it from the Google Calendar
@@ -416,7 +416,7 @@ and an optional `note`.
   gets a forwarding page, which says "This event page has a new address." (`legacy.renamed` in `data/text/common.csv`).
   If the entry later gets its old title back, the real page stays and the build warns (delete the row).
 - A row that forwards to an event page the calendar no longer has (the entry was renamed, moved or deleted) forwards to the
-  calendar instead, and the build warns: point it at the event's new page.
+  Events page (`/calendar/`) instead, and the build warns: point it at the event's new page.
 - `/sitemap-old-addresses.xml` lists every old address that has a forwarding page. It is for submitting in Google
   Search Console during the move (not listed in robots.txt) and can be removed about six months after the move.
 

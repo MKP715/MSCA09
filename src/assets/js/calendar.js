@@ -399,7 +399,7 @@
         },
         shareUrl() { return location.origin + location.pathname + "?" + this.urlParams().toString(); },
         // the Area events' flyers come before the calendar. A link with the calendar's words in the address (a committee
-        // or district page's "Area calendar" link, "Share this view") is about the calendar: open the page there. Not when
+        // or district page's "Events" / "This district on the Events page" link, "Share this view") is about the calendar: open the page there. Not when
         // the address names a part of the page (#…), on a reload or Back / Forward (the browser puts the page back where
         // it was), or once the page has been scrolled
         jumpToCalendar() {

@@ -22,7 +22,7 @@ export function render(d) {
   const L = d.icsLang.code;
   const base = String((d.site && d.site.url) || "https://msca09aa.org").replace(/\/$/, "");
   return calendarToIcs(c.series || [], {
-    name: `MSCA09 – ${t("calendar.title", L)}`,
+    name: `MSCA09 – ${t("calendar.ics_name", L)}`,
     description: t("calendar.ics_description", L),
     siteUrl: base,
     stamp: c.generated,

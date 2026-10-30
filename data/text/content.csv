@@ -237,6 +237,8 @@ contribute.f3_cite,"Self-Support: Where Money and Spirituality Mix, page 5 — r
 contribute.ways_eyebrow,Ways to give,Formas de contribuir,
 contribute.ways_title,"Zelle, mail or in person","Zelle, correo o en persona",
 contribute.ways_lead,Area 09 accepts contributions only from A.A. sources. There is no credit card or PayPal option.,El Área 09 acepta contribuciones solo de fuentes de A.A. No hay opción de tarjeta de crédito ni de PayPal.,
+contribute.separate_title,"Giving to your district, central office or G.S.O.?","¿Quieres contribuir a tu distrito, a tu oficina central o a la OSG?",Note at the top of Ways to give: everything on this page goes to the Area only
+contribute.separate_body,"Everything on this page — Zelle, the post office box and the Treasurer at Area meetings — goes to **Area 09 only**. Your district, your local central office (intergroup) and the General Service Office are separate service entities, each with its own treasurer, so a contribution sent here is credited to the Area, not to them. To support one of them, contribute to it directly: ask your district's treasurer or DCMC (both are listed on your district's page), and see below for your central office and G.S.O.","Todo lo que aparece en esta página —Zelle, el apartado postal y el Tesorero en las reuniones del Área— es **solo para el Área 09**. Tu distrito, tu oficina central (intergrupo) y la Oficina de Servicios Generales son entidades de servicio separadas, cada una con su propio tesorero, así que una contribución enviada aquí se acredita al Área, no a ellas. Para apoyar a alguna de ellas, contribuye directamente: pregunta al tesorero o al CMCD de tu distrito (ambos aparecen en la página de tu distrito) y consulta más abajo para tu oficina central y la OSG.",**bold** allowed. The two buttons under it reuse contribute.beyond.01.cta (your district) and contribute.nav_beyond (the section further down)
 contribute.flyer_kicker,Printable flyer,Volante para imprimir,"The flyer card beside the Ways to give heading. The PDF is the contribute-flyer row of data/resources.csv, the picture of its page the contribute-flyer-pages row"
 contribute.flyer_title,"All the ways to give, on one page","Todas las formas de contribuir, en una página",
 contribute.flyer_body,"The Area's Seventh Tradition flyer: Zelle, mail or in person, and what to write with your contribution. Page 1 is in English and page 2 in Spanish — print it for your group's treasurer or business meeting.","El volante de la Séptima Tradición del Área: Zelle, correo o en persona, y qué anotar con tu contribución. La página 1 está en inglés y la 2 en español: imprímelo para el tesorero o la reunión de trabajo de tu grupo.",
@@ -515,7 +517,7 @@ about.meetfact.03.icon,users,,
 about.meetfact.04.text,A Monthly Service Study & Committee Sharing Session meets online on the third Thursday evening.,Un estudio mensual de servicio y sesión para compartir de los comités se reúne en línea el tercer jueves por la noche.,
 about.meetfact.04.icon,video,,
 about.meets_cta,Assemblies and ASCs,Asambleas y CSA,
-about.meets_calendar,Full calendar,Calendario completo,
+about.meets_calendar,All events,Todos los eventos,
 about.year_label,A typical year,Un año típico,
 about.year_note,"This is the usual pattern. Each year's dates, places and host districts are set in the approved Area calendar.","Este es el patrón habitual. Las fechas, lugares y distritos anfitriones de cada año se fijan en el calendario aprobado del Área.",
 about.kind_label,Colour key,Clave de colores,

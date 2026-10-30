@@ -5,7 +5,7 @@ home.hero.title,Mid-Southern California {hl},{hl} del Medio Sur de California,Bi
 home.hero.title_highlight,Area 09,Área 09,The highlighted (colourful) words of the big heading
 home.hero.tagline,"Recovery, Unity and Service — Area 09 exists for the Third Legacy, so every group has a voice and the message keeps getting through.","Recuperación, Unidad y Servicio: el Área 09 existe para el Tercer Legado, para que cada grupo tenga voz y el mensaje siga llegando.",
 home.hero.cta_meeting,Find a meeting,Buscar una reunión,
-home.hero.cta_calendar,Area calendar,Calendario del Área,
+home.hero.cta_calendar,Events,Eventos,
 home.hero.fact_meetings,Area meetings: usually the 2nd Sunday · in person and on Zoom,Reuniones del Área: por lo general el 2.º domingo · en persona y por Zoom,
 home.hero.fact_languages,English- and Spanish-speaking districts,Distritos de habla inglesa e hispana,
 home.hero.play,Play the slideshow and animations,Reanudar la presentación y las animaciones,Tooltip on the banner's Pause button while paused
@@ -18,7 +18,7 @@ home.next.hosted_by,Hosted by {name},Anfitrión: {name},
 home.next.hosted_by_many,Hosted by {name},Anfitriones: {name},Used when two or more districts host together; {name} = the districts
 home.next.district,District {n},Distrito {n},
 home.next.starts_in,Starts in,Empieza en,
-home.next.ended,This meeting has ended — see the calendar for the next one.,Esta reunión ya terminó; consulta el calendario para ver la próxima.,
+home.next.ended,This meeting has ended — see the Events page for the next one.,Esta reunión ya terminó; consulta la página de Eventos para ver la próxima.,
 home.next.details,Details,Detalles,
 home.next.all,All Area meetings,Todas las reuniones del Área,
 home.next.eyebrow_generic,Area meetings,Reuniones del Área,
@@ -35,7 +35,7 @@ home.coming.title,Area events & workshops,Eventos y talleres,
 home.coming.lead,"Assemblies, forums, workshops and gatherings from the Area calendar. Tap a flyer for details, directions and how to join.","Asambleas, foros, talleres y convivencias del calendario del Área. Toca un volante para ver los detalles, cómo llegar y cómo conectarte.",
 home.coming.prev,Previous events,Eventos anteriores,
 home.coming.next,More events,Más eventos,
-home.coming.all,Full calendar,Calendario completo,
+home.coming.all,All events,Todos los eventos,
 home.carousel.role,carousel,carrusel,Read out by screen readers for the events carousel
 home.carousel.pause,Pause automatic scrolling,Pausar el desplazamiento automático,Button that stops the events carousel moving by itself
 home.carousel.play,Resume automatic scrolling,Reanudar el desplazamiento automático,Tooltip on the same button while paused
@@ -47,7 +47,7 @@ home.area.and,&,y,Joins two host districts: District 10 & District 15
 home.week.title,This week in service,Esta semana en servicio,
 home.week.lead,"District, committee, H&I and intergroup meetings in the next seven days.","Reuniones de distritos, comités, H&I e intergrupos en los próximos siete días.",
 home.week.empty,No service meetings in the next seven days.,No hay reuniones de servicio en los próximos siete días.,
-home.week.all,All meetings in the calendar,Todas las reuniones en el calendario,
+home.week.all,All meetings on the Events page,Todas las reuniones en la página de Eventos,
 home.districts.eyebrow,Find your district,Encuentra tu distrito,
 home.districts.title,Service starts close to home,El servicio empieza cerca de casa,
 home.districts.lead,"Every A.A. group belongs to a district. Type your city to find yours: when and where it meets, who serves, and how to get involved.","Cada grupo de A.A. pertenece a un distrito. Escribe tu ciudad para encontrar el tuyo: cuándo y dónde se reúne, quiénes sirven y cómo participar.",

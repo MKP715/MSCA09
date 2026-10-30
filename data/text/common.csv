@@ -19,7 +19,7 @@ nav.menu,Menu,Menú,
 nav.close,Close,Cerrar,
 nav.breadcrumb,Breadcrumb,Ruta de navegación,
 nav.quick,Quick links,Accesos rápidos,
-nav.calendar,Calendar,Calendario,
+nav.calendar,Events,Eventos,
 nav.districts,Districts,Distritos,
 nav.committees,Committees,Comités,
 nav.get_help,Get help,Ayuda,
@@ -47,7 +47,7 @@ search.type.post,Delegate's Corner,Rincón del Delegado,
 search.type.service,Area service,Servicio del Área,
 search.type.page,Information,Información,"Any other page (About the Area, Newcomers, Resources, Contact …)"
 districts.docs.library,This district in the document library,Este distrito en la biblioteca de documentos,"District pages: button under the district's documents (opens the library filtered to the district)"
-districts.events.calendar_district,This district on the Area calendar,Este distrito en el calendario del Área,"District pages: button under the events (opens the calendar filtered to the district)"
+districts.events.calendar_district,This district on the Events page,Este distrito en la página de Eventos,District pages: button under the events (opens the calendar filtered to the district)
 time.today,Today,Hoy,
 time.tomorrow,Tomorrow,Mañana,
 time.yesterday,Yesterday,Ayer,
@@ -142,8 +142,8 @@ search.kw./service/forms/budget/,"budget form, budget request, annual budget, co
 app.name,Mid-Southern California Area 09 of A.A.,Área 09 del Medio Sur de California de A.A.,"The installed app's full name (install dialog, app list, Start menu, Dock). Changing it asks people who installed the app to approve the new name"
 app.short_name,MSCA 09,MSCA 09,"The name under the app's icon: 12 characters at most, the same in both languages (phones show one name whatever the language)"
 app.description,"The calendar, meetings, events, districts, committees and service documents of Mid-Southern California Area 09 of Alcoholics Anonymous, in English and Spanish.","El calendario, las reuniones, los eventos, los distritos, los comités y los documentos de servicio del Área 09 del Medio Sur de California de Alcohólicos Anónimos, en inglés y en español.",Shown in the install dialog of some browsers (under 300 characters)
-app.shortcut.calendar,Calendar,Calendario,Shortcut in the app icon's menu (long-press or right-click the icon)
-app.shortcut.events,Meetings & events,Reuniones y eventos,Shortcut in the app icon's menu
+app.shortcut.calendar,Events,Eventos,Shortcut in the app icon's menu (long-press or right-click the icon)
+app.shortcut.events,Happenings,Actividades,Shortcut in the app icon's menu
 app.shortcut.newcomers,New to A.A.?,¿Nuevo en A.A.?,Shortcut in the app icon's menu
 app.shortcut.contact,Contact,Contacto,Shortcut in the app icon's menu
 app.install,Install the app,Instalar la aplicación,"Footer button: puts the site on the home screen, Start menu or Dock like an app"

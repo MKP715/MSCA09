@@ -591,7 +591,7 @@ For each author, for the next or approved version. All eight files are posted as
 - The clean Zelle QR (same destination) is on `/contribute/` — the test payment is still open (1.2).
 - Motions 76-7 and 76-8 added (Q&A only Oct 11); 76-1 summary corrected (single signer); 76-6 and 76-B27 notes updated — Sept 13 results and 76-7's deciding body still open (1.4).
 - Home page: pinned Oct 11 ASC notice and a "review the 2027 budget" notice.
-- Registrar note lists the evidence for "Charles A." (still to be confirmed); Web Servant shown as "Devin B.".
+- Registrar note lists the evidence for "Charles A." (still to be confirmed); Web Servant seat filled in (open again since Oct 30).
 - The Service Study & Sharing Session flyer is no longer shown (it pointed to an old-site page); a new one is asked for under Alternate Delegate.
 - Old-website login details that were printed in some published documents (including the Panel 76 tool kits) were removed; the same files and links stay in place.
 - Technical: the build settings and the document scanner were tightened (the scanner's redaction now also clears the hidden author field).
@@ -729,7 +729,7 @@ For each author, for the next or approved version. All eight files are posted as
   the old site is offline; /service/prf-2028/ is the only PRF 2028 page.
 - [ ] **Owner:** the Long Beach photo comes from the old site; confirm it may be used (where it came from).
 - [ ] **Delegate / PRF chair:** add the Forum weekend (Dec 1–3, 2028) and the host committee's planning meetings to the
-  Area calendar when ready; the Contact page points to the calendar for them.
+  Area calendar when ready; the Forum's Contact page points to the Events page for them.
 - [ ] **PRF chair:** how will interpretation work in 2028 (headsets, or an app on the phone as in San Diego in 2026)?
   The FAQ says it will be confirmed with registration.
 
@@ -970,6 +970,14 @@ The Area Google Calendar was checked against every district, intergroup and cent
   "You're offline" page that opens the real page by itself once the device is back online.
 - The switch is the `app` row of `data/settings.csv` (`off` turns off the app's offline copies and updates on every
   device at its next visit; icons already installed stay and simply open the website). How it works: README, "The app".
+
+- **Also on Oct 30 (evening):** the calendar page is now called **Events** (Eventos) and the list of service meetings and
+  past events **Happenings** (Actividades); their addresses stay /calendar/ and /events/, and the calendar file people
+  subscribe to keeps its name. The GSR School box on district pages no longer repeats the DCMC address (it is with the
+  district's trusted servants). /contribute/ says at the top of *Ways to give* that everything there goes to Area 09 only,
+  and how to give to a district, central office or G.S.O. instead. The Web Servant seat is open. The 2026 Pacific
+  Regional Forum page has the G.S.O.'s final program and FAQ in English and Spanish (author details cleared, and a
+  staff member's account photo in the FAQ's map picture covered).
 
 **Still to do**
 - [ ] **Technology Chair (or Webmaster): Test** the app on a real iPhone and a real Android phone: install it, open it

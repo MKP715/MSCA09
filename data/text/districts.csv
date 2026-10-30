@@ -95,7 +95,7 @@ districts.inter.step3,Business meeting,Junta de negocios,
 districts.inter.read_more,Read how a meeting runs,Leer cómo se desarrolla la junta,
 districts.inter.next,Next meetings,Próximas juntas,
 districts.inter.none,The next date is announced by the host district and posted on the Area calendar.,La próxima fecha la anuncia el distrito anfitrión y se publica en el calendario del Área.,
-districts.inter.calendar,Area calendar,Calendario del Área,
+districts.inter.calendar,All events,Todos los eventos,
 districts.inter.tables,Workshop tables,Mesas de trabajo,
 districts.inter.tables_note,"Each table is led by one Spanish-speaking district. The tables also meet at the Hispanic Intradistrict session, and their reports are read at the next Inter-District Meeting.","Cada mesa la coordina un distrito hispano. Las mesas también trabajan en la sesión intradistrital hispana, y sus informes se leen en la siguiente Junta Interdistrital.",
 districts.inter.contact,Contact,Contacto,
@@ -303,7 +303,6 @@ districts.gsr.line_before,before the district meeting,antes de la reunión del d
 districts.gsr.where_zoom,On Zoom,Por Zoom,"Where, for a school that meets online only (the Zoom details are under it)"
 districts.gsr.also_zoom,And on Zoom (details below),Y por Zoom (los datos están abajo),Under the place of a hybrid school
 districts.gsr.contact_chair,GSR School Chair,Coordinador(a) de Escuela de RSG,"Label above the district's GSR School Chair on each card (data/trusted-servants.csv, position GSR School Chair)"
-districts.gsr.contact_via,Write to the district:,Escribe al distrito:,"Under the GSR School Chair's name when the roster gives no e-mail for the chair: the address under it is the district's, not the chair's own"
 districts.gsr.source_text,As announced by the district. Please confirm with the district before you go.,Según lo anuncia el distrito. Confírmalo con el distrito antes de ir.,Under a card whose day is written in data/gsr-schools.csv (when_en / when_es)
 districts.gsr.list_chair,GSR School Chair: {name},Coordinador(a) de Escuela de RSG: {name},On /committees/gsr-school/ under a district's schools; {name} = first name and last initial
 districts.county_short.los-angeles,Los Angeles,Los Ángeles,"County name without 'County', for the compact district rows on phones"

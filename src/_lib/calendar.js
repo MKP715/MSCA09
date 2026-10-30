@@ -1638,7 +1638,7 @@ export function tidyLinkLabel(label) {
   const raw = String(label || '').trim();
   const fileName = /_|\.(pptx?|pdf|docx?|jpe?g|png)\b|\b(FINAL|Rev\d*)\b|[a-z][A-Z][a-z]|\(\d\)\s*$/.test(raw);
   const lang = LBL_LANG_ES.test(raw) ? 'es' : LBL_LANG_EN.test(raw) ? 'en' : '';
-  const kind = /fl(y|i)er|fly(?=[\s_]|$)/i.test(raw) ? 'flyer' : /program|agenda|schedule/i.test(raw) ? 'program' : 'document';
+  const kind = /fl(y|i)er|fly(?=[\s_]|$)/i.test(raw) ? 'flyer' : /\bfaq\b|preguntas frecuentes/i.test(raw) ? 'faq' : /program|agenda|schedule/i.test(raw) ? 'program' : 'document';
   if (!fileName) return { text: raw, lang, kind, fileName };
   let t = raw
     .replace(/\.(pptx?|pdf|docx?|jpe?g|png)\b/gi, ' ')

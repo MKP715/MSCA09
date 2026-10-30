@@ -162,8 +162,8 @@
           </div>
           {%- endif %}
 
-          {#- CONTACT: the district's GSR School Chair, else the row's (or the calendar's) role address, else the
-              district; a chair without an address of their own: the district's, said to be the district's -#}
+          {#- CONTACT: the row's (or the calendar's) own role address, else the district's GSR School Chair (and their
+              own address, if any). Never the district's (DCMC's) address: the trusted-servants list has it -#}
           {%- set web = s.web if s else "" %}
           {%- if ct.name or ct.email or web %}
           <div class="mi-block gsr-contact">
@@ -171,8 +171,7 @@
             <div class="min-w-0">
               <p class="mi-label">{{ ("districts.gsr.contact_chair" if ct.chair else "calendar.info.contact") | t(L) }}</p>
               {%- if ct.name %}<div class="mi-value">{{ ct.name }}{% if ct.unconfirmed %} <span class="text-sm font-normal text-ink-500">({{ "people.to_confirm" | t(L) }})</span>{% endif %}</div>{% endif %}
-              {%- if ct.email and ct.viaDistrict %}<p class="mi-sub mt-1.5!">{{ "districts.gsr.contact_via" | t(L) }}</p>{% endif %}
-              {%- if ct.email %}<div class="{{ 'mt-1 ' if ct.name and not ct.viaDistrict }}text-sm">{{ emailLink({ email: ct.email, lang: L }) }}</div>{% endif %}
+              {%- if ct.email %}<div class="{{ 'mt-1 ' if ct.name }}text-sm">{{ emailLink({ email: ct.email, lang: L }) }}</div>{% endif %}
               {%- if web %}{% set webUrl = web | ownUrl(L) %}<a href="{{ webUrl }}"{% if not webUrl.startsWith("/") %} target="_blank" rel="noopener"{% endif %} class="mi-link">{% icon "globe", "size-4" %}{{ web | calHost }}</a>{% endif %}
             </div>
           </div>
