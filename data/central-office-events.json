@@ -219,7 +219,7 @@
      "h": 1492,
      "mime": "image/png",
      "pdf": "",
-     "sha256": "",
+     "sha256": "c95a14f0bedd7e151a804b45b741ccde60a03cbad86ab88ed7fc6530a53ab647",
      "sizes": [
       [
        212,
@@ -323,7 +323,7 @@
      "h": 1062,
      "mime": "image/jpeg",
      "pdf": "",
-     "sha256": "",
+     "sha256": "475e7e99bec7657ca1def8b079a2980d293298a2d230b3fa017290e95af11aaa",
      "sizes": [
       [
        185,
@@ -451,7 +451,7 @@
      "h": 2560,
      "mime": "image/png",
      "pdf": "",
-     "sha256": "",
+     "sha256": "ed9c045340402bae9c576a95c1e9f1c4dc816310f99015c03ab64ceea643a796",
      "sizes": [
       [
        232,
@@ -663,13 +663,13 @@
    ],
    "flyers": [
     {
-     "h": 0,
+     "h": 1504,
      "mime": "image/jpeg",
      "pdf": "",
-     "sha256": "",
+     "sha256": "377e0ee474654cb9a91aae7b6081c21130a63c14434f84283d408077029b469d",
      "sizes": [],
      "url": "https://www.aanoc.org/images/events/practicing-principles.jpeg",
-     "w": 0
+     "w": 1179
     }
    ],
    "format": "In person",
@@ -700,13 +700,13 @@
    "flags": [],
    "flyers": [
     {
-     "h": 0,
+     "h": 1408,
      "mime": "image/jpeg",
      "pdf": "https://www.oc-aa.org/wp-content/uploads/2026/09/doc01079620260909101242.pdf",
-     "sha256": "",
+     "sha256": "316c2382d20c7ca96f7de07680140983a1920be69d5d69fa9a5433c72aae4819",
      "sizes": [],
      "url": "https://www.oc-aa.org/wp-content/uploads/2026/09/doc01079620260909101242-pdf.jpg",
-     "w": 0
+     "w": 1088
     }
    ],
    "format": "In person",
@@ -968,13 +968,13 @@
    "flags": [],
    "flyers": [
     {
-     "h": 0,
+     "h": 699,
      "mime": "image/png",
      "pdf": "",
-     "sha256": "",
+     "sha256": "da02ebab669d2954c446c0c5217187c7cd9bee25753de45089399bece67aeeee",
      "sizes": [],
      "url": "https://www.aanoc.org/images/events/Pacific_regional_forum_SD26.png",
-     "w": 0
+     "w": 471
     }
    ],
    "format": "In person",
@@ -1005,13 +1005,13 @@
    "flags": [],
    "flyers": [
     {
-     "h": 0,
+     "h": 1482,
      "mime": "image/jpeg",
      "pdf": "",
-     "sha256": "",
+     "sha256": "d710f916ba15c4a3d2ca17061b7b0475844ba26401abd6add2ff83fec7af9edc",
      "sizes": [],
      "url": "https://www.aanoc.org/images/events/hispanic-womens-workshop26.jpeg",
-     "w": 0
+     "w": 1072
     }
    ],
    "format": "Hybrid",
@@ -1323,7 +1323,11 @@
    },
    "errorKind": "",
    "failingSince": "",
-   "flyers": {},
+   "flyers": {
+    "https://www.aanoc.org/images/events/Pacific_regional_forum_SD26.png": "da02ebab669d2954c446c0c5217187c7cd9bee25753de45089399bece67aeeee 471 699 image/png",
+    "https://www.aanoc.org/images/events/hispanic-womens-workshop26.jpeg": "d710f916ba15c4a3d2ca17061b7b0475844ba26401abd6add2ff83fec7af9edc 1072 1482 image/jpeg",
+    "https://www.aanoc.org/images/events/practicing-principles.jpeg": "377e0ee474654cb9a91aae7b6081c21130a63c14434f84283d408077029b469d 1179 1504 image/jpeg"
+   },
    "lastChange": "2026-10-30",
    "pageModified": "",
    "sources": {
@@ -1347,6 +1351,9 @@
    "failingSince": "",
    "flyers": {
     "https://www.oc-aa.org/wp-content/uploads/2026/07/HI-Chili-Cookoff-2026.jpeg": "9235571bd70c2bde7ed5d738dc5167d88dc80a9038c084e8b1f7c0644f885153 1054 1492 image/jpeg",
+    "https://www.oc-aa.org/wp-content/uploads/2026/08/8EFBF189-E9B1-4ECC-8CC6-D62CF0BAAA2B.png": "c95a14f0bedd7e151a804b45b741ccde60a03cbad86ab88ed7fc6530a53ab647 1054 1492 image/png",
+    "https://www.oc-aa.org/wp-content/uploads/2026/09/doc01079620260909101242-pdf.jpg": "316c2382d20c7ca96f7de07680140983a1920be69d5d69fa9a5433c72aae4819 1088 1408 image/jpeg",
+    "https://www.oc-aa.org/wp-content/uploads/2026/10/District-12-Traditions-Day-2026-Flyer-scaled.png": "ed9c045340402bae9c576a95c1e9f1c4dc816310f99015c03ab64ceea643a796 1978 2560 image/png",
     "https://www.oc-aa.org/wp-content/uploads/2026/10/Halloween_Party_Flyer.jpeg": "35ef4112b418b7368cafca251d726d30fa2310d66033b819a60ec3f28565ce95 1546 2000 image/jpeg",
     "https://www.oc-aa.org/wp-content/uploads/2026/10/IMG_5029.jpeg": "d30bf9ab85ce9436ede0773ae3cbce1295259f91e0caf62522f0cae297d57715 1206 1808 image/jpeg"
    },
@@ -1423,6 +1430,7 @@
    "errorKind": "",
    "failingSince": "",
    "flyers": {
+    "https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-Sobriedad-4.jpg": "475e7e99bec7657ca1def8b079a2980d293298a2d230b3fa017290e95af11aaa 654 1062 image/jpeg",
     "https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-sobriedad-1.jpg": "5059edff987ea15a00bdfca8fc76fd0194b1a2b8ae31450d20552cc317c7a13e 644 1066 image/jpeg",
     "https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-sobriedad-2.jpg": "c48d0afd3d16fc3835020387b71434adabb153f85a27244465e2adf0de16a61b 661 1055 image/jpeg",
     "https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-sobriedad-3.jpg": "371191b2917dfa6fb9457b95a35a03b0b28708931fe0acf1ef1c61f2de0af939 665 1051 image/jpeg"
@@ -1439,8 +1447,8 @@
   "sureste-riverside": {
    "adapter": "tribe",
    "count": 6,
-   "errorKind": "",
-   "failingSince": "",
+   "errorKind": "robots",
+   "failingSince": "2026-10-30",
    "flyers": {
     "https://oiaasriverside.org/wp-content/uploads/2026/08/12-PASOS-32-ANIVERSARIO-1234_Page_2.jpg": "8ecae6679271a3e3313369561bd848ad03b9f922620bd44183964ecc7395a9b3 2200 1700 image/jpeg",
     "https://oiaasriverside.org/wp-content/uploads/2026/08/12-PASOS-32-ANIVERSARIO-NUEVO-SALON_Page_1.jpg": "0aaf138645ba0119be6d0e54d2e25cc278003d3995251c4afb1a743da620c19e 1056 799 image/jpeg",
@@ -1456,7 +1464,7 @@
     "co-sureste-riverside-1344": "2026-11-08 b62f0dce83ea1a28aaa3d379491e17fe9a3acc8e",
     "co-sureste-riverside-1354": "2026-11-21 e5d2fe94f1dafa5c2269df737eddddf058555117"
    },
-   "status": "ok",
+   "status": "error",
    "unparsed": 0,
    "watchModified": ""
   },
@@ -1468,6 +1476,8 @@
    "flyers": {
     "https://www.temeculacentraloffice.org/aa/wp-content/uploads/2026ChildrensHolidayParty.pdf": "2cede80c9ddac46e546c8b6be003ee08243373525ac4203bdfcbd55b205e39f4 0 0 application/pdf",
     "https://www.temeculacentraloffice.org/aa/wp-content/uploads/2026ThanksgivingAlcathon.pdf": "876f77e595f3a6fcbddf3925a61624f345c69cb94dbe65ca33feb2ae562f33c7 0 0 application/pdf",
+    "https://www.temeculacentraloffice.org/aa/wp-content/uploads/ACYPAA_LIV.png": "b34ea7a9b2ea252598f9738e31d04d818bb6eee6674b7dd1acab8b7ee207a3f3 1429 2000 image/png",
+    "https://www.temeculacentraloffice.org/aa/wp-content/uploads/ACYPAA_Roundup_54.jpeg": "675317c03cf1fb889c7f8ec661557cc53706e50a9ef69416926c2d1f5bd36509 1526 2048 image/jpeg",
     "https://www.temeculacentraloffice.org/aa/wp-content/uploads/Bingo_11.14.26.pdf": "dee293ba8fcf3ec74c7814bc8509e626d6c6a741e21044826c0b466cbbcb649a 0 0 application/pdf"
    },
    "lastChange": "2026-10-30",
