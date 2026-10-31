@@ -9,8 +9,8 @@
      @click="if (!$event.metaKey && !$event.ctrlKey && !$event.shiftKey) { $event.preventDefault(); open(o) }">
     <span class="ag-item__time" x-text="o.time"></span>
     <span class="ag-item__main">
-      <span class="ag-item__type"><span class="contents" x-html="o.icon"></span><span x-text="o.typeLabel"></span></span>
-      <span class="ag-item__title" x-text="o.title"></span>
+      <span class="ag-item__type"><span class="contents" x-html="o.icon"></span><span x-text="o.typeLabel"></span><span x-show="o.co" class="ag-item__co">{% icon "building-2", "size-3" %}<span x-text="o.co"></span></span></span>
+      <span class="ag-item__title" x-text="o.title" :lang="o.tlang || null"></span>
       <span class="ag-item__meta">
         <span class="inline-flex min-w-0 items-center gap-1.5">
           <span x-show="o.fmtIcon === 'video'" class="contents">{% icon "video", "size-3.5 shrink-0" %}</span>
@@ -23,7 +23,7 @@
         <span x-show="o.st === 'postponed'" class="ag-item__flag">{{ "calendar.postponed" | t(L) }}</span>
       </span>
     </span>
-    <template x-if="o.fl"><img :src="flyerUrl(o.fl, 200)" alt="" class="ag-item__thumb" loading="lazy" decoding="async" @error="$el.remove()"></template>
+    <template x-if="o.fl"><img :src="flyerUrl(o.fl, 200)" alt="" class="ag-item__thumb" loading="lazy" decoding="async" referrerpolicy="no-referrer" @error="$el.remove()"></template>
     {% icon "chevron-right", "ag-item__chev size-5 shrink-0" %}
   </a>
 </li>

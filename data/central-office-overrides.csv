@@ -1,0 +1,3 @@
+id,action,value,until,notes
+"# Corrections to the events read from the central offices' websites (data/central-office-events.json). id = the event's id there (co-<office>-…, also shown in the build log and the import report). One row per change.",,,,
+"# action: hide = leave the event out · show = show it although the Area calendar seems to have it already · type = value is a type key of data/event-types.csv · title = value is the corrected title · same-as = value is the slug of the Area calendar entry that is the same event (the Area entry is shown). until = optional last day the row applies (YYYY-MM-DD); notes = why.",,,,

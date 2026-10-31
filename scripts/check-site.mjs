@@ -260,7 +260,7 @@ function checkPhones(text, where) {
 // ------------------------------------------------------------- full-name look-alikes
 // "Maria Gonzalez" (first name + capitalised word) where "Maria G." is the rule: src/_lib/names.js.
 // (`servants` = data/trusted-servants.csv, read with the allow lists above.)
-const STRICT_NAME_PAGES = /^\/(es\/)?(about\/panel|committees|districts|events)\//;
+const STRICT_NAME_PAGES = /^\/(es\/)?(about\/panel|committees|districts|events|calendar\/central-offices)\//;
 
 // ------------------------------------------------------------- data files
 const dataDir = path.join(ROOT, "data");
@@ -275,7 +275,8 @@ function walk(dir, ext, out = []) {
   }
   return out;
 }
-const SKIP_CONTACT_SCAN = /(contact-allowlist|name-allowlist|media-review|flyer-holds|redirects)\.csv$/;
+// (office-flyer-review.csv: addresses of the central offices' flyers, never their contents)
+const SKIP_CONTACT_SCAN = /(contact-allowlist|name-allowlist|media-review|flyer-holds|redirects|office-flyer-review)\.csv$/;
 let csvFiles = 0;
 for (const file of walk(dataDir, [".csv"])) {
   csvFiles++;
@@ -552,6 +553,93 @@ for (const file of walk(SITE, [".json", ".ics"])) {
   }
   checkPhones(text, rel);
   checkHeld(text, rel);
+}
+
+// ------------------------------------------------------------- central-office events
+// The events read from the central offices' websites (src/_data/officeEvents.js, scripts/office-events.mjs). Their
+// text is checked with every page and with events.json above; here: what may never come with them (a Zoom link, an
+// e-mail, an .ics file, Event data for search engines: the office's page is the original), a flyer only once the flyer
+// check passed for that very file (data/office-flyer-review.csv), and the editors' tables.
+{
+  const OFFICE_ADAPTERS = ["tribe", "aanoc", "tvco", "watch", "shared", "none"];
+  // never in a central office's event (src/_data/officeEvents.js leaves out an event with one, with the same CO_REFUSED and
+  // coWords, so this is a backstop): a Zoom address, a passcode word, "PW" with its code, a Zoom meeting number — read
+  // after every dash, full-width sign and space is made plain
+  const CO_REFUSED = /zoom(?:gov)?\.us|\bpass[\s-]?codes?\b\s*(?:(?:is|es|[:=#-])\s*\S|\w*\d)|\bpasscode\w*\d|\bcontrase[nñ]as?\b\s*(?:(?:is|es|[:=#-])\s*\S|\w*\d)|\bp\s?[./]?\s?w\b\.?\s*[:=#.-]?\s*\w*\d|\bzoom\b[^\n]{0,20}\d{3}[\s.-]?\d{3,4}[\s.-]?\d{3,4}|\b(?:meeting|webinar|reuni[oó]n)\s*id\b[^\n]{0,10}\d{3}[\s.-]?\d{3,4}[\s.-]?\d{3,4}/i;
+  const coWords = (s) =>
+    String(s || "")
+      .normalize("NFC")
+      .replace(/[‐-―−﹘﹣－]/g, "-")
+      .replace(/[！-～]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0))
+      .replace(/[  -   　]/g, " ")
+      .replace(/[​-‍﻿]/g, "");
+  const OVERRIDE_ACTIONS = ["hide", "show", "type", "title", "same-as"];
+  const officeKeys = new Set(readCsv("central-offices.csv").map((r) => r.key).filter(Boolean));
+  for (const r of readCsv("office-event-sources.csv")) {
+    if (!r.office || r.office.startsWith("#")) continue;
+    const where = `data/office-event-sources.csv row ${r._row} (${r.office})`;
+    if (!officeKeys.has(r.office)) err(where, `"${r.office}" is not a key of data/central-offices.csv`);
+    const adapter = String(r.adapter || "").trim().toLowerCase();
+    if (!OFFICE_ADAPTERS.includes(adapter)) err(where, `adapter "${r.adapter}" — use one of ${OFFICE_ADAPTERS.join(", ")}`);
+    for (const col of ["feed", "events_page"]) if (r[col] && !/^https:\/\//.test(r[col].trim())) err(where, `${col} must be an https:// address`);
+  }
+  for (const r of readCsv("central-office-overrides.csv")) {
+    if (!r.id || r.id.startsWith("#")) continue;
+    const where = `data/central-office-overrides.csv row ${r._row}`;
+    if (!/^co-[a-z0-9-]+$/.test(r.id.trim())) err(where, `id "${r.id}" — copy the event's id (co-<office>-…) from data/central-office-events.json or from the card's address (#co-…)`);
+    if (!OVERRIDE_ACTIONS.includes(String(r.action || "").trim().toLowerCase())) err(where, `action "${r.action}" — use one of ${OVERRIDE_ACTIONS.join(", ")}`);
+    if (r.until && !/^\d{4}-\d{2}-\d{2}$/.test(r.until.trim())) err(where, `until "${r.until}" — a date YYYY-MM-DD, or empty for always`);
+  }
+
+  // the flyer addresses the site may show: every size of a flyer whose check passed for the file the mirror lists
+  const shownFlyers = new Set();
+  try {
+    const mirror = JSON.parse(fs.readFileSync(path.join(ROOT, "data", "central-office-events.json"), "utf8"));
+    const passed = new Set(
+      readCsv("office-flyer-review.csv")
+        .filter((r) => /^(clean|cleared)$/i.test(String(r.result || "").trim()) && r.url && r.sha256)
+        .map((r) => `${r.url.trim()}|${r.sha256.trim().toLowerCase()}`),
+    );
+    for (const e of mirror.events || [])
+      for (const f of e.flyers || [])
+        if (f.sha256 && passed.has(`${f.url}|${String(f.sha256).toLowerCase()}`)) {
+          shownFlyers.add(f.url);
+          if (f.pdf) shownFlyers.add(f.pdf);
+          for (const s of f.sizes || []) if (Array.isArray(s) && s[1]) shownFlyers.add(s[1]);
+        }
+  } catch {}
+
+  let json = null;
+  try {
+    json = JSON.parse(fs.readFileSync(path.join(SITE, "assets", "data", "events.json"), "utf8"));
+  } catch {}
+  if (json) {
+    for (const [slug, s] of Object.entries(json.series || {})) {
+      if (s.src !== "co") continue;
+      const where = `/assets/data/events.json series ${slug}`;
+      for (const k of ["online", "email", "ics"]) if (s[k]) err(where, `a central office's event has "${k}": its details stay on the office's own page`);
+      if (CO_REFUSED.test(coWords(JSON.stringify(s)))) err(where, "Zoom details or a passcode in a central office's event");
+      for (const u of [...(s.flyers || []), s.pdf].filter(Boolean)) if (!shownFlyers.has(u)) err(where, `flyer ${u} has not passed the flyer check (data/office-flyer-review.csv)`);
+    }
+    for (const o of json.occurrences || []) if (o.fx && !shownFlyers.has(o.fx)) err(`/assets/data/events.json ${o.k}`, `flyer ${o.fx} has not passed the flyer check (data/office-flyer-review.csv)`);
+  }
+  // the central offices' page, and the Events page's strip of their events: pictures from anywhere but Google Drive
+  // (the Area's own flyers) are the offices' flyers
+  for (const file of pages) {
+    const rel = "/" + path.relative(SITE, file).replace(/\\/g, "/");
+    const coPage = /^\/(es\/)?calendar\/central-offices\//.test(rel);
+    if (!coPage && !/^\/(es\/)?calendar\/index\.html$/.test(rel)) continue;
+    const html = fs.readFileSync(file, "utf8");
+    if (coPage && /"@type"\s*:\s*"Event"/.test(html)) err(rel, "Event data for search engines on the central offices' page: the offices' own pages are the originals");
+    // the page's words (not its markup: the zoom-in icon's SVG is not a Zoom meeting)
+    const words = decode(html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ").replace(/<[^>]+>/g, " \n "));
+    if (coPage && CO_REFUSED.test(coWords(words))) err(rel, "Zoom details or a passcode on the central offices' page");
+    for (const m of html.matchAll(/<img\b[^>]*\ssrc="(https?:\/\/[^"]+)"/g)) {
+      const u = decode(m[1]);
+      if (/^https:\/\/(lh3\.googleusercontent\.com|drive\.google\.com)\//.test(u)) continue;
+      if (!shownFlyers.has(u)) err(rel, `picture ${u} has not passed the flyer check (data/office-flyer-review.csv)`);
+    }
+  }
 }
 
 // ------------------------------------------------------------- links the site must not carry (data/link-fixes.csv)

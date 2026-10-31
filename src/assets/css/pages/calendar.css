@@ -45,6 +45,8 @@
     color: var(--a-800);
   }
   .ev-type--sm { @apply px-2 py-0.5 text-[10px] leading-4; }
+  /* a central office's event (macros/events.njk officeEventCard): the office that posted it */
+  .ev-co-badge { @apply inline-flex items-center gap-1 rounded-full bg-copper-50 px-2 py-1 text-[11px] leading-none font-bold text-copper-800 ring-1 ring-copper-200; }
   .ev-title { @apply font-display text-lg leading-snug font-bold text-balance break-words text-ink-950 transition-colors; }
   .ev-meta { @apply mt-1.5 flex items-start gap-2 text-sm leading-snug text-ink-600; }
   .ev-meta > svg { color: var(--a-500); margin-top: 1px; }
@@ -511,6 +513,8 @@
   .ag-item:hover .ag-item__title { color: var(--a-800); }
   .ag-item__meta { @apply mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-500; }
   .ag-item__lang { @apply inline-flex items-center gap-1 rounded-full bg-coral-50 px-2 py-0.5 text-xs font-semibold text-coral-700; }
+  /* a central office's event (read from its website): the office's short name beside the type */
+  .ag-item__co { @apply ml-1.5 inline-flex items-center gap-1 rounded-full bg-copper-50 px-1.5 py-px text-[10px] font-bold tracking-normal text-copper-800 normal-case; }
   .ag-item__flag { @apply rounded-full bg-red-50 px-2 py-0.5 text-xs font-bold text-red-700; }
   .ag-item__thumb { @apply hidden h-16 w-12 rounded-lg object-cover object-top ring-1 ring-ink-900/10 sm:block; }
   .ag-item__chev { @apply hidden text-ink-300 transition sm:block; }
@@ -640,6 +644,8 @@ html[data-motion="paused"] .cal-feat .ev-grid--rail > li { transition: none; }
   background: var(--a-100); color: var(--a-900); box-shadow: inset 3px 0 0 var(--a-500);
 }
 .cal-fc .msca-ev.fc-daygrid-event:hover { background: var(--a-200); }
+/* a central office's event: a dashed edge, so it reads as not the Area's own entry */
+.cal-fc .msca-ev.is-co.fc-daygrid-event:not(:focus-visible) { box-shadow: inset 3px 0 0 var(--a-500), inset 0 0 0 1px var(--a-300); outline: 1px dashed var(--a-500); outline-offset: -1px; }
 .cal-fc .msca-ev.fc-daygrid-event:focus-visible { outline: 2px solid var(--a-600); outline-offset: 1px; }
 .fce { @apply block min-w-0 overflow-hidden text-[12px] leading-[1.3] whitespace-normal; }
 .fce-time { @apply shrink-0 font-bold tabular-nums; color: var(--a-800); }

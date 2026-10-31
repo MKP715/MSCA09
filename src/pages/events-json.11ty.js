@@ -3,6 +3,9 @@
 // "today" is decided in the browser, so a page built hours ago still shows the right things.
 // `series` holds only the calendar entries that have a date in the window (the page reaches an entry only through an
 // occurrence's `s`), and there is no build time in it: nothing reads one.
+// After the Area's own entries come the central offices' events (officeEvents, src/_data/officeEvents.js): marked
+// im = 1 and so = the office, with series src = "co". They have no page of their own: their url is their card on
+// /calendar/central-offices/, and web is the event's page on the office's website.
 export const data = {
   permalink: "/assets/data/events.json",
   eleventyExcludeFromCollections: true,
@@ -19,6 +22,10 @@ const KEYS = {
   fle: "flyer for Spanish pages, when it is not fl (an IMG: line labelled Spanish)",
   a: "start (ISO, Pacific offset)", b: "end (ISO, Pacific offset; all-day: next midnight)", ad: "1 = all day", r: "1 = part of a repeating series",
   z: "1 = has Zoom", st: "status when not confirmed: cancelled | postponed", tl: "time label [en, es]",
+  so: "central office key (offices[].key): the office that posted it, or that holds an Area event",
+  al: "other central offices that list the same event", im: "1 = read from a central office's website (no page here)",
+  fx: "flyer of an imported event: the full https address of a checked picture on the office's website",
+  ne: "1 = the office gives no end time (b = a + 2 hours, or the end of the last day of a multi-day event)",
 };
 
 const compact = (o) => {
@@ -32,8 +39,10 @@ const compact = (o) => {
 // "https://lh3.googleusercontent.com/d/<id>=w800-rj-l85" -> "<id>"
 const driveIdOf = (u) => (u ? (u.match(/\/d\/([A-Za-z0-9_-]{20,})/) || [])[1] : "") || "";
 
-export function render({ calendar }) {
+export function render({ calendar, officeEvents }) {
   const c = calendar || {};
+  const co = officeEvents || {};
+  const areaOffice = co.areaOffice || {};
   const occurrences = (c.occurrences || []).map((o) =>
     compact({
       k: `${o.slug}/${o.key.split("@").pop()}`, s: o.slug, t: o.title, te: o.title_es, ty: o.type, c: o.color, f: o.format, l: o.language,
@@ -43,8 +52,18 @@ export function render({ calendar }) {
       a: o.start, b: o.end, ad: o.allDay ? 1 : 0, r: o.recurring ? 1 : 0, z: o.hasZoom ? 1 : 0,
       st: o.status && o.status !== "confirmed" ? o.status : "",
       tl: [o.timeLabel_en, o.timeLabel_es],
+      so: areaOffice[o.slug] || "",
     })
   );
+  const stamp = (iso) => iso.slice(0, 16).replace(/[-T:]/g, "");
+  for (const e of co.events || []) {
+    occurrences.push(compact({
+      k: `${e.id}/${stamp(e.start)}`, s: e.id, t: e.title, te: e.title_es, ty: e.type, c: e.color, f: e.format, l: e.language,
+      ci: e.city, v: e.venue, fx: e.flyer ? e.flyer.card : "",
+      a: e.start, b: e.end, ad: e.allDay ? 1 : 0, tl: [e.timeLabel_en, e.timeLabel_es],
+      so: e.office, al: e.also, im: 1, ne: e.noEnd ? 1 : 0,
+    }));
+  }
   // only the entries a date in the window points to (older entries, back to 2020, would be a quarter of the file)
   const used = new Set(occurrences.map((o) => o.s));
   const series = {};
@@ -65,6 +84,20 @@ export function render({ calendar }) {
       ended: s.ended ? 1 : 0,
     });
   }
+  // a central office's event: what its card shows, its card's address, and its page on the office's website. Never a
+  // Zoom link, an e-mail or an .ics file (check-site.mjs refuses them here)
+  for (const e of co.events || []) {
+    series[e.id] = compact({
+      src: "co", office: e.office, also: e.also,
+      title: e.title, title_es: e.title_es, type: e.type, format: e.format, language: e.language,
+      url: e.url, web: e.src, time_en: e.timeLabel_en, time_es: e.timeLabel_es,
+      // no place in the office's listing: tba 1 ("flyer" = it is on the flyer shown, else on the office's page);
+      // an online event has none
+      location: e.noPlace ? { tba: 1, on: e.noPlace } : e.venue || e.address || e.city ? compact({ name: e.venue, address: [e.address, e.city, e.zip].filter(Boolean).join(", "), maps: e.mapsUrl, city: e.city }) : null,
+      summary: e.summary, cost: e.cost,
+      flyers: e.flyer ? [e.flyer.card] : null, pdf: e.pdf,
+    });
+  }
   return JSON.stringify({
     v: 1,
     tz: "America/Los_Angeles",
@@ -78,6 +111,7 @@ export function render({ calendar }) {
     districts: (c.districts || []).map((d) => ({ slug: d.slug, en: d.label_en, es: d.label_es, nums: d.nums })),
     committees: (c.committees || []).map((x) => ({ slug: x.slug, en: x.name_en, es: x.name_es })),
     topics: (c.topics || []).map((x) => ({ key: x.key, slug: x.slug })),
+    offices: (co.offices || []).map((o) => ({ key: o.key, en: o.name_en, es: o.name_es, short: o.short, color: o.color })),
     links: { subscribe: c.subscribeUrl, webcal: c.webcalUrl, ics: c.mirrorUrl, embed: c.embedUrl, embed_es: c.embedUrlEs },
     series,
     occurrences,

@@ -16,7 +16,8 @@
       <p id="flt-only-hint" class="sr-only">{{ "calendar.filters.only_hint" | t(L) }}</p>
       {%- for g in calendar.types | groupBy("group") %}
       {%- set shown = [] %}
-      {%- for ty in g.items %}{% if ty.seriesCount > 0 %}{% set shown = shown.concat([ty]) %}{% endif %}{% endfor %}
+      {#- the types the calendar uses, and those of the central offices' events (src/_data/officeEvents.js) -#}
+      {%- for ty in g.items %}{% if ty.seriesCount > 0 or officeEvents.typeCounts[ty.key] %}{% set shown = shown.concat([ty]) %}{% endif %}{% endfor %}
       {%- if shown.length %}
       {%- set keys = shown | pluck("key") %}
       <div class="flt-cat">
@@ -43,6 +44,31 @@
       {%- endif %}
       {%- endfor %}
     </fieldset>
+
+    {#- ---- where from: the Area calendar, or the central offices' own websites (read every day); and which office -#}
+    {%- if officeEvents.officeList.length %}
+    <fieldset class="flt-group">
+      <legend class="flt-legend">{{ "calendar.filters.source" | t(L) }}</legend>
+      <div class="flt-pills">
+        {%- for sr in [{ v: "", key: "calendar.filters.source_all", icon: "layout-grid", color: "slate" }, { v: "area", key: "calendar.filters.source_area", icon: "calendar-days", color: "ocean" }, { v: "co", key: "calendar.filters.source_co", icon: "building-2", color: "copper" }] %}
+        <label class="flt-pill" style="{{ sr.color | accent }}">
+          <input type="radio" class="sr-only" name="flt-src" value="{{ sr.v }}" x-model="f.src">
+          <span class="flt-pill__in">{% icon sr.icon, "size-3.5" %}{{ sr.key | t(L) }}<span class="flt-pill__n" x-text="count('srcs', {{ sr.v | json }})"></span></span>
+        </label>
+        {%- endfor %}
+      </div>
+      <label class="mt-3 block" x-show="f.src !== 'area'">
+        <span class="sr-only">{{ "calendar.offices.office" | t(L) }}</span>
+        <select class="flt-select" x-model="f.office">
+          <option value="">{{ "calendar.offices.any_office" | t(L) }}</option>
+          {%- for o in officeEvents.officeList %}
+          {%- set on = o.name_es if L.code == "es" else o.name_en %}
+          <option value="{{ o.key }}" x-text="{{ on | json }} + ' (' + count('offices', {{ o.key | json }}) + ')'">{{ on }}</option>
+          {%- endfor %}
+        </select>
+      </label>
+    </fieldset>
+    {%- endif %}
 
     {#- ---- format -#}
     <fieldset class="flt-group">

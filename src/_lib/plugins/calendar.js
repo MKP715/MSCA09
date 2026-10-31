@@ -20,6 +20,7 @@ const JS_KEYS = [
   "tod_morning", "tod_afternoon", "tod_evening", "tod_allday", "has_flyer", "has_zoom", "n_categories", "no_categories",
   "n_events", "one_event", "no_events", "nav_hint", "close", "go_agenda",
   "later_one", "later_n", "earlier_one", "earlier_n", "go_to", "showing_matches", "early",
+  "co_from", "co_site", "co_open", "co_note", "src_area", "src_co",
 ];
 
 function siteUrl() {
@@ -275,7 +276,8 @@ export default function (eleventyConfig) {
     return (es ? x[`${field}_es`] : x[`${field}_en`]) || x[`${field}_en`] || x[field] || "";
   });
   // configuration for the /calendar/ page script (lang, strings, type icons, filter labels)
-  eleventyConfig.addFilter("calConfig", (cal, lang) => {
+  // officeEvents (src/_data/officeEvents.js): the central offices, for the Office filter and the events' badges
+  eleventyConfig.addFilter("calConfig", (cal, lang, officeEvents) => {
     const L = code(lang);
     const c = cal || {};
     const i18n = Object.fromEntries(JS_KEYS.map((k) => [k, t(`calendar.js.${k}`, L)]));
@@ -290,7 +292,11 @@ export default function (eleventyConfig) {
     // same tab; events.json keeps the full address for other apps)
     const own = {};
     for (const s of c.series || []) if (s.web && ownUrl(s.web, L).startsWith("/")) own[s.web] = ownUrl(s.web, L);
-    return { lang: L, locale: L === "es" ? "es-US" : "en-US", json: c.jsonUrl || "/assets/data/events.json", i18n, icons, dows, districts, cmts, own };
+    // every central office (an Area event an office holds has its key too), its name in this language and its badge
+    const offices = ((officeEvents && officeEvents.offices) || []).map((o) => ({ key: o.key, label: L === "es" ? o.name_es : o.name_en, short: o.short }));
+    // the offices the Office filter offers (those with events now): an address or a saved filter naming another is dropped
+    const officeKeys = ((officeEvents && officeEvents.officeList) || []).map((o) => o.key);
+    return { lang: L, locale: L === "es" ? "es-US" : "en-US", json: c.jsonUrl || "/assets/data/events.json", i18n, icons, dows, districts, cmts, own, offices, officeKeys };
   });
 
   // unique ids for lists on one page (data-empty targets)

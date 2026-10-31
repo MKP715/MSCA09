@@ -14,6 +14,8 @@
       { k: "spanish", icon: "languages", color: "blush" },
       { k: "online", icon: "video", color: "iris" }
     ] %}
+    {#- the central offices' events (and the Area events they hold), when there are any -#}
+    {%- if officeEvents.officeList.length %}{% set quicks = quicks.concat([{ k: "co", icon: "building-2", color: "copper" }]) %}{% endif %}
     {%- for q in quicks %}
     <button type="button" class="cal-quick__btn" style="{{ q.color | accent }}" @click="quick('{{ q.k }}')" :class="isQuick('{{ q.k }}') && 'is-on'" :aria-pressed="isQuick('{{ q.k }}').toString()" :disabled="!ready">
       {% icon q.icon, "size-4" %}{{ ("calendar.quick." + q.k) | t(L) }}

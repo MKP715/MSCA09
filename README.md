@@ -22,17 +22,18 @@ and announcements also update in visitors' browsers between builds.
 1. [How it works](#how-it-works)
 2. [Everyday updates](#everyday-updates) (most volunteers only need this)
 3. [Adding something to the calendar](#adding-something-to-the-calendar)
-4. [Adding a document](#adding-a-document)
-5. [Flyers and PDFs on hold](#flyers-and-pdfs-on-hold)
-6. [Old msca09aa.org addresses](#old-msca09aaorg-addresses)
-7. [When the panel rotates](#when-the-panel-rotates)
-8. [Anonymity rules — read before editing](#anonymity-rules--read-before-editing)
-9. [When the build turns red](#when-the-build-turns-red)
-10. [Staying switched on](#staying-switched-on)
-11. [The app](#the-app)
-12. [One-time setup (webmaster)](#one-time-setup-webmaster)
-13. [For developers](#for-developers)
-14. [Credits and licences](#credits-and-licences)
+4. [Central-office events](#central-office-events)
+5. [Adding a document](#adding-a-document)
+6. [Flyers and PDFs on hold](#flyers-and-pdfs-on-hold)
+7. [Old msca09aa.org addresses](#old-msca09aaorg-addresses)
+8. [When the panel rotates](#when-the-panel-rotates)
+9. [Anonymity rules — read before editing](#anonymity-rules--read-before-editing)
+10. [When the build turns red](#when-the-build-turns-red)
+11. [Staying switched on](#staying-switched-on)
+12. [The app](#the-app)
+13. [One-time setup (webmaster)](#one-time-setup-webmaster)
+14. [For developers](#for-developers)
+15. [Credits and licences](#credits-and-licences)
 
 ---
 
@@ -276,6 +277,72 @@ Spanish copy of the page (the `ownUrl` filter); the `.ics` files and `events.jso
 any entry that breaks these rules in the Actions log (for example a Spanish event without a Spanish title,
 a location without a venue name, or a flyer on hold). To publish a calendar change straight away
 instead of waiting up to three hours, go to **Actions** → *Build and publish the website* → **Run workflow**.
+
+---
+
+## Central-office events
+
+The central offices' and intergroups' own events reach the site **by themselves**: nobody types them into Google
+Calendar. Once a day (the first build of each Pacific day) `scripts/office-events.mjs` reads the event lists the
+offices publish on their own websites and saves them in `data/central-office-events.json`; the build commits that
+file ("Refresh central-office events [skip ci]"). On the site they appear:
+
+- in the calendar on the Events page (`/calendar/`), with a dashed edge, the office's short name and a **Where from**
+  filter (Area calendar / Central offices) with an **Office** list, and a **Central offices** quick view;
+- in a strip **From the central offices** under the calendar;
+- on their own page, **Events › Central office events** (`/calendar/central-offices/`), with each office's card.
+
+They never appear on the home page, Happenings, district or committee pages, or in the `.ics` files, and they get no
+event page of their own: every card links to the office's own page about the event, which is the original.
+
+**Keep using Google Calendar for everything else.** When an event is already in Google Calendar (today's office events,
+or one you add later with the Area's own flyer), the Area's entry is the one shown and the office's copy is left out, at
+every build (same day plus the office's address in the entry, two shared title words, or one word and the same office /
+city / time: `src/_lib/office-match.js`). The build log lists these matches (`[officeEvents] … already on the Area
+calendar`).
+
+**How each office is read** is in `data/office-event-sources.csv` (one row per office of `central-offices.csv`):
+`adapter` = `tribe` (a WordPress events calendar), `aanoc` (NOCCO's site), `tvco` (Temecula's events page),
+`watch` (the office posts its events only as pictures or text: its card links to its events page, and the daily
+summary says when that page changed), `shared` (South OC: OC Intergroup's site) or `none`. `import` = `no` stops
+reading an office's events (for example if it asks us to); to stop every request to its website, also for a `watch`
+row, set `adapter` = `none`. Robots rules and crawl delays are honoured, with one read a day.
+
+**Anonymity.** Personal phone numbers and e-mail addresses, Zoom details, sobriety dates and full names are taken out
+of the offices' text before anything is saved, and the copy is committed only when `node scripts/office-events.mjs
+--check` finds none left (the build still uses the day's copy; any event that would trip the site check is dropped).
+Flyers stay on the office's website: a flyer is shown only after the same check as the Area's flyers (e-mail addresses
+and sobriety dates; not phone numbers) passed for that very file — `data/office-flyer-review.csv`, written by
+`node scripts/check-media.mjs --office-flyers` in the same run. Until then the card shows the type's poster. A checked
+flyer is read again every 14 days, so a picture the office replaces at the same address is checked before it is shown
+(`error: changed` until then). An event whose title itself carries a personal detail is left out altogether (the daily
+summary names its id only).
+
+**What the rules cannot promise.** The cleaning reads the offices' text with rules, not with understanding. It errs
+on the safe side: an event whose title carries a code, a meeting number or a sobriety date is cut or left out, and a
+summary with any hint of one is left out whole. A detail written in an unusual way (a year in words, a code with a long
+sentence between it and its label) can still get through, and an ordinary title can now and then be cut. If you see
+either, hide or correct that event with one row below, and tell the webmaster which wording was missed.
+
+**Fixing one event** — `data/central-office-overrides.csv` (`id` = the event's id, `co-<office>-…`, as in its card's
+address `/calendar/central-offices/#co-…`):
+
+| action | value | does |
+|---|---|---|
+| `hide` | – | leaves it off the site |
+| `show` | – | shows it although it looks like an Area calendar entry |
+| `same-as` | an Area event's page slug | says which Area entry it is (then it is left out) |
+| `type` | a key of `event-types.csv` | gives it another type |
+| `title` | the corrected title | renames it |
+
+`until` (YYYY-MM-DD, optional) ends the row after that day. A flyer the check held (`hold: …`) that is really fine:
+set its `result` to `cleared` in `data/office-flyer-review.csv`.
+
+**When something looks wrong.** Each run's summary (Actions → the run → *Summary*) has one line per office: read,
+kept, left out (meetings, past, already on the Area calendar), flyers waiting, and a note when an office could not be
+read (its last events are kept) or its page changed. To read the offices again at once: **Actions** → *Build and
+publish the website* → **Run workflow** → *Central-office events* = `force`. Developers: `npm run offices -- --dry-run`
+(a read without saving), `npm run test:offices` (the readers on saved pages, no network).
 
 ---
 

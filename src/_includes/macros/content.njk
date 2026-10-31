@@ -88,6 +88,24 @@
       {%- endif %}
     </dl>
     {%- endif %}
+    {#- o.co (officeEvents.byKey[key], /calendar/central-offices/): how its events reach the site, its upcoming events
+        there and its own events page -#}
+    {%- if o.co %}
+    {%- set co = o.co %}
+    {%- set shared = (o.coOffices or {})[co.sharedWith] %}
+    <div class="office-card__events border-t border-ink-100 pt-4 text-sm">
+      {%- set coIcon = "refresh-cw" if co.status == "auto" else ("images" if co.status == "pictures" else "info") %}
+      <p class="flex items-start gap-2 text-ink-600">{% icon coIcon, "mt-0.5 size-4 shrink-0 text-[var(--a-600)]" %}<span>{{ ("calendar.offices.status." + co.status) | t(L, { office: ((shared.name_es if L.code == 'es' else shared.name_en) if shared else "") }) }}</span></p>
+      <div class="mt-3 flex flex-wrap gap-2">
+        {%- if co.count %}
+        <a href="?office={{ co.key }}#events" class="btn btn-white btn-sm" data-fw-office-link="{{ co.key }}">{% icon "calendar-days", "size-4 text-[var(--a-600)]" %}{{ ("calendar.offices.upcoming_one" | t(L)) if co.count == 1 else ("calendar.offices.upcoming_n" | t(L, { n: co.count })) }}</a>
+        {%- endif %}
+        {%- if co.events_page %}
+        <a href="{{ co.events_page }}" target="_blank" rel="noopener" class="btn btn-ghost btn-sm">{% icon "external-link", "size-4" %}{{ "calendar.offices.events_page" | t(L) }}</a>
+        {%- endif %}
+      </div>
+    </div>
+    {%- endif %}
     {%- if web and f.phone %}
     <a href="{{ web }}" target="_blank" rel="noopener" class="btn btn-ghost mt-auto w-full justify-between">
       <span class="inline-flex min-w-0 items-center gap-2">{% icon "globe", "size-4 shrink-0" %}<span class="truncate">{{ web | hostname }}</span></span>{% icon "external-link", "size-3.5 opacity-60" %}

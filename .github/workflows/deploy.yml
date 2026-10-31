@@ -7,6 +7,9 @@ name: Build and publish the website
 #    last published site is not published again (GitHub Pages would re-date every file, and
 #    returning visitors would download them all again); pushes and manual runs always publish.
 #  - on demand: Actions tab → "Build and publish the website" → Run workflow
+#  - once a day (the first run of the Pacific day), it also reads the central offices' event lists from their own
+#    websites (scripts/office-events.mjs → data/central-office-events.json; README "Central-office events"). A manual
+#    run can force that read again, or skip it.
 #
 # One-time setup: Settings → Pages → Build and deployment → Source: GitHub Actions.
 # Optional: Settings → Secrets and variables → Actions → New secret GOOGLE_API_KEY
@@ -28,6 +31,12 @@ on:
   schedule:
     - cron: "11 */3 * * *"
   workflow_dispatch:
+    inputs:
+      offices:
+        description: "Central-office events: read them if not read yet today (due), read them again now (force), or not at all (skip)"
+        type: choice
+        options: [due, force, skip]
+        default: due
 
 # Each job gets only what it needs (below); nothing by default. The build job runs some 330 outside npm packages, so
 # it can only read: it cannot push to the repository or call the Pages deploy API (the deploy job publishes the files
@@ -93,6 +102,60 @@ jobs:
       - name: Report calendar entries that need fixing in Google Calendar (never blocks)
         run: node scripts/check-calendar.mjs || true
 
+      - name: Test the central-office readers on saved pages (pushes only; never blocks)
+        # The office websites' saved answers in test/office-events/fixtures (no network): tells us when a change to
+        # the importer broke one of the readers, before tomorrow's run finds out.
+        if: github.event_name == 'push'
+        run: npm run test:offices || echo "::warning::The central-office importer's tests failed (npm run test:offices)."
+
+      - name: Today's date in California
+        id: day
+        run: echo "day=$(TZ=America/Los_Angeles date +%F)" >> "$GITHUB_OUTPUT"
+
+      - name: Were the central offices' events already read today?
+        # One read a day: the first run of each Pacific day leaves a marker in the Actions cache (below)
+        id: offices-done
+        uses: actions/cache/restore@v6
+        continue-on-error: true
+        with:
+          path: .office-import
+          key: office-import-${{ steps.day.outputs.day }}
+          lookup-only: true
+
+      - name: Read the central offices' events (once a day; never blocks)
+        # The event lists the central offices publish on their own websites (data/office-event-sources.csv says how
+        # each one is read), politely: robots.txt and crawl delays honoured, at most a few requests per office, a
+        # 6-minute budget. Personal phone numbers and e-mail addresses, Zoom details, sobriety dates and full names are
+        # taken out before anything is written. An office that cannot be read keeps its last events; the health of
+        # each office is in this run's summary. data/central-office-events.json changes only when the events do.
+        # See scripts/office-events.mjs and README "Central-office events".
+        id: offices
+        if: inputs.offices != 'skip' && (steps.offices-done.outputs.cache-hit != 'true' || inputs.offices == 'force')
+        run: node scripts/office-events.mjs || echo "::warning::Could not read the central offices' events; the copy in the repository is used."
+
+      - name: Check the central offices' new flyers (e-mail addresses and sobriety dates; never blocks)
+        # A flyer from an office's website is shown only after this check passed for that very file
+        # (data/office-flyer-review.csv). As for the Area's own flyers, phone numbers on flyers are not checked
+        # (owner's rule, Oct 22, 2026). After each day's read (once a day): the flyers not checked yet, those whose
+        # check failed a week ago or more, and a few checked ones again (an office may replace a picture at the same
+        # address). The reading tools are needed for any of them; with nothing due the check ends at once.
+        if: steps.offices.outcome == 'success'
+        run: |
+          sudo apt-get update -qq \
+            && sudo apt-get install -y -qq tesseract-ocr tesseract-ocr-eng tesseract-ocr-spa poppler-utils \
+            && node scripts/check-media.mjs --office-flyers --max-minutes 8 \
+            || echo "::warning::The central offices' new flyers could not be checked; they stay hidden until the next check."
+
+      - name: Remember that today's read is done
+        if: steps.offices.outcome == 'success'
+        run: mkdir -p .office-import && echo "${{ steps.day.outputs.day }}" > .office-import/day
+      - uses: actions/cache/save@v6
+        if: steps.offices.outcome == 'success' && steps.offices-done.outputs.cache-hit != 'true'
+        continue-on-error: true
+        with:
+          path: .office-import
+          key: office-import-${{ steps.day.outputs.day }}
+
       - name: Reuse resized banner photos from the last run
         uses: actions/cache@v6
         with:
@@ -157,6 +220,25 @@ jobs:
           cp data/archives/files.json "$RUNNER_TEMP/keep/data/archives/files.json"
           cp ARCHIVES-DRIVE-LINKS.md "$RUNNER_TEMP/keep/ARCHIVES-DRIVE-LINKS.md"
           echo "Archives file list handed to the keep job."
+
+      - name: Hand the central offices' events to the keep job (only when they pass the anonymity check)
+        # The copy becomes permanent public history, so it is handed over only when scripts/office-events.mjs --check
+        # finds no personal phone number, e-mail address, Zoom detail, sobriety date or full name in it. Otherwise the
+        # repository keeps its last copy, and this build still uses today's (src/_data/officeEvents.js leaves out
+        # any event that would fail). The log names offices and event ids only, never the details.
+        run: |
+          if git diff --quiet -- data/central-office-events.json data/office-flyer-review.csv \
+             && [ -z "$(git ls-files --others --exclude-standard -- data/central-office-events.json data/office-flyer-review.csv)" ]; then
+            echo "The central offices' events have not changed."
+            exit 0
+          fi
+          if ! node scripts/office-events.mjs --check; then
+            echo "::warning::The central offices' events were NOT committed: personal details are left after cleaning (see the lines above). The site still builds without them."
+            exit 0
+          fi
+          mkdir -p "$RUNNER_TEMP/keep/data"
+          cp data/central-office-events.json data/office-flyer-review.csv "$RUNNER_TEMP/keep/data/"
+          echo "Central-office events handed to the keep job."
 
       - name: Upload the copies for the keep job
         # Only what the two steps above handed over (often nothing but this note); kept for one day
@@ -256,7 +338,7 @@ jobs:
     if: always()
     runs-on: ubuntu-latest
     permissions:
-      contents: write # commit the calendar copy and the Archives file list
+      contents: write # commit the calendar copy, the Archives file list and the central offices' events
       actions: write # "Keep the scheduled runs switched on"
     steps:
       - uses: actions/checkout@v7
@@ -271,8 +353,8 @@ jobs:
           name: keep
           path: ${{ runner.temp }}/keep
 
-      - name: Keep the calendar copy and the Archives file list in the repository
-        # Only these three files are taken from the build's hand-over, and only when they differ from the repository.
+      - name: Keep the calendar copy, the Archives file list and the central offices' events in the repository
+        # Only these five files are taken from the build's hand-over, and only when they differ from the repository.
         # [skip ci] stops a rebuild loop.
         env:
           GH_TOKEN: ${{ github.token }}
@@ -291,13 +373,19 @@ jobs:
             git add data/archives/files.json ARCHIVES-DRIVE-LINKS.md
             git diff --cached --quiet || git commit -m "Refresh the Area 09 Archives file list [skip ci]"
           fi
+          if [ -f "$k/data/central-office-events.json" ] && [ -f "$k/data/office-flyer-review.csv" ]; then
+            cp "$k/data/central-office-events.json" data/central-office-events.json
+            cp "$k/data/office-flyer-review.csv" data/office-flyer-review.csv
+            git add data/central-office-events.json data/office-flyer-review.csv
+            git diff --cached --quiet || git commit -m "Refresh central-office events [skip ci]"
+          fi
           if [ "$(git rev-parse HEAD)" = "$GITHUB_SHA" ]; then
             echo "Nothing to keep."
             exit 0
           fi
           # GitHub hides the token in the log
           git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:${GITHUB_REF_NAME}" \
-            || echo "::warning::Could not push the calendar copy / Archives file list (not fatal)."
+            || echo "::warning::Could not push the calendar copy / Archives file list / central-office events (not fatal)."
 
       - name: Keep the scheduled runs switched on
         # Once a day (the first run after midnight UTC), even when the build failed; never fatal.

@@ -79,6 +79,8 @@ jsText: ["calendar.flyers.count_one", "calendar.flyers.count_n", "calendar.flyer
         <div class="min-w-0">
           <h1 class="font-display text-3xl font-extrabold tracking-tight text-balance text-ink-950 sm:text-4xl 2xl:text-5xl" data-pagefind-weight="10">{{ title }}</h1>
           <p class="mt-1 text-[15px] leading-snug text-pretty text-ink-600 sm:text-base">{{ "calendar.flyers.lead" | t(L) }}</p>
+          {#- the central offices' own events and flyers have their own page -#}
+          <a href="{{ '/calendar/central-offices/' | lurl(L) }}" class="mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-copper-700 hover:underline">{% icon "building-2", "size-4" %}{{ "calendar.flyers.offices_link" | t(L) }}{% icon "arrow-right", "size-3.5" %}</a>
         </div>
       </div>
       <a href="{{ '/calendar/' | lurl(L) }}" class="btn btn-white shrink-0 max-sm:hidden">{% icon "calendar-days", "size-4 text-ocean-600" %}{{ "calendar.open_calendar" | t(L) }}</a>

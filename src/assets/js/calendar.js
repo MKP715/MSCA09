@@ -5,8 +5,10 @@
     - loads /assets/data/events.json (built from the Google Calendar every few hours)
     - views: Agenda (our own list), Month / Week / List (FullCalendar 6, loaded on demand);
       on phones the Month view is a compact dot calendar with the chosen day's list below it
-    - filters: categories (with live counts), format, language, district, committee/topic,
-      day of week, time of day, has flyer, has Zoom, text search
+    - filters: categories (with live counts), where from (the Area calendar or the central offices' own websites) and
+      which office, format, language, district, committee/topic, day of week, time of day, has flyer, has Zoom, text search
+    - the central offices' events (events.json im = 1, so = the office; src/_data/officeEvents.js) have no page here:
+      their link is their card on /calendar/central-offices/, and the details panel also links the office's own page
     - text search (MSearch, search.js): title, type, committees, districts, format, language, place, address,
       role e-mail, weekday, month and repeat rule, in English and Spanish; a date typed in the box ("Oct 10",
       "10 de octubre") matches the days an entry covers. It looks at every date in the calendar, not only the
@@ -37,12 +39,14 @@
   const SHADES = ["50", "100", "200", "300", "400", "500", "600", "700", "800", "900"];
   const FORMAT_SLUG = { "In person": "in-person", Hybrid: "hybrid", Virtual: "online" };
   const LANG_SLUG = { English: "en", Spanish: "es", Bilingual: "bi" };
+  const LANG_CODE = { English: "en", Spanish: "es" }; // the lang attribute of a title written in one of them
   const TODS = ["morning", "afternoon", "evening", "allday"];
   const AREA_TYPES = ["Area", "Area Committee", "Assembly", "Foro", "Servathon", "Conference"];
   const LEARNING_TYPES = ["Service School", "Workshop", "History"];
   const STORE_KEY = "msca-calendar-v1";
   // the calendar's own words in the address (readUrl / urlParams)
-  const URL_KEYS = ["view", "date", "type", "format", "lang", "district", "committee", "topic", "day", "time", "flyer", "zoom", "q"];
+  const URL_KEYS = ["view", "date", "type", "src", "office", "format", "lang", "district", "committee", "topic", "day", "time", "flyer", "zoom", "q"];
+  const SRCS = ["area", "co"]; // where an entry comes from: the Area's Google Calendar, a central office's website
   // a text search lists this many matches at a time ("Show more matches" adds as many): phones and tablets draw
   // agenda rows several times slower, so they get about what their 14-day agenda shows
   const SEARCH_STEP = { small: 40, large: 100 };
@@ -123,8 +127,9 @@
       let WEND = "9999-12-31"; // last day in events.json: a text search looks this far ahead
       let QP = { q: null };    // the search box, parsed once per value (query())
       let DISTS = [];          // events.json districts: { slug, nums } (the District dropdown lists the same ones)
+      let OFFICES = {};        // events.json offices: key -> { en, es, short }
 
-      const blank = () => ({ types: TYPES.map((t) => t.key), formats: [], langs: [], district: "", cmt: "", dows: [], tods: [], flyer: false, zoom: false, q: "" });
+      const blank = () => ({ types: TYPES.map((t) => t.key), src: "", office: "", formats: [], langs: [], district: "", cmt: "", dows: [], tods: [], flyer: false, zoom: false, q: "" });
 
       return {
         saved: storageOk() ? Alpine.$persist({}).as(STORE_KEY) : {},
@@ -136,8 +141,8 @@
         sel: null,
         shown: false,
         ss: null,
-        f: { types: [], formats: [], langs: [], district: "", cmt: "", dows: [], tods: [], flyer: false, zoom: false, q: "" },
-        counts: { types: {}, formats: {}, langs: {}, dows: {}, tods: {}, total: 0 },
+        f: { types: [], src: "", office: "", formats: [], langs: [], district: "", cmt: "", dows: [], tods: [], flyer: false, zoom: false, q: "" },
+        counts: { types: {}, srcs: {}, offices: {}, formats: {}, langs: {}, dows: {}, tods: {}, total: 0 },
         agenda: [],
         agendaDays: 30,
         agendaFrom: todayYmd(),
@@ -241,7 +246,10 @@
           SERIES = data.series || {};
           WEND = String(data.windowEnd || WEND).slice(0, 10);
           DISTS = data.districts || [];
+          OFFICES = Object.fromEntries((data.offices || []).map((o) => [o.key, o]));
           const icons = cfg.icons || {};
+          // an office's names (both languages and its short name), for the search box: "NOCCO", "oficina central"
+          const OW = (k) => (OFFICES[k] ? [OFFICES[k].en, OFFICES[k].es, OFFICES[k].short] : []);
           // search words of a committee and of a host district, in both languages (District 8 is also "District 11")
           const CW = Object.fromEntries((data.committees || []).map((c) => [c.slug, [c.en, c.es]]));
           const DW = Object.fromEntries((data.districts || []).map((d) => [d.slug, [d.en, d.es, ...(d.nums || []).map((n) => `District ${n}`)]]));
@@ -257,17 +265,21 @@
             const date = r.a.slice(0, 10);
             let endDate = r.b.slice(0, 10);
             if (allDay || wallEnd.slice(11) === "00:00:00") endDate = addDays(endDate, -1);
+            // an evening that runs past midnight (9:30 PM – 2 AM) is that evening's: one day, with its start time
+            else if (endDate === addDays(date, 1) && wallEnd.slice(11) <= "06:00:00" && Date.parse(r.b) - Date.parse(r.a) < 864e5) endDate = date;
             if (endDate < date) endDate = date;
             const hour = +wall.slice(11, 13);
             const title = (es && r.te) || r.t;
             const place = r.f === "Virtual" ? `${cfg.i18n.online} · Zoom` : [r.v, r.ci].filter(Boolean).join(", ") || (r.f === "Hybrid" ? "Zoom" : "");
-            const key = [r.s, r.t, r.te, r.ty, r.v, r.ci, r.f, r.l, r.z ? 1 : 0, (r.cm || []).join(), (r.d || []).join()].join("|");
+            const offices = r.so ? [r.so, ...(r.al || [])] : [];
+            const key = [r.s, r.t, r.te, r.ty, r.v, r.ci, r.f, r.l, r.z ? 1 : 0, (r.cm || []).join(), (r.d || []).join(), offices.join()].join("|");
             let hay = hays.get(key);
             if (hay === undefined) {
               const loc = s.location || {};
               const mail = (MS.fold(s.email).match(/[a-z0-9._%+-]+@[a-z0-9.-]+/) || [""])[0];
               hay = MS.index(r.t, r.te, ty.en, ty.es, (r.cm || []).map((x) => CW[x]), (r.d || []).map((x) => DW[x]),
-                FORMAT_WORDS[r.f], LANG_WORDS[r.l], r.z ? "Zoom" : "", place, r.v, r.ci, loc.address, s.rule_en, s.rule_es) +
+                FORMAT_WORDS[r.f], LANG_WORDS[r.l], r.z ? "Zoom" : "", place, r.v, r.ci, loc.address, s.rule_en, s.rule_es,
+                offices.map(OW), offices.length ? "central office oficina central intergroup intergrupo" : "") +
                 // the role e-mail whole and its name part ("d05dcmc", "archiveschair") as plain words: through MSearch.index
                 // its pieces ("msca09aa", "dcmc" → "district committee member chair") would match every entry with an e-mail
                 (mail ? `${mail} ${mail.split("@")[0]} ` : "") + (r.f === "Hybrid" ? HYBRID_RAW + " " : "");
@@ -287,7 +299,11 @@
             return {
               k: r.k, s: r.s, title, ty: r.ty, typeLabel: es ? ty.es : ty.en, color: r.c || ty.color, vars: accentVars(r.c || ty.color),
               icon: icons[r.ty] || "", f: r.f || "", l: r.l || "", d: r.d || [], cm: r.cm || [], tp: s.topics || [],
-              ci: r.ci || "", v: r.v || "", fl: (es && r.fle) || r.fl || "", z: !!r.z, r: !!r.r, st: r.st || "", allDay,
+              ci: r.ci || "", v: r.v || "", fl: (es && r.fle) || r.fl || r.fx || "", z: !!r.z, r: !!r.r, st: r.st || "", allDay,
+              // the central office it comes from (im: read from the office's website) or that holds it, and the others listing it
+              so: r.so || "", offices, im: !!r.im, ne: !!r.ne,
+              // an office's own title, when it is in the other language than the page's (WCAG 3.1.2)
+              tlang: r.im && !(es && r.te) && LANG_CODE[r.l] && LANG_CODE[r.l] !== cfg.lang ? LANG_CODE[r.l] : "",
               a: r.a, b: r.b, wall, wallEnd, date, endDate, multi: endDate !== date,
               ms: Date.parse(r.a), msEnd: Date.parse(r.b), dow: dowOf(date),
               tod: allDay ? "allday" : hour < 12 ? "morning" : hour < 17 ? "afternoon" : "evening",
@@ -309,6 +325,8 @@
           const out = blank();
           if (x && typeof x === "object") {
             if (Array.isArray(x.types)) out.types = x.types.filter((k) => keys.includes(k));
+            out.src = SRCS.includes(x.src) ? x.src : "";
+            out.office = this.knownOffice(x.office);
             for (const k of ["formats", "langs", "dows", "tods"]) if (Array.isArray(x[k])) out[k] = x[k].slice();
             out.district = this.knownDistrict(x.district);
             out.cmt = this.knownCmt(x.cmt);
@@ -328,6 +346,8 @@
           return d ? d.slug : "";
         },
         knownCmt(v) { return typeof v === "string" && (cfg.cmts || []).some((c) => c.value === v) ? v : ""; },
+        knownOffice(v) { return typeof v === "string" && (cfg.officeKeys || []).includes(v) ? v : ""; },
+        officeName(k) { const o = (cfg.offices || []).find((x) => x.key === k); return o ? o.label : ""; },
 
         /* ------------------------------------------------ URL <-> state */
         readUrl() {
@@ -339,6 +359,8 @@
             const want = p.get("type").split(",");
             f.types = TYPES.filter((t) => want.includes(t.slug)).map((t) => t.key);
           }
+          if (SRCS.includes(p.get("src"))) f.src = p.get("src");
+          f.office = this.knownOffice(p.get("office"));
           if (p.get("format")) { const w = p.get("format").split(","); f.formats = Object.keys(FORMAT_SLUG).filter((k) => w.includes(FORMAT_SLUG[k])); }
           if (p.get("lang")) { const w = p.get("lang").split(","); f.langs = Object.keys(LANG_SLUG).filter((k) => w.includes(LANG_SLUG[k])); }
           f.district = this.knownDistrict(p.get("district"));
@@ -370,6 +392,8 @@
           p.set("view", this.view);
           if (this.view !== "agenda" && !(this.view === "month" && this.nowMode) && this.anchor && this.anchor.slice(0, 7) !== todayYmd().slice(0, 7)) p.set("date", this.view === "week" ? this.anchor : this.anchor.slice(0, 7));
           if (f.types.length !== TYPES.length) p.set("type", TYPES.filter((t) => f.types.includes(t.key)).map((t) => t.slug).join(",") || "none");
+          if (f.src) p.set("src", f.src);
+          if (f.office) p.set("office", f.office);
           if (f.formats.length) p.set("format", f.formats.map((k) => FORMAT_SLUG[k]).join(","));
           if (f.langs.length) p.set("lang", f.langs.map((k) => LANG_SLUG[k]).join(","));
           if (f.district) p.set("district", f.district);
@@ -416,6 +440,11 @@
           // the plain filter object, not Alpine's reactive proxy: a search runs this for every entry, six times in recount()
           const f = Alpine.raw(this.f);
           if (skip !== "types" && !f.types.includes(o.ty)) return false;
+          // where from: the Area calendar (its own entries, also those an office holds) or the central offices (their
+          // own events and the Area events they hold)
+          if (skip !== "srcs" && f.src === "co" && !o.so) return false;
+          if (skip !== "srcs" && f.src === "area" && o.im) return false;
+          if (skip !== "offices" && f.office && !o.offices.includes(f.office)) return false;
           if (skip !== "formats" && f.formats.length && !f.formats.includes(o.f)) return false;
           if (skip !== "langs" && f.langs.length && !f.langs.includes(o.l)) return false;
           if (f.district && !o.d.includes(f.district)) return false;
@@ -537,7 +566,7 @@
         recount() {
           this.early = this.countEarly();
           const [from, to] = this.countRange();
-          const c = { types: {}, formats: {}, langs: {}, dows: {}, tods: {}, total: 0 };
+          const c = { types: {}, srcs: {}, offices: {}, formats: {}, langs: {}, dows: {}, tods: {}, total: 0 };
           const nowMs = Date.now();
           const agenda = this.view === "agenda";
           // an entry the typed search rules out counts nowhere (no facet count leaves the search out): skip it at once
@@ -548,6 +577,12 @@
             if (agenda && o.msEnd < nowMs) continue;
             if (!text(o)) continue;
             if (this.match(o, "types")) c.types[o.ty] = (c.types[o.ty] || 0) + 1;
+            if (this.match(o, "srcs")) {
+              c.srcs[""] = (c.srcs[""] || 0) + 1;
+              if (!o.im) c.srcs.area = (c.srcs.area || 0) + 1;
+              if (o.so) c.srcs.co = (c.srcs.co || 0) + 1;
+            }
+            if (this.match(o, "offices")) for (const k of o.offices) c.offices[k] = (c.offices[k] || 0) + 1;
             if (this.match(o, "formats")) c.formats[o.f] = (c.formats[o.f] || 0) + 1;
             if (this.match(o, "langs")) c.langs[o.l] = (c.langs[o.l] || 0) + 1;
             if (this.match(o, "dows")) c.dows[o.dow] = (c.dows[o.dow] || 0) + 1;
@@ -633,7 +668,7 @@
         /* ------------------------------------------------ filter actions */
         activeCount() {
           const f = this.f;
-          return (f.types.length !== TYPES.length ? 1 : 0) + f.formats.length + f.langs.length + (f.district ? 1 : 0) + (f.cmt ? 1 : 0) +
+          return (f.types.length !== TYPES.length ? 1 : 0) + (f.src ? 1 : 0) + (f.office ? 1 : 0) + f.formats.length + f.langs.length + (f.district ? 1 : 0) + (f.cmt ? 1 : 0) +
             f.dows.length + f.tods.length + (f.flyer ? 1 : 0) + (f.zoom ? 1 : 0) + (f.q.trim() ? 1 : 0);
         },
         clearAll() { this.f = blank(); },
@@ -652,6 +687,8 @@
             const sel = TYPES.filter((t) => f.types.includes(t.key));
             out.push({ key: "types", label: sel.length <= 2 ? sel.map((t) => (es ? t.es : t.en)).join(", ") || i.no_categories : i.n_categories.replace("{n}", sel.length) });
           }
+          if (f.src) out.push({ key: "src", label: i["src_" + f.src] });
+          if (f.office) out.push({ key: "office", label: this.officeName(f.office) || f.office });
           f.formats.forEach((x) => out.push({ key: "formats", v: x, label: i["format_" + FORMAT_SLUG[x]] }));
           f.langs.forEach((x) => out.push({ key: "langs", v: x, label: i["lang_" + LANG_SLUG[x]] }));
           if (f.district) { const d = (cfg.districts || []).find((x) => x.slug === f.district); out.push({ key: "district", label: d ? d.label : f.district }); }
@@ -678,6 +715,7 @@
           if (name === "online") f.formats = ["Virtual"];
           if (name === "workshops") f.types = LEARNING_TYPES.filter((k) => TYPEMAP[k]);
           if (name === "districts") f.types = ["District"];
+          if (name === "co") f.src = "co";
           silent = true;
           this.f = f;
           if (name === "week") {
@@ -686,7 +724,7 @@
             if (this.phone) { this.view = "agenda"; this.agendaDays = 7; }
             else this.view = "week";
             viewPicked = true;
-          } else if ((name === "area" || name === "workshops") && (this.view === "week" || this.view === "agenda")) {
+          } else if ((name === "area" || name === "workshops" || name === "co") && (this.view === "week" || this.view === "agenda")) {
             // few entries: a week would often be empty, so show the next three months as a list
             this.view = "agenda";
             this.agendaFrom = todayYmd();
@@ -698,7 +736,7 @@
         },
         isQuick(name) {
           const f = this.f;
-          const clean = !f.formats.length && !f.langs.length && !f.district && !f.cmt && !f.dows.length && !f.tods.length && !f.flyer && !f.zoom && !f.q.trim();
+          const clean = !f.src && !f.office && !f.formats.length && !f.langs.length && !f.district && !f.cmt && !f.dows.length && !f.tods.length && !f.flyer && !f.zoom && !f.q.trim();
           const typesAre = (keys) => f.types.length === keys.length && keys.every((k) => f.types.includes(k));
           const allTypes = f.types.length === TYPES.length;
           if (name === "all") return clean && allTypes && this.view !== "week";
@@ -706,7 +744,8 @@
           if (name === "area") return clean && typesAre(AREA_TYPES.filter((k) => TYPEMAP[k]));
           if (name === "workshops") return clean && typesAre(LEARNING_TYPES.filter((k) => TYPEMAP[k]));
           if (name === "districts") return clean && typesAre(["District"]);
-          const only = (k, vals) => allTypes && !f.district && !f.cmt && !f.dows.length && !f.tods.length && !f.flyer && !f.zoom && !f.q.trim() &&
+          if (name === "co") return allTypes && f.src === "co" && !f.office && !f.formats.length && !f.langs.length && !f.district && !f.cmt && !f.dows.length && !f.tods.length && !f.flyer && !f.zoom && !f.q.trim();
+          const only = (k, vals) => allTypes && !f.src && !f.office && !f.district && !f.cmt && !f.dows.length && !f.tods.length && !f.flyer && !f.zoom && !f.q.trim() &&
             (k === "langs" ? !f.formats.length : !f.langs.length) && f[k].length === vals.length && vals.every((v) => f[k].includes(v));
           if (name === "spanish") return only("langs", ["Spanish", "Bilingual"]);
           if (name === "online") return only("formats", ["Virtual"]);
@@ -844,6 +883,8 @@
               showNonCurrentDates: true,
               eventDisplay: "block",
               displayEventEnd: false,
+              // an evening that ends before 6 AM the next day is drawn on its own day only (prepare(): endDate)
+              nextDayThreshold: "06:00:00",
               eventInteractive: true,
               navLinks: true,
               navLinkDayClick: (date) => {
@@ -992,7 +1033,7 @@
               start: o.allDay ? o.date : o.wall,
               end: o.allDay ? addDays(o.endDate, 1) : o.wallEnd,
               allDay: o.allDay,
-              classNames: ["msca-ev", o.st ? "is-" + o.st : ""].filter(Boolean),
+              classNames: ["msca-ev", o.st ? "is-" + o.st : "", o.im ? "is-co" : ""].filter(Boolean),
               extendedProps: { o },
             });
           }
@@ -1004,13 +1045,13 @@
           const cancelled = o.st === "cancelled" ? ` <span class="fce-flag">${esc(cfg.i18n.cancelled)}</span>` : "";
           if (t.startsWith("list")) {
             // the title is a real link: Tab reaches it, Enter opens the details panel (eventClick), Ctrl/Cmd+Enter the page
-            return { html: `<span class="fcl"><span class="fcl-type">${o.icon}${esc(o.typeLabel)}</span><a class="fcl-title" href="${esc(o.url)}">${esc(o.title)}</a>${cancelled}<span class="fcl-meta">${esc(o.place)}</span></span>` };
+            return { html: `<span class="fcl"><span class="fcl-type">${o.icon}${esc(o.typeLabel)}</span><a class="fcl-title" href="${esc(o.url)}"${o.tlang ? ` lang="${o.tlang}"` : ""}>${esc(o.title)}</a>${cancelled}<span class="fcl-meta">${esc(o.place)}</span></span>` };
           }
           // real spaces between the parts, so the link's text reads "7 PM District 5", not "7 PMDistrict 5"
           const time = o.allDay || !arg.isStart ? "" : `<span class="fce-time">${esc(o.short)}</span> `;
           const meta = t === "dayGridWeek" ? ` <span class="fce-meta">${esc(o.place)}</span>` : "";
           const extra = `<span class="sr-only"> · ${o.allDay ? esc(cfg.i18n.all_day) + " · " : ""}${esc(o.typeLabel)}</span>`;
-          return { html: `<span class="fce">${time}<span class="fce-title">${esc(o.title)}</span>${cancelled}${meta}${extra}</span>` };
+          return { html: `<span class="fce">${time}<span class="fce-title"${o.tlang ? ` lang="${o.tlang}"` : ""}>${esc(o.title)}</span>${cancelled}${meta}${extra}</span>` };
         },
         // compact start time for month / week chips, in the site's 12-hour style: "7 PM", "7:30 PM" / "7 p. m."
         shortTime(wall) {
@@ -1096,6 +1137,7 @@
           return {
             k: o.k, title: o.title, typeLabel: o.typeLabel, vars: o.vars, icon: o.icon, time: o.multi ? this.rangeLabel(o) : o.time,
             place: o.place, fl: o.fl, st: o.st, url: o.url, a: o.a, b: o.b, f: o.f, l: o.l, r: o.r,
+            co: o.im ? (OFFICES[o.so] && OFFICES[o.so].short) || "" : "", tlang: o.tlang,
             fmt: o.f === "Virtual" ? cfg.i18n.format_online : o.f === "Hybrid" ? cfg.i18n.format_hybrid : cfg.i18n.format_in_person,
             fmtIcon: o.f === "Virtual" ? "video" : o.f === "Hybrid" ? "hybrid" : "pin",
             lang: o.l === "Spanish" ? cfg.i18n.lang_es : o.l === "Bilingual" ? cfg.i18n.lang_bi : "",
@@ -1222,9 +1264,24 @@
           return (s.notes || []).map((text) => ({ text, lang: "en" }));
         },
         selRel() { return this.sel && M.relative ? M.relative(this.sel.a, this.sel.b) : { text: "", tone: "" }; },
-        // a JPEG at quality 85, like every flyer the site builds (DRIVE_FMT in src/_lib/calendar.js)
-        flyerUrl(id, w) { return id ? `https://lh3.googleusercontent.com/d/${id}=w${w || 800}-rj-l85` : ""; },
-        flyerFallback(ev, id) { const img = ev.target; img.onerror = null; img.removeAttribute("srcset"); img.src = `https://drive.google.com/thumbnail?id=${id}&sz=w800`; },
+        // a JPEG at quality 85, like every flyer the site builds (DRIVE_FMT in src/_lib/calendar.js); a central office's
+        // flyer (a checked picture on its own website) is its full address
+        flyerUrl(id, w) { return !id ? "" : /^https:/.test(id) ? id : `https://lh3.googleusercontent.com/d/${id}=w${w || 800}-rj-l85`; },
+        flyerFallback(ev, id) {
+          const img = ev.target;
+          img.onerror = null;
+          img.removeAttribute("srcset");
+          if (/^https:/.test(id)) img.hidden = true;
+          else img.src = `https://drive.google.com/thumbnail?id=${id}&sz=w800`;
+        },
+        // a central office's event (its own website is the original): "From NOCCO", "On NOCCO's website"
+        isCo() { return !!(this.ss && this.ss.src === "co"); },
+        // the badge and the button name the office by its short name ("OC Intergroup"); the note by its full name
+        coText(key) {
+          const o = this.sel && OFFICES[this.sel.so];
+          const name = o ? (cfg.lang === "es" ? o.es : o.en) : "";
+          return (cfg.i18n[key] || "").replace("{office}", key !== "co_note" && o ? o.short || name : name);
+        },
         googleUrl() {
           const o = this.sel, s = this.ss || {};
           if (!o) return "#";
@@ -1238,7 +1295,11 @@
           if (s.online && s.online.id) lines.push(`${cfg.i18n.meeting_id}: ${s.online.id}`);
           if (s.online && s.online.pc) lines.push(`${cfg.i18n.passcode}: ${s.online.pc}`);
           this.selNotes().forEach((n) => lines.push(n.text));
-          lines.push(location.origin + o.url);
+          if (s.src === "co") {
+            // a central office's event: its own page is the original
+            if (s.summary) lines.push(s.summary);
+            if (s.web) lines.push(s.web);
+          } else lines.push(location.origin + o.url);
           p.set("details", lines.join("\n"));
           const where = s.location && s.location.address ? [s.location.name, s.location.address].filter(Boolean).join(", ") : (s.online && s.online.url) || "";
           if (where) p.set("location", where);

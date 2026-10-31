@@ -986,6 +986,40 @@ The Area Google Calendar was checked against every district, intergroup and cent
   the app opens in, and that "Don't show this again" in Safari's install window hides the footer button. Report
   anything odd to webmaster@msca09aa.org.
 
+## 20. Done on October 30, 2026 (night) — the central offices' events come in by themselves
+
+- **Nobody types central-office events any more.** Once a day the website reads the event lists that the central offices
+  and intergroups publish on their own websites: OC Intergroup (Central and South OC), NOCCO, All South Bay (ASBCO),
+  Harbor Area (HACO), Temecula Valley (TVCO), Sur de la Bahía and Sureste de Riverside. Inland Empire's calendar is read
+  too, if the office starts using it.
+- **Where they show:**
+  - in the calendar on the **Events** page, with a dashed edge and the office's short name;
+  - with a new **Where from** filter (Area calendar / Central offices), an **Office** list and a **Central offices** quick view;
+  - in a strip **From the central offices** under the calendar;
+  - on a new page, **Events › Central office events** (/calendar/central-offices/), with every office's card.
+
+  Each event links to the office's own page about it, which is the original. They never appear on the home page, on
+  Happenings, on district or committee pages, or in the calendar files people subscribe to.
+- **The Area calendar always wins.** An event that is already in Google Calendar shows once, as the Area's entry; the
+  office's copy is left out at every build. Nothing has to be deleted from Google Calendar.
+- **Anonymity is kept automatically:** personal phone numbers and e-mail addresses, Zoom IDs and passcodes, sobriety
+  dates and full names are taken out of the offices' text before anything is saved. An office's flyer is shown only after
+  the same check as the Area's flyers (e-mail addresses and sobriety dates, not phone numbers), and again every 14 days.
+- **Offices whose events cannot be read automatically:** Desert, Coachella Hispana and Victor Valley (pictures or typed
+  text only), Inland Empire's flyer gallery, and Hispana Sur de Orange (no events posted). Their cards link to their own
+  events pages. The Online Intergroup (OIAA) is left out (worldwide; mostly committee meetings).
+- How it works, and how to hide or correct one imported event: README, "Central-office events".
+
+**Still to do**
+- [ ] **Calendar keeper:** from now on, do not add central offices' events to Google Calendar; they arrive by themselves.
+  (Add one only when the Area has its own flyer or details for it: the Area's entry then replaces the office's copy.)
+- [ ] **Webmaster:** after the first daily run, open Actions → the run → *Summary* and check each office's line (read,
+  kept, already on the Area calendar, flyers checked). Check that the offices' flyers appear on /calendar/central-offices/
+  within a day.
+- [ ] **Intergroups & Central Offices liaison:** let the offices know that the Area site lists their events from their
+  websites, with a link back. Desert, Coachella Hispana, Victor Valley, Inland Empire and Hispana Sur de Orange: events
+  posted in a website calendar (The Events Calendar for WordPress, as OC, HACO and ASBCO use) would come in by themselves.
+
 ## How to send information to the webmaster
 
 - E-mail **webmaster@msca09aa.org** with the file attached. One topic per e-mail.

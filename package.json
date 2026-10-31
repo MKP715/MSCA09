@@ -19,6 +19,8 @@
     "build:fresh": "npm run fetch && npm run build",
     "check": "node scripts/check-site.mjs",
     "test:search": "node scripts/test-search.mjs",
+    "test:offices": "node --test \"test/office-events/*.test.mjs\"",
+    "offices": "node scripts/office-events.mjs",
     "check:media": "node scripts/check-media.mjs",
     "dev:site": "eleventy --serve --quiet",
     "dev:css": "tailwindcss -i src/assets/css/site.css -o _site/assets/css/site.css --watch",

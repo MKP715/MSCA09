@@ -1,5 +1,6 @@
 /*
-  MSCA09 — the event flyers page (/calendar/flyers/ and /es/calendar/flyers/, src/pages/calendar-flyers.njk).
+  MSCA09 — the event flyers page (/calendar/flyers/ and /es/calendar/flyers/, src/pages/calendar-flyers.njk), and the
+  central office events page (/calendar/central-offices/, src/pages/calendar-offices.njk), which works the same way.
 
   Alpine component "flyerWall". The build writes every card (calendar.flyerWall in src/_data/calendar.js); this script
   only hides, dates and moves them.
@@ -10,6 +11,8 @@
                          then shows that date, see clock)
              f.show      "" | "events" | "meetings" (data-fw-kind "event" / "meeting")
              f.type      a type slug (data-fw-type)              f.district  a district slug (data-fw-districts)
+             f.office    a central office's key (data-fw-offices: the office and the others that list the event; a
+                         link with data-fw-office-link="<key>" on the page chooses it without reloading)
              f.langs     any of "en" "es" "bi" (data-fw-lang)    f.formats   any of "in-person" "hybrid" "online"
            Nothing chosen = every card. The filters live in the address — ?when=90&type=workshop&lang=es,bi&format=hybrid
            &district=d14&show=events&q=… (history.replaceState, other parameters kept) — so a filtered view can be shared
@@ -24,7 +27,8 @@
     counts   `shown` / `total` (countText: "12 of 26 flyers"); facet(name, value): how many cards a choice would show,
              the other filters staying as they are (the pills' and the lists' numbers); a month or section with nothing
              visible is hidden, with its count; the empty state shows when nothing is left; `announce` is read out
-             (polite) after the visitor changes something.
+             (polite) after the visitor changes something. The count's words: the text keys <data-fw-count>.count_one /
+             count_n / count_of on the component's element ("calendar.flyers" when it has none).
   Without JavaScript the filter bar is not shown (calendar.css: html:not(.js), until init() marks the page .fw-ready)
   and every card is, with the build's dates.
   Strings come from the page's text keys (MSCA.t, front matter jsText).
@@ -45,7 +49,7 @@
     return `${p.year}-${p.month}`;
   };
   const tr = (k, vars) => (M.tr ? M.tr(k, vars) : k);
-  const blank = () => ({ q: "", when: "", show: "", type: "", langs: [], formats: [], district: "" });
+  const blank = () => ({ q: "", when: "", show: "", type: "", langs: [], formats: [], district: "", office: "" });
 
   document.addEventListener("alpine:init", () => {
     window.Alpine.data("flyerWall", () => {
@@ -76,6 +80,18 @@
           });
           this.readUrl();
           this.apply(true);
+          // an office card's "N upcoming events" (calendar-offices.njk): that office's events, without reloading the page
+          this.$root.ownerDocument.addEventListener("click", (e) => {
+            const a = e.target.closest && e.target.closest("[data-fw-office-link]");
+            if (!a || e.metaKey || e.ctrlKey || e.shiftKey || !this.options("[data-fw-offices-list]").includes(a.dataset.fwOfficeLink)) return;
+            e.preventDefault();
+            this.f = Object.assign(blank(), { office: a.dataset.fwOfficeLink });
+            this.$nextTick(() => {
+              const ev = document.getElementById("events");
+              if (ev) ev.scrollIntoView({ behavior: M.reducedMotion ? "auto" : "smooth", block: "start" });
+              if (this.$refs.results) this.$refs.results.focus({ preventScroll: true });
+            });
+          });
           // after the visitor's own change: the cards, the address and the spoken count. Typing in the search box (only
           // the words changed) redraws without the fade: it is for a filter the visitor picked, never for typing
           const rest = () => JSON.stringify({ ...this.f, q: "" });
@@ -109,6 +125,7 @@
           if (p.get("show") === "events" || p.get("show") === "meetings") f.show = p.get("show");
           if (this.options("[data-fw-types]").includes(p.get("type"))) f.type = p.get("type");
           if (this.options("[data-fw-districts]").includes(p.get("district"))) f.district = p.get("district");
+          if (this.options("[data-fw-offices-list]").includes(p.get("office"))) f.office = p.get("office");
           f.langs = list("lang", LANGS);
           f.formats = list("format", FORMATS);
           this.f = f;
@@ -116,9 +133,10 @@
         syncUrl() {
           try {
             const p = new URLSearchParams(location.search);
-            ["when", "type", "lang", "format", "district", "show", "q"].forEach((k) => p.delete(k));
+            ["when", "office", "type", "lang", "format", "district", "show", "q"].forEach((k) => p.delete(k));
             const f = this.f;
             if (f.when) p.set("when", f.when);
+            if (f.office) p.set("office", f.office);
             if (f.type) p.set("type", f.type);
             if (f.langs.length) p.set("lang", LANGS.filter((x) => f.langs.includes(x)).join(","));
             if (f.formats.length) p.set("format", FORMATS.filter((x) => f.formats.includes(x)).join(","));
@@ -221,6 +239,7 @@
             langs: (c) => !f.langs.length || f.langs.includes(c.dataset.fwLang),
             formats: (c) => !f.formats.length || f.formats.includes(c.dataset.fwFormat),
             district: (c) => !f.district || (c.dataset.fwDistricts || "").split(" ").includes(f.district),
+            office: (c) => !f.office || (c.dataset.fwOffices || "").split(" ").includes(f.office),
           };
           const names = Object.keys(tests);
           const facets = {};
@@ -253,6 +272,7 @@
             if (others("langs")) bump("langs:" + c.dataset.fwLang);
             if (others("formats")) bump("formats:" + c.dataset.fwFormat);
             if (others("district")) (c.dataset.fwDistricts || "").split(" ").filter(Boolean).forEach((d) => bump("district:" + d));
+            if (others("office")) (c.dataset.fwOffices || "").split(" ").filter(Boolean).forEach((o) => bump("office:" + o));
           }
           // months and sections with nothing left to show
           this.$root.querySelectorAll("[data-fw-month]").forEach((g) => {
@@ -285,12 +305,13 @@
         },
         activeCount() {
           const f = this.f;
-          return [f.q.trim(), f.when, f.show, f.type, f.langs.length, f.formats.length, f.district].filter(Boolean).length;
+          return [f.q.trim(), f.when, f.show, f.type, f.langs.length, f.formats.length, f.district, f.office].filter(Boolean).length;
         },
         countText() {
           const n = Math.max(this.shown, 0);
-          if (n < this.total) return tr("calendar.flyers.count_of", { n, total: this.total });
-          return tr(n === 1 ? "calendar.flyers.count_one" : "calendar.flyers.count_n", { n });
+          const k = this.$root.dataset.fwCount || "calendar.flyers";
+          if (n < this.total) return tr(k + ".count_of", { n, total: this.total });
+          return tr(n === 1 ? k + ".count_one" : k + ".count_n", { n });
         },
         // phones and tablets: fold the filters ("Show results", Escape) and bring the bar to the top, the first flyers
         // under it, the keyboard on the Filters button

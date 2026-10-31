@@ -21,7 +21,7 @@ for (const r of servants) {
 const SECOND_FIRST = new Set(`Ann Anne Marie Jo Lou Lynn Lynne Sue Kay Jean Beth Ellen Louise Rose Mae Elena Luisa`.split(/\s+/));
 // Words that make "First Word" a place, a venue, a book or a role rather than a person.
 const NOT_SURNAME = new Set(
-  `Area District Distrito Committee Comité Panel Zoom Service Servicio General Conference Delegate Alternate Chair Secretary Treasurer Registrar Grapevine Vina Viña Archives The Long Beach North South East West Central Office Church Avenue Ave Street Blvd Road Drive Way Park Valley Hills Hall Club Center Room Hospital Monday Tuesday Wednesday Thursday Friday Saturday Sunday County Island Point Lake Mountain Mountains Springs City Desert College University School Hispanic Spanish English Inter Intergroup Hotel Community Fellowship Alano Foundation Unity Hope Serenity Sobriety Recovery Pacific Regional Forum Trustee Board Workshop Assembly Meeting Methodist Lutheran Catholic Baptist Presbyterian Episcopal Memorial Hill Bay Harbor Mission Grove Airport Plaza Square Library Building Centre Ranch Canyon Estates Village Heights Gardens Station Fire Police Senior Citizens Mesa Verde Palms Cove Bernardino Clemente Jacinto Angeles Cruz Washington Lincoln Kennedy Lane Court Highway Fwy Pkwy Auditorium Group Groups Steps Traditions Concepts Big Book Twelve Unidos Grupo Rancho Pre Post Report Reports Minutes News Study Tree Sees Leaders Past Class Jan Feb Mar Apr Jun Jul Aug Sep Sept Oct Nov Dec January February April June July August September October November December Enero Febrero Marzo Abril Mayo Junio Julio Agosto Septiembre Octubre Noviembre Diciembre`.split(/\s+/),
+  `Area District Distrito Committee Comité Panel Zoom Service Servicio General Conference Delegate Alternate Chair Secretary Treasurer Registrar Grapevine Vina Viña Archives The Long Beach North South East West Central Office Church Avenue Ave Street Blvd Road Drive Way Park Valley Hills Hall Club Center Room Hospital Monday Tuesday Wednesday Thursday Friday Saturday Sunday County Island Point Lake Mountain Mountains Springs City Desert College University School Hispanic Spanish English Inter Intergroup Hotel Community Fellowship Alano Foundation Unity Hope Serenity Sobriety Recovery Pacific Regional Forum Trustee Board Workshop Assembly Meeting Methodist Lutheran Catholic Baptist Presbyterian Episcopal Memorial Hill Bay Harbor Mission Grove Airport Plaza Square Library Building Centre Ranch Canyon Estates Village Heights Gardens Station Fire Police Senior Citizens Mesa Verde Palms Cove Bernardino Clemente Jacinto Angeles Cruz Washington Lincoln Kennedy Lane Court Highway Fwy Pkwy Auditorium Group Groups Steps Traditions Concepts Big Book Twelve Unidos Grupo Rancho Pre Post Report Reports Minutes News Study Tree Sees Leaders Past Class Jan Feb Mar Apr Jun Jul Aug Sep Sept Oct Nov Dec January February April June July August September October November December Enero Febrero Marzo Abril Mayo Junio Julio Agosto Septiembre Octubre Noviembre Diciembre Sacramentado Cristo Nazareno Misericordioso Resucitado History Historia Heritage Archives Your Our Their My His Her Calendar Calendars Flyer Flyers Sing Singalong Parade Float Day Jpg Jpeg Png Pdf Webp Gif`.split(/\s+/),
 );
 const PLACE_BEFORE = /\b(San|Santa|Santo|St|Saint|Los|Las|El|La|Lake|Mount|Mt|Fort|Port|Point|Rancho|Laguna|Dana)\.?\s+$/;
 // "Memorial" is a venue only before a venue word ("Veterans Memorial Hall"), not in "Bill Wilson Memorial Fund".
@@ -36,17 +36,36 @@ const NAME_RE = new RegExp(`\\b(${[...FIRST].sort((a, b) => b.length - a.length)
 const FIRST_ALT = [...FIRST].sort((a, b) => b.length - a.length).join("|");
 const FIRST_BRACKET = new RegExp(`\\b(${FIRST_ALT}) \\(((?:Mc|Mac)?\\p{Lu}\\p{Ll}{2,})\\)`, "gu");
 const FIRST_INITIAL_BRACKET = new RegExp(`\\b(${FIRST_ALT}) (\\p{Lu})\\(\\p{Ll}+\\)`, "gu");
+// The names are matched in a copy of the text of the same length, with accents taken off ("María González" →
+// "Maria Gonzalez") and words in capitals written as names ("JOSE MARTINEZ" → "Jose Martinez"); what a hit reports
+// (and shortenNames keeps) comes from the text itself, at the same place: "María G.", "JOSE M.".
+const fold = (s) => s.replace(/[À-ɏ]/g, (c) => {
+  const b = c.normalize("NFD")[0];
+  return /^[A-Za-z]$/.test(b) ? b : c;
+});
+const forMatching = (text) => fold(String(text || "")).replace(/\b[A-Z]{3,}\b/g, (w) => w[0] + w.slice(1).toLowerCase());
+const NOT_SURNAME_FOLDED = new Set([...NOT_SURNAME].map(fold));
+const ALLOW_FOLDED = nameAllow.map(fold);
 export function nameHits(text) {
+  text = String(text || "");
+  const norm = forMatching(text);
   const hits = [];
-  for (const m of text.matchAll(NAME_RE)) {
-    if (NOT_SURNAME.has(m[3])) continue;
-    const before = text.slice(Math.max(0, m.index - 12), m.index);
-    const after = text.slice(m.index + m[0].length, m.index + m[0].length + 20);
+  for (const m of norm.matchAll(NAME_RE)) {
+    if (NOT_SURNAME_FOLDED.has(m[3])) continue;
+    const before = norm.slice(Math.max(0, m.index - 12), m.index);
+    const after = norm.slice(m.index + m[0].length, m.index + m[0].length + 20);
     if (PLACE_BEFORE.test(before) || VENUE_AFTER.test(after)) continue;
     if (/^\s+\p{Lu}\.(?!\p{L})/u.test(after)) continue; // "Lisa Marie P." — first names + last initial
-    const ctx = text.slice(Math.max(0, m.index - 50), m.index + m[0].length + 40).replace(/\s+/g, " ");
-    if (nameAllow.some((p) => ctx.includes(p))) continue;
-    hits.push({ name: m[0], ctx, index: m.index, first: m[1] + (m[2] || ""), last: m[3] });
+    const ctxAt = [Math.max(0, m.index - 50), m.index + m[0].length + 40];
+    const ctx = text.slice(...ctxAt).replace(/\s+/g, " ");
+    const ctxFolded = fold(ctx);
+    if (nameAllow.some((p) => ctx.includes(p)) || ALLOW_FOLDED.some((p) => ctxFolded.includes(p))) continue;
+    const firstLen = m[1].length + (m[2] || "").length;
+    hits.push({
+      name: text.slice(m.index, m.index + m[0].length), ctx, index: m.index,
+      first: text.slice(m.index, m.index + firstLen), last: text.slice(m.index + m[0].length - m[3].length, m.index + m[0].length),
+      lastFolded: m[3],
+    });
   }
   return hits;
 }
@@ -59,15 +78,17 @@ export function shortenNames(text) {
     .replace(FIRST_INITIAL_BRACKET, (m, first, initial) => `${first} ${initial}.`);
   const hits = nameHits(s);
   if (!hits.length) return s;
+  const norm = forMatching(s);
   let out = "";
   let at = 0;
   for (const h of hits) {
     if (h.index < at) continue;
     // "Mary Ann Warren": the second word is a first name too, so the surname is the word after it.
-    const rest = s.slice(h.index + h.name.length);
-    const next = SECOND_FIRST.has(h.last) && rest.match(/^ ((?:Mc|Mac|O'|O’)?\p{Lu}\p{Ll}{2,}(?:-\p{Lu}?\p{Ll}+)?)(?![\p{L}])/u);
-    if (next && !NOT_SURNAME.has(next[1])) {
-      out += s.slice(at, h.index) + `${h.first} ${h.last} ${next[1][0].toUpperCase()}.`;
+    const rest = norm.slice(h.index + h.name.length);
+    const next = SECOND_FIRST.has(h.lastFolded) && rest.match(/^ ((?:Mc|Mac|O'|O’)?\p{Lu}\p{Ll}{2,}(?:-\p{Lu}?\p{Ll}+)?)(?![\p{L}])/u);
+    if (next && !NOT_SURNAME_FOLDED.has(next[1])) {
+      const word = s.slice(h.index + h.name.length + 1, h.index + h.name.length + next[0].length);
+      out += s.slice(at, h.index) + `${h.first} ${h.last} ${word[0].toUpperCase()}.`;
       at = h.index + h.name.length + next[0].length;
     } else {
       out += s.slice(at, h.index) + `${h.first} ${h.last[0].toUpperCase()}.`;

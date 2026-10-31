@@ -28,11 +28,11 @@ scripts: ["/assets/js/calendar.js"]
        view") opens the page at the calendar, past the flyers (calendar.js jumpToCalendar)
     4. more ways to browse
 -#}
-{%- from "macros/events.njk" import upcomingList -%}
+{%- from "macros/events.njk" import upcomingList, officeEventCard -%}
 {%- from "macros/ui.njk" import sectionHead, breadcrumbLd -%}
 {%- set L = lang -%}
 {%- set C = calendar -%}
-<script type="application/json" id="cal-config">{{ C | calConfig(L) | json | safe }}</script>
+<script type="application/json" id="cal-config">{{ C | calConfig(L, officeEvents) | json | safe }}</script>
 
 {#- ---------------------------------------------------------- slim page header -#}
 <section class="cal-hero relative isolate overflow-hidden" style="{{ 'ocean' | accent }}">
@@ -55,6 +55,8 @@ scripts: ["/assets/js/calendar.js"]
         <div class="min-w-0">
           <h1 class="font-display text-3xl font-extrabold tracking-tight text-balance text-ink-950 sm:text-4xl 2xl:text-5xl" data-pagefind-weight="10">{{ "calendar.title" | t(L) }}</h1>
           <p class="mt-1 text-[15px] leading-snug text-pretty text-ink-600 sm:text-base">{{ "calendar.lead" | t(L) }}</p>
+          {#- the central offices' own events (read from their websites every day): their page, at every width -#}
+          <a href="{{ '/calendar/central-offices/' | lurl(L) }}" class="mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-copper-700 hover:underline">{% icon "building-2", "size-4" %}{{ "calendar.offices.link" | t(L) }}{% icon "arrow-right", "size-3.5" %}</a>
         </div>
       </div>
       <dl class="cal-stats" aria-label="{{ 'calendar.stats.label' | t(L) }}">
@@ -76,7 +78,7 @@ scripts: ["/assets/js/calendar.js"]
   <div class="absolute inset-0 -z-10 bg-ring-soft" aria-hidden="true"></div>
   <div class="wrap">
     {{ sectionHead({ eyebrow: "calendar.featured.eyebrow" | t(L), title: "calendar.featured.title" | t(L), lead: "calendar.featured.lead" | t(L), id: "featured-title",
-                     actions: [{ label: "calendar.featured.all" | t(L), url: "/events/" | lurl(L) }, { label: "calendar.flyers.all" | t(L), url: "/calendar/flyers/" | lurl(L) }] }) }}
+                     actions: [{ label: "calendar.featured.all" | t(L), url: "/events/" | lurl(L) }, { label: "calendar.flyers.all" | t(L), url: "/calendar/flyers/" | lurl(L) }, { label: "calendar.offices.link" | t(L), url: "/calendar/central-offices/" | lurl(L) }] }) }}
     {#- phones and tablets: one swipeable row of 10 flyers (calendar.css .ev-grid--rail); from 1024px a grid that shows
         one row until "Show more events" opens three full rows (calendar.css .cal-feat), so the calendar stays near
         the top. The first
@@ -129,6 +131,29 @@ scripts: ["/assets/js/calendar.js"]
 
   {% include "partials/calendar-detail.njk" %}
 </div>
+
+{#- ---------------------------------------------------------- from the central offices -#}
+{#- the next events the central offices post on their own websites (officeEvents, src/_data/officeEvents.js; the Area
+    calendar's own entries are never repeated here): one swipeable row on phones and tablets, a grid from 1024px. Each
+    card opens its card on /calendar/central-offices/, where the office's own page is linked -#}
+{%- set coEvents = officeEvents.featured or [] -%}
+{%- if coEvents.length %}
+<section class="relative isolate overflow-hidden py-12 lg:py-16" aria-labelledby="co-strip-title" style="{{ 'copper' | accent }}">
+  <div class="absolute inset-0 -z-10 bg-ring-soft opacity-70" aria-hidden="true"></div>
+  <div class="wrap">
+    {{ sectionHead({ eyebrow: "calendar.offices.strip_eyebrow" | t(L), title: "calendar.offices.strip_title" | t(L), lead: "calendar.offices.strip_lead" | t(L), id: "co-strip-title",
+                     actions: [{ label: "calendar.offices.see_all" | t(L), url: "/calendar/central-offices/" | lurl(L) }] }) }}
+    <ul id="co-strip" role="list" class="ev-grid ev-grid--flyer ev-grid--rail" data-pagefind-ignore="all">
+      {%- for ev in coEvents %}
+      {{ officeEventCard({ ev: ev, lang: L, offices: officeEvents.byKey, sizes: "(min-width: 1920px) 18vw, (min-width: 1536px) 22vw, (min-width: 1024px) 30vw, min(78vw, 20rem)" }) }}
+      {%- endfor %}
+    </ul>
+    <div class="mt-6 flex flex-wrap gap-2">
+      <a href="{{ '/calendar/central-offices/' | lurl(L) }}" class="btn btn-ghost">{% icon "building-2", "size-4" %}{{ "calendar.offices.see_all" | t(L) }}</a>
+    </div>
+  </div>
+</section>
+{%- endif %}
 
 {#- ---------------------------------------------------------- browse more -#}
 <section class="wrap py-16 lg:py-20" aria-labelledby="browse-title">

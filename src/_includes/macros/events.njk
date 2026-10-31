@@ -259,6 +259,106 @@
 {%- endif -%}
 {% endmacro %}
 
+{#- ---------------------------------------------------------------- officeEventCard -#}
+{#- A central office's event (officeEvents.events, src/_data/officeEvents.js): read from the office's own website, so it
+    has no page here. o: { ev, lang, offices (officeEvents.byKey), sizes, prio ("high" | "eager" | ""), level, wall }
+      wall true   /calendar/central-offices/: the card's anchor (id), the filters' data-fw-* and its date (flyers.js),
+                  the picture opens full size and the text links to the office's own page about it (new tab)
+      wall false  the strip under the Events page's calendar: the whole card links to its card on that page
+    The picture is the office's own file, shown only after the flyer check passed for that very file
+    (data/office-flyer-review.csv); without one, the type's poster. The summary is the office's text, cleaned (plain). -#}
+{% macro officeEventCard(o) %}
+{%- set ev = o.ev -%}
+{%- if ev -%}
+{%- set L = o.lang -%}
+{%- set es = (L.code or L) == "es" -%}
+{%- set off = (o.offices or {})[ev.office] -%}
+{%- set offName = ((off.name_es if es else off.name_en) if off else "") -%}
+{%- set offShort = (off.short if off else "") or offName -%}
+{%- set title = ev | calTitle(L) -%}
+{%- set hx = "h" + (o.level or 3) -%}
+{%- set wall = o.wall -%}
+{%- set zoom = wall and ev.flyer -%}
+{%- set sz = o.sizes or "(min-width: 1920px) 18vw, (min-width: 1536px) 22vw, (min-width: 1024px) 30vw, (min-width: 480px) 45vw, 92vw" -%}
+{%- set tlang = ("es" if ev.language == "Spanish" else ("en" if ev.language == "English" else "")) -%}
+{%- set dl = [[ev.start, ev.end, ev.start | dt("mon", L) | replace(".", ""), ev.start | dt("day", L), ev.start | dt("wkd", L) | replace(".", ""), ("" + _whenText(ev, L)) | trim]] -%}
+<{{ o.tag or "li" }}{% if wall %} id="{{ ev.id }}"{% endif %} class="ev ev--flyer ev--co scroll-mt-28" style="{{ ev.color | accent }}" data-hide-after="{{ ev.end }}" data-when="{{ ev.start }}" data-until="{{ ev.end }}"{% if zoom %} data-gallery{% endif %}{% if wall %} data-dates="{{ dl | json }}" data-fw-card="{{ ev.id }}" data-fw-kind="event" data-fw-type="{{ ev.typeSlug }}" data-fw-lang="{{ ev.langKey }}" data-fw-format="{{ ev.formatKey }}" data-fw-offices="{{ ev.offices | join(' ') }}" data-search="{{ ev.search }}"{% endif %}>
+  {%- if wall %}
+  <div class="ev-flyer ev-flyer--zoom group">
+  {%- else %}
+  <a href="{{ ev.url | lurl(L) }}" class="ev-flyer group">
+  {%- endif %}
+    <div class="relative">
+      {%- if ev.flyer %}
+      {%- if zoom %}
+      <a href="{{ ev.flyer.full }}" data-pswp data-pswp-width="{{ ev.flyer.w or 0 }}" data-pswp-height="{{ ev.flyer.h or 0 }}" class="ev-flyer__media" aria-label="{{ 'calendar.flyers.zoom' | t(L, { title: title }) }}">
+      {%- else %}
+      <div class="ev-flyer__media">
+      {%- endif %}
+        <img src="{{ ev.flyer.url }}"{% if ev.flyer.srcset %} srcset="{{ ev.flyer.srcset }}" sizes="{{ sz }}"{% endif %} alt="{{ 'calendar.flyer_alt' | t(L, { title: title }) }}" class="ev-flyer__img"
+             loading="{{ 'eager' if o.prio else 'lazy' }}"{% if o.prio == 'high' %} fetchpriority="high"{% endif %} decoding="async" referrerpolicy="no-referrer"
+             onerror="this.removeAttribute('srcset');this.onerror=function(){this.onerror=null;this.style.visibility='hidden'};this.src='{{ ev.flyer.full }}'">
+        <img src="{{ ev.flyer.url }}" alt="" aria-hidden="true" class="ev-flyer__blur" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">
+        {%- if zoom %}<span class="ev-flyer__zoom" aria-hidden="true">{% icon "zoom-in", "size-5" %}</span>{% endif %}
+      {%- if zoom %}
+      </a>
+      {%- else %}
+      </div>
+      {%- endif %}
+      {%- else %}
+      <div class="ev-flyer__media">
+        {#- no checked flyer yet: a typographic poster in the type's colours -#}
+        <div class="ev-poster" aria-hidden="true">
+          <img src="/assets/img/logo/logo-{{ L.code or L }}-160.webp" alt="" class="ev-poster__logo" loading="lazy" decoding="async" width="160" height="160">
+          <span class="ev-poster__icon">{% icon ev.icon or "calendar", "size-40" %}</span>
+          <span class="ev-poster__type">{% icon "building-2", "size-3.5" %}{{ offShort }}</span>
+          <span class="ev-poster__title"{% if tlang and tlang != (L.code or L) %} lang="{{ tlang }}"{% endif %}>{{ title }}</span>
+          <span class="ev-poster__when"><span class="capitalize">{{ ev.start | dt("wkd", L) | replace(".", "") }}</span> {{ ev.start | dt("short", L) | replace(".", "") }}{% if ev.city %} · {{ ev.city }}{% endif %}</span>
+        </div>
+      </div>
+      {%- endif %}
+      <div class="ev-flyer__badge">{{ dateBadge({ iso: ev.start, lang: L, color: ev.color }) }}</div>
+    </div>
+    <div class="ev-flyer__body">
+      <div class="flex min-h-7 flex-wrap items-center justify-end gap-1.5">
+        <span data-rel hidden class="rel-badge"></span>
+      </div>
+      <div class="flex flex-wrap items-center gap-1.5">
+        <span class="ev-type">{% icon ev.icon or "calendar", "size-3.5" %}{{ ev | calTypeLabel(L) }}</span>
+        <span class="ev-co-badge" title="{{ offName }}">{% icon "building-2", "size-3.5" %}{{ offShort }}</span>
+      </div>
+      <{{ hx }} class="ev-title"{% if tlang and tlang != (L.code or L) %} lang="{{ tlang }}"{% endif %}>{{ title }}</{{ hx }}>
+      {#- the badge above is hidden from screen readers: the date is said here (outside data-date-when, which flyers.js rewrites) -#}
+      <p class="ev-meta">{% icon "clock", "size-4 shrink-0" %}<span class="sr-only">{{ ev.start | dt("date", L) }}: </span><span{% if wall %} data-date-when{% endif %}>{{ _when(ev, L) }}</span></p>
+      {%- if ev.noPlace or ev.venue or ev.address or ev.city %}
+      <p class="ev-meta">{% icon "map-pin", "size-4 shrink-0" %}<span class="line-clamp-2">
+        {%- if ev.noPlace %}{{ ("calendar.offices.place_on_flyer" if ev.noPlace == "flyer" else "calendar.offices.place_on_site") | t(L) }}
+        {%- elif wall and ev.mapsUrl %}<a href="{{ ev.mapsUrl }}" target="_blank" rel="noopener" class="hover:text-ink-900 hover:underline">{{ [ev.venue, ev.address, ev.city] | select | join(", ") }}</a>
+        {%- else %}{{ [ev.venue, ev.address if wall else "", ev.city] | select | join(", ") }}{% endif %}</span></p>
+      {%- endif %}
+      {%- if ev.cost %}<p class="ev-meta">{% icon "ticket", "size-4 shrink-0" %}<span class="line-clamp-1">{{ ev.cost }}</span></p>{% endif %}
+      {%- if wall and ev.summary %}
+      <p class="mt-2 line-clamp-4 text-sm leading-relaxed text-ink-600"{% if tlang and tlang != (L.code or L) %} lang="{{ tlang }}"{% endif %}>{{ ev.summary }}</p>
+      {%- endif %}
+      {%- if wall %}
+      <p class="mt-auto flex flex-wrap gap-1.5 pt-3">{{ formatBadge({ format: ev.format, lang: L }) }}{% if ev.language and ev.language != "English" %}{{ langBadge({ language: ev.language, lang: L }) }}{% endif %}</p>
+      <div class="mt-3 flex flex-wrap gap-2">
+        <a href="{{ ev.src }}" target="_blank" rel="noopener" class="btn btn-white btn-sm">{% icon "external-link", "size-4 text-copper-600" %}{{ "calendar.offices.on_site" | t(L, { office: offShort }) }}</a>
+        {%- if ev.pdf %}
+        <a href="{{ ev.pdf }}" target="_blank" rel="noopener" class="btn btn-ghost btn-sm">{% icon "file-text", "size-4" %}{{ "calendar.offices.flyer_pdf" | t(L) }}</a>
+        {%- endif %}
+      </div>
+      {%- endif %}
+    </div>
+  {%- if wall %}
+  </div>
+  {%- else %}
+  </a>
+  {%- endif %}
+</{{ o.tag or "li" }}>
+{%- endif -%}
+{% endmacro %}
+
 {#- ---------------------------------------------------------------- upcomingList -#}
 {% macro upcomingList(o) %}
 {%- set L = o.lang -%}

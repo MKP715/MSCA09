@@ -26,8 +26,10 @@
             <span class="ev-type"><span class="contents" x-html="sel.icon"></span><span x-text="sel.typeLabel"></span></span>
             <span class="rel-badge" :data-tone="selRel().tone" x-text="selRel().text" x-show="selRel().tone !== 'past' && selRel().tone !== 'later'"></span>
             <span class="chip chip-accent" style="{{ 'red' | accent }}" x-show="sel.st === 'cancelled'">{% icon "ban", "size-3.5" %}{{ "calendar.cancelled" | t(L) }}</span>
+            {#- a central office's event (read from its website): which office posted it -#}
+            <span class="chip chip-accent" style="{{ 'copper' | accent }}" x-show="isCo()">{% icon "building-2", "size-3.5" %}<span x-text="coText('co_from')"></span></span>
           </div>
-          <h2 id="cal-detail-title" class="mt-3 font-display text-2xl leading-tight font-extrabold text-balance text-ink-950" x-text="sel.title"></h2>
+          <h2 id="cal-detail-title" class="mt-3 font-display text-2xl leading-tight font-extrabold text-balance text-ink-950" x-text="sel.title" :lang="sel.tlang || null"></h2>
 
           <dl class="mt-5 space-y-3">
             <div class="cd-row">
@@ -52,7 +54,7 @@
             <template x-if="ss && ss.location && ss.location.tba">
               <div class="cd-row">
                 <dt class="cd-row__icon">{% icon "map-pin", "size-4" %}<span class="sr-only">{{ "calendar.info.where" | t(L) }}</span></dt>
-                <dd><p class="font-semibold text-ink-900">{{ "calendar.place_tba" | t(L) }}</p></dd>
+                <dd><p class="font-semibold text-ink-900" x-text="!isCo() ? {{ 'calendar.place_tba' | t(L) | json }} : ss.location.on === 'flyer' ? {{ 'calendar.offices.place_on_flyer' | t(L) | json }} : {{ 'calendar.offices.place_on_site' | t(L) | json }}">{{ "calendar.place_tba" | t(L) }}</p></dd>
               </div>
             </template>
             <div class="cd-row">
@@ -100,7 +102,15 @@
               <template x-for="(n, i) in selNotes()" :key="i"><li>{% icon "info", "mt-0.5 size-4 shrink-0" %}<span><span x-text="n.text" :lang="n.lang"></span><span x-show="n.lang !== {{ L.code | json }}" class="mi-notes__tag"> {{ "calendar.note_in_english" | t(L) }}</span></span></li></template>
             </ul>
           </template>
-          <div class="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm" x-show="ss && (ss.email || ss.web)">
+          {#- a central office's event: the office's own words (cleaned, plain text), its PDF flyer, and whose event it is -#}
+          <template x-if="isCo()">
+            <div>
+              <p class="mt-5 text-[15px] leading-relaxed text-pretty text-ink-700" x-show="ss.summary" x-text="ss.summary" :lang="sel.l === 'Spanish' ? 'es' : sel.l === 'English' ? 'en' : null"></p>
+              <a x-show="ss.pdf" :href="ss.pdf" target="_blank" rel="noopener" referrerpolicy="no-referrer" class="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-ocean-700 hover:underline">{% icon "file-text", "size-4" %}{{ "calendar.offices.flyer_pdf" | t(L) }}</a>
+              <p class="mt-4 flex items-start gap-2 rounded-xl bg-copper-50 px-3 py-2 text-xs leading-snug text-copper-900">{% icon "info", "mt-0.5 size-3.5 shrink-0" %}<span x-text="coText('co_note')"></span></p>
+            </div>
+          </template>
+          <div class="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm" x-show="ss && !isCo() && (ss.email || ss.web)">
             <a x-show="ss && ss.email" :href="ss && ('mailto:' + ss.email)" class="inline-flex items-center gap-1.5 font-semibold text-ocean-700 hover:underline">{% icon "mail", "size-4" %}<span x-text="ss && ss.email"></span></a>
             <a x-show="ss && ss.web" :href="ss && webUrl(ss.web)" :target="ss && webOwn(ss.web) ? null : '_blank'" :rel="ss && webOwn(ss.web) ? null : 'noopener'" class="inline-flex items-center gap-1.5 font-semibold text-ocean-700 hover:underline">{% icon "globe", "size-4" %}{{ "ui.website" | t(L) }}</a>
           </div>
@@ -110,11 +120,14 @@
         <div class="cal-detail__foot">
           {#- Share: the event's own page (/events/<slug>/), the address that keeps working after the calendar moves on -#}
           <div class="col-span-2 flex gap-2">
-            <a :href="sel.url" class="btn btn-primary min-w-0 flex-1">{% icon "arrow-up-right", "size-4" %}{{ "calendar.detail.open" | t(L) }}</a>
+            <a :href="sel.url" class="btn btn-primary min-w-0 flex-1" x-show="!isCo()">{% icon "arrow-up-right", "size-4" %}{{ "calendar.detail.open" | t(L) }}</a>
+            {#- a central office's event has no page here: the office's own page is the original (Share gives its card) -#}
+            <a :href="ss && ss.web" target="_blank" rel="noopener" class="btn btn-primary min-w-0 flex-1" x-show="isCo()">{% icon "external-link", "size-4" %}<span class="truncate" x-text="coText('co_site')"></span></a>
             {{ shareButton({ lang: L, style: "btn btn-white", bind: { title: "sel.title", url: "sel.url" } }) }}
           </div>
           <a :href="googleUrl()" target="_blank" rel="noopener" class="btn btn-white">{% icon "calendar-plus", "size-4 text-ocean-600" %}{{ "calendar.add.google" | t(L) }}</a>
-          <a :href="icsUrl()" download class="btn btn-white">{% icon "download", "size-4 text-iris-600" %}.ics</a>
+          <a :href="icsUrl()" download class="btn btn-white" x-show="!isCo()">{% icon "download", "size-4 text-iris-600" %}.ics</a>
+          <a :href="sel.url" class="btn btn-white" x-show="isCo()">{% icon "images", "size-4 text-copper-600" %}<span x-text="coText('co_open')"></span></a>
         </div>
       </div>
     </template>

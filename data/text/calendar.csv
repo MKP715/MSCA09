@@ -6,7 +6,7 @@ key,en,es,notes
 calendar.title,Events,Eventos,Page title of /calendar/
 calendar.meta_title,A.A. events & service calendar – Orange County & Inland Empire,Eventos y calendario de A.A. – condado de Orange e Inland Empire,"Search-result and link-preview title of /calendar/ (the page heading stays calendar.title). Over 55 characters, so nothing is added after it; keep it under about 65"
 calendar.eyebrow,Meetings & events,Reuniones y eventos,
-calendar.lead,"Every Area, district and committee meeting, workshop and event — in Pacific time.","Todas las reuniones del Área, de distrito y de comité, talleres y eventos — en hora del Pacífico.",One line under the page title
+calendar.lead,"Every Area, district and committee meeting, workshop and event, and the central offices' events — in Pacific time.","Todas las reuniones del Área, de distrito y de comité, talleres y eventos, y los eventos de las oficinas centrales — en hora del Pacífico.",One line under the page title
 calendar.skip,Skip to the calendar,Ir al calendario,Keyboard link at the top of /calendar/: jumps past the event flyers to the calendar
 calendar.sticky.label,Calendar tools,Herramientas del calendario,Bar that stays at the top of the screen on phones
 calendar.sticky.top,Back to search and views,Volver a la búsqueda y las vistas,
@@ -229,6 +229,63 @@ calendar.flyers.clear,Clear filters,Quitar los filtros,"Button on /calendar/flye
 calendar.flyers.count_one,1 flyer,1 volante,"Number of flyers shown on /calendar/flyers/ (each card is one event or meeting, with all its flyers)"
 calendar.flyers.count_n,{n} flyers,{n} volantes,
 calendar.flyers.count_of,{n} of {total} flyers,{n} de {total} volantes,While a filter is on
+"# Central office events: /calendar/central-offices/ (src/pages/calendar-offices.njk), the strip under the Events page's calendar, and the calendar's Where from filter. The events are read every day from the central offices' own websites (scripts/office-events.mjs); {office} = the office's name or short name.",,,
+calendar.offices.title,Central office events,Eventos de las oficinas centrales,"Page title of /calendar/central-offices/, its breadcrumb"
+calendar.offices.meta_title,"A.A. central office events – Orange County, Long Beach & Inland Empire","Eventos de las oficinas centrales de A.A. – condado de Orange, Long Beach e Inland Empire",Search-result and link-preview title
+calendar.offices.description,"Events posted by the A.A. central offices and intergroups of Area 09 – Orange County, Long Beach, the South Bay and the Inland Empire – gathered every day.","Eventos de las oficinas centrales e intergrupos de A.A. del Área 09 – condado de Orange, Long Beach, South Bay e Inland Empire – reunidos cada día.",Search-result description (about 155 characters)
+calendar.offices.lead,"Events that the central offices and intergroups of our Area post on their own websites, gathered every day.","Eventos que las oficinas centrales e intergrupos de nuestra Área publican en sus propios sitios web, reunidos cada día.",One line under the page title
+calendar.offices.link,Central office events,Eventos de las oficinas centrales,"Links to the page: under the Events page's title, beside its flyers, and in the Happenings jump bar"
+calendar.offices.stat_events,Upcoming events,Próximos eventos,Number in the page header
+calendar.offices.stat_offices,Offices read daily,Oficinas leídas a diario,Number in the page header: offices whose events are read automatically
+calendar.offices.in_calendar,See them in the calendar,Verlos en el calendario,Header button: the Events page's calendar with the Central offices filter
+calendar.offices.filters_label,Filter the central office events,Filtrar los eventos de las oficinas centrales,Spoken name of the filter bar
+calendar.offices.search_label,Search the central office events,Buscar en los eventos de las oficinas centrales,Spoken name of the search box
+calendar.offices.search,"Search events, offices, cities…","Buscar eventos, oficinas, ciudades…",Placeholder of the search box
+calendar.offices.count_one,1 event,1 evento,Number of events shown
+calendar.offices.count_n,{n} events,{n} eventos,
+calendar.offices.count_of,{n} of {total} events,{n} de {total} eventos,While a filter is on
+calendar.offices.office,Central office,Oficina central,Label of the Office list (this page and the calendar's filters)
+calendar.offices.any_office,Any office,Cualquier oficina,First choice of the Office list
+calendar.offices.events_title,Coming up at the central offices,Próximamente en las oficinas centrales,Heading of the events
+calendar.offices.events_lead,"Tap a flyer to see it full size. For tickets, times and changes, check the office's own page.","Toca un volante para verlo en tamaño completo. Para boletos, horarios y cambios, consulta la página de la oficina.",
+calendar.offices.empty_title,No central office event matches,Ningún evento de las oficinas centrales coincide,When the filters leave nothing
+calendar.offices.none,No upcoming central office events right now. Each office's own page is linked below.,Por ahora no hay próximos eventos de las oficinas centrales. Abajo está el enlace a la página de cada oficina.,When no office has an upcoming event
+calendar.offices.offices_title,The central offices,Las oficinas centrales,Heading of the office cards
+calendar.offices.offices_lead,Each card says how the office's events reach this page. Offices that post their events only as pictures or as text are linked to their own events page.,Cada tarjeta indica cómo llegan aquí los eventos de la oficina. Las oficinas que publican sus eventos solo como imágenes o como texto tienen un enlace a su propia página de eventos.,
+calendar.offices.note_title,Where these events come from,De dónde vienen estos eventos,Note at the foot of the page
+calendar.offices.note,"Once a day the site reads the event lists that the central offices publish on their own websites. Each event links to the office's page, which is the original: check the times and details there. When an event is already in the Area calendar, the Area's entry is shown instead. Personal phone numbers and e-mail addresses are never copied.","Una vez al día el sitio lee las listas de eventos que las oficinas centrales publican en sus propios sitios web. Cada evento enlaza a la página de la oficina, que es la original: consulta allí los horarios y detalles. Cuando un evento ya está en el calendario del Área, se muestra la entrada del Área. Nunca se copian teléfonos ni correos electrónicos personales.",
+calendar.offices.call_link,Call a central office,Llamar a una oficina central,Button in the note: /resources/#offices
+calendar.offices.place_on_flyer,Place on the flyer,Lugar en el volante,An event whose listing gives no place
+calendar.offices.place_on_site,Place: see the office's page,Lugar: consulta la página de la oficina,An event whose listing gives no place (and no flyer is shown)
+calendar.offices.on_site,Details on {office}'s site,Detalles en el sitio de {office},Button on each event card (opens the office's page about it)
+calendar.offices.flyer_pdf,Flyer (PDF),Volante (PDF),A checked PDF flyer on the office's website
+calendar.offices.events_page,Its events page,Su página de eventos,Button on an office card
+calendar.offices.upcoming_one,1 upcoming event,1 próximo evento,Button on an office card: its events on this page
+calendar.offices.upcoming_n,{n} upcoming events,{n} próximos eventos,
+calendar.offices.strip_eyebrow,Around the Area,En el Área,Strip under the Events page's calendar
+calendar.offices.strip_title,From the central offices,De las oficinas centrales,
+calendar.offices.strip_lead,Events that the central offices and intergroups post on their own websites.,Eventos que las oficinas centrales e intergrupos publican en sus propios sitios web.,
+calendar.offices.see_all,See all central office events,Ver todos los eventos de las oficinas centrales,
+calendar.offices.status.auto,Read from its website every day.,Se lee de su sitio web cada día.,Office card: how its events reach the page
+calendar.offices.status.pictures,Posts its events as pictures: see its events page.,Publica sus eventos como imágenes: consulta su página de eventos.,
+calendar.offices.status.list,Lists its events as text: see its events page.,Publica sus eventos como texto: consulta su página de eventos.,
+calendar.offices.status.none,Has no events page yet.,Todavía no tiene página de eventos.,
+calendar.offices.status.shared,Shares its website and events with {office}.,Comparte su sitio web y sus eventos con la {office}.,
+calendar.offices.status.online,"Online, worldwide: see its own calendar.","En línea, en todo el mundo: consulta su propio calendario.",
+calendar.offices.status.paused,Could not be read lately: see its events page.,No se ha podido leer últimamente: consulta su página de eventos.,Its website has not been readable for more than 3 days
+calendar.offices.status.off,Not read automatically: see its events page.,No se lee automáticamente: consulta su página de eventos.,import = no in data/office-event-sources.csv
+calendar.filters.source,Where from,De dónde,Calendar filter: the Area calendar or the central offices' websites
+calendar.filters.source_all,Everything,Todo,
+calendar.filters.source_area,Area calendar,Calendario del Área,
+calendar.filters.source_co,Central offices,Oficinas centrales,"The central offices' events, and the Area events they hold"
+calendar.quick.co,Central offices,Oficinas centrales,Quick view of the calendar
+calendar.flyers.offices_link,The central offices' events and flyers,Eventos y volantes de las oficinas centrales,Link under the title of /calendar/flyers/
+calendar.js.co_from,From {office},De {office},Calendar details panel: a central office's event
+calendar.js.co_site,On {office}'s website,En el sitio de {office},
+calendar.js.co_open,Flyer and details,Volante y detalles,Opens its card on /calendar/central-offices/
+calendar.js.co_note,"Posted by {office}, not by Area 09. Check the details with the office.","Publicado por la {office}, no por el Área 09. Confirma los detalles con la oficina.",
+calendar.js.src_area,Area calendar,Calendario del Área,Filter chip
+calendar.js.src_co,Central offices,Oficinas centrales,Filter chip
 calendar.flyers.empty_title,No flyers match these filters.,Ningún volante coincide con estos filtros.,
 calendar.flyers.empty_body,"Try another month or type, or clear the filters to see every flyer.","Prueba otro mes u otro tipo, o quita los filtros para ver todos los volantes.",
 calendar.flyers.none,No upcoming event has a flyer right now. The Events page lists every meeting and event.,Por ahora ningún evento próximo tiene volante. La página de Eventos muestra todas las reuniones y eventos.,/calendar/flyers/ when the calendar has no upcoming flyer at all
@@ -246,7 +303,7 @@ calendar.browse.google,Open in Google Calendar,Abrir en Google Calendar,
 calendar.browse.google_body,"The same calendar, in Google's own view.","El mismo calendario, en la vista de Google.",
 calendar.browse.area,Assemblies & Area meetings,Asambleas y reuniones del Área,
 calendar.browse.area_body,"Agendas, flyers and minutes for every Area meeting.","Agendas, volantes y actas de cada reunión del Área.",
-calendar.footnote,"All times are Pacific time. This page was built from the Area's Google Calendar on {date} and refreshes every few hours. To add or correct an entry, write to the webmaster.","Todas las horas están en hora del Pacífico. Esta página se generó a partir del Google Calendar del Área el {date} y se actualiza cada pocas horas. Para agregar o corregir una entrada, escribe al webmaster.","Note under /calendar/. {date} = the day the page was built, with no time of day: an unchanged calendar then gives the same page all day, and the 3-hourly build does not publish it again (.github/workflows/deploy.yml)"
+calendar.footnote,"All times are Pacific time. This page was built from the Area's Google Calendar on {date} and refreshes every few hours. The central offices' events are read once a day from their own websites. To add or correct an entry, write to the webmaster.","Todas las horas están en hora del Pacífico. Esta página se generó a partir del Google Calendar del Área el {date} y se actualiza cada pocas horas. Los eventos de las oficinas centrales se leen una vez al día de sus propios sitios web. Para agregar o corregir una entrada, escribe al webmaster.","Note under /calendar/. {date} = the day the page was built, with no time of day: an unchanged calendar then gives the same page all day, and the 3-hourly build does not publish it again (.github/workflows/deploy.yml)"
 calendar.events.crumb,Happenings,Actividades,Breadcrumb
 calendar.events.title,Happenings,Actividades,Page title of /events/
 calendar.events.meta_title,Happenings: A.A. service meetings & events,Actividades: reuniones de servicio y eventos,"Search-result and link-preview title of /events/ (the page heading stays calendar.events.title); "" · A.A. Area 09"" is added after it while it is 55 characters or shorter"
