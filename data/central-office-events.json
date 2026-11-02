@@ -1,237 +1,6 @@
 {
  "events": [
   {
-   "address": "2415 Michelson Dr.",
-   "allDay": false,
-   "also": [],
-   "cats": [
-    "intergroup",
-    "special-events"
-   ],
-   "city": "Irvine",
-   "cost": "",
-   "end": "2026-11-01T14:00:00-08:00",
-   "endDate": "",
-   "flags": [],
-   "flyers": [
-    {
-     "h": 1492,
-     "mime": "image/png",
-     "pdf": "",
-     "sha256": "c95a14f0bedd7e151a804b45b741ccde60a03cbad86ab88ed7fc6530a53ab647",
-     "sizes": [
-      [
-       212,
-       "https://www.oc-aa.org/wp-content/uploads/2026/08/8EFBF189-E9B1-4ECC-8CC6-D62CF0BAAA2B-212x300.png"
-      ],
-      [
-       723,
-       "https://www.oc-aa.org/wp-content/uploads/2026/08/8EFBF189-E9B1-4ECC-8CC6-D62CF0BAAA2B-723x1024.png"
-      ],
-      [
-       768,
-       "https://www.oc-aa.org/wp-content/uploads/2026/08/8EFBF189-E9B1-4ECC-8CC6-D62CF0BAAA2B-768x1087.png"
-      ]
-     ],
-     "url": "https://www.oc-aa.org/wp-content/uploads/2026/08/8EFBF189-E9B1-4ECC-8CC6-D62CF0BAAA2B.png",
-     "w": 1054
-    }
-   ],
-   "format": "In person",
-   "id": "co-oc-central-70200",
-   "lang": "English",
-   "office": "oc-central",
-   "src": "https://www.oc-aa.org/event/bowling-event/",
-   "srcHash": "5056bebd72a03314e9a336db10ad61871bb8fb7e",
-   "start": "2026-11-01T12:30:00-08:00",
-   "summary": "",
-   "title": "Bowling Event",
-   "title_es": "",
-   "type": "Social",
-   "venue": "Irvine Lanes",
-   "zip": "92612"
-  },
-  {
-   "address": "5325 Pacific Coast Hwy",
-   "allDay": false,
-   "also": [],
-   "cats": [
-    "aniversario"
-   ],
-   "city": "Long Beach",
-   "cost": "",
-   "end": "2026-11-01T22:00:00-08:00",
-   "endDate": "",
-   "flags": [],
-   "flyers": [
-    {
-     "h": 1066,
-     "mime": "image/jpeg",
-     "pdf": "",
-     "sha256": "5059edff987ea15a00bdfca8fc76fd0194b1a2b8ae31450d20552cc317c7a13e",
-     "sizes": [
-      [
-       181,
-       "https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-sobriedad-1-181x300.jpg"
-      ],
-      [
-       619,
-       "https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-sobriedad-1-619x1024.jpg"
-      ]
-     ],
-     "url": "https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-sobriedad-1.jpg",
-     "w": 644
-    },
-    {
-     "h": 1055,
-     "mime": "image/jpeg",
-     "pdf": "",
-     "sha256": "c48d0afd3d16fc3835020387b71434adabb153f85a27244465e2adf0de16a61b",
-     "sizes": [
-      [
-       188,
-       "https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-sobriedad-2-188x300.jpg"
-      ],
-      [
-       642,
-       "https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-sobriedad-2-642x1024.jpg"
-      ]
-     ],
-     "url": "https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-sobriedad-2.jpg",
-     "w": 661
-    },
-    {
-     "h": 1051,
-     "mime": "image/jpeg",
-     "pdf": "",
-     "sha256": "371191b2917dfa6fb9457b95a35a03b0b28708931fe0acf1ef1c61f2de0af939",
-     "sizes": [
-      [
-       190,
-       "https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-sobriedad-3-190x300.jpg"
-      ],
-      [
-       648,
-       "https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-sobriedad-3-648x1024.jpg"
-      ]
-     ],
-     "url": "https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-sobriedad-3.jpg",
-     "w": 665
-    },
-    {
-     "h": 1062,
-     "mime": "image/jpeg",
-     "pdf": "",
-     "sha256": "475e7e99bec7657ca1def8b079a2980d293298a2d230b3fa017290e95af11aaa",
-     "sizes": [
-      [
-       185,
-       "https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-Sobriedad-4-185x300.jpg"
-      ],
-      [
-       631,
-       "https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-Sobriedad-4-631x1024.jpg"
-      ]
-     ],
-     "url": "https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-Sobriedad-4.jpg",
-     "w": 654
-    }
-   ],
-   "format": "In person",
-   "id": "co-sur-bahia-3246",
-   "lang": "Spanish",
-   "office": "sur-bahia",
-   "src": "https://aasurdelabahia.org/event/aniversario-39-grupo-buscando-sobriedad/",
-   "srcHash": "4a517a3223f498d7f65c1bcdcbd2a23b4975acc3",
-   "start": "2026-11-01T13:00:00-08:00",
-   "summary": "",
-   "title": "Aniversario #39 grupo Buscando Sobriedad",
-   "title_es": "",
-   "type": "Social",
-   "venue": "Hotel Current",
-   "zip": "90804"
-  },
-  {
-   "address": "",
-   "allDay": false,
-   "also": [],
-   "cats": [],
-   "city": "",
-   "cost": "",
-   "end": "2026-11-01T21:00:00-08:00",
-   "endDate": "",
-   "flags": [
-    "place-on-flyer"
-   ],
-   "flyers": [
-    {
-     "h": 799,
-     "mime": "image/jpeg",
-     "pdf": "",
-     "sha256": "0aaf138645ba0119be6d0e54d2e25cc278003d3995251c4afb1a743da620c19e",
-     "sizes": [
-      [
-       300,
-       "https://oiaasriverside.org/wp-content/uploads/2026/08/12-PASOS-32-ANIVERSARIO-NUEVO-SALON_Page_1-300x227.jpg"
-      ],
-      [
-       768,
-       "https://oiaasriverside.org/wp-content/uploads/2026/08/12-PASOS-32-ANIVERSARIO-NUEVO-SALON_Page_1-768x581.jpg"
-      ],
-      [
-       1024,
-       "https://oiaasriverside.org/wp-content/uploads/2026/08/12-PASOS-32-ANIVERSARIO-NUEVO-SALON_Page_1-1024x775.jpg"
-      ]
-     ],
-     "url": "https://oiaasriverside.org/wp-content/uploads/2026/08/12-PASOS-32-ANIVERSARIO-NUEVO-SALON_Page_1.jpg",
-     "w": 1056
-    },
-    {
-     "h": 1700,
-     "mime": "image/jpeg",
-     "pdf": "",
-     "sha256": "8ecae6679271a3e3313369561bd848ad03b9f922620bd44183964ecc7395a9b3",
-     "sizes": [
-      [
-       300,
-       "https://oiaasriverside.org/wp-content/uploads/2026/08/12-PASOS-32-ANIVERSARIO-1234_Page_2-300x232.jpg"
-      ],
-      [
-       768,
-       "https://oiaasriverside.org/wp-content/uploads/2026/08/12-PASOS-32-ANIVERSARIO-1234_Page_2-768x593.jpg"
-      ],
-      [
-       1024,
-       "https://oiaasriverside.org/wp-content/uploads/2026/08/12-PASOS-32-ANIVERSARIO-1234_Page_2-1024x791.jpg"
-      ],
-      [
-       1536,
-       "https://oiaasriverside.org/wp-content/uploads/2026/08/12-PASOS-32-ANIVERSARIO-1234_Page_2-1536x1187.jpg"
-      ],
-      [
-       2048,
-       "https://oiaasriverside.org/wp-content/uploads/2026/08/12-PASOS-32-ANIVERSARIO-1234_Page_2-2048x1583.jpg"
-      ]
-     ],
-     "url": "https://oiaasriverside.org/wp-content/uploads/2026/08/12-PASOS-32-ANIVERSARIO-1234_Page_2.jpg",
-     "w": 2200
-    }
-   ],
-   "format": "In person",
-   "id": "co-sureste-riverside-1312",
-   "lang": "Spanish",
-   "office": "sureste-riverside",
-   "src": "https://oiaasriverside.org/event/32-aniversario-del-grupo-aa-12-pasos-11-01-2026-de-la-100pm-900pm/",
-   "srcHash": "b8a6667d77561e7f7d6cf6784b78fa056ac198ac",
-   "start": "2026-11-01T13:00:00-08:00",
-   "summary": "",
-   "title": "32 Aniversario del Grupo AA 12 Pasos",
-   "title_es": "",
-   "type": "Social",
-   "venue": "",
-   "zip": ""
-  },
-  {
    "address": "24442 Moulton Pkwy.",
    "allDay": false,
    "also": [
@@ -326,7 +95,7 @@
      "h": 859,
      "mime": "image/jpeg",
      "pdf": "",
-     "sha256": "",
+     "sha256": "f84cffdc0a2252f98ae2f087aab88d95a5d8fc1b6311bb27b748e8dceec4cf27",
      "sizes": [
       [
        300,
@@ -523,6 +292,70 @@
    "zip": "92705"
   },
   {
+   "address": "101 E. 28th st.",
+   "allDay": false,
+   "also": [],
+   "cats": [
+    "aniversario"
+   ],
+   "city": "Long Beach",
+   "cost": "",
+   "end": "2026-11-14T21:00:00-08:00",
+   "endDate": "",
+   "flags": [],
+   "flyers": [
+    {
+     "h": 1071,
+     "mime": "image/jpeg",
+     "pdf": "",
+     "sha256": "29e218d7c12f21133ff04365115ba3c72c04b969db3c6db439313810c8ba3e1d",
+     "sizes": [
+      [
+       190,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Ultima-Esperanza-1-190x300.jpg"
+      ],
+      [
+       650,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Ultima-Esperanza-1-650x1024.jpg"
+      ]
+     ],
+     "url": "https://aasurdelabahia.org/wp-content/uploads/2026/11/Ultima-Esperanza-1.jpg",
+     "w": 680
+    },
+    {
+     "h": 1047,
+     "mime": "image/jpeg",
+     "pdf": "",
+     "sha256": "96dfc6a4a5632e6798566bf87caabc6b0e46239d38ccfc1a8f5f82edeee539dd",
+     "sizes": [
+      [
+       189,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Ultima-Esperanza-2-189x300.jpg"
+      ],
+      [
+       644,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Ultima-Esperanza-2-644x1024.jpg"
+      ]
+     ],
+     "url": "https://aasurdelabahia.org/wp-content/uploads/2026/11/Ultima-Esperanza-2.jpg",
+     "w": 658
+    }
+   ],
+   "format": "In person",
+   "id": "co-sur-bahia-3259",
+   "lang": "Spanish",
+   "office": "sur-bahia",
+   "src": "https://aasurdelabahia.org/event/aniversario-18-grupo-ultima-esperanza/",
+   "srcHash": "4836aaeb5dbdc1816b3a54d84b1d4741ee60ba2b",
+   "start": "2026-11-14T14:00:00-08:00",
+   "summary": "",
+   "title": "Aniversario #18 grupo Ultima Esperanza",
+   "title_es": "",
+   "type": "Social",
+   "venue": "",
+   "zip": "90806"
+  },
+  {
    "address": "27732 Encanto Dr.",
    "allDay": false,
    "also": [],
@@ -644,6 +477,56 @@
    "type": "Social",
    "venue": "",
    "zip": ""
+  },
+  {
+   "address": "1308 E. Artesia Blvd.",
+   "allDay": false,
+   "also": [],
+   "cats": [
+    "aniversario"
+   ],
+   "city": "Long Beach",
+   "cost": "",
+   "end": "2026-11-21T21:00:00-08:00",
+   "endDate": "",
+   "flags": [],
+   "flyers": [
+    {
+     "h": 1387,
+     "mime": "image/jpeg",
+     "pdf": "",
+     "sha256": "82ac1bc42260929d1032ddedc5eaa996d5b0e7ebb27ec8b80841e11045430a9f",
+     "sizes": [
+      [
+       234,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Aniversario-Intergrupal-234x300.jpg"
+      ],
+      [
+       768,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Aniversario-Intergrupal-768x986.jpg"
+      ],
+      [
+       797,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Aniversario-Intergrupal-797x1024.jpg"
+      ]
+     ],
+     "url": "https://aasurdelabahia.org/wp-content/uploads/2026/11/Aniversario-Intergrupal.jpg",
+     "w": 1080
+    }
+   ],
+   "format": "In person",
+   "id": "co-sur-bahia-3282",
+   "lang": "Spanish",
+   "office": "sur-bahia",
+   "src": "https://aasurdelabahia.org/event/aniversario-34-de-la-oficina-intergrupal-del-sur-de-la-bahia/",
+   "srcHash": "bcd2c3bcd0f3830e47b665bafc018d27cd8de1ad",
+   "start": "2026-11-21T14:00:00-08:00",
+   "summary": "",
+   "title": "Aniversario #34 de la Oficina Intergrupal del Sur de la Bahía",
+   "title_es": "",
+   "type": "Social",
+   "venue": "Sur de la Bahía",
+   "zip": "90805"
   },
   {
    "address": "",
@@ -879,7 +762,7 @@
      "h": 1700,
      "mime": "image/jpeg",
      "pdf": "",
-     "sha256": "",
+     "sha256": "b3e2bc9f63db7bbeed76031fc9c21d2a9b908e1701418304990114bdde789b40",
      "sizes": [
       [
        300,
@@ -909,7 +792,7 @@
      "h": 1700,
      "mime": "image/jpeg",
      "pdf": "",
-     "sha256": "",
+     "sha256": "b198d30ab97117233aabfc0e8055f0061121ee9e2fd02f5c2844bf3cae631b9a",
      "sizes": [
       [
        300,
@@ -1143,11 +1026,10 @@
   },
   "oc-central": {
    "adapter": "tribe",
-   "count": 4,
+   "count": 3,
    "errorKind": "",
    "failingSince": "",
    "flyers": {
-    "https://www.oc-aa.org/wp-content/uploads/2026/08/8EFBF189-E9B1-4ECC-8CC6-D62CF0BAAA2B.png": "c95a14f0bedd7e151a804b45b741ccde60a03cbad86ab88ed7fc6530a53ab647 1054 1492 image/png",
     "https://www.oc-aa.org/wp-content/uploads/2026/09/ACYPAA54_Flyer.png": "4aa1477cba04cc9fddcbf1367f9eb8c00c8c8310764ebc0b930afb5b49d40a2c 1429 2000 image/png",
     "https://www.oc-aa.org/wp-content/uploads/2026/09/doc01079620260909101242-pdf.jpg": "6c60d44ef02f4b765e5513316f8acaf0f9956efc8f9dd22a2ea670def919f35a 1088 1408 image/jpeg",
     "https://www.oc-aa.org/wp-content/uploads/2026/10/District-12-Traditions-Day-2026-Flyer-scaled.png": "553fb579706d321a84d4c5473aac11707f210f023aaa6bac83c97d61702f8be4 1978 2560 image/png"
@@ -1155,7 +1037,6 @@
    "lastChange": "2026-11-01",
    "pageModified": "",
    "sources": {
-    "co-oc-central-70200": "2026-11-01 5056bebd72a03314e9a336db10ad61871bb8fb7e",
     "co-oc-central-70269": "2026-11-14 a92c33d95673fb234def8da6ce33c22c4d49c5aa",
     "co-oc-central-70285": "2027-04-18 0aaacb4561f5e25961b2babc2708b6ab2d07fa47",
     "co-oc-central-70340": "2026-11-07 244d8d376b6ef71069bf54e4f6713050ec1615f3"
@@ -1218,19 +1099,19 @@
   },
   "sur-bahia": {
    "adapter": "tribe",
-   "count": 1,
+   "count": 2,
    "errorKind": "",
    "failingSince": "",
    "flyers": {
-    "https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-Sobriedad-4.jpg": "475e7e99bec7657ca1def8b079a2980d293298a2d230b3fa017290e95af11aaa 654 1062 image/jpeg",
-    "https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-sobriedad-1.jpg": "5059edff987ea15a00bdfca8fc76fd0194b1a2b8ae31450d20552cc317c7a13e 644 1066 image/jpeg",
-    "https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-sobriedad-2.jpg": "c48d0afd3d16fc3835020387b71434adabb153f85a27244465e2adf0de16a61b 661 1055 image/jpeg",
-    "https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-sobriedad-3.jpg": "371191b2917dfa6fb9457b95a35a03b0b28708931fe0acf1ef1c61f2de0af939 665 1051 image/jpeg"
+    "https://aasurdelabahia.org/wp-content/uploads/2026/11/Aniversario-Intergrupal.jpg": "82ac1bc42260929d1032ddedc5eaa996d5b0e7ebb27ec8b80841e11045430a9f 1080 1387 image/jpeg",
+    "https://aasurdelabahia.org/wp-content/uploads/2026/11/Ultima-Esperanza-1.jpg": "29e218d7c12f21133ff04365115ba3c72c04b969db3c6db439313810c8ba3e1d 680 1071 image/jpeg",
+    "https://aasurdelabahia.org/wp-content/uploads/2026/11/Ultima-Esperanza-2.jpg": "96dfc6a4a5632e6798566bf87caabc6b0e46239d38ccfc1a8f5f82edeee539dd 658 1047 image/jpeg"
    },
-   "lastChange": "2026-10-30",
+   "lastChange": "2026-11-02",
    "pageModified": "",
    "sources": {
-    "co-sur-bahia-3246": "2026-11-01 4a517a3223f498d7f65c1bcdcbd2a23b4975acc3"
+    "co-sur-bahia-3259": "2026-11-14 4836aaeb5dbdc1816b3a54d84b1d4741ee60ba2b",
+    "co-sur-bahia-3282": "2026-11-21 bcd2c3bcd0f3830e47b665bafc018d27cd8de1ad"
    },
    "status": "ok",
    "unparsed": 0,
@@ -1238,25 +1119,25 @@
   },
   "sureste-riverside": {
    "adapter": "tribe",
-   "count": 6,
-   "errorKind": "robots",
-   "failingSince": "2026-10-30",
+   "count": 5,
+   "errorKind": "",
+   "failingSince": "",
    "flyers": {
-    "https://oiaasriverside.org/wp-content/uploads/2026/08/12-PASOS-32-ANIVERSARIO-1234_Page_2.jpg": "8ecae6679271a3e3313369561bd848ad03b9f922620bd44183964ecc7395a9b3 2200 1700 image/jpeg",
-    "https://oiaasriverside.org/wp-content/uploads/2026/08/12-PASOS-32-ANIVERSARIO-NUEVO-SALON_Page_1.jpg": "0aaf138645ba0119be6d0e54d2e25cc278003d3995251c4afb1a743da620c19e 1056 799 image/jpeg",
-    "https://oiaasriverside.org/wp-content/uploads/2026/10/Flayer-lenguaje-2026-Face.jpg": "d412d8ebc57c0d7a7cf8801efd88a04337912e4add3f07b668c6e8bb25628b95 1375 1062 image/jpeg"
+    "https://oiaasriverside.org/wp-content/uploads/2026/10/Flayer-lenguaje-2026-Face.jpg": "d412d8ebc57c0d7a7cf8801efd88a04337912e4add3f07b668c6e8bb25628b95 1375 1062 image/jpeg",
+    "https://oiaasriverside.org/wp-content/uploads/2026/10/Flayer-lenguaje-2026.jpg": "f84cffdc0a2252f98ae2f087aab88d95a5d8fc1b6311bb27b748e8dceec4cf27 1375 859 image/jpeg",
+    "https://oiaasriverside.org/wp-content/uploads/2026/10/Sobriedad-y-Salvacion-Aniversario_Page_1.jpg": "b198d30ab97117233aabfc0e8055f0061121ee9e2fd02f5c2844bf3cae631b9a 2200 1700 image/jpeg",
+    "https://oiaasriverside.org/wp-content/uploads/2026/10/Sobriedad-y-Salvacion-Aniversario_Page_2.jpg": "b3e2bc9f63db7bbeed76031fc9c21d2a9b908e1701418304990114bdde789b40 2200 1700 image/jpeg"
    },
    "lastChange": "2026-10-30",
    "pageModified": "",
    "sources": {
     "co-sureste-riverside-1303": "2026-11-29 3290b40abf5b3da5b611900dd21302eb6a3c08db",
-    "co-sureste-riverside-1312": "2026-11-01 b8a6667d77561e7f7d6cf6784b78fa056ac198ac",
     "co-sureste-riverside-1337": "2026-11-14 7b7f1c7922c2cc54d3e376bf5109afa12648722b",
     "co-sureste-riverside-1340": "2026-12-26 7b3693f9baae6fbb2a70c27af0b70b1cc418d022",
     "co-sureste-riverside-1344": "2026-11-08 b62f0dce83ea1a28aaa3d379491e17fe9a3acc8e",
     "co-sureste-riverside-1354": "2026-11-21 e5d2fe94f1dafa5c2269df737eddddf058555117"
    },
-   "status": "error",
+   "status": "ok",
    "unparsed": 0,
    "watchModified": ""
   },
