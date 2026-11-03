@@ -184,7 +184,7 @@
      "h": 2560,
      "mime": "image/jpeg",
      "pdf": "",
-     "sha256": "",
+     "sha256": "f74eb68b9aa148f9a8934a435ba8c5c66b2ee380cb37e1f14ffd1b3dc11d6b31",
      "sizes": [
       [
        203,
@@ -407,7 +407,7 @@
      "h": 1700,
      "mime": "image/jpeg",
      "pdf": "",
-     "sha256": "",
+     "sha256": "321ca67357010959af68d1bc2d36cf7f0e421b9c95abeb57e1a121b740e81f6f",
      "sizes": [
       [
        300,
@@ -437,7 +437,7 @@
      "h": 1700,
      "mime": "image/jpeg",
      "pdf": "",
-     "sha256": "",
+     "sha256": "1f42233093c4a257322f90dd220a4e430635edd98e938b09b790871470062191",
      "sizes": [
       [
        300,
@@ -1123,10 +1123,13 @@
    "errorKind": "",
    "failingSince": "",
    "flyers": {
+    "https://oiaasriverside.org/wp-content/uploads/2026/10/20260927_210553-scaled.jpg": "f74eb68b9aa148f9a8934a435ba8c5c66b2ee380cb37e1f14ffd1b3dc11d6b31 1733 2560 image/jpeg",
     "https://oiaasriverside.org/wp-content/uploads/2026/10/Flayer-lenguaje-2026-Face.jpg": "d412d8ebc57c0d7a7cf8801efd88a04337912e4add3f07b668c6e8bb25628b95 1375 1062 image/jpeg",
     "https://oiaasriverside.org/wp-content/uploads/2026/10/Flayer-lenguaje-2026.jpg": "f84cffdc0a2252f98ae2f087aab88d95a5d8fc1b6311bb27b748e8dceec4cf27 1375 859 image/jpeg",
     "https://oiaasriverside.org/wp-content/uploads/2026/10/Sobriedad-y-Salvacion-Aniversario_Page_1.jpg": "b198d30ab97117233aabfc0e8055f0061121ee9e2fd02f5c2844bf3cae631b9a 2200 1700 image/jpeg",
-    "https://oiaasriverside.org/wp-content/uploads/2026/10/Sobriedad-y-Salvacion-Aniversario_Page_2.jpg": "b3e2bc9f63db7bbeed76031fc9c21d2a9b908e1701418304990114bdde789b40 2200 1700 image/jpeg"
+    "https://oiaasriverside.org/wp-content/uploads/2026/10/Sobriedad-y-Salvacion-Aniversario_Page_2.jpg": "b3e2bc9f63db7bbeed76031fc9c21d2a9b908e1701418304990114bdde789b40 2200 1700 image/jpeg",
+    "https://oiaasriverside.org/wp-content/uploads/2026/10/VIII-Aniversario-Aqui-Empieza-y-termina-una-etapa_Page_1.jpg": "1f42233093c4a257322f90dd220a4e430635edd98e938b09b790871470062191 2200 1700 image/jpeg",
+    "https://oiaasriverside.org/wp-content/uploads/2026/10/VIII-Aniversario-Aqui-Empieza-y-termina-una-etapa_Page_2.jpg": "321ca67357010959af68d1bc2d36cf7f0e421b9c95abeb57e1a121b740e81f6f 2200 1700 image/jpeg"
    },
    "lastChange": "2026-10-30",
    "pageModified": "",
