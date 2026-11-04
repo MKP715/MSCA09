@@ -20,6 +20,7 @@
 // `calendar` and `documents` global data (other loaders' output is not visible here).
 import { DateTime } from "luxon";
 import { readCsv, list, num, yes } from "../_lib/csv.js";
+import { paypalUrl, venmoHandle, venmoRoleLike, venmoUrl } from "../_lib/give.js";
 import { LANGS, dictionary } from "../_lib/i18n.js";
 // the shared search matcher (src/assets/js/search.js): text prepared here is folded like the visitor's query
 import "../assets/js/search.js";
@@ -287,7 +288,15 @@ export default function () {
     const fullAddress = [r.venue, addressLine].filter(Boolean).join(", ");
     const lat = num(r.lat, NaN);
     const lng = num(r.lng, NaN);
-    return {
+    const paypal = paypalUrl(r.paypal_url);
+    let venmo = venmoHandle(r.venmo);
+    // a username that does not name a service role may be a member's own account: never shown (npm run check refuses it)
+    if (venmo && !venmoRoleLike(venmo)) {
+      console.warn(`[districts] ${r.slug}: venmo "${venmo}" does not look like a district account — left off the page (data/districts.csv)`);
+      venmo = "";
+    }
+    if (paypal === null) console.warn(`[districts] ${r.slug}: paypal_url "${r.paypal_url}" is not a PayPal donation-button link (https://www.paypal.com/donate/?hosted_button_id=…) — left off the page (data/districts.csv)`);
+    if (venmo === null) console.warn(`[districts] ${r.slug}: venmo "${r.venmo}" is not a Venmo username (5–30 letters, digits, - or _) or profile link (venmo.com/u/…) — left off the page (data/districts.csv)`);    return {
       slug: r.slug,
       number: r.number,
       number_es: String(r.number || "").replace(/\s*&\s*/g, " y "),
@@ -329,6 +338,14 @@ export default function () {
       meetings_label_es: r.meetings_label_es,
       po_box: r.po_box,
       contribute_url: r.contribute_url,
+      // Seventh Tradition online (the "give" section of the district page, src/_lib/give.js): the district's PayPal
+      // donation link, the name that page shows (givers check it), whether that page also has a Venmo button, and the
+      // district's own Venmo username (when it has one apart from PayPal)
+      paypal_url: paypal || "",
+      paypal_name: paypal ? String(r.paypal_name || "").trim() : "",
+      paypal_venmo: Boolean(paypal) && yes(r.paypal_venmo),
+      venmo: venmo || "",
+      venmo_url: venmoUrl(venmo),
       lat: Number.isFinite(lat) ? lat : null,
       lng: Number.isFinite(lng) ? lng : null,
       map_approx: yes(r.map_approx),

@@ -155,6 +155,7 @@ districts.nav.meeting,Meeting,Reunión,
 districts.nav.about,About,Acerca,
 districts.nav.cities,Cities,Ciudades,
 districts.nav.people,Trusted servants,Servidores,
+districts.nav.give,Contribute,Contribuir,Section link to the Contribute section (shown when the district has paypal_url or venmo in data/districts.csv)
 districts.nav.find,Find a meeting,Buscar reunión,
 districts.nav.events,Events,Eventos,
 districts.nav.documents,Documents,Documentos,
@@ -195,6 +196,13 @@ districts.aside.contribute_mail,"or by mail, to the address above.","o por corre
 districts.aside.contribute_mail_only,Groups can send contributions to the district by mail to the address above.,Los grupos pueden enviar sus contribuciones al distrito por correo a la dirección de arriba.,
 districts.aside.contribute_ask,Ask the district how groups can contribute.,Pregunta al distrito cómo pueden contribuir los grupos.,
 districts.aside.contribute_area,Contribute to Area 09 →,Contribuir al Área 09 →,
+districts.aside.give_paypal,"Groups and members can contribute to the district online, with PayPal or a card.","Los grupos y miembros pueden contribuir al distrito en línea, con PayPal o con tarjeta.",Seventh Tradition line of the contact box when the district has PayPal (paypal_url) without Venmo
+districts.aside.give_venmo,"Groups and members can contribute to the district online, with PayPal, Venmo or a card.","Los grupos y miembros pueden contribuir al distrito en línea, con PayPal, Venmo o tarjeta.","Same, when its PayPal page also takes Venmo (paypal_venmo = yes) or it has its own Venmo username"
+districts.aside.give_venmo_only,"Groups and members can contribute to the district online, with Venmo.","Los grupos y miembros pueden contribuir al distrito en línea, con Venmo.","Same, when the district has Venmo but no PayPal"
+districts.aside.give_btn,Give with PayPal,Contribuir con PayPal,Button to the district's PayPal donation page (contact box and Contribute section)
+districts.aside.give_btn_venmo,Give with PayPal or Venmo,Contribuir con PayPal o Venmo,Same button when that PayPal page also has a Venmo button
+districts.aside.give_more,"How to give, step by step ↓","Cómo contribuir, paso a paso ↓",Link to the Contribute section of the page
+districts.aside.give_more_venmo,How to give ↓,Cómo contribuir ↓,Same link when the district has Venmo but no PayPal (its section has no numbered steps)
 districts.about.title,About this district,Acerca de este distrito,
 districts.about.history,History,Historia,
 districts.about.merged,Former district,Antiguo distrito,
@@ -220,6 +228,38 @@ districts.people.dcmc,DCMC,CMCD,
 districts.people.dcmc_es,DCM (district chair),MCD (coordinador(a) del distrito),
 districts.people.none,The names for this panel have not reached the Area website yet.,Los nombres de este panel todavía no han llegado al sitio del Área.,
 districts.people.anonymity,"In keeping with Tradition Eleven we list first names and last initials only, with service e-mail addresses.","Siguiendo la Undécima Tradición, mostramos solo el nombre y la inicial del apellido, con direcciones de correo de servicio.",
+districts.give.title,Contribute to {name},Contribuir al {name},Contribute section of a district page (src/_includes/partials/district-give.njk); {name} = the district's name
+districts.give.chip,Seventh Tradition,Séptima Tradición,
+districts.give.lead,"{name} is supported by the contributions of its groups and members. These are the district's own ways to give, and the money goes to the district treasurer.","El {name} se mantiene con las contribuciones de sus grupos y miembros. Estas son las formas de contribuir del propio distrito, y el dinero llega al tesorero del distrito.",
+districts.give.online_kicker,Online,En línea,
+districts.give.online_title,PayPal,PayPal,Title of the PayPal card
+districts.give.online_title_venmo,PayPal or Venmo,PayPal o Venmo,"Same, when the PayPal page also has a Venmo button (paypal_venmo = yes)"
+districts.give.online_sub,No PayPal account needed: a debit or credit card works too.,No necesitas una cuenta de PayPal: también puedes usar una tarjeta de débito o crédito.,
+districts.give.online_sub_venmo,"Pay with Venmo, a PayPal account, or a debit or credit card. No PayPal account needed.","Paga con Venmo, con una cuenta de PayPal o con tarjeta de débito o crédito. No necesitas una cuenta de PayPal.",
+districts.give.how,How to give,Cómo contribuir,Heading over the steps
+districts.give.step_open,Open the district's donation page on PayPal (the button below).,Abre la página de donaciones del distrito en PayPal (el botón de abajo).,
+districts.give.step_name,Check the name at the top of the page: **{payee}**.,Revisa el nombre que aparece arriba en la página: **{payee}**.,"{payee} = paypal_name in data/districts.csv, the name the PayPal page shows"
+districts.give.step_name_generic,"Before you give, check that the page shows the district's name.","Antes de contribuir, revisa que la página muestre el nombre del distrito.",Used instead of step_name while paypal_name is empty
+districts.give.step_amount,"Enter the amount, then choose **Donate with PayPal** or **Debit or Credit Card**.",Escribe la cantidad y elige **PayPal** o **tarjeta de débito o crédito**.,The words in bold are the buttons on PayPal's page
+districts.give.step_amount_venmo,"Enter the amount, then choose **Donate with PayPal**, **Venmo** or **Debit or Credit Card**.","Escribe la cantidad y elige **PayPal**, **Venmo** o **tarjeta de débito o crédito**.","Same, when the PayPal page also has a Venmo button"
+districts.give.step_group,Giving for your group? E-mail the district at {email} with your group's name and G.S.O. number.,¿Contribuyes en nombre de tu grupo? Escribe al distrito a {email} con el nombre y el número OSG de tu grupo.,"{email} = the district's e-mail (email in data/districts.csv), shown as a link"
+districts.give.step_group_noemail,Giving for your group? Tell your DCM or the district treasurer your group's name and G.S.O. number.,¿Contribuyes en nombre de tu grupo? Dile a tu MCD o al tesorero del distrito el nombre y el número OSG de tu grupo.,Used instead of step_group while the district has no e-mail
+districts.give.qr_caption,Scan with your phone to give from it.,Escanéalo con tu teléfono para contribuir desde él.,Under a QR code (shown on computer and tablet screens only)
+districts.give.qr_caption_venmo,"Scan with your phone to give from it, with Venmo too.","Escanéalo con tu teléfono para contribuir desde él, también con Venmo.","Same, under the QR code of a PayPal page that also has a Venmo button"
+districts.give.qr_paypal_alt,QR code of {name}'s PayPal donation page,Código QR de la página de donaciones de PayPal del {name},Spoken by screen readers
+districts.give.qr_venmo_alt,QR code of {name}'s Venmo profile,Código QR del perfil de Venmo del {name},Spoken by screen readers
+districts.give.venmo_kicker,In the Venmo app,En la aplicación Venmo,Card for the district's own Venmo username (venmo in data/districts.csv)
+districts.give.venmo_title,Venmo,Venmo,
+districts.give.venmo_label,Venmo username,Usuario de Venmo,
+districts.give.venmo_body,"Find this username in Venmo, or open the district's profile. **Check the name** before you pay.",Busca este usuario en Venmo o abre el perfil del distrito. **Revisa el nombre** antes de pagar.,
+districts.give.venmo_cta,Open in Venmo,Abrir en Venmo,
+districts.give.mail_title,By mail,Por correo,
+districts.give.mail_body,Send a check to the district's mailing address:,Envía un cheque a la dirección postal del distrito:,Followed by po_box from data/districts.csv
+districts.give.safe,The payment is made on PayPal's or Venmo's own site or app: this website never sees your payment details.,El pago se hace en el propio sitio o aplicación de PayPal o Venmo: este sitio web nunca ve tus datos de pago.,
+districts.give.safe_paypal,The payment is made on PayPal's own site: this website never sees your payment details.,El pago se hace en el propio sitio de PayPal: este sitio web nunca ve tus datos de pago.,"Same, when the district has PayPal without Venmo"
+districts.give.safe_venmo,The payment is made in Venmo's own app or site: this website never sees your payment details.,El pago se hace en la propia aplicación o sitio de Venmo: este sitio web nunca ve tus datos de pago.,"Same, when the district has Venmo but no PayPal"
+districts.give.separate,"This goes to {name} only. The Area, your central office and G.S.O. each have their own treasurer.","Esto va solo al {name}. El Área, tu oficina central y la OSG tienen cada una su propio tesorero.",Followed by the link districts.aside.contribute_area
+districts.give.web,More ways to give on the district's website:,Más formas de contribuir en el sitio web del distrito:,"Followed by the district's contribute_url (data/districts.csv), when it has one"
 districts.find.title,Find an A.A. meeting near you,Encuentra una reunión de A.A. cerca de ti,
 districts.find.lead,"Meeting lists are kept by local central offices and intergroups, not by the district or the Area. Call or visit:","Las listas de reuniones las llevan las oficinas centrales e intergrupos locales, no el distrito ni el Área. Llama o visita:",
 districts.find.guide,Meeting Guide app,Aplicación Meeting Guide,

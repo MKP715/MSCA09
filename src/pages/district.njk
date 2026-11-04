@@ -121,12 +121,15 @@ eleventyComputed:
 {#- ============================================================== BODY -#}
 {#- sections that would be empty are left out (and so are their links) -#}
 {%- set hasDocs = (docs | length > 0) or d.website -%}
+{#- the Contribute section: the district's own PayPal / Venmo (data/districts.csv, partials/district-give.njk) -#}
+{%- set hasGive = d.paypal_url or d.venmo -%}
 {%- set navItems = [
   { id: "meeting", icon: "calendar-clock", key: "districts.nav.meeting", show: true },
   { id: "gsr", icon: "graduation-cap", key: ("districts.nav.gsr" if gsrInfo.kind == "school" else "districts.nav.gsr_orientation"), show: gsrInfo.items | length > 0 },
   { id: "about", icon: "info", key: "districts.nav.about", show: true },
   { id: "cities", icon: "map-pin", key: "districts.nav.cities", show: true },
   { id: "people", icon: "users", key: "districts.nav.people", show: true },
+  { id: "give", icon: "hand-coins", key: "districts.nav.give", show: hasGive },
   { id: "find", icon: "search", key: "districts.nav.find", show: true },
   { id: "events", icon: "calendar-days", key: "districts.nav.events", show: true },
   { id: "documents", icon: "file-text", key: "districts.nav.documents", show: hasDocs },
@@ -284,7 +287,18 @@ eleventyComputed:
               <div>
                 <dt class="text-xs font-bold tracking-wide text-ink-500 uppercase">{{ "districts.aside.contribute" | t(L) }}</dt>
                 <dd class="mt-1 text-sm leading-relaxed text-ink-600">
-                  {%- if d.contribute_url %}{{ "districts.aside.contribute_web" | t(L) }} <a href="{{ d.contribute_url }}" target="_blank" rel="noopener" class="font-semibold text-ocean-700 hover:underline">{{ d.contribute_url | hostname }}</a>{% if d.po_box %} {{ "districts.aside.contribute_mail" | t(L) }}{% endif %}
+                  {%- if hasGive %}
+                  {#- PayPal / Venmo: a button straight to it, and the step-by-step section (#give) -#}
+                  {{ ((("districts.aside.give_venmo" if (d.venmo or d.paypal_venmo) else "districts.aside.give_paypal")) if d.paypal_url else "districts.aside.give_venmo_only") | t(L) }}
+                  <span class="mt-2.5 flex flex-wrap gap-2">
+                    {%- if d.paypal_url %}<a href="{{ d.paypal_url }}" target="_blank" rel="noopener" class="btn btn-accent btn-sm">{% icon "hand-coins", "size-3.5" %}{{ ("districts.aside.give_btn_venmo" if d.paypal_venmo else "districts.aside.give_btn") | t(L) }}<span class="sr-only"> {{ "share.new_tab" | t(L) }}</span></a>{% endif %}
+                    {%- if d.venmo %}<a href="{{ d.venmo_url }}" target="_blank" rel="noopener" class="btn btn-white btn-sm">{% icon "smartphone", "size-3.5" %}{{ "districts.give.venmo_title" | t(L) }}<span class="sr-only"> {{ "share.new_tab" | t(L) }}</span></a>{% endif %}
+                  </span>
+                  {#- the district's own contributions page, when it has one, stays on the page beside PayPal / Venmo -#}
+                  {%- if d.contribute_url %}<span class="mt-2 block">{{ "districts.give.web" | t(L) }} <a href="{{ d.contribute_url }}" target="_blank" rel="noopener" class="font-semibold text-ocean-700 hover:underline">{{ d.contribute_url | hostname }}<span class="sr-only"> {{ "share.new_tab" | t(L) }}</span></a></span>{% endif %}
+                  {#- only the PayPal card has numbered steps -#}
+                  <a href="#give" class="mt-2 block font-semibold text-ocean-700 hover:underline">{{ ("districts.aside.give_more" if d.paypal_url else "districts.aside.give_more_venmo") | t(L) }}</a>
+                  {%- elif d.contribute_url %}{{ "districts.aside.contribute_web" | t(L) }} <a href="{{ d.contribute_url }}" target="_blank" rel="noopener" class="font-semibold text-ocean-700 hover:underline">{{ d.contribute_url | hostname }}</a>{% if d.po_box %} {{ "districts.aside.contribute_mail" | t(L) }}{% endif %}
                   {%- elif d.po_box %}{{ "districts.aside.contribute_mail_only" | t(L) }}
                   {%- else %}{{ "districts.aside.contribute_ask" | t(L) }}{% endif %}
                   <a href="{{ '/contribute/' | lurl(L) }}" class="mt-1 block font-semibold text-ocean-700 hover:underline">{{ "districts.aside.contribute_area" | t(L) }}</a>
@@ -398,6 +412,9 @@ eleventyComputed:
         {%- endif %}
         <p class="mt-4 flex items-start gap-2 text-sm text-ink-500">{% icon "shield-check", "size-4 mt-0.5 shrink-0 text-sage-600" %}<span>{{ "districts.people.anonymity" | t(L) }}</span></p>
       </section>
+
+      {#- Seventh Tradition: the district's own PayPal / Venmo, and its mailing address (only when it has PayPal or Venmo) -#}
+      {%- if hasGive %}{% include "partials/district-give.njk" %}{% endif %}
 
       {#- find a meeting -#}
       <section id="find" class="dx-section dx-panel" aria-labelledby="h-find">

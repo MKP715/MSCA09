@@ -48,6 +48,7 @@ import { fillSettings } from "../src/_lib/i18n.js";
 import { nameHits } from "../src/_lib/names.js";
 import { normStatus, holdsSeat } from "../src/_lib/status.js";
 import { compileLinkFixes } from "../src/_lib/calendar.js";
+import { paypalUrl, venmoHandle, venmoRoleLike } from "../src/_lib/give.js";
 
 const ROOT = process.cwd();
 const SITE = path.resolve(process.argv[2] || process.env.SITE_DIR || "_site");
@@ -334,6 +335,23 @@ for (const c of committeeRows) {
       if (!filled(r.pdf, r.pdf_es)) warn(where, `no printable copy (pdf, or pdf_es for a Spanish version): the flyer is shown without a PDF to download or print`);
     }
   }
+}
+
+// ------------------------------------------------------------- district Seventh Tradition links
+// data/districts.csv paypal_url / venmo (src/_lib/give.js): the "give" section of a district page sends money, so its
+// links must lead to PayPal or Venmo themselves — anything else is left off the page and stops the deploy here.
+// A Venmo username is published as written, so it must name a service role (venmoRoleLike) and hold no full name
+// (nameHits): a treasurer's own Venmo ("First-Last-1234") would publish a member's full name.
+for (const r of readCsv("districts.csv")) {
+  if (!r.slug) continue;
+  const where = `data/districts.csv row ${r._row} (${r.slug})`;
+  if (paypalUrl(r.paypal_url) === null)
+    err(where, `paypal_url "${r.paypal_url}" — use the district's own PayPal donation-button link (https://www.paypal.com/donate/?hosted_button_id=…), or leave it empty. PayPal.Me links are not accepted.`);
+  const venmo = venmoHandle(r.venmo);
+  if (venmo === null)
+    err(where, `venmo "${r.venmo}" — the district's own Venmo username (5–30 letters, digits, - or _, without @) or its profile link (https://venmo.com/u/…), or leave it empty`);
+  else if (venmo && (!venmoRoleLike(venmo) || nameHits(venmo.replace(/[-_]+/g, " ")).length))
+    err(where, `venmo "${venmo}" does not look like a district account (its name should say district/dist8/msca/area/treasurer/…, and no member's name). A personal Venmo, such as a treasurer's own, may not be published.`);
 }
 
 // ------------------------------------------------------------- meeting recordings

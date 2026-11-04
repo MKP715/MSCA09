@@ -4,6 +4,7 @@ import { DateTime } from "luxon";
 import markdownIt from "markdown-it";
 import { t, loc, lurl, altUrl, code, resetText, missing, dictionary } from "./i18n.js";
 import { DRIVE_FMT, ownSitePath } from "./calendar.js";
+import { qrSvg } from "./qr.js";
 
 export const TZ = "America/Los_Angeles";
 
@@ -251,6 +252,8 @@ export function registerFilters(eleventyConfig) {
     }
   });
   eleventyConfig.addFilter("ensureHttp", (u) => (!u ? "" : /^https?:\/\//.test(u) ? u : "https://" + u));
+  // {{ url | qrSvg(label, classes) | safe }}: the QR code of an address, drawn at build time (src/_lib/qr.js)
+  eleventyConfig.addFilter("qrSvg", (u, label = "", cls = "") => qrSvg(u, { label, cls }));
 
   // ---- dates (always Pacific time) ----
   eleventyConfig.addFilter("dt", (value, preset = "date", lang = "en") => formatDate(value, preset, lang));

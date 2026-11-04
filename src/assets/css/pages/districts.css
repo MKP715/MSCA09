@@ -275,4 +275,9 @@ html[data-motion="paused"] .dx-more, html[data-motion="paused"] .dx-more-fade { 
   .dx-more { height: auto !important; overflow: visible !important; }
   .dx-more-fade { display: none !important; }
   .dx-clamp-body { max-height: none !important; mask-image: none !important; -webkit-mask-image: none !important; }
+  /* Contribute (#give): on paper the QR code is the way to the PayPal / Venmo page, so it is printed (screens show it
+     from md up), and the address printed after a button (site.css a[href^=http]::after) wraps instead of being cut off */
+  #give figure { display: block !important; }
+  #give .btn { flex-wrap: wrap; white-space: normal; }
+  #give .btn::after { flex-basis: 100%; overflow-wrap: anywhere; }
 }
