@@ -393,7 +393,9 @@
   {
    "address": "9845 Belfast Dr",
    "allDay": false,
-   "also": [],
+   "also": [
+    "oc-central"
+   ],
    "cats": [],
    "city": "Garden Grove",
    "cost": "",
@@ -1061,7 +1063,7 @@
    "sources": {},
    "status": "empty",
    "unparsed": 0,
-   "watchModified": "2026-10-29T10:35:48"
+   "watchModified": "2026-11-03T14:05:02"
   },
   "nocco": {
    "adapter": "aanoc",
@@ -1104,20 +1106,22 @@
   },
   "oc-central": {
    "adapter": "tribe",
-   "count": 3,
+   "count": 4,
    "errorKind": "",
    "failingSince": "",
    "flyers": {
     "https://www.oc-aa.org/wp-content/uploads/2026/09/ACYPAA54_Flyer.png": "4aa1477cba04cc9fddcbf1367f9eb8c00c8c8310764ebc0b930afb5b49d40a2c 1429 2000 image/png",
     "https://www.oc-aa.org/wp-content/uploads/2026/09/doc01079620260909101242-pdf.jpg": "6c60d44ef02f4b765e5513316f8acaf0f9956efc8f9dd22a2ea670def919f35a 1088 1408 image/jpeg",
-    "https://www.oc-aa.org/wp-content/uploads/2026/10/District-12-Traditions-Day-2026-Flyer-scaled.png": "553fb579706d321a84d4c5473aac11707f210f023aaa6bac83c97d61702f8be4 1978 2560 image/png"
+    "https://www.oc-aa.org/wp-content/uploads/2026/10/District-12-Traditions-Day-2026-Flyer-scaled.png": "553fb579706d321a84d4c5473aac11707f210f023aaa6bac83c97d61702f8be4 1978 2560 image/png",
+    "https://www.oc-aa.org/wp-content/uploads/2026/11/IMG_7007.jpeg": "16f3f23c0a4bdf3c53956acac91c024c19de38dee9c2943fef4bb2756768fc76 500 647 image/jpeg"
    },
-   "lastChange": "2026-11-01",
+   "lastChange": "2026-11-05",
    "pageModified": "",
    "sources": {
     "co-oc-central-70269": "2026-11-14 a92c33d95673fb234def8da6ce33c22c4d49c5aa",
     "co-oc-central-70285": "2027-04-18 0aaacb4561f5e25961b2babc2708b6ab2d07fa47",
-    "co-oc-central-70340": "2026-11-07 244d8d376b6ef71069bf54e4f6713050ec1615f3"
+    "co-oc-central-70340": "2026-11-07 244d8d376b6ef71069bf54e4f6713050ec1615f3",
+    "co-oc-central-70392": "2026-11-15 6cc242ce510ae0a59142655ab39bfbbe88e6f29d"
    },
    "status": "ok",
    "unparsed": 0,
