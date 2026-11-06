@@ -581,13 +581,18 @@
    ],
    "flyers": [
     {
-     "h": 1408,
-     "mime": "image/jpeg",
-     "pdf": "https://hacoaa.org/wp-content/uploads/Trad-Bqt-flyer-2026.pdf",
-     "sha256": "9e7c9976f79da2de28f83ae67670c3c62f8a007f584620708dcd10179e7840cd",
-     "sizes": [],
-     "url": "https://hacoaa.org/wp-content/uploads/Trad-Bqt-flyer-2026-pdf.jpg",
-     "w": 1088
+     "h": 675,
+     "mime": "image/png",
+     "pdf": "",
+     "sha256": "f66a4ec5ba1fa7bd646d741729d7980b793856983d4677c2557b23aed1e315e6",
+     "sizes": [
+      [
+       300,
+       "https://hacoaa.org/wp-content/uploads/trad-26-300x390.png"
+      ]
+     ],
+     "url": "https://hacoaa.org/wp-content/uploads/trad-26.png",
+     "w": 519
     }
    ],
    "format": "In person",
@@ -595,7 +600,7 @@
    "lang": "English",
    "office": "haco",
    "src": "https://hacoaa.org/sober-event/traditions-banquet/",
-   "srcHash": "6e4e79728428bb6a552c9b43e36a4e6be84a538b",
+   "srcHash": "2b1f969f528529d52863413c78d82d7d41831ceb",
    "start": "2026-11-21T18:30:00-08:00",
    "summary": "",
    "title": "Traditions Banquet",
@@ -1013,14 +1018,14 @@
    "errorKind": "",
    "failingSince": "",
    "flyers": {
-    "https://hacoaa.org/wp-content/uploads/Trad-Bqt-flyer-2026-pdf.jpg": "9e7c9976f79da2de28f83ae67670c3c62f8a007f584620708dcd10179e7840cd 1088 1408 image/jpeg",
+    "https://hacoaa.org/wp-content/uploads/trad-26.png": "f66a4ec5ba1fa7bd646d741729d7980b793856983d4677c2557b23aed1e315e6 519 675 image/png",
     "https://hacoaa.org/wp-content/uploads/women-hispanic.png": "aa9c4f019ade25344161ee6914b1ca47a6f1b2c68cd4c055d766c8490539419f 733 515 image/png"
    },
-   "lastChange": "2026-10-30",
+   "lastChange": "2026-11-06",
    "pageModified": "",
    "sources": {
     "co-haco-27509": "2026-12-12 7d3114c7c6057408a1c530770f52ed2c29aa7e7d",
-    "co-haco-27560": "2026-11-21 6e4e79728428bb6a552c9b43e36a4e6be84a538b"
+    "co-haco-27560": "2026-11-21 2b1f969f528529d52863413c78d82d7d41831ceb"
    },
    "status": "ok",
    "unparsed": 0,
