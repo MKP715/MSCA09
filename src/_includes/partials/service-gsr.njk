@@ -1,0 +1,84 @@
+{#- "New GSR? Start here" — steps, packets and the GSR Preamble. Needs: lang, calendar, site. -#}
+{%- set L = lang -%}
+{%- set gsrSeries = calendar.bySlug["gsr-school"] if (calendar and calendar.bySlug) else null -%}
+{%- set nextArea = calendar.nextAreaMeeting if calendar else null -%}
+{%- set es = L.code == "es" -%}
+<section id="new-gsr" aria-labelledby="gsr-title" class="relative isolate overflow-hidden rounded-[2rem] bg-sage-50 px-5 py-10 sm:px-8 lg:px-12 lg:py-14 2xl:px-16" style="{{ 'sage' | accent }}">
+  <div class="bg-confetti absolute inset-0 -z-10 opacity-60" aria-hidden="true"></div>
+  <div class="grid grid-cols-1 gap-10 xl:grid-cols-12 xl:gap-14">
+    <div class="xl:col-span-7">
+      <p class="eyebrow">{% icon "sprout", "size-4" %}{{ "service.gsr.eyebrow" | t(L) }}</p>
+      <h2 id="gsr-title" class="h-section mt-2 text-balance">{{ "service.gsr.title" | t(L) }}</h2>
+      <p class="lead mt-3 max-w-3xl">{{ "service.gsr.lead" | t(L) }}</p>
+
+      {%- set steps = [
+        { n: 1, icon: "user-round-check", color: "sage", url: "mailto:registrar@msca09aa.org", ext: false },
+        { n: 2, icon: "map", color: "copper", url: "/districts/" | lurl(L), ext: false },
+        { n: 3, icon: "graduation-cap", color: "lime", url: "/committees/gsr-school/" | lurl(L), ext: false },
+        { n: 4, icon: "package-open", color: "ocean", url: ("https://www.aa.org/es/contenido-del-paquete-de-representante-de-servicios-generales-rsg" if es else "https://www.aa.org/contents-general-service-representative-gsr-kit-list"), ext: true },
+        { n: 5, icon: "calendar-check", color: "iris", url: (nextArea.url | lurl(L)) if nextArea else ("/service/area-meetings/" | lurl(L)), ext: false },
+        { n: 6, icon: "book-open-check", color: "coral", url: "/service/#learn-title" | lurl(L), ext: false }
+      ] -%}
+      <ol class="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2" role="list">
+        {%- for s in steps %}
+        <li class="reveal" style="{{ s.color | accent }}; --reveal-delay: {{ loop.index0 * 70 }}ms">
+          <a href="{{ s.url }}" {% if s.ext %}target="_blank" rel="noopener"{% endif %} class="group flex h-full gap-4 rounded-3xl bg-white p-4 shadow-soft ring-1 ring-ink-900/5 transition hover:-translate-y-0.5 hover:shadow-lift sm:p-5">
+            <span class="relative shrink-0">
+              <span class="icon-tile size-12">{% icon s.icon, "size-6" %}</span>
+              <span class="absolute -top-2 -left-2 grid size-6 place-items-center rounded-full bg-ink-950 text-xs font-extrabold text-white ring-2 ring-white">{{ s.n }}</span>
+            </span>
+            <span class="min-w-0">
+              <span class="block font-display text-[17px] font-bold text-ink-950 group-hover:text-(--a-700)">{{ ("service.gsr.step" + s.n + "_title") | t(L) }}</span>
+              <span class="mt-1 block text-sm leading-relaxed text-ink-600">
+                {%- if s.n == 3 and gsrSeries -%}
+                {{ "service.gsr.step3_body_live" | t(L, { when: (gsrSeries | loc("pattern", L)) }) }}
+                {%- elif s.n == 5 and nextArea -%}
+                {{ "service.gsr.step5_body_live" | t(L, { date: (nextArea.start | dt("date", L)) }) }}
+                {%- else -%}
+                {{ ("service.gsr.step" + s.n + "_body") | t(L) }}
+                {%- endif -%}
+              </span>
+            </span>
+          </a>
+        </li>
+        {%- endfor %}
+      </ol>
+
+      <div class="mt-8 rounded-3xl bg-white/80 p-5 ring-1 ring-ink-900/5 backdrop-blur sm:p-6">
+        <h3 class="flex items-center gap-2 font-display text-lg font-bold text-ink-950">{% icon "library-big", "size-5 text-sage-600" %}{{ "service.gsr.packets_title" | t(L) }}</h3>
+        {%- set reads = [
+          ["service.gsr.read_pamphlet", "https://www.aa.org/es/rsg-representante-de-servicios-generales" if es else "https://www.aa.org/gsr-general-service-representative", "book-open"],
+          ["service.gsr.read_kit", "https://www.aa.org/es/contenido-del-paquete-de-representante-de-servicios-generales-rsg" if es else "https://www.aa.org/contents-general-service-representative-gsr-kit-list", "package-open"],
+          ["service.gsr.read_handbook", "https://www.aa.org/es/contenido-del-manual-de-grupo" if es else "https://www.aa.org/contents-group-handbook-list", "users"],
+          ["service.gsr.read_manual", "https://www.aa.org/es/el-manual-de-servicio-de-aa-y-doce-conceptos-para-el-servicio-mundial" if es else "https://www.aa.org/aa-service-manualtwelve-concepts-world-services", "book-marked"],
+          ["service.gsr.read_traditions", "https://www.aa.org/es/the-twelve-traditions" if es else "https://www.aa.org/the-twelve-traditions", "scroll-text"],
+          ["service.gsr.read_concepts", "https://www.aa.org/es/the-twelve-concepts" if es else "https://www.aa.org/the-twelve-concepts", "landmark"]
+        ] -%}
+        <ul class="mt-3 grid grid-cols-1 gap-x-6 gap-y-1 sm:grid-cols-2" role="list">
+          {%- for r in reads %}
+          <li><a href="{{ r[1] }}" target="_blank" rel="noopener" class="group flex items-center gap-2.5 rounded-xl px-2 py-2 text-[15px] font-semibold text-ink-800 hover:bg-sage-50 hover:text-sage-800">{% icon r[2], "size-4 shrink-0 text-sage-600" %}<span class="flex-1">{{ r[0] | t(L) }}</span>{% icon "external-link", "size-3.5 text-ink-300 group-hover:text-sage-600" %}</a></li>
+          {%- endfor %}
+        </ul>
+        <p class="mt-3 text-sm text-ink-500">{{ "service.gsr.questions" | t(L) }} <a href="mailto:gsrschoolchair{{ '-es' if es }}@msca09aa.org" class="font-semibold text-ocean-700 hover:underline">gsrschoolchair{{ "-es" if es }}@msca09aa.org</a></p>
+      </div>
+    </div>
+
+    <figure class="svc-preamble xl:col-span-5">
+      <div class="svc-preamble__card">
+        <div class="flex items-center gap-3 pr-10 sm:pr-24">
+          <img src="/assets/img/logo/logo-{{ L.code }}-160.webp" alt="" width="56" height="56" class="size-14 rounded-full bg-white p-0.5 shadow-soft" loading="lazy">
+          <div>
+            <p class="text-xs font-bold tracking-[0.14em] text-balance text-coral-700 uppercase sm:tracking-[0.18em]">{{ "service.gsr.preamble_kicker" | t(L) }}</p>
+            <h3 class="font-display text-2xl font-extrabold text-ink-950">{{ "service.gsr.preamble_title" | t(L) }}</h3>
+          </div>
+        </div>
+        <blockquote class="mt-6 space-y-3 font-display text-lg leading-relaxed text-ink-800 2xl:text-xl" lang="en">
+          {%- for i in [1, 2, 3, 4, 5, 6] %}
+          <p{% if i == 1 %} class="font-bold text-ink-950"{% endif %}>{{ ("service.gsr.preamble_" + i) | t("en") }}</p>
+          {%- endfor %}
+        </blockquote>
+        <figcaption class="mt-6 border-t border-ink-100 pt-4 text-sm leading-relaxed text-ink-500">{{ "service.gsr.preamble_note" | t(L) }}</figcaption>
+      </div>
+    </figure>
+  </div>
+</section>

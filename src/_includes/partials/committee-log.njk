@@ -1,0 +1,25 @@
+{#- The committee's live working document (the log row of data/committee-resources.csv): a Google Doc or Sheet the
+    committee keeps up to date (minutes, a dated log of its work), as a card near the top of its page, drawn like the
+    website card (committee-site.njk); the page header and Quick links open it too. Linked, never copied, so the page
+    always opens the latest version. A document in one language says so on the other language's page ("en inglés").
+    status = hidden on the row takes it off the site (src/_data/committees.js). Expects: c, L. -#}
+{%- if c.log %}
+{%- set Lc = L | langCode -%}
+{%- set dlang = c.log.language | lower | trim -%}
+{%- set language = (("calendar.flyer_in." + dlang) | t(L)) if (dlang == "en" or dlang == "es") and dlang != Lc else "" -%}
+<section class="cm-site cm-log" aria-labelledby="cm-log-h">
+  <span class="icon-tile size-14 rounded-2xl lg:self-start" aria-hidden="true">{% icon "notebook-pen", "size-7" %}</span>
+  <div class="min-w-0">
+    <p class="cm-kicker">{{ "committees.log_label" | t(L) }}</p>
+    <h2 id="cm-log-h" class="mt-1 font-display text-xl font-bold text-balance text-ink-950 sm:text-2xl">{{ (c.log | loc("title", L)) or ("committees.log_title" | t(L)) }}</h2>
+    {#- .cm-site-url brings its own top margin; the language chip gets the same, so the two line up -#}
+    <p class="flex flex-wrap items-center gap-x-2">
+      <span class="cm-site-url">{% icon "file-text", "size-3.5 shrink-0 text-sage-600" %}<span>{{ c.log.url | hostname }}</span></span>
+      {%- if language %}<span class="chip chip-accent mt-3">{% icon "languages", "size-3.5" %}{{ language }}</span>{% endif %}
+    </p>
+    <p class="mt-3 max-w-3xl text-[15px] leading-relaxed text-pretty text-ink-700">{{ (c.log | loc("body", L)) or ("committees.log_body" | t(L)) }}</p>
+    <p class="mt-2 flex items-start gap-1.5 text-sm text-ink-500">{% icon "refresh-cw", "size-4 mt-0.5 shrink-0 text-[var(--a-600)]" %}<span>{{ "committees.log_live" | t(L) }}</span></p>
+  </div>
+  <a href="{{ c.log.url }}" target="_blank" rel="noopener" class="btn btn-accent btn-lg w-full lg:w-auto">{{ "committees.log_open" | t(L) }}<span class="sr-only">{{ (" (" + language + ")") if language }} {{ "share.new_tab" | t(L) }}</span>{% icon "external-link", "size-5" %}</a>
+</section>
+{%- endif %}

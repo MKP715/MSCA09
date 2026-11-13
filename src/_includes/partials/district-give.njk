@@ -1,0 +1,104 @@
+{#-
+  The Contribute section of a district page (/districts/<slug>/#give): the district's own Seventh Tradition ways to give.
+  Shown only when the district has PayPal or Venmo (district.njk: hasGive); otherwise the Seventh Tradition line in the
+  contact box says how to give.
+  Content: data/districts.csv — paypal_url (the district's PayPal donation link), paypal_name (the name that page shows),
+  paypal_venmo (yes = that page also has a Venmo button), venmo (the district's own Venmo username), po_box — read and
+  checked in src/_lib/give.js. Wording: data/text/districts.csv (districts.give.*). QR codes: qrSvg (src/_lib/qr.js),
+  drawn at build time from the same addresses, for people reading on a computer or on paper (hidden on phone
+  screens; districts.css prints them). A district's own contributions page (contribute_url) is listed too.
+  Expects (from district.njk): L, d, name.
+  The money goes to the district, not to the Area: the note at the end says so and links to /contribute/.
+-#}
+{%- from "macros/content.njk" import copyRow with context -%}
+{%- set payee = d.paypal_name -%}
+<section id="give" class="dx-section dx-panel" aria-labelledby="h-give">
+  <div class="flex flex-wrap items-end justify-between gap-3">
+    <h2 id="h-give" class="dx-h2"><span class="icon-tile">{% icon "hand-coins", "size-5" %}</span>{{ "districts.give.title" | t(L, { name: name }) }}</h2>
+    <span class="chip chip-accent">{{ "districts.give.chip" | t(L) }}</span>
+  </div>
+  <p class="mt-3 max-w-3xl text-ink-600">{{ "districts.give.lead" | t(L, { name: name }) }}</p>
+
+  <div class="mt-6 grid grid-cols-1 gap-5">
+    {%- if d.paypal_url %}
+    {#- PayPal: the district's donation page (with Venmo and card buttons when paypal_venmo = yes) -#}
+    <article class="overflow-hidden rounded-3xl bg-white ring-1 ring-ink-900/10" style="{{ 'ocean' | accent }}" aria-labelledby="give-online">
+      <header class="relative overflow-hidden px-5 py-5 text-white sm:px-7" style="background: linear-gradient(115deg, var(--color-ocean-800), var(--color-ocean-700) 45%, var(--color-iris-700));">
+        <span class="pointer-events-none absolute -right-4 -bottom-7 text-white/15" aria-hidden="true">{% icon "hand-coins", "size-32" %}</span>
+        <div class="relative">
+          <p class="text-xs font-bold tracking-[0.18em] uppercase">{{ "districts.give.online_kicker" | t(L) }}</p>
+          <h3 id="give-online" class="mt-1 font-display text-2xl font-extrabold sm:text-3xl">{{ ("districts.give.online_title_venmo" if d.paypal_venmo else "districts.give.online_title") | t(L) }}</h3>
+          <p class="mt-1 max-w-xl text-[15px] text-white">{{ ("districts.give.online_sub_venmo" if d.paypal_venmo else "districts.give.online_sub") | t(L) }}</p>
+        </div>
+      </header>
+      <div class="grid grid-cols-1 gap-6 p-5 sm:p-7 md:grid-cols-[minmax(0,1fr)_11rem] md:items-start lg:gap-8">
+        <div>
+          <p class="mb-4 text-xs font-bold tracking-[0.16em] text-ocean-800 uppercase">{{ "districts.give.how" | t(L) }}</p>
+          {#- step 4 names the district's role mailbox: {email} becomes a mailto link after Markdown (as the Zelle ID on /contribute/) -#}
+          {%- set mailHtml = ('<a href="mailto:' + (d.email | escape) + '" class="font-semibold break-words text-ocean-700 hover:underline">' + ((d.email | escape) | replace("@", "@<wbr>")) + '</a>') if d.email else "" %}
+          {%- set steps = [
+            "districts.give.step_open" | t(L),
+            ("districts.give.step_name" | t(L, { payee: payee }) if payee else "districts.give.step_name_generic" | t(L)),
+            ("districts.give.step_amount_venmo" if d.paypal_venmo else "districts.give.step_amount") | t(L),
+            ("districts.give.step_group" if d.email else "districts.give.step_group_noemail") | t(L)
+          ] %}
+          {#- role="list": Safari drops list semantics from an unstyled list; the numbers are read out as in the Zelle steps -#}
+          <ol class="space-y-3.5" role="list">
+            {%- for s in steps %}
+            <li class="flex items-start gap-3">
+              <span class="grid size-7 shrink-0 place-items-center rounded-full bg-gradient-to-br from-ocean-700 to-iris-700 font-display text-sm font-bold text-white">{{ loop.index }}</span>
+              <span class="min-w-0 pt-0.5 text-[15px] leading-relaxed text-ink-700 [&_strong]:font-bold [&_strong]:text-ink-950">{{ (s | mdi) | replace("{email}", mailHtml) | safe }}</span>
+            </li>
+            {%- endfor %}
+          </ol>
+          <a href="{{ d.paypal_url }}" target="_blank" rel="noopener" class="btn btn-accent mt-6 max-sm:w-full">{% icon "hand-coins", "size-4" %}{{ ("districts.aside.give_btn_venmo" if d.paypal_venmo else "districts.aside.give_btn") | t(L) }}{% icon "external-link", "size-3.5 opacity-80" %}<span class="sr-only"> {{ "share.new_tab" | t(L) }}</span></a>
+        </div>
+        <figure class="mx-auto hidden w-full max-w-[11rem] text-center md:block">
+          <div class="qr-frame"><div class="rounded-[1.15rem] bg-white p-2.5">{{ d.paypal_url | qrSvg("districts.give.qr_paypal_alt" | t(L, { name: name }), "block h-auto w-full") | safe }}</div></div>
+          <figcaption class="mt-4 text-sm leading-snug font-semibold text-ink-700">{{ ("districts.give.qr_caption_venmo" if d.paypal_venmo else "districts.give.qr_caption") | t(L) }}</figcaption>
+        </figure>
+      </div>
+    </article>
+    {%- endif %}
+
+    {%- if d.venmo %}
+    {#- Venmo: the district's own username (only when it has one apart from the PayPal page) -#}
+    <article class="overflow-hidden rounded-3xl bg-white ring-1 ring-ink-900/10" style="{{ 'iris' | accent }}" aria-labelledby="give-venmo">
+      <div class="grid grid-cols-1 gap-6 p-5 sm:p-7 md:grid-cols-[minmax(0,1fr)_11rem] md:items-start lg:gap-8">
+        <div class="min-w-0">
+          <p class="text-xs font-bold tracking-[0.16em] text-iris-800 uppercase">{{ "districts.give.venmo_kicker" | t(L) }}</p>
+          <h3 id="give-venmo" class="mt-1 font-display text-2xl font-extrabold text-ink-950">{{ "districts.give.venmo_title" | t(L) }}</h3>
+          <div class="mt-4">{{ copyRow({ label: "districts.give.venmo_label" | t(L), value: "@" + d.venmo, lang: L, mono: true, big: true }) }}</div>
+          <p class="mt-4 text-[15px] leading-relaxed text-ink-700 [&_strong]:font-bold [&_strong]:text-ink-950">{{ "districts.give.venmo_body" | t(L) | mdi | safe }}</p>
+          <a href="{{ d.venmo_url }}" target="_blank" rel="noopener" class="btn btn-accent mt-5 max-sm:w-full">{% icon "smartphone", "size-4" %}{{ "districts.give.venmo_cta" | t(L) }}{% icon "external-link", "size-3.5 opacity-80" %}<span class="sr-only"> {{ "share.new_tab" | t(L) }}</span></a>
+        </div>
+        <figure class="mx-auto hidden w-full max-w-[11rem] text-center md:block">
+          <div class="qr-frame"><div class="rounded-[1.15rem] bg-white p-2.5">{{ d.venmo_url | qrSvg("districts.give.qr_venmo_alt" | t(L, { name: name }), "block h-auto w-full") | safe }}</div></div>
+          <figcaption class="mt-4 text-sm leading-snug font-semibold text-ink-700">{{ "districts.give.qr_caption" | t(L) }}</figcaption>
+        </figure>
+      </div>
+    </article>
+    {%- endif %}
+
+    {%- if d.po_box %}
+    {#- by mail: the district's mailing address (the same one the contact box shows) -#}
+    <div class="flex items-start gap-4 rounded-3xl bg-(--a-50) p-5 ring-1 ring-(--a-200) sm:p-6">
+      <span class="icon-tile-soft hidden sm:grid">{% icon "mailbox", "size-5" %}</span>
+      <div class="min-w-0">
+        <h3 class="font-display text-lg font-bold text-ink-950">{{ "districts.give.mail_title" | t(L) }}</h3>
+        <p class="mt-1 text-[15px] leading-relaxed text-ink-700">{{ "districts.give.mail_body" | t(L) }} <span class="font-semibold text-ink-950">{{ d.po_box }}</span></p>
+      </div>
+    </div>
+    {%- endif %}
+  </div>
+
+  <ul class="mt-6 space-y-2.5 text-sm leading-relaxed text-ink-600" role="list">
+    {#- the district's own contributions page (contribute_url), when it has one -#}
+    {%- if d.contribute_url %}
+    <li class="flex items-start gap-2">{% icon "globe", "size-4 mt-0.5 shrink-0 text-ocean-600" %}<span>{{ "districts.give.web" | t(L) }} <a href="{{ d.contribute_url }}" target="_blank" rel="noopener" class="font-semibold text-ocean-700 hover:underline">{{ d.contribute_url | hostname }}<span class="sr-only"> {{ "share.new_tab" | t(L) }}</span></a></span></li>
+    {%- endif %}
+    {#- where the payment is made: only the services this district offers are named -#}
+    <li class="flex items-start gap-2">{% icon "shield-check", "size-4 mt-0.5 shrink-0 text-sage-600" %}<span>{{ ((("districts.give.safe" if (d.venmo or d.paypal_venmo) else "districts.give.safe_paypal")) if d.paypal_url else "districts.give.safe_venmo") | t(L) }}</span></li>
+    <li class="flex items-start gap-2">{% icon "split", "size-4 mt-0.5 shrink-0 text-ocean-600" %}<span>{{ "districts.give.separate" | t(L, { name: name }) }} <a href="{{ '/contribute/' | lurl(L) }}" class="font-semibold whitespace-nowrap text-ocean-700 hover:underline">{{ "districts.aside.contribute_area" | t(L) }}</a></span></li>
+  </ul>
+</section>

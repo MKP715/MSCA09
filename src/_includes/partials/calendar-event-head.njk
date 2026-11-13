@@ -1,0 +1,9 @@
+{#- Inside <head> of /events/<slug>/ (front matter headInclude): schema.org Event data for a one-time event's coming
+    date, when it has a place with a street or city (calJsonLd in _lib/plugins/calendar.js: none for repeating,
+    online-only or place-to-be-announced entries); held flyers never appear (data/flyer-holds.csv). -#}
+{%- if entry and entry.item -%}
+{%- set ld = entry.item | calJsonLd(lang, entry.item | calMetaDescription(lang)) -%}
+{%- if ld.length %}
+  <script type="application/ld+json">{{ (ld[0] if ld.length == 1 else ld) | json | safe }}</script>
+{%- endif -%}
+{%- endif -%}

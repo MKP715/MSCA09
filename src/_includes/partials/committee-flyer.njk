@@ -1,0 +1,28 @@
+{#- A committee's standing flyer (flyer rows of data/committee-resources.csv), near the top of its page: the pictures of
+    the flyer's pages in the site's flyer gallery (lightbox: flyerGallery in macros/events.njk) and a link to the printable
+    PDF. Spanish pages show the Spanish version when the row has one (url_es / pdf_es); a flyer in one language only says
+    so on the other language's page ("Volante del comité (en inglés)"). Expects: c, L. -#}
+{%- from "macros/events.njk" import flyerGallery with context -%}
+{%- set Lc = L | langCode -%}
+{%- for f in c.flyers %}
+{%- set useEs = f.pages_es.length and (Lc == "es" or not f.pages.length) -%}
+{%- set pages = f.pages_es if useEs else f.pages -%}
+{%- set pdf = (f.pdf_es or f.pdf) if useEs else (f.pdf or f.pdf_es) -%}
+{%- set flang = "es" if useEs else (f.language | lower | trim) -%}
+{%- set language = (("calendar.flyer_in." + flang) | t(L)) if (flang == "en" or flang == "es") and flang != Lc else "" -%}
+{%- set title = f | loc("title", L) -%}
+{%- set body = f | loc("body", L) -%}
+<section class="cm-flyer" aria-labelledby="cm-flyer-h{{ loop.index }}">
+  <div class="min-w-0">
+    <p class="cm-kicker">{% icon "image", "size-4" %}{{ ("committees.flyer_label_lang" | t(L, { language: language })) if language else ("committees.flyer_label" | t(L)) }}</p>
+    <h2 id="cm-flyer-h{{ loop.index }}" class="mt-1 font-display text-xl font-bold text-balance text-ink-950 sm:text-2xl">{{ title }}</h2>
+    {%- if body %}<p class="mt-2 max-w-2xl text-[15px] leading-relaxed text-pretty text-ink-700">{{ body }}</p>{% endif %}
+    {%- if pdf %}
+    <a href="{{ pdf | driveView }}" target="_blank" rel="noopener" class="btn btn-accent mt-5 max-w-full whitespace-normal text-left">{% icon "download", "size-4 shrink-0" %}{{ ("committees.flyer_pdf_lang" | t(L, { language: language })) if language else ("committees.flyer_pdf" | t(L)) }}<span class="sr-only"> {{ "share.new_tab" | t(L) }}</span></a>
+    {%- endif %}
+  </div>
+  {#- two or more pictures are the pages of this one flyer: "Open page 2 of the flyer full size", "<title> — page 2 of 2" -#}
+  {%- set multi = pages.length > 1 %}
+  <div class="cm-flyer-pages">{{ flyerGallery({ flyers: pages, lang: L, alt: ("calendar.flyer_alt" | t(L, { title: title })), openKey: ("committees.flyer_page_open" if multi else ""), altKey: ("committees.flyer_page_alt" if multi else ""), altTitle: title, sizes: "(min-width: 1280px) 16rem, (min-width: 640px) 40vw, 45vw" }) }}</div>
+</section>
+{%- endfor %}

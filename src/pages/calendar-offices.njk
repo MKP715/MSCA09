@@ -1,0 +1,255 @@
+---
+pagination:
+  data: langs
+  size: 1
+  alias: lang
+  addAllPagesToCollections: true
+permalink: "{{ lang.prefix }}/calendar/central-offices/"
+layout: base.njk
+title_key: calendar.offices.title
+meta_title_key: calendar.offices.meta_title
+description_key: calendar.offices.description
+accent: copper
+scripts: ["/assets/js/flyers.js"]
+jsText: ["calendar.offices.count_one", "calendar.offices.count_n", "calendar.offices.count_of"]
+source: "README.md#central-office-events"
+---
+{#-
+  /calendar/central-offices/ — the events the central offices and intergroups of the Area post on their own websites
+  (officeEvents, src/_data/officeEvents.js: read once a day by scripts/office-events.mjs in deploy.yml; the Area
+  calendar's own entries win, so an event already in Google Calendar is not repeated here). Reached from the Events
+  page (header button, the strip under the calendar, the "Central offices" quick view's events), the Happenings jump
+  bar and /calendar/flyers/. From the top:
+    1. a slim header in the calendar's style: breadcrumbs (Home › Events › Central office events, also given to search
+       engines; no Event data: the offices' pages are the originals), title, lead, share, the two numbers
+    2. the filters (flyers.js, Alpine "flyerWall", as on /calendar/flyers/): search, When, Office, Type, Language,
+       Format; kept in the address (?office=nocco&type=social&when=30…)
+    3. #events: the upcoming events by month. Each card (macros/events.njk officeEventCard) shows the office's checked
+       flyer (or the type's poster), the date, place, cost and the office's text, and links to the office's own page
+       about it. app.js removes a card once it is over (data-hide-after). Kept out of site search (the offices' text
+       changes every day): the header and the office cards are what site search finds
+    4. #offices: every central office, by region, with how its events reach this page and a link to its events page
+    5. a note: where the events come from, and that the Area calendar's entries come first
+  No build time is printed: an unchanged import gives the same page all day.
+-#}
+{%- from "macros/events.njk" import officeEventCard -%}
+{%- from "macros/content.njk" import officeCard with context -%}
+{%- from "macros/ui.njk" import breadcrumbLd, shareButton, emptyState -%}
+{%- set L = lang -%}
+{%- set CO = officeEvents -%}
+{%- set all = CO.events -%}
+{%- set firstId = all[0].id if all.length else "" -%}
+{%- set sizes = "(min-width: 1920px) 18vw, (min-width: 1536px) 22vw, (min-width: 1024px) 30vw, (min-width: 480px) 45vw, 92vw" -%}
+
+{#- ---------------------------------------------------------- slim page header -#}
+<section class="cal-hero relative isolate overflow-hidden" style="{{ 'copper' | accent }}">
+  <div class="cal-hero__bg absolute inset-0 -z-10" aria-hidden="true"></div>
+  <div class="bg-confetti absolute inset-0 -z-10 opacity-60" aria-hidden="true"></div>
+  <img src="/assets/img/logo/logo-{{ L.code }}-256.webp" alt="" aria-hidden="true" width="256" height="256" loading="lazy"
+       class="pointer-events-none absolute -top-10 right-6 -z-10 hidden size-56 rotate-12 opacity-[0.07] lg:block 2xl:right-16">
+  <div class="wrap pt-4 pb-6 sm:pt-5 lg:pt-6 lg:pb-8">
+    <div class="mb-3 flex items-center justify-between gap-3">
+      <nav aria-label="{{ 'nav.breadcrumb' | t(L) }}" class="min-w-0 text-sm">
+        <ol class="-my-3 flex flex-wrap items-center gap-x-1.5 text-ink-600 lg:my-0 lg:gap-y-1.5">
+          <li><a href="{{ '/' | lurl(L) }}" class="-ml-3.5 inline-flex size-11 items-center justify-center hover:text-ink-900 lg:ml-0 lg:size-auto">{% icon "house", "size-4" %}<span class="sr-only">{{ "nav.home" | t(L) }}</span></a></li>
+          <li class="flex items-center gap-1.5">{% icon "chevron-right", "size-3.5 text-ink-300" %}<a href="{{ '/calendar/' | lurl(L) }}" class="inline-flex min-h-11 min-w-11 items-center justify-center hover:text-ink-900 lg:min-h-0 lg:min-w-0">{{ "calendar.title" | t(L) }}</a></li>
+          <li class="flex min-h-11 min-w-0 items-center gap-1.5 lg:min-h-0">{% icon "chevron-right", "size-3.5 text-ink-300" %}<span class="truncate font-medium text-ink-800" aria-current="page">{{ title }}</span></li>
+        </ol>
+      </nav>
+      {{ shareButton({ lang: L, title: title, style: "pill" }) }}
+    </div>
+    {{ breadcrumbLd({ lang: L, crumbs: [{ label_key: "calendar.title", url: "/calendar/" }], title: title, base: site.url }) }}
+    <div class="flex flex-wrap items-center justify-between gap-x-10 gap-y-4">
+      <div class="flex min-w-0 flex-1 basis-[20rem] items-center gap-4">
+        <span class="icon-tile hidden size-12 shrink-0 rounded-2xl sm:grid lg:size-14">{% icon "building-2", "size-6 lg:size-7" %}</span>
+        <div class="min-w-0">
+          <h1 class="font-display text-3xl font-extrabold tracking-tight text-balance text-ink-950 sm:text-4xl 2xl:text-5xl" data-pagefind-weight="10">{{ title }}</h1>
+          <p class="mt-1 text-[15px] leading-snug text-pretty text-ink-600 sm:text-base">{{ "calendar.offices.lead" | t(L) }}</p>
+        </div>
+      </div>
+      <dl class="cal-stats" aria-label="{{ 'calendar.stats.label' | t(L) }}">
+        <div class="cal-stat" style="{{ 'copper' | accent }}"><dt>{{ "calendar.offices.stat_events" | t(L) }}</dt><dd>{{ all.length }}</dd></div>
+        <div class="cal-stat" style="{{ 'ocean' | accent }}"><dt>{{ "calendar.offices.stat_offices" | t(L) }}</dt><dd>{{ CO.stats.auto }}</dd></div>
+      </dl>
+    </div>
+    <div class="mt-4 flex flex-wrap gap-2">
+      <a href="{{ '/calendar/' | lurl(L) }}?src=co" class="btn btn-white btn-sm">{% icon "calendar-days", "size-4 text-ocean-600" %}{{ "calendar.offices.in_calendar" | t(L) }}</a>
+      <a href="#offices" class="btn btn-ghost btn-sm">{% icon "building-2", "size-4" %}{{ "calendar.offices.offices_title" | t(L) }}</a>
+    </div>
+  </div>
+</section>
+
+{%- if all.length %}
+<div x-data="flyerWall" data-fw-count="calendar.offices" class="fw-page wrap pt-6 pb-10 sm:pt-8 lg:pt-10 lg:pb-14">
+  {#- ---------------------------------------------------------- filters (with JavaScript only) -#}
+  <form class="fw-bar" role="search" aria-label="{{ 'calendar.offices.filters_label' | t(L) }}" @submit.prevent data-pagefind-ignore>
+    <div class="fw-bar__top">
+      <label class="cal-search fw-search">
+        {% icon "search", "size-5 shrink-0 text-ink-500" %}
+        <span class="sr-only">{{ "calendar.offices.search_label" | t(L) }}</span>
+        <input type="search" x-model.debounce.250ms="f.q" placeholder="{{ 'calendar.offices.search' | t(L) }}" autocomplete="off" enterkeyhint="search">
+      </label>
+      <button type="button" class="cal-filter-btn fw-toggle" @click="open = !open" aria-expanded="false" :aria-expanded="open.toString()" aria-controls="fw-panel">
+        {% icon "sliders-horizontal", "size-4" %}{{ "ui.filters" | t(L) }}<span class="cal-filter-btn__n" x-cloak x-show="activeCount() > 0" x-text="activeCount()"></span>
+      </button>
+      <p class="fw-count"><strong x-text="countText()">{{ ("calendar.offices.count_one" | t(L)) if all.length == 1 else ("calendar.offices.count_n" | t(L, { n: all.length })) }}</strong></p>
+      <button type="button" class="cal-clear" x-cloak x-show="activeCount() > 0" @click="clear()">{{ "calendar.flyers.clear" | t(L) }}</button>
+    </div>
+    <p class="sr-only" role="status" aria-live="polite" x-text="announce"></p>
+
+    <div id="fw-panel" class="fw-panel" :class="open && 'is-open'" @keydown.escape="if (open) { $event.stopPropagation(); done() }">
+      {#- ---- when: all upcoming (default) · next 30 / 90 days · a month with an event -#}
+      <fieldset class="fw-group">
+        <legend class="flt-legend">{{ "calendar.flyers.when" | t(L) }}</legend>
+        <div class="flt-pills">
+          {%- for w in [{ v: "", key: "calendar.flyers.when_all", icon: "calendar-days" }, { v: "30", key: "calendar.flyers.when_30", icon: "calendar-clock" }, { v: "90", key: "calendar.flyers.when_90", icon: "calendar-range" }] %}
+          <label class="flt-pill" style="{{ 'ocean' | accent }}">
+            <input type="radio" class="sr-only" name="fw-when" value="{{ w.v }}" x-model="f.when"{% if not w.v %} checked{% endif %}>
+            <span class="flt-pill__in">{% icon w.icon, "size-3.5" %}{{ w.key | t(L) }}<span class="flt-pill__n" x-text="facet('when', {{ w.v | json }})">{{ all.length if not w.v }}</span></span>
+          </label>
+          {%- endfor %}
+          {%- if CO.months.length > 1 %}
+          <label class="fw-month-pick">
+            <span class="sr-only">{{ "calendar.flyers.month" | t(L) }}</span>
+            <select class="flt-select" data-fw-months :value="monthValue()" @change="f.when = $event.target.value">
+              <option value="">{{ "calendar.flyers.any_month" | t(L) }}</option>
+              {%- for m in CO.months %}
+              {%- set ml = m.key | dt("month", L) | capitalize %}
+              <option value="{{ m.key }}" :disabled="facet('month', {{ m.key | json }}) === 0 && f.when !== {{ m.key | json }}" x-text="optLabel({{ ml | json }}, 'month', {{ m.key | json }})">{{ ml }}</option>
+              {%- endfor %}
+            </select>
+          </label>
+          {%- endif %}
+        </div>
+      </fieldset>
+
+      {#- ---- language and format: any of the chosen -#}
+      <fieldset class="fw-group">
+        <legend class="flt-legend">{{ "calendar.filters.language" | t(L) }}</legend>
+        <div class="flt-pills">
+          {%- for lg in [{ k: "en", key: "language.english", color: "sea" }, { k: "es", key: "language.spanish", color: "coral" }, { k: "bi", key: "language.bilingual", color: "sun" }] %}
+          <label class="flt-pill" style="{{ lg.color | accent }}">
+            <input type="checkbox" class="sr-only" value="{{ lg.k }}" x-model="f.langs">
+            <span class="flt-pill__in">{% icon "languages", "size-3.5" %}{{ lg.key | t(L) }}<span class="flt-pill__n" x-text="facet('langs', {{ lg.k | json }})">{{ all | where("langKey", lg.k) | length }}</span></span>
+          </label>
+          {%- endfor %}
+        </div>
+      </fieldset>
+      <fieldset class="fw-group">
+        <legend class="flt-legend">{{ "calendar.filters.format" | t(L) }}</legend>
+        <div class="flt-pills">
+          {%- for fm in [{ k: "in-person", key: "format.in_person", icon: "map-pin", color: "sage" }, { k: "hybrid", key: "format.hybrid", icon: "monitor-smartphone", color: "iris" }, { k: "online", key: "format.virtual", icon: "video", color: "ocean" }] %}
+          <label class="flt-pill" style="{{ fm.color | accent }}">
+            <input type="checkbox" class="sr-only" value="{{ fm.k }}" x-model="f.formats">
+            <span class="flt-pill__in">{% icon fm.icon, "size-3.5" %}{{ fm.key | t(L) }}<span class="flt-pill__n" x-text="facet('formats', {{ fm.k | json }})">{{ all | where("formatKey", fm.k) | length }}</span></span>
+          </label>
+          {%- endfor %}
+        </div>
+      </fieldset>
+
+      {#- ---- office and type: only those the events have -#}
+      <div class="fw-group fw-selects">
+        <label class="block min-w-0">
+          <span class="flt-legend">{{ "calendar.offices.office" | t(L) }}</span>
+          <select class="flt-select" data-fw-offices-list x-model="f.office">
+            <option value="">{{ "calendar.offices.any_office" | t(L) }}</option>
+            {%- for o in CO.offices %}{% if o.count %}
+            {%- set on = o.name_es if L.code == "es" else o.name_en %}
+            <option value="{{ o.key }}" x-text="optLabel({{ on | json }}, 'office', {{ o.key | json }})">{{ on }}</option>
+            {%- endif %}{% endfor %}
+          </select>
+        </label>
+        <label class="block min-w-0">
+          <span class="flt-legend">{{ "calendar.flyers.type" | t(L) }}</span>
+          <select class="flt-select" data-fw-types x-model="f.type">
+            <option value="">{{ "calendar.flyers.all_types" | t(L) }}</option>
+            {%- for ty in CO.types %}
+            {%- set tl = ty | calLoc("label", L) %}
+            <option value="{{ ty.slug }}" x-text="optLabel({{ tl | json }}, 'type', {{ ty.slug | json }})">{{ tl }}</option>
+            {%- endfor %}
+          </select>
+        </label>
+      </div>
+
+      {#- phones and tablets: fold the filters away and go back to the events (Escape does the same) -#}
+      <div class="fw-panel__foot">
+        <button type="button" class="btn btn-ocean flex-1" @click="done()">
+          {{ "calendar.filters.show" | t(L) }} <span class="rounded-full bg-white/25 px-2 py-0.5 text-xs" x-text="Math.max(shown, 0)">{{ all.length }}</span>
+        </button>
+      </div>
+    </div>
+  </form>
+
+  {#- the target of "Clear filters" in the empty state (the button goes away) -#}
+  <div x-ref="results" tabindex="-1" class="fw-results">
+    {#- ---------------------------------------------------------- events, by month (not in site search: the offices'
+        text changes every day; the header and the office cards are what site search finds) -#}
+    <section id="events" class="fw-section scroll-mt-28" aria-labelledby="fw-events-title" data-fw-section data-pagefind-ignore="all">
+      <div class="fw-section__head">
+        <h2 id="fw-events-title" class="h-section text-balance">{{ "calendar.offices.events_title" | t(L) }}</h2>
+        <p class="lead mt-2 text-pretty">{{ "calendar.offices.events_lead" | t(L) }}</p>
+      </div>
+      <div class="fw-months">
+      {%- for m in CO.months %}
+      <section class="fw-month" data-fw-month="{{ m.key }}" aria-labelledby="fw-m-{{ m.key }}">
+        <div class="fw-month__title"><h3 id="fw-m-{{ m.key }}" class="first-letter:uppercase">{{ m.key | dt("month", L) }}</h3><span class="chip chip-accent" data-fw-n aria-hidden="true">{{ m.cards.length }}</span></div>
+        <ul class="ev-grid ev-grid--flyer" role="list" data-fw-list>
+          {%- for ev in m.cards %}
+          {{ officeEventCard({ ev: ev, lang: L, offices: CO.byKey, sizes: sizes, prio: "high" if ev.id == firstId else "", level: 4, wall: true }) }}
+          {%- endfor %}
+        </ul>
+      </section>
+      {%- endfor %}
+      </div>
+    </section>
+
+    {#- nothing matches the filters -#}
+    <div class="ev-empty" x-cloak x-show="shown === 0" data-pagefind-ignore>
+      <span class="icon-tile-soft size-11">{% icon "search-x", "size-5" %}</span>
+      <p><strong class="block text-ink-900">{{ "calendar.offices.empty_title" | t(L) }}</strong>{{ "calendar.flyers.empty_body" | t(L) }}</p>
+      <button type="button" class="btn btn-ghost btn-sm" @click="clear(true)">{% icon "x", "size-4" %}{{ "calendar.flyers.clear" | t(L) }}</button>
+    </div>
+  </div>
+</div>
+{%- else %}
+<div class="wrap pt-10 pb-6 lg:pt-14">
+  {{ emptyState({ icon: "building-2", title: "calendar.offices.none" | t(L), color: "copper" }) }}
+</div>
+{%- endif %}
+
+{#- ---------------------------------------------------------- the central offices -#}
+<section id="offices" class="scroll-mt-28 bg-ink-50/60 py-14 lg:py-20" aria-labelledby="offices-title">
+  <div class="wrap">
+    <div class="max-w-3xl">
+      <h2 id="offices-title" class="h-section text-balance">{{ "calendar.offices.offices_title" | t(L) }}</h2>
+      <p class="lead mt-2 text-pretty">{{ "calendar.offices.offices_lead" | t(L) }}</p>
+    </div>
+    <div class="mt-10 space-y-12">
+      {%- for r in CO.regions %}
+      <div aria-labelledby="co-region-{{ r.key }}">
+        <h3 id="co-region-{{ r.key }}" class="flex items-center gap-2 font-display text-xl font-bold text-ink-950" style="{{ r.color | accent }}"><span class="icon-tile-soft size-9">{% icon r.icon, "size-4" %}</span>{{ ("offices.region." + r.key) | t(L) }}</h3>
+        <ul class="mt-5 grid gap-5 md:grid-cols-2 xl:grid-cols-3" role="list">
+          {%- for c in r.items %}
+          <li>{{ officeCard({ office: offices.byKey[c.key], lang: L, co: c, coOffices: CO.byKey, headingLevel: 4 }) }}</li>
+          {%- endfor %}
+        </ul>
+      </div>
+      {%- endfor %}
+    </div>
+  </div>
+</section>
+
+{#- ---------------------------------------------------------- where the events come from -#}
+<section class="wrap py-14 lg:py-16" aria-labelledby="co-note-title">
+  <div class="flex items-start gap-4 rounded-3xl bg-copper-50 p-6 text-[15px] leading-relaxed text-ink-700 sm:p-8" style="{{ 'copper' | accent }}">
+    <span class="icon-tile-soft size-11 shrink-0">{% icon "info", "size-5" %}</span>
+    <div class="min-w-0">
+      <h2 id="co-note-title" class="font-display text-lg font-bold text-ink-950">{{ "calendar.offices.note_title" | t(L) }}</h2>
+      <p class="mt-2 text-pretty">{{ "calendar.offices.note" | t(L) }}</p>
+      <div class="mt-5 flex flex-wrap gap-2">
+        <a href="{{ '/calendar/' | lurl(L) }}" class="btn btn-white btn-sm">{% icon "calendar-days", "size-4 text-ocean-600" %}{{ "calendar.open_calendar" | t(L) }}</a>
+        <a href="{{ '/resources/' | lurl(L) }}#offices" class="btn btn-ghost btn-sm">{% icon "phone", "size-4" %}{{ "calendar.offices.call_link" | t(L) }}</a>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,92 @@
+{#-
+  Building blocks of the online Area finance forms (/service/forms/…). Import with
+    {% from "macros/forms.njk" import ffOfficial, ffCard, ffMoney, ffField, ffForget, ffpBox with context %}
+  Wording: data/text/forms.csv (forms.*). Choices and lines: data/finance-forms.csv (src/_data/financeForms.js).
+-#}
+
+{#- The official paper versions (PDF / Word) of a form, from the document library by id.
+    o: { ids, lang, compact } — ids in the order of data/finance-forms.csv (section = official). -#}
+{% macro ffOfficial(o) %}
+{%- set L = o.lang -%}
+<ul class="ff-official {{ 'is-compact' if o.compact }}" role="list">
+  {%- for id in o.ids %}
+  {%- set d = documents.all | find("id", id) %}
+  {%- if d and d.url %}
+  {%- set isEs = (d.language | lower) == "spanish" %}
+  {%- set ico = "file-type" if d.format == "Word" else "file-text" %}
+  <li>
+    <a href="{{ d.url }}" target="_blank" rel="noopener" class="ff-official-link">
+      <span class="ff-official-ico">{% icon ico, "size-5" %}</span>
+      <span class="min-w-0 flex-1">
+        <span class="block font-semibold text-ink-900">{{ ("forms.official_word" if d.format == "Word" else "forms.official_pdf") | t(L) }}</span>
+        <span class="block text-sm text-ink-600">{{ ("language.spanish" if isEs else "language.english") | t(L) }}{% if d.size_kb %} · {{ d.size_kb }} KB{% endif %}</span>
+      </span>
+      {% icon "external-link", "size-4 shrink-0 text-ink-400" %}
+      <span class="sr-only">{{ "forms.new_tab" | t(L) }}</span>
+    </a>
+  </li>
+  {%- endif %}
+  {%- endfor %}
+</ul>
+{% endmacro %}
+
+{#- A numbered section of a form. o: { id, num, title, lead, color }. The body is the caller's content. -#}
+{% macro ffCard(o) %}
+<section id="{{ o.id }}" class="ff-card scroll-mt-28" aria-labelledby="{{ o.id }}-h" {% if o.color %}style="{{ o.color | accent }}"{% endif %}>
+  <header class="ff-card-head">
+    {%- if o.num %}<span class="ff-num" aria-hidden="true">{{ o.num }}</span>{% endif %}
+    <div class="min-w-0">
+      <h2 id="{{ o.id }}-h" class="ff-h2">{{ o.title }}</h2>
+      {%- if o.lead %}<p class="ff-lead">{{ o.lead }}</p>{% endif %}
+    </div>
+  </header>
+  <div class="ff-card-body">{{ caller() }}</div>
+</section>
+{% endmacro %}
+
+{#- A dollar box. o: { id, model, label, code, labelClass, err, idExpr }
+    model = the Alpine expression it is bound to; err = an Alpine expression giving the error key; idExpr = an
+    Alpine expression for a dynamic id (inside x-for), used instead of id; code = the column letter (A–H). -#}
+{% macro ffMoney(o) %}
+<div class="ff-field">
+  <label {% if o.idExpr %}:for="{{ o.idExpr }}"{% else %}for="{{ o.id }}"{% endif %} class="ff-label {{ o.labelClass }}">{% if o.code %}<span class="ff-code" aria-hidden="true">{{ o.code }}</span>{% endif %}<span>{{ o.label }}</span></label>
+  <div class="ff-money">
+    <span aria-hidden="true">$</span>
+    <input type="text" inputmode="decimal" autocomplete="off" {% if o.idExpr %}:id="{{ o.idExpr }}"{% else %}id="{{ o.id }}"{% endif %}
+           class="field ff-input" x-model="{{ o.model }}" @blur="tidyMoney($event)"
+           :aria-invalid="!!err({{ o.err }})" :aria-describedby="err({{ o.err }}) ? errId({{ o.err }}) : null">
+  </div>
+  <p class="ff-err" x-cloak x-show="err({{ o.err }})" :id="errId({{ o.err }})" x-text="err({{ o.err }})"></p>
+</div>
+{% endmacro %}
+
+{#- A text, date, e-mail or phone box. o: { id, model, label, type, autocomplete, hint, err, required, rows, inputmode } -#}
+{% macro ffField(o) %}
+<div class="ff-field">
+  <label for="{{ o.id }}" class="ff-label">{{ o.label }}{% if o.required %}<span class="ff-req" aria-hidden="true">*</span>{% endif %}</label>
+  {%- if o.hint %}<p id="{{ o.id }}-hint" class="ff-hint">{{ o.hint }}</p>{% endif %}
+  {%- if o.rows %}
+  <textarea id="{{ o.id }}" rows="{{ o.rows }}" class="field ff-input" x-model="{{ o.model }}" {% if o.autocomplete %}autocomplete="{{ o.autocomplete }}"{% endif %}
+            {% if o.required %}aria-required="true"{% endif %} :aria-invalid="!!err('{{ o.err or o.id }}')"
+            :aria-describedby="[{{ ('\'' + o.id + '-hint\'') if o.hint else 'null' }}, err('{{ o.err or o.id }}') ? errId('{{ o.err or o.id }}') : null].filter(Boolean).join(' ') || null"></textarea>
+  {%- else %}
+  <input id="{{ o.id }}" type="{{ o.type or 'text' }}" class="field ff-input" x-model="{{ o.model }}" {% if o.autocomplete %}autocomplete="{{ o.autocomplete }}"{% endif %}
+         {% if o.inputmode %}inputmode="{{ o.inputmode }}"{% endif %} {% if o.required %}aria-required="true"{% endif %} :aria-invalid="!!err('{{ o.err or o.id }}')"
+         :aria-describedby="[{{ ('\'' + o.id + '-hint\'') if o.hint else 'null' }}, err('{{ o.err or o.id }}') ? errId('{{ o.err or o.id }}') : null].filter(Boolean).join(' ') || null">
+  {%- endif %}
+  <p class="ff-err" x-cloak x-show="err('{{ o.err or o.id }}')" :id="errId('{{ o.err or o.id }}')" x-text="err('{{ o.err or o.id }}')"></p>
+</div>
+{% endmacro %}
+
+{#- After the visitor e-mails or prints the form while "Keep a draft" is ticked: erase the draft from this device
+    (forget() in forms.js; the answers stay on the screen). o: { lang } -#}
+{% macro ffForget(o) %}
+<div class="ff-forget pop-in" x-cloak x-show="(sent || printed) && keep" role="status">
+  {% icon "shield-check", "size-5 mt-0.5 shrink-0" %}
+  <p class="min-w-0 flex-[1_1_14rem]">{{ "forms.forget_body" | t(o.lang) }}</p>
+  <button type="button" class="btn btn-white btn-sm max-sm:ml-8" @click="forget()">{% icon "eraser", "size-4" %}{{ "forms.forget_cta" | t(o.lang) }}</button>
+</div>
+{% endmacro %}
+
+{#- A ticked / empty box for the printed copy (drawn with CSS, so it prints the same everywhere). on = Alpine expression. -#}
+{% macro ffpBox(on) %}<span class="ffp-box" :class="{ 'is-on': {{ on }} }"></span>{% endmacro %}

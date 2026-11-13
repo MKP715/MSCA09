@@ -1,0 +1,3 @@
+{#- Calendar "when / where / how to join" panel for one series (needs macros/events.njk). Expects: s, L. -#}
+{%- from "macros/events.njk" import meetingInfo with context -%}
+{{ meetingInfo({ series: s, lang: L }) }}

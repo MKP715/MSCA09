@@ -1,0 +1,37 @@
+{#- One calendar series as a "when / where / how to join" panel.
+    Used only when the calendar's own macro (macros/events.njk → meetingInfo) is not available.
+    Expects: s (Series), L (lang). -#}
+{%- from "macros/ui.njk" import copyable, formatBadge, langBadge, emailLink with context -%}
+<div class="card-accent p-5 sm:p-6" style="{{ c.color | accent }}">
+  <div class="flex flex-wrap items-start justify-between gap-3">
+    <div class="min-w-0">
+      <h3 class="font-display text-xl font-bold text-ink-950"><a href="{{ s.url | lurl(L) }}" class="hover:underline">{{ s | loc("title", L) or s.title }}</a></h3>
+      <p class="mt-1 flex items-center gap-2 font-semibold text-[var(--a-700)]">{% icon "repeat", "size-4" %}{{ s | loc("pattern", L) }}</p>
+    </div>
+    <div class="flex flex-wrap gap-1.5">{{ formatBadge({ format: s.format, lang: L }) }}{{ langBadge({ language: s.language, lang: L }) }}</div>
+  </div>
+  {%- if s.next %}
+  <p class="mt-3 text-sm text-ink-600" data-hide-after="{{ s.next.end }}">{% icon "calendar-check", "size-4 inline -mt-0.5 mr-1 text-[var(--a-600)]" %}{{ "committees.next_date" | t(L) }} <strong class="text-ink-900">{{ s.next.start | dt("long", L) }}</strong></p>
+  {%- endif %}
+  <div class="mt-4 grid gap-3 lg:grid-cols-2">
+    {%- if s.location and (s.location.name or s.location.address) %}
+    <div class="flex items-start gap-3 rounded-2xl bg-ink-50 px-4 py-3">
+      <span class="mt-0.5 text-[var(--a-600)]">{% icon "map-pin", "size-5" %}</span>
+      <div class="min-w-0 text-sm">
+        {%- if s.location.name %}<p class="font-semibold text-ink-900">{{ s.location.name }}</p>{% endif %}
+        {%- if s.location.address %}<p class="text-ink-600">{{ s.location.address }}</p>{% endif %}
+        {%- if s.location.mapsUrl %}<a href="{{ s.location.mapsUrl }}" target="_blank" rel="noopener" class="mt-1 inline-flex items-center gap-1 font-semibold text-ocean-700 hover:underline">{{ "committees.directions" | t(L) }}{% icon "external-link", "size-3.5" %}</a>{% endif %}
+      </div>
+    </div>
+    {%- endif %}
+    {%- if s.online and s.online.zoomId %}{{ copyable({ label: "committees.zoom_id" | t(L), value: s.online.zoomId, lang: L }) }}{% endif %}
+    {%- if s.online and s.online.passcode %}{{ copyable({ label: "committees.passcode" | t(L), value: s.online.passcode, lang: L }) }}{% endif %}
+  </div>
+  <div class="mt-4 flex flex-wrap items-center gap-3">
+    {%- if s.online and s.online.joinUrl %}<a href="{{ s.online.joinUrl }}" target="_blank" rel="noopener" class="btn btn-accent">{% icon "video", "size-4" %}{{ "committees.join_zoom" | t(L) }}</a>{% endif %}
+    <a href="{{ s.url | lurl(L) }}" class="btn btn-ghost">{{ "committees.meeting_details" | t(L) }}{% icon "arrow-right", "size-4" %}</a>
+    {%- if s.email %}<span class="text-sm">{{ emailLink({ email: s.email, lang: L }) }}</span>{% endif %}
+  </div>
+  {#- the Note lines in the page language (Spanish 'Nota:' lines on /es/); an English note shown on a Spanish page is marked lang="en" -#}
+  {%- for n in s | calNotes(L) %}<p class="mt-3 rounded-xl bg-sun-50 px-3 py-2 text-sm text-ink-700" {% if n.lang != L.code %}lang="{{ n.lang }}"{% endif %}>{% icon "info", "size-4 inline -mt-0.5 mr-1 text-sun-700" %}{{ n.text }}</p>{% endfor %}
+</div>

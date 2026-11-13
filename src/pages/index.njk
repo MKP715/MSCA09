@@ -1,0 +1,29 @@
+---
+# The home page, in English (/) and Spanish (/es/).
+# Its sections live in src/_includes/partials/home-*.njk; the words in data/text/home.csv;
+# the order below is the order on the page (newcomers come early: someone looking for help
+# should reach the phone numbers within a couple of swipes on a phone);
+# the banner photos in data/hero.csv; announcements in data/announcements.csv;
+# the quick-action tiles in data/home-links.csv. Meetings and events come from the Area calendar.
+pagination:
+  addAllPagesToCollections: true
+  data: langs
+  size: 1
+  alias: lang
+permalink: "{{ lang.prefix }}/"
+layout: base.njk
+description_key: home.description
+accent: ocean
+bodyClass: home
+scripts: ["/assets/js/home.js"]
+headInclude: partials/home-head.njk
+---
+{% include "partials/home-hero.njk" %}
+{% include "partials/home-announcements.njk" %}
+{% include "partials/home-actions.njk" %}
+{% include "partials/home-newcomers.njk" %}
+{% include "partials/home-coming-up.njk" %}
+{% include "partials/home-districts.njk" %}
+{% include "partials/home-service.njk" %}
+{% include "partials/home-stats.njk" %}
+{% include "partials/home-contribute.njk" %}

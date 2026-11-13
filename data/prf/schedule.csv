@@ -1,0 +1,28 @@
+day,sort,time_en,time_es,kind,proposed,title_en,title_es,body_en,body_es
+"# The tentative Forum weekend on /service/prf-2028/program/. day = thu | fri | sat | sun (Thursday Nov 30 – Sunday Dec 3, 2028). sort = order within the day.",,,,,,,,,
+# kind = session (general session) | service (registration / service) | meeting (A.A. meeting) | social (fellowship). proposed = yes for host-committee ideas that are not confirmed.,,,,,,,,,
+# The official program comes from G.S.O. and the Regional Trustee: replace these rows when it is published.,,,,,,,,,
+thu,10,TBA,Por anunciar,social,yes,Pre-Forum welcome event,Evento de bienvenida previo al Foro,An optional early-arrival gathering is being explored by the host committee.,El comité anfitrión estudia una reunión opcional para quienes lleguen temprano.
+thu,20,All day,Todo el día,service,,Early arrivals & local sightseeing,Llegadas tempranas y turismo local,"Group room rate may be available up to three days before and after the Forum, based on hotel availability.","La tarifa de grupo puede estar disponible hasta tres días antes y después del Foro, según disponibilidad del hotel."
+fri,10,10:30 a.m.,10:30 a. m.,service,,Carry the Message literature display set-up,Montaje de la exhibición de literatura,Volunteer crew (4 people).,Equipo de voluntarios (4 personas).
+fri,20,12:00 p.m.,12:00 p. m.,service,,Name badge preparation,Preparación de gafetes,Registration Chair and volunteers.,Coordinador(a) de inscripción y voluntarios.
+fri,30,1:00 p.m.,1:00 p. m.,service,,Training for chairs & volunteers,Capacitación de coordinadores y voluntarios,,
+fri,40,2:00 – 10:00 p.m.,2:00 – 10:00 p. m.,service,,Registration desk open,Mesa de inscripción abierta,Greeters welcome attendees near registration from 2:00 to 7:00 p.m.,Recepcionistas dan la bienvenida cerca de la inscripción de 2:00 a 7:00 p. m.
+fri,50,4:00 p.m.,4:00 p. m.,meeting,,A.A. meeting,Reunión de A.A.,,
+fri,60,6:30 p.m.,6:30 p. m.,session,,Opening General Session,Sesión General de apertura,"Welcome, introductions of trustees, directors and staff, and opening presentations.","Bienvenida, presentación de custodios, directores y personal, y presentaciones iniciales."
+fri,70,~8:00 p.m.,~8:00 p. m.,session,,Presentations & sharing session,Presentaciones y sesión de compartimiento,Open microphone — comments and questions welcome.,Micrófono abierto: comentarios y preguntas bienvenidos.
+fri,80,~9:30 p.m.,~9:30 p. m.,social,yes,Ice cream social / after-party,Convivio con helado / fiesta,Self-supporting fellowship; young people’s after-party with LACYPAA under discussion.,Convivencia automantenida; se habla de una fiesta de jóvenes con LACYPAA.
+sat,10,7:30 a.m.,7:30 a. m.,meeting,,A.A. meeting,Reunión de A.A.,,
+sat,20,8:30 a.m. – 10:00 p.m.,8:30 a. m. – 10:00 p. m.,service,,Registration desk open,Mesa de inscripción abierta,,
+sat,30,9:00 a.m.,9:00 a. m.,session,,Morning General Session,Sesión General de la mañana,"Presentations from GSO, A.A.W.S., Grapevine and the General Service Board, followed by sharing.","Presentaciones de la OSG, A.A.W.S., Grapevine y la Junta de Servicios Generales, seguidas de compartimiento."
+sat,40,12:00 p.m.,12:00 p. m.,social,,Lunch on your own,Almuerzo por tu cuenta,Many restaurants within walking distance of the hotel.,Muchos restaurantes a poca distancia del hotel.
+sat,50,1:30 p.m.,1:30 p. m.,session,,Afternoon General Session,Sesión General de la tarde,Presentations and sharing sessions.,Presentaciones y sesiones de compartimiento.
+sat,60,5:00 p.m.,5:00 p. m.,social,yes,Dinner on your own — or host banquet & speaker meeting,"Cena por tu cuenta, o banquete y reunión de oradores","A self-supporting banquet, speaker meeting and dance is being considered.",Se considera un banquete automantenido con reunión de oradores y baile.
+sat,70,6:30 – 8:15 p.m.,6:30 – 8:15 p. m.,session,,Concurrent workshops,Talleres simultáneos,Volunteers guide attendees to workshop rooms.,Voluntarios guían a los asistentes a las salas de talleres.
+sat,80,8:15 p.m.,8:15 p. m.,session,,Workshop wrap-up / sharing,Cierre de talleres / compartimiento,,
+sat,90,~9:00 p.m.,~9:00 p. m.,social,yes,Area hospitality & games night,Hospitalidad de áreas y noche de juegos,Each area brings a game or snack to share.,Cada área trae un juego o bocadillo para compartir.
+sun,10,7:30 a.m.,7:30 a. m.,meeting,,A.A. meeting,Reunión de A.A.,,
+sun,20,8:30 – 10:00 a.m.,8:30 – 10:00 a. m.,service,,Registration for late arrivals,Inscripción para llegadas tardías,,
+sun,30,9:00 a.m.,9:00 a. m.,session,,Closing General Session,Sesión General de clausura,"Workshop reports, Ask-It-Basket answers, past trustees’ sharing and closing remarks.","Informes de talleres, respuestas de la Canasta de Preguntas, compartimiento de custodios pasados y palabras de clausura."
+sun,40,12:00 p.m.,12:00 p. m.,session,,Forum closes,Cierre del Foro,,
+sun,50,12:00 p.m.,12:00 p. m.,service,,Literature display pack-up & translation equipment return,Empaque de literatura y devolución del equipo de interpretación,Volunteer crew (3+ people).,Equipo de voluntarios (3+ personas).

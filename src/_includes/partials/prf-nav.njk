@@ -1,0 +1,13 @@
+{#- The Pacific Regional Forum 2028 pages: one row of tabs under the heading band. Pages: src/_data/prf.js (pages);
+    the page's own key is prfPage in its front matter. Phones scroll the row sideways (prf.js brings the current tab
+    into view). -#}
+{%- set L = lang -%}
+<nav class="prf-tabs" aria-label="{{ 'prf.nav.label' | t(L) }}" data-pagefind-ignore>
+  <div class="wrap">
+    <ul class="prf-tabs__list no-scrollbar" role="list">
+      {%- for p in prf.pages %}
+      <li><a href="{{ p.url | lurl(L) }}" class="prf-tab{{ ' is-on' if p.key == prfPage }}" {% if p.key == prfPage %}aria-current="page"{% endif %}>{% icon p.icon, "size-4 shrink-0" %}<span>{{ ("prf.nav." + p.key) | t(L) }}</span></a></li>
+      {%- endfor %}
+    </ul>
+  </div>
+</nav>

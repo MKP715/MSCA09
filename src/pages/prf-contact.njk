@@ -1,0 +1,74 @@
+---
+pagination: { data: langs, size: 1, alias: lang, addAllPagesToCollections: true }
+permalink: "{{ lang.prefix }}/service/prf-2028/contact/"
+layout: page.njk
+title_key: prf.contact.title
+title_suffix_key: prf.title_suffix
+description_key: prf.contact.description
+eyebrow_key: prf.contact.eyebrow
+lead_key: prf.contact.lead
+heroIcon: mail
+accent: sea
+crumbs: [{ label_key: "prf.crumb_service", url: "/service/" }, { label_key: "prf.crumb", url: "/service/prf-2028/" }]
+bare: true
+prfPage: contact
+ogImage: /assets/img/prf/long-beach-1024.jpg
+# the photo's size and type, so a link preview can show it on the first share
+ogImageWidth: 1024
+ogImageHeight: 553
+ogImageType: image/jpeg
+og_image_alt_key: prf.flyer.photo_alt
+source: data/prf/forum.csv
+scripts: ["/assets/js/prf.js"]
+jsText: ["prf.js.to", "prf.js.subject"]
+---
+{#- Contact the host committee: the chair (a role, prf.contact.chair_role, never a name; the role address), planning
+    meetings, presentations for districts and groups, and two forms — get updates, ask a question — that write an e-mail
+    to the host committee (#updates, #question). Data: data/prf/forum.csv (email, bid_doc); wording: data/text/prf.csv. -#}
+{%- from "macros/ui.njk" import emailLink with context -%}
+{%- from "macros/prf.njk" import prfMailForm with context -%}
+{%- set L = lang -%}
+{%- set P = prf -%}
+{%- set S = P.set -%}
+{%- set bidDoc = documents.all | find("id", S.bid_doc) -%}
+
+{% include "partials/prf-nav.njk" %}
+
+<div class="wrap py-12 lg:py-16 2xl:py-20">
+  <div class="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-10">
+    <aside class="space-y-5 lg:col-span-4">
+      <div class="card p-6" style="{{ 'sea' | accent }}">
+        <span class="chip chip-accent">{{ "prf.contact.chair" | t(L) }}</span>
+        <p class="mt-3 font-display text-2xl font-bold text-ink-950">{{ "prf.contact.chair_role" | t(L) }}</p>
+        <div class="mt-4">{{ emailLink({ email: S.email, lang: L }) }}</div>
+        <p class="mt-3 text-xs leading-relaxed text-ink-500">{{ "prf.contact.email_note" | t(L) }}</p>
+      </div>
+      <div class="card p-6" style="{{ 'iris' | accent }}">
+        <h2 class="flex items-center gap-3 font-display text-xl font-bold text-ink-950"><span class="icon-tile size-10 rounded-xl">{% icon "users", "size-5" %}</span>{{ "prf.contact.meet_title" | t(L) }}</h2>
+        <p class="mt-3 leading-relaxed text-ink-600">{{ "prf.contact.meet_body" | t(L) }}</p>
+        <p class="mt-3 flex items-start gap-2 text-sm text-ink-500">{% icon "hourglass", "size-4 mt-0.5 shrink-0" %}<span>{{ "prf.contact.meet_tba" | t(L) }}</span></p>
+        <a href="{{ '/calendar/' | lurl(L) }}" class="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-(--a-700) hover:underline">{% icon "calendar-days", "size-4" %}{{ "prf.contact.meet_calendar" | t(L) }}</a>
+      </div>
+      <div class="card p-6" style="{{ 'coral' | accent }}">
+        <h2 class="flex items-center gap-3 font-display text-xl font-bold text-ink-950"><span class="icon-tile size-10 rounded-xl">{% icon "presentation", "size-5" %}</span>{{ "prf.contact.present_title" | t(L) }}</h2>
+        <p class="mt-3 leading-relaxed text-ink-600">{{ "prf.contact.present_body" | t(L) }}</p>
+        {%- if bidDoc and bidDoc.url %}
+        <a href="{{ bidDoc.url }}" target="_blank" rel="noopener" class="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-(--a-700) hover:underline">{% icon "file-text", "size-4" %}{{ "prf.contact.deck" | t(L) }}</a>
+        {%- endif %}
+      </div>
+    </aside>
+
+    <div class="space-y-8 lg:col-span-8">
+      <section id="updates" class="card scroll-mt-28 p-6 sm:p-8" aria-labelledby="prf-updates-h">
+        <h2 id="prf-updates-h" class="flex items-center gap-3 font-display text-2xl font-bold text-ink-950"><span class="icon-tile-soft size-11" style="{{ 'sun' | accent }}">{% icon "bell", "size-5" %}</span>{{ "prf.contact.updates_title" | t(L) }}</h2>
+        <p class="mt-2 mb-6 text-ink-600">{{ "prf.contact.updates_lead" | t(L) }}</p>
+        {{ prfMailForm({ form: "updates", lang: L }) }}
+      </section>
+      <section id="question" class="card scroll-mt-28 p-6 sm:p-8" aria-labelledby="prf-question-h">
+        <h2 id="prf-question-h" class="flex items-center gap-3 font-display text-2xl font-bold text-ink-950"><span class="icon-tile-soft size-11" style="{{ 'sea' | accent }}">{% icon "message-circle-question", "size-5" %}</span>{{ "prf.contact.question_title" | t(L) }}</h2>
+        <p class="mt-2 mb-6 text-ink-600">{{ "prf.contact.question_lead" | t(L) }}</p>
+        {{ prfMailForm({ form: "question", lang: L }) }}
+      </section>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,110 @@
+{
+ "events": [
+  {
+   "id": 3246,
+   "global_id": "aasurdelabahia.org?id=3246",
+   "global_id_lineage": [
+    "aasurdelabahia.org?id=3246"
+   ],
+   "author": "4",
+   "status": "publish",
+   "date": "2026-10-28 18:35:31",
+   "date_utc": "2026-10-29 01:35:31",
+   "modified": "2026-10-28 18:35:31",
+   "modified_utc": "2026-10-29 01:35:31",
+   "url": "https://aasurdelabahia.org/event/aniversario-39-grupo-buscando-sobriedad/",
+   "rest_url": "https://aasurdelabahia.org/wp-json/tribe/events/v1/events/3246",
+   "title": "Aniversario #39 grupo Buscando Sobriedad",
+   "description": "<p style=\"text-align: center;\"><img loading=\"lazy\" decoding=\"async\" class=\"alignnone size-full wp-image-3247\" src=\"https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-sobriedad-1.jpg\" alt=\"\" width=\"644\" height=\"1066\" srcset=\"https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-sobriedad-1.jpg 644w, https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-sobriedad-1-181x300.jpg 181w, https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-sobriedad-1-619x1024.jpg 619w\" sizes=\"auto, (max-width: 644px) 100vw, 644px\" /> <img loading=\"lazy\" decoding=\"async\" class=\"alignnone size-full wp-image-3248\" src=\"https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-sobriedad-2.jpg\" alt=\"\" width=\"661\" height=\"1055\" srcset=\"https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-sobriedad-2.jpg 661w, https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-sobriedad-2-188x300.jpg 188w, https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-sobriedad-2-642x1024.jpg 642w\" sizes=\"auto, (max-width: 661px) 100vw, 661px\" /> <img loading=\"lazy\" decoding=\"async\" class=\"alignnone size-full wp-image-3249\" src=\"https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-sobriedad-3.jpg\" alt=\"\" width=\"665\" height=\"1051\" srcset=\"https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-sobriedad-3.jpg 665w, https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-sobriedad-3-190x300.jpg 190w, https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-sobriedad-3-648x1024.jpg 648w\" sizes=\"auto, (max-width: 665px) 100vw, 665px\" /> <img loading=\"lazy\" decoding=\"async\" class=\"alignnone size-full wp-image-3250\" src=\"https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-Sobriedad-4.jpg\" alt=\"\" width=\"654\" height=\"1062\" srcset=\"https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-Sobriedad-4.jpg 654w, https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-Sobriedad-4-185x300.jpg 185w, https://aasurdelabahia.org/wp-content/uploads/2026/10/Buscando-Sobriedad-4-631x1024.jpg 631w\" sizes=\"auto, (max-width: 654px) 100vw, 654px\" /></p>",
+   "excerpt": "",
+   "slug": "aniversario-39-grupo-buscando-sobriedad",
+   "image": false,
+   "all_day": false,
+   "start_date": "2026-11-01 13:00:00",
+   "start_date_details": {
+    "year": "2026",
+    "month": "11",
+    "day": "01",
+    "hour": "13",
+    "minutes": "00",
+    "seconds": "00"
+   },
+   "end_date": "2026-11-01 22:00:00",
+   "end_date_details": {
+    "year": "2026",
+    "month": "11",
+    "day": "01",
+    "hour": "22",
+    "minutes": "00",
+    "seconds": "00"
+   },
+   "utc_start_date": "2026-11-01 21:00:00",
+   "utc_start_date_details": {
+    "year": "2026",
+    "month": "11",
+    "day": "01",
+    "hour": "21",
+    "minutes": "00",
+    "seconds": "00"
+   },
+   "utc_end_date": "2026-11-02 06:00:00",
+   "utc_end_date_details": {
+    "year": "2026",
+    "month": "11",
+    "day": "02",
+    "hour": "06",
+    "minutes": "00",
+    "seconds": "00"
+   },
+   "timezone": "America/Los_Angeles",
+   "timezone_abbr": "PST",
+   "cost": "",
+   "cost_details": {
+    "currency_symbol": "$",
+    "currency_code": "USD",
+    "currency_position": "prefix",
+    "values": []
+   },
+   "website": "",
+   "show_map": true,
+   "show_map_link": true,
+   "hide_from_listings": false,
+   "sticky": false,
+   "featured": false,
+   "categories": [
+    {
+     "name": "Aniversario",
+     "slug": "aniversario",
+     "term_group": 0,
+     "term_taxonomy_id": 4,
+     "taxonomy": "tribe_events_cat",
+     "description": "",
+     "parent": 0,
+     "count": 5,
+     "filter": "raw",
+     "id": 4,
+     "urls": {
+      "self": "https://aasurdelabahia.org/wp-json/tribe/events/v1/categories/4",
+      "collection": "https://aasurdelabahia.org/wp-json/tribe/events/v1/categories"
+     }
+    }
+   ],
+   "tags": [],
+   "venue": {
+    "id": 3251,
+    "venue": "Hotel Current",
+    "address": "5325 Pacific Coast Hwy",
+    "city": "Long Beach",
+    "zip": "90804",
+    "state": "CA",
+    "country": "United States",
+    "show_map": true
+   },
+   "organizer": [],
+   "custom_fields": []
+  }
+ ],
+ "rest_url": "https://aasurdelabahia.org/wp-json/tribe/events/v1/events/?page=1&per_page=50&start_date=2026-10-30 00:00:00&end_date=2028-05-02 23:59:59&status=publish",
+ "total": 1,
+ "total_pages": 1
+}

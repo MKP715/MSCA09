@@ -1,0 +1,160 @@
+---
+pagination: { data: langs, size: 1, alias: lang, addAllPagesToCollections: true }
+permalink: "{{ lang.prefix }}/service/forms/"
+layout: page.njk
+title_key: forms.hub.title
+description_key: forms.hub.description
+eyebrow_key: forms.hub.eyebrow
+lead_key: forms.hub.lead
+heroIcon: file-pen-line
+accent: emerald
+crumbs: [{ label_key: "forms.crumb_service", url: "/service/" }]
+bare: true
+source: data/finance-forms.csv
+---
+{#- The Area's finance forms: the Expense Reimbursement Request and the Annual Budget Request, each to fill in
+    online (forms-expense.njk, forms-budget.njk) or to download as the official PDF / Word file, with the Area's
+    finance rules and whom to ask. Data: data/finance-forms.csv, data/settings.csv (mileage_rate,
+    budget_request_year, budget_request_deadline); wording: data/text/forms.csv. -#}
+{%- from "macros/forms.njk" import ffOfficial with context -%}
+{%- from "macros/ui.njk" import emailLink, sectionHead, shareButton with context -%}
+{%- set L = lang -%}
+{%- set F = financeForms -%}
+{%- set rateText = "$" + F.rate.toFixed(2) -%}
+{%- set exampleText = "$" + (F.rate * 10).toFixed(2) -%}
+{%- set deadlineText = (F.deadline | dt("full", L)) if F.deadline else "" -%}
+{%- set exTo = F.expense.send.to -%}
+{%- set bTo = F.budget.send.to -%}
+{%- set bCc = F.budget.send.cc -%}
+
+<div class="wrap space-y-16 py-12 lg:space-y-20 lg:py-16 2xl:py-20">
+
+  {#- ============================================================ the two forms -#}
+  <section aria-labelledby="ff-pick-h">
+    <h2 id="ff-pick-h" class="sr-only">{{ "forms.hub.pick" | t(L) }}</h2>
+    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2 2xl:gap-8">
+
+      <article class="ff-hub-card" style="{{ 'emerald' | accent }}" aria-labelledby="ff-exp-h">
+        <div class="ff-hub-band">
+          <span class="ff-hub-icon">{% icon "receipt", "size-7 sm:size-8" %}</span>
+          <div class="min-w-0">
+            <p class="ff-hub-kicker">{{ "forms.hub.exp_kicker" | t(L) }}</p>
+            <h3 id="ff-exp-h" class="ff-hub-title">{{ "forms.expense.title" | t(L) }}</h3>
+          </div>
+        </div>
+        <div class="flex flex-1 flex-col gap-5 p-6 sm:p-8">
+          <p class="leading-relaxed text-ink-700">{{ "forms.hub.exp_body" | t(L) }}</p>
+          <ul class="ff-facts" role="list">
+            <li>{% icon "calendar-clock", "size-5 shrink-0" %}<span><strong>{{ "forms.rule.days_title" | t(L) }}</strong> {{ "forms.rule.days_body" | t(L) }}</span></li>
+            <li>{% icon "receipt", "size-5 shrink-0" %}<span><strong>{{ "forms.rule.receipts_title" | t(L) }}</strong> {{ "forms.rule.receipts_body" | t(L) }}</span></li>
+            <li>{% icon "car", "size-5 shrink-0" %}<span><strong>{{ "forms.rule.mileage_title" | t(L, { rate: rateText }) }}</strong> {{ "forms.rule.mileage_body" | t(L, { rate: rateText, example: exampleText }) }}</span></li>
+            {%- if exTo %}<li>{% icon "send", "size-5 shrink-0" %}<span><strong>{{ "forms.hub.goes_to" | t(L) }}</strong> {{ exTo | loc("name", L) }} · <span class="whitespace-nowrap">{{ exTo.email }}</span></span></li>{% endif %}
+          </ul>
+          <div class="flex flex-wrap gap-3">
+            <a href="{{ '/service/forms/expense/' | lurl(L) }}" class="btn btn-accent btn-lg">{% icon "file-pen-line", "size-5" %}{{ "forms.hub.fill_online" | t(L) }}{% icon "arrow-right", "size-4" %}</a>
+          </div>
+          <div class="mt-auto border-t border-ink-100 pt-5">
+            <p class="text-xs font-bold tracking-[0.14em] text-ink-500 uppercase">{{ "forms.hub.paper_versions" | t(L) }}</p>
+            <div class="mt-2">{{ ffOfficial({ ids: F.expense.official, lang: L, compact: true }) }}</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="ff-hub-card" style="{{ 'teal' | accent }}" aria-labelledby="ff-bud-h">
+        <div class="ff-hub-band">
+          <span class="ff-hub-icon">{% icon "calculator", "size-7 sm:size-8" %}</span>
+          <div class="min-w-0">
+            <p class="ff-hub-kicker">{{ "forms.hub.bud_kicker" | t(L) }}</p>
+            <h3 id="ff-bud-h" class="ff-hub-title">{{ "forms.budget.title" | t(L) }}</h3>
+          </div>
+        </div>
+        <div class="flex flex-1 flex-col gap-5 p-6 sm:p-8">
+          <p class="leading-relaxed text-ink-700">{{ "forms.hub.bud_body" | t(L) }}</p>
+          <ul class="ff-facts" role="list">
+            {%- if F.deadline %}
+            <li data-hide-after="{{ F.deadlineEnd }}">{% icon "calendar-clock", "size-5 shrink-0" %}<span><strong>{{ "forms.budget.due_title" | t(L, { year: F.year, date: deadlineText }) }}</strong> {{ "forms.budget.due_body" | t(L) }}</span></li>
+            <li data-show-after="{{ F.deadlineEnd }}">{% icon "hourglass", "size-5 shrink-0" %}<span><strong>{{ "forms.budget.past_title" | t(L, { year: F.year, date: deadlineText }) }}</strong> {{ "forms.budget.past_body" | t(L) }}</span></li>
+            {%- endif %}
+            <li>{% icon "list-checks", "size-5 shrink-0" %}<span><strong>{{ "forms.hub.bud_lines_title" | t(L) }}</strong> {{ "forms.hub.bud_lines_body" | t(L) }}</span></li>
+            {%- if bTo %}<li>{% icon "send", "size-5 shrink-0" %}<span><strong>{{ "forms.hub.goes_to" | t(L) }}</strong> {{ "forms.hub.bud_goes" | t(L, { name: bTo | loc("name", L), to: bTo.email, cc: bCc.email if bCc else "" }) }}</span></li>{% endif %}
+          </ul>
+          <div class="flex flex-wrap gap-3">
+            <a href="{{ '/service/forms/budget/' | lurl(L) }}" class="btn btn-accent btn-lg">{% icon "file-pen-line", "size-5" %}{{ "forms.hub.fill_online" | t(L) }}{% icon "arrow-right", "size-4" %}</a>
+          </div>
+          <div class="mt-auto border-t border-ink-100 pt-5">
+            <p class="text-xs font-bold tracking-[0.14em] text-ink-500 uppercase">{{ "forms.hub.paper_versions" | t(L) }}</p>
+            <div class="mt-2">{{ ffOfficial({ ids: F.budget.official, lang: L, compact: true }) }}</div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  {#- ============================================================ how it works -#}
+  <section aria-labelledby="ff-how-h">
+    {{ sectionHead({ eyebrow: "forms.hub.how_eyebrow" | t(L), title: "forms.hub.how_title" | t(L), lead: "forms.hub.how_lead" | t(L), id: "ff-how-h", accent: "ocean" }) }}
+    <ol class="grid grid-cols-1 gap-5 md:grid-cols-3 2xl:gap-6" role="list">
+      {%- for s in [["fill", "list-checks", "ocean"], ["pdf", "printer", "iris"], ["mail", "mail", "sage"]] %}
+      <li class="card-accent reveal flex flex-col gap-3 p-6 2xl:p-7" style="{{ s[2] | accent }}; --reveal-delay: {{ loop.index0 * 90 }}ms">
+        <div class="flex items-center gap-3">
+          <span class="icon-tile">{% icon s[1], "size-6" %}</span>
+          <span class="font-display text-sm font-bold tracking-[0.16em] text-[var(--a-800)] uppercase">{{ "forms.hub.step_n" | t(L, { n: loop.index }) }}</span>
+        </div>
+        <h3 class="font-display text-xl font-bold text-ink-950">{{ ("forms.hub.how_" + s[0] + "_title") | t(L) }}</h3>
+        <p class="leading-relaxed text-ink-600">{{ ("forms.hub.how_" + s[0] + "_body") | t(L) }}</p>
+      </li>
+      {%- endfor %}
+    </ol>
+    <p class="ff-private mt-6">{% icon "lock", "size-5 mt-0.5 shrink-0" %}<span><strong class="font-semibold text-ink-900">{{ "forms.hub.private_title" | t(L) }}</strong> {{ "forms.hub.private_body" | t(L) }}</span></p>
+  </section>
+
+  {#- ============================================================ rules and contacts -#}
+  <section class="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:gap-8" aria-labelledby="ff-rules-h">
+    <div class="card p-6 sm:p-8 lg:col-span-7" style="{{ 'sun' | accent }}">
+      <h2 id="ff-rules-h" class="flex items-center gap-3 font-display text-2xl font-bold text-ink-950"><span class="icon-tile size-11 rounded-xl">{% icon "scale", "size-5" %}</span>{{ "forms.hub.rules_title" | t(L) }}</h2>
+      <dl class="ff-rule-list mt-6">
+        {%- for k in ["mileage", "receipts", "budget", "unbudgeted", "policy"] %}
+        {%- set vars = { rate: rateText, year: F.year, date: deadlineText } %}
+        <div>
+          <dt>{{ ("forms.hub.r_" + k + "_title") | t(L, vars) }}</dt>
+          {%- if k == "budget" and F.deadline %}
+          {#- before the deadline: when requests are due; after it: when they were due (app.js keeps the one that applies) -#}
+          <dd><span data-hide-after="{{ F.deadlineEnd }}">{{ "forms.hub.r_budget_body" | t(L, vars) | mdi | safe }}</span><span data-show-after="{{ F.deadlineEnd }}">{{ "forms.hub.r_budget_past_body" | t(L, vars) | mdi | safe }}</span></dd>
+          {%- else %}
+          <dd>{{ ("forms.hub.r_" + k + "_body") | t(L, vars) | mdi | safe }}</dd>
+          {%- endif %}
+        </div>
+        {%- endfor %}
+      </dl>
+    </div>
+    <div class="card p-6 sm:p-8 lg:col-span-5" style="{{ 'emerald' | accent }}">
+      <h2 class="flex items-center gap-3 font-display text-2xl font-bold text-ink-950"><span class="icon-tile size-11 rounded-xl">{% icon "messages-square", "size-5" %}</span>{{ "forms.help_title" | t(L) }}</h2>
+      <dl class="mt-6 space-y-5">
+        {%- if exTo %}
+        <div>
+          <dt class="text-xs font-bold tracking-wide text-ink-500 uppercase">{{ "forms.hub.ask_expense" | t(L) }}</dt>
+          <dd class="mt-1 space-y-1"><p class="font-semibold text-ink-900">{{ exTo | loc("name", L) }}</p>{{ emailLink({ email: exTo.email, lang: L }) }}</dd>
+        </div>
+        {%- endif %}
+        {%- if bTo %}
+        <div>
+          <dt class="text-xs font-bold tracking-wide text-ink-500 uppercase">{{ "forms.hub.ask_budget" | t(L) }}</dt>
+          <dd class="mt-1 space-y-1"><p class="font-semibold text-ink-900">{{ "forms.budget.committee_page" | t(L, { name: bTo | loc("name", L) }) }}</p>{{ emailLink({ email: bTo.email, lang: L }) }}</dd>
+        </div>
+        {%- endif %}
+      </dl>
+      <ul class="mt-6 space-y-1 border-t border-ink-100 pt-5 text-sm" role="list">
+        {%- for l in [[exTo.url if exTo else "", "receipt", (exTo | loc("name", L)) if exTo else ""], [bTo.url if bTo else "", "piggy-bank", ("forms.budget.committee_page" | t(L, { name: bTo | loc("name", L) })) if bTo else ""], ["/documents/finances/", "chart-column", "forms.hub.finances_shelf" | t(L)], ["/documents/forms/", "file-pen-line", "forms.hub.forms_shelf" | t(L)]] %}
+        {%- if l[0] and l[2] %}
+        <li><a href="{{ l[0] | lurl(L) }}" class="flex items-center gap-2 rounded-xl px-2 py-2 font-medium text-ink-700 hover:bg-[var(--a-50)] hover:text-ink-950">{% icon l[1], "size-4 shrink-0 text-[var(--a-600)]" %}<span class="min-w-0 flex-1">{{ l[2] }}</span>{% icon "chevron-right", "size-4 shrink-0 text-ink-300" %}</a></li>
+        {%- endif %}
+        {%- endfor %}
+      </ul>
+    </div>
+  </section>
+
+  <div class="flex flex-col gap-4 rounded-3xl bg-ink-50 p-6 sm:flex-row sm:items-center sm:justify-between">
+    <p class="flex items-start gap-3 text-sm text-ink-600">{% icon "pencil-line", "size-5 shrink-0 text-ink-400" %}<span>{{ "forms.hub.correction" | t(L) }} <a class="font-semibold text-ocean-700 hover:underline" href="mailto:{{ site.email_webmaster }}">{{ site.email_webmaster }}</a></span></p>
+    {{ shareButton({ lang: L, title: "forms.hub.title" | t(L), style: "btn btn-white", wrap: "shrink-0" }) }}
+  </div>
+</div>

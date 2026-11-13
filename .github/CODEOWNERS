@@ -1,0 +1,12 @@
+# Files whose changes must be approved by a reviewer before they reach the website.
+# (Takes effect once Settings → Rules → a ruleset for main with "Require a pull request before
+# merging" and "Require review from Code Owners" is switched on. Give that ruleset a bypass
+# for GitHub Actions, or the automatic calendar-mirror and media-check commits cannot be saved.)
+#
+# The anonymity safety net: an address or name added to these lists is published without
+# further checks, so a second person looks at every change (Tradition Eleven).
+/data/contact-allowlist.csv   @MKP715
+/data/name-allowlist.csv      @MKP715
+/scripts/check-site.mjs       @MKP715
+/scripts/check-media.mjs      @MKP715
+/.github/                     @MKP715

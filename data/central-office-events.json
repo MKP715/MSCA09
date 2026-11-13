@@ -1,0 +1,1148 @@
+{
+ "events": [
+  {
+   "address": "401 S. Pavilion way",
+   "allDay": false,
+   "also": [],
+   "cats": [],
+   "city": "Palm Springs",
+   "cost": "",
+   "end": "2026-11-15T16:00:00-08:00",
+   "endDate": "2026-11-15",
+   "flags": [],
+   "flyers": [
+    {
+     "h": 1059,
+     "mime": "image/jpeg",
+     "pdf": "",
+     "sha256": "52bcffadb19912b14950421d6d7d030ac46e53d996181a758fdf683f56061bd2",
+     "sizes": [
+      [
+       190,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Congreso-Valle-de-Coachella-190x300.jpg"
+      ],
+      [
+       649,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Congreso-Valle-de-Coachella-649x1024.jpg"
+      ]
+     ],
+     "url": "https://aasurdelabahia.org/wp-content/uploads/2026/11/Congreso-Valle-de-Coachella.jpg",
+     "w": 671
+    }
+   ],
+   "format": "In person",
+   "id": "co-sur-bahia-3325",
+   "lang": "Spanish",
+   "office": "sur-bahia",
+   "src": "https://aasurdelabahia.org/event/congreso-43-del-valle-de-coachella/",
+   "srcHash": "1621bfc0f307a1c02fbe9c8b909980874d746578",
+   "start": "2026-11-13T16:00:00-08:00",
+   "summary": "",
+   "title": "Congreso #43 del Valle de Coachella",
+   "title_es": "",
+   "type": "Convention",
+   "venue": "Palm Springs Park and Recreation",
+   "zip": "92262"
+  },
+  {
+   "address": "",
+   "allDay": false,
+   "also": [
+    "nocco"
+   ],
+   "cats": [],
+   "city": "",
+   "cost": "",
+   "end": "2026-11-14T14:00:00-08:00",
+   "endDate": "",
+   "flags": [
+    "place-on-flyer"
+   ],
+   "flyers": [
+    {
+     "h": 2560,
+     "mime": "image/jpeg",
+     "pdf": "",
+     "sha256": "f74eb68b9aa148f9a8934a435ba8c5c66b2ee380cb37e1f14ffd1b3dc11d6b31",
+     "sizes": [
+      [
+       203,
+       "https://oiaasriverside.org/wp-content/uploads/2026/10/20260927_210553-203x300.jpg"
+      ],
+      [
+       693,
+       "https://oiaasriverside.org/wp-content/uploads/2026/10/20260927_210553-693x1024.jpg"
+      ],
+      [
+       768,
+       "https://oiaasriverside.org/wp-content/uploads/2026/10/20260927_210553-768x1134.jpg"
+      ]
+     ],
+     "url": "https://oiaasriverside.org/wp-content/uploads/2026/10/20260927_210553-scaled.jpg",
+     "w": 1733
+    }
+   ],
+   "format": "In person",
+   "id": "co-sureste-riverside-1337",
+   "lang": "Spanish",
+   "office": "sureste-riverside",
+   "src": "https://oiaasriverside.org/event/msca-area-09-panel-79-servathon-11-14-2026-from-1000-am-to-200pm/",
+   "srcHash": "7b7f1c7922c2cc54d3e376bf5109afa12648722b",
+   "start": "2026-11-14T10:00:00-08:00",
+   "summary": "",
+   "title": "MSCA Area 09 Panel 79 Servathon",
+   "title_es": "",
+   "type": "Event",
+   "venue": "",
+   "zip": ""
+  },
+  {
+   "address": "2220 Winston Rd",
+   "allDay": false,
+   "also": [],
+   "cats": [],
+   "city": "Anaheim",
+   "cost": "",
+   "end": "",
+   "endDate": "",
+   "flags": [
+    "no-end-time"
+   ],
+   "flyers": [
+    {
+     "h": 1504,
+     "mime": "image/jpeg",
+     "pdf": "",
+     "sha256": "377e0ee474654cb9a91aae7b6081c21130a63c14434f84283d408077029b469d",
+     "sizes": [],
+     "url": "https://www.aanoc.org/images/events/practicing-principles.jpeg",
+     "w": 1179
+    }
+   ],
+   "format": "In person",
+   "id": "co-nocco-practicing-principles",
+   "lang": "English",
+   "office": "nocco",
+   "src": "https://www.aanoc.org/events/practicing-principles/",
+   "srcHash": "c67b98b40bfc68ea2cbae9b35dd8321228090c01",
+   "start": "2026-11-14T11:00:00-08:00",
+   "summary": "A workshop with speakers and open discussion, focused on practicing the principles in all our affairs. Free raffle and light lunch! Hosted by GSRs of District 10.",
+   "title": "Practicing Principles",
+   "title_es": "",
+   "type": "Event",
+   "venue": "Recovery Road",
+   "zip": "92806"
+  },
+  {
+   "address": "1526 Brookhollow Dr. #75",
+   "allDay": false,
+   "also": [],
+   "cats": [
+    "open-house"
+   ],
+   "city": "Santa Ana",
+   "cost": "",
+   "end": "2026-11-14T15:00:00-08:00",
+   "endDate": "",
+   "flags": [],
+   "flyers": [
+    {
+     "h": 1408,
+     "mime": "image/jpeg",
+     "pdf": "https://www.oc-aa.org/wp-content/uploads/2026/09/doc01079620260909101242.pdf",
+     "sha256": "6c60d44ef02f4b765e5513316f8acaf0f9956efc8f9dd22a2ea670def919f35a",
+     "sizes": [],
+     "url": "https://www.oc-aa.org/wp-content/uploads/2026/09/doc01079620260909101242-pdf.jpg",
+     "w": 1088
+    }
+   ],
+   "format": "In person",
+   "id": "co-oc-central-70269",
+   "lang": "English",
+   "office": "oc-central",
+   "src": "https://www.oc-aa.org/event/central-office-open-house-3/",
+   "srcHash": "a92c33d95673fb234def8da6ce33c22c4d49c5aa",
+   "start": "2026-11-14T11:00:00-08:00",
+   "summary": "Come down and visit your Central Office. See how we support and help your groups to Carry the Message to the alcoholic who is still suffering. We will have some Good Food and Fellowship! You might even want to volunteer for something. Pass it on!",
+   "title": "Central Office Open House",
+   "title_es": "",
+   "type": "Social",
+   "venue": "Orange County Central Office",
+   "zip": "92705"
+  },
+  {
+   "address": "101 E. 28th st.",
+   "allDay": false,
+   "also": [],
+   "cats": [
+    "aniversario"
+   ],
+   "city": "Long Beach",
+   "cost": "",
+   "end": "2026-11-14T21:00:00-08:00",
+   "endDate": "",
+   "flags": [],
+   "flyers": [
+    {
+     "h": 1071,
+     "mime": "image/jpeg",
+     "pdf": "",
+     "sha256": "29e218d7c12f21133ff04365115ba3c72c04b969db3c6db439313810c8ba3e1d",
+     "sizes": [
+      [
+       190,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Ultima-Esperanza-1-190x300.jpg"
+      ],
+      [
+       650,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Ultima-Esperanza-1-650x1024.jpg"
+      ]
+     ],
+     "url": "https://aasurdelabahia.org/wp-content/uploads/2026/11/Ultima-Esperanza-1.jpg",
+     "w": 680
+    },
+    {
+     "h": 1047,
+     "mime": "image/jpeg",
+     "pdf": "",
+     "sha256": "96dfc6a4a5632e6798566bf87caabc6b0e46239d38ccfc1a8f5f82edeee539dd",
+     "sizes": [
+      [
+       189,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Ultima-Esperanza-2-189x300.jpg"
+      ],
+      [
+       644,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Ultima-Esperanza-2-644x1024.jpg"
+      ]
+     ],
+     "url": "https://aasurdelabahia.org/wp-content/uploads/2026/11/Ultima-Esperanza-2.jpg",
+     "w": 658
+    }
+   ],
+   "format": "In person",
+   "id": "co-sur-bahia-3259",
+   "lang": "Spanish",
+   "office": "sur-bahia",
+   "src": "https://aasurdelabahia.org/event/aniversario-18-grupo-ultima-esperanza/",
+   "srcHash": "4836aaeb5dbdc1816b3a54d84b1d4741ee60ba2b",
+   "start": "2026-11-14T14:00:00-08:00",
+   "summary": "",
+   "title": "Aniversario #18 grupo Ultima Esperanza",
+   "title_es": "",
+   "type": "Social",
+   "venue": "",
+   "zip": "90806"
+  },
+  {
+   "address": "27732 Encanto Dr.",
+   "allDay": false,
+   "also": [],
+   "cats": [],
+   "city": "Menifee",
+   "cost": "",
+   "end": "2026-11-14T16:00:00-08:00",
+   "endDate": "",
+   "flags": [],
+   "flyers": [
+    {
+     "h": 0,
+     "mime": "application/pdf",
+     "pdf": "https://www.temeculacentraloffice.org/aa/wp-content/uploads/Bingo_11.14.26.pdf",
+     "sha256": "dee293ba8fcf3ec74c7814bc8509e626d6c6a741e21044826c0b466cbbcb649a",
+     "sizes": [],
+     "url": "https://www.temeculacentraloffice.org/aa/wp-content/uploads/Bingo_11.14.26.pdf",
+     "w": 0
+    }
+   ],
+   "format": "In person",
+   "id": "co-temecula-bingo-at-unity-hall-20261114",
+   "lang": "English",
+   "office": "temecula",
+   "src": "https://www.temeculacentraloffice.org/aa-events/",
+   "srcHash": "2cecb26e61c2632df1546252d67ce62b52fdfaa5",
+   "start": "2026-11-14T14:00:00-08:00",
+   "summary": "",
+   "title": "Bingo at Unity Hall",
+   "title_es": "",
+   "type": "Social",
+   "venue": "Unity Hall",
+   "zip": ""
+  },
+  {
+   "address": "9845 Belfast Dr",
+   "allDay": false,
+   "also": [
+    "oc-central"
+   ],
+   "cats": [],
+   "city": "Garden Grove",
+   "cost": "",
+   "end": "",
+   "endDate": "",
+   "flags": [
+    "no-end-time"
+   ],
+   "flyers": [
+    {
+     "h": 2000,
+     "mime": "image/png",
+     "pdf": "",
+     "sha256": "a789faedb46432fc3575e90334c5633cd7dc5b783e2d8b5e01ad97c2a9a63217",
+     "sizes": [],
+     "url": "https://www.aanoc.org/images/events/friendsgiving_feast_2026.png",
+     "w": 1545
+    }
+   ],
+   "format": "In person",
+   "id": "co-nocco-friendsgiving-feast-covypaa-rocypaa",
+   "lang": "English",
+   "office": "nocco",
+   "src": "https://www.aanoc.org/events/friendsgiving-feast-covypaa-rocypaa/",
+   "srcHash": "2f1790c7060830185410e5c390e0ef832171880b",
+   "start": "2026-11-15T12:00:00-08:00",
+   "summary": "COVYPAA & ROCYPAA invite you to a Friendsgiving Feast — Fellowship | Food | Gratitude. Lunch: 12:00pm · AA Meeting: 2:00pm · Suggested contribution: $15 · More info: Instagram: @covypaa | @roc.ypaa · Website: rocypaa.com",
+   "title": "Friendsgiving Feast — COVYPAA & ROCYPAA",
+   "title_es": "",
+   "type": "YPAA",
+   "venue": "Garden Grove Alano Club",
+   "zip": "92844"
+  },
+  {
+   "address": "",
+   "allDay": false,
+   "also": [],
+   "cats": [],
+   "city": "",
+   "cost": "",
+   "end": "2026-11-21T22:00:00-08:00",
+   "endDate": "",
+   "flags": [
+    "place-on-flyer"
+   ],
+   "flyers": [
+    {
+     "h": 1700,
+     "mime": "image/jpeg",
+     "pdf": "",
+     "sha256": "321ca67357010959af68d1bc2d36cf7f0e421b9c95abeb57e1a121b740e81f6f",
+     "sizes": [
+      [
+       300,
+       "https://oiaasriverside.org/wp-content/uploads/2026/10/VIII-Aniversario-Aqui-Empieza-y-termina-una-etapa_Page_2-300x232.jpg"
+      ],
+      [
+       768,
+       "https://oiaasriverside.org/wp-content/uploads/2026/10/VIII-Aniversario-Aqui-Empieza-y-termina-una-etapa_Page_2-768x593.jpg"
+      ],
+      [
+       1024,
+       "https://oiaasriverside.org/wp-content/uploads/2026/10/VIII-Aniversario-Aqui-Empieza-y-termina-una-etapa_Page_2-1024x791.jpg"
+      ],
+      [
+       1536,
+       "https://oiaasriverside.org/wp-content/uploads/2026/10/VIII-Aniversario-Aqui-Empieza-y-termina-una-etapa_Page_2-1536x1187.jpg"
+      ],
+      [
+       2048,
+       "https://oiaasriverside.org/wp-content/uploads/2026/10/VIII-Aniversario-Aqui-Empieza-y-termina-una-etapa_Page_2-2048x1583.jpg"
+      ]
+     ],
+     "url": "https://oiaasriverside.org/wp-content/uploads/2026/10/VIII-Aniversario-Aqui-Empieza-y-termina-una-etapa_Page_2.jpg",
+     "w": 2200
+    },
+    {
+     "h": 1700,
+     "mime": "image/jpeg",
+     "pdf": "",
+     "sha256": "1f42233093c4a257322f90dd220a4e430635edd98e938b09b790871470062191",
+     "sizes": [
+      [
+       300,
+       "https://oiaasriverside.org/wp-content/uploads/2026/10/VIII-Aniversario-Aqui-Empieza-y-termina-una-etapa_Page_1-300x232.jpg"
+      ],
+      [
+       768,
+       "https://oiaasriverside.org/wp-content/uploads/2026/10/VIII-Aniversario-Aqui-Empieza-y-termina-una-etapa_Page_1-768x593.jpg"
+      ],
+      [
+       1024,
+       "https://oiaasriverside.org/wp-content/uploads/2026/10/VIII-Aniversario-Aqui-Empieza-y-termina-una-etapa_Page_1-1024x791.jpg"
+      ],
+      [
+       1536,
+       "https://oiaasriverside.org/wp-content/uploads/2026/10/VIII-Aniversario-Aqui-Empieza-y-termina-una-etapa_Page_1-1536x1187.jpg"
+      ],
+      [
+       2048,
+       "https://oiaasriverside.org/wp-content/uploads/2026/10/VIII-Aniversario-Aqui-Empieza-y-termina-una-etapa_Page_1-2048x1583.jpg"
+      ]
+     ],
+     "url": "https://oiaasriverside.org/wp-content/uploads/2026/10/VIII-Aniversario-Aqui-Empieza-y-termina-una-etapa_Page_1.jpg",
+     "w": 2200
+    }
+   ],
+   "format": "In person",
+   "id": "co-sureste-riverside-1354",
+   "lang": "Spanish",
+   "office": "sureste-riverside",
+   "src": "https://oiaasriverside.org/event/aqui-empieza-y-termina-una-etapa-viii-aniversario-11-21-26-de-100-a-1000pm/",
+   "srcHash": "e5d2fe94f1dafa5c2269df737eddddf058555117",
+   "start": "2026-11-21T13:00:00-08:00",
+   "summary": "",
+   "title": "Aqui Empieza y Termina una etapa VIII Aniversario",
+   "title_es": "",
+   "type": "Social",
+   "venue": "",
+   "zip": ""
+  },
+  {
+   "address": "1308 E. Artesia Blvd.",
+   "allDay": false,
+   "also": [],
+   "cats": [
+    "aniversario"
+   ],
+   "city": "Long Beach",
+   "cost": "",
+   "end": "2026-11-21T21:00:00-08:00",
+   "endDate": "",
+   "flags": [],
+   "flyers": [
+    {
+     "h": 1387,
+     "mime": "image/jpeg",
+     "pdf": "",
+     "sha256": "82ac1bc42260929d1032ddedc5eaa996d5b0e7ebb27ec8b80841e11045430a9f",
+     "sizes": [
+      [
+       234,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Aniversario-Intergrupal-234x300.jpg"
+      ],
+      [
+       768,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Aniversario-Intergrupal-768x986.jpg"
+      ],
+      [
+       797,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Aniversario-Intergrupal-797x1024.jpg"
+      ]
+     ],
+     "url": "https://aasurdelabahia.org/wp-content/uploads/2026/11/Aniversario-Intergrupal.jpg",
+     "w": 1080
+    }
+   ],
+   "format": "In person",
+   "id": "co-sur-bahia-3282",
+   "lang": "Spanish",
+   "office": "sur-bahia",
+   "src": "https://aasurdelabahia.org/event/aniversario-34-de-la-oficina-intergrupal-del-sur-de-la-bahia/",
+   "srcHash": "bcd2c3bcd0f3830e47b665bafc018d27cd8de1ad",
+   "start": "2026-11-21T14:00:00-08:00",
+   "summary": "",
+   "title": "Aniversario #34 de la Oficina Intergrupal del Sur de la Bahía",
+   "title_es": "",
+   "type": "Social",
+   "venue": "Sur de la Bahía",
+   "zip": "90805"
+  },
+  {
+   "address": "",
+   "allDay": false,
+   "also": [],
+   "cats": [],
+   "city": "",
+   "cost": "$60",
+   "end": "2026-11-21T22:00:00-08:00",
+   "endDate": "",
+   "flags": [
+    "place-on-flyer"
+   ],
+   "flyers": [
+    {
+     "h": 675,
+     "mime": "image/png",
+     "pdf": "",
+     "sha256": "e29fa59e5ce2ed33613154d107ecda2b2ea35ffd03ea76d3a6fcbc36020a1b32",
+     "sizes": [
+      [
+       300,
+       "https://hacoaa.org/wp-content/uploads/trad-26-300x390.png"
+      ]
+     ],
+     "url": "https://hacoaa.org/wp-content/uploads/trad-26.png",
+     "w": 519
+    }
+   ],
+   "format": "In person",
+   "id": "co-haco-27560",
+   "lang": "English",
+   "office": "haco",
+   "src": "https://hacoaa.org/sober-event/traditions-banquet/",
+   "srcHash": "2b1f969f528529d52863413c78d82d7d41831ceb",
+   "start": "2026-11-21T18:30:00-08:00",
+   "summary": "",
+   "title": "Traditions Banquet",
+   "title_es": "",
+   "type": "Social",
+   "venue": "",
+   "zip": ""
+  },
+  {
+   "address": "27574 Commerce Center Dr # 139",
+   "allDay": false,
+   "also": [],
+   "cats": [],
+   "city": "Temecula",
+   "cost": "",
+   "end": "2026-11-27T01:00:00-08:00",
+   "endDate": "",
+   "flags": [],
+   "flyers": [
+    {
+     "h": 0,
+     "mime": "application/pdf",
+     "pdf": "https://www.temeculacentraloffice.org/aa/wp-content/uploads/2026ThanksgivingAlcathon.pdf",
+     "sha256": "876f77e595f3a6fcbddf3925a61624f345c69cb94dbe65ca33feb2ae562f33c7",
+     "sizes": [],
+     "url": "https://www.temeculacentraloffice.org/aa/wp-content/uploads/2026ThanksgivingAlcathon.pdf",
+     "w": 0
+    }
+   ],
+   "format": "In person",
+   "id": "co-temecula-thanksgiving-alcathon-20261126",
+   "lang": "English",
+   "office": "temecula",
+   "src": "https://www.temeculacentraloffice.org/aa-events/",
+   "srcHash": "49586ce11c439c741b0509e64516e0d388db488a",
+   "start": "2026-11-26T07:00:00-08:00",
+   "summary": "",
+   "title": "Thanksgiving Alcathon",
+   "title_es": "",
+   "type": "Social",
+   "venue": "Serenity Circle Hall",
+   "zip": "92590"
+  },
+  {
+   "address": "",
+   "allDay": false,
+   "also": [],
+   "cats": [],
+   "city": "",
+   "cost": "",
+   "end": "2026-11-29T17:00:00-08:00",
+   "endDate": "2026-11-29",
+   "flags": [
+    "place-on-flyer",
+    "title-date-mismatch"
+   ],
+   "flyers": [
+    {
+     "h": 2560,
+     "mime": "image/jpeg",
+     "pdf": "",
+     "sha256": "",
+     "sizes": [],
+     "url": "https://oiaasriverside.org/wp-content/uploads/2026/08/28-CONGRESO-scaled.jpg",
+     "w": 1857
+    }
+   ],
+   "format": "In person",
+   "id": "co-sureste-riverside-1303",
+   "lang": "Spanish",
+   "office": "sureste-riverside",
+   "src": "https://oiaasriverside.org/event/xxviii-congreso-de-alcoholicos-anonimos-272829-de-noviembre-del-2026/",
+   "srcHash": "3290b40abf5b3da5b611900dd21302eb6a3c08db",
+   "start": "2026-11-26T08:00:00-08:00",
+   "summary": "",
+   "title": "XXVIII Congreso de Alcoholicos Anonimos",
+   "title_es": "",
+   "type": "Convention",
+   "venue": "",
+   "zip": ""
+  },
+  {
+   "address": "1355 North Harbor Drive",
+   "allDay": true,
+   "also": [],
+   "cats": [],
+   "city": "San Diego",
+   "cost": "",
+   "end": "",
+   "endDate": "2026-12-06",
+   "flags": [],
+   "flyers": [
+    {
+     "h": 699,
+     "mime": "image/png",
+     "pdf": "",
+     "sha256": "da02ebab669d2954c446c0c5217187c7cd9bee25753de45089399bece67aeeee",
+     "sizes": [],
+     "url": "https://www.aanoc.org/images/events/Pacific_regional_forum_SD26.png",
+     "w": 471
+    }
+   ],
+   "format": "In person",
+   "id": "co-nocco-2026-pacific-regional-forum",
+   "lang": "English",
+   "office": "nocco",
+   "src": "https://www.aanoc.org/events/2026-pacific-regional-forum/",
+   "srcHash": "c91ce529c01fe297f6cd84f97e94328a7eaeaba7",
+   "start": "2026-12-04",
+   "summary": "Join us for the 2026 Pacific Regional Forum, December 4–6 at the Wyndham San Diego Bayside. Registration opens Friday, October 2, 2026. Room Rate: $229.00/night — last day to book: November 4, 2026. Book online (Group Code: AA022026SD). …",
+   "title": "2026 Pacific Regional Forum",
+   "title_es": "",
+   "type": "Forum",
+   "venue": "Wyndham San Diego Bayside",
+   "zip": "92101"
+  },
+  {
+   "address": "520 W South St.",
+   "allDay": true,
+   "also": [
+    "haco"
+   ],
+   "cats": [],
+   "city": "Anaheim",
+   "cost": "",
+   "end": "",
+   "endDate": "2026-12-12",
+   "flags": [],
+   "flyers": [
+    {
+     "h": 1482,
+     "mime": "image/jpeg",
+     "pdf": "",
+     "sha256": "d710f916ba15c4a3d2ca17061b7b0475844ba26401abd6add2ff83fec7af9edc",
+     "sizes": [],
+     "url": "https://www.aanoc.org/images/events/hispanic-womens-workshop26.jpeg",
+     "w": 1072
+    }
+   ],
+   "format": "Hybrid",
+   "id": "co-nocco-11th-hispanic-womens-a-a-workshop",
+   "lang": "Bilingual",
+   "office": "nocco",
+   "src": "https://www.aanoc.org/events/11th-hispanic-womens-a.a.-workshop/",
+   "srcHash": "2e5624488eebf67a2f81e3e529fcf89459e42aa7",
+   "start": "2026-12-12",
+   "summary": "",
+   "title": "11th Hispanic Women's A.A. Workshop",
+   "title_es": "11vo Taller de Mujeres Hispanas de Alcohólicos Anónimos",
+   "type": "Workshop",
+   "venue": "My Safe Harbor",
+   "zip": "92805"
+  },
+  {
+   "address": "27574 Commerce Center Dr # 139",
+   "allDay": false,
+   "also": [],
+   "cats": [],
+   "city": "Temecula",
+   "cost": "",
+   "end": "2026-12-19T16:00:00-08:00",
+   "endDate": "",
+   "flags": [],
+   "flyers": [
+    {
+     "h": 0,
+     "mime": "application/pdf",
+     "pdf": "https://www.temeculacentraloffice.org/aa/wp-content/uploads/2026ChildrensHolidayParty.pdf",
+     "sha256": "2cede80c9ddac46e546c8b6be003ee08243373525ac4203bdfcbd55b205e39f4",
+     "sizes": [],
+     "url": "https://www.temeculacentraloffice.org/aa/wp-content/uploads/2026ChildrensHolidayParty.pdf",
+     "w": 0
+    }
+   ],
+   "format": "In person",
+   "id": "co-temecula-children-s-holiday-party-20261219",
+   "lang": "English",
+   "office": "temecula",
+   "src": "https://www.temeculacentraloffice.org/aa-events/",
+   "srcHash": "a8148b749f43ca6d51f63fcdbfe53bc626842dfc",
+   "start": "2026-12-19T14:00:00-08:00",
+   "summary": "",
+   "title": "Children’s Holiday Party",
+   "title_es": "",
+   "type": "Social",
+   "venue": "Serenity Circle Hall",
+   "zip": "92590"
+  },
+  {
+   "address": "",
+   "allDay": false,
+   "also": [],
+   "cats": [],
+   "city": "",
+   "cost": "",
+   "end": "2026-12-26T21:00:00-08:00",
+   "endDate": "",
+   "flags": [
+    "place-on-flyer"
+   ],
+   "flyers": [
+    {
+     "h": 1700,
+     "mime": "image/jpeg",
+     "pdf": "",
+     "sha256": "b3e2bc9f63db7bbeed76031fc9c21d2a9b908e1701418304990114bdde789b40",
+     "sizes": [
+      [
+       300,
+       "https://oiaasriverside.org/wp-content/uploads/2026/10/Sobriedad-y-Salvacion-Aniversario_Page_2-300x232.jpg"
+      ],
+      [
+       768,
+       "https://oiaasriverside.org/wp-content/uploads/2026/10/Sobriedad-y-Salvacion-Aniversario_Page_2-768x593.jpg"
+      ],
+      [
+       1024,
+       "https://oiaasriverside.org/wp-content/uploads/2026/10/Sobriedad-y-Salvacion-Aniversario_Page_2-1024x791.jpg"
+      ],
+      [
+       1536,
+       "https://oiaasriverside.org/wp-content/uploads/2026/10/Sobriedad-y-Salvacion-Aniversario_Page_2-1536x1187.jpg"
+      ],
+      [
+       2048,
+       "https://oiaasriverside.org/wp-content/uploads/2026/10/Sobriedad-y-Salvacion-Aniversario_Page_2-2048x1583.jpg"
+      ]
+     ],
+     "url": "https://oiaasriverside.org/wp-content/uploads/2026/10/Sobriedad-y-Salvacion-Aniversario_Page_2.jpg",
+     "w": 2200
+    },
+    {
+     "h": 1700,
+     "mime": "image/jpeg",
+     "pdf": "",
+     "sha256": "b198d30ab97117233aabfc0e8055f0061121ee9e2fd02f5c2844bf3cae631b9a",
+     "sizes": [
+      [
+       300,
+       "https://oiaasriverside.org/wp-content/uploads/2026/10/Sobriedad-y-Salvacion-Aniversario_Page_1-300x232.jpg"
+      ],
+      [
+       768,
+       "https://oiaasriverside.org/wp-content/uploads/2026/10/Sobriedad-y-Salvacion-Aniversario_Page_1-768x593.jpg"
+      ],
+      [
+       1024,
+       "https://oiaasriverside.org/wp-content/uploads/2026/10/Sobriedad-y-Salvacion-Aniversario_Page_1-1024x791.jpg"
+      ],
+      [
+       1536,
+       "https://oiaasriverside.org/wp-content/uploads/2026/10/Sobriedad-y-Salvacion-Aniversario_Page_1-1536x1187.jpg"
+      ],
+      [
+       2048,
+       "https://oiaasriverside.org/wp-content/uploads/2026/10/Sobriedad-y-Salvacion-Aniversario_Page_1-2048x1583.jpg"
+      ]
+     ],
+     "url": "https://oiaasriverside.org/wp-content/uploads/2026/10/Sobriedad-y-Salvacion-Aniversario_Page_1.jpg",
+     "w": 2200
+    }
+   ],
+   "format": "In person",
+   "id": "co-sureste-riverside-1340",
+   "lang": "Spanish",
+   "office": "sureste-riverside",
+   "src": "https://oiaasriverside.org/event/grupo-aasobriedad-y-salvacion-xxv-aniversario-12-26-26-de-i00-a-900pm/",
+   "srcHash": "7b3693f9baae6fbb2a70c27af0b70b1cc418d022",
+   "start": "2026-12-26T13:30:00-08:00",
+   "summary": "",
+   "title": "Grupo AA:Sobriedad y Salvacion XXV ANIVERSARIO",
+   "title_es": "",
+   "type": "Social",
+   "venue": "",
+   "zip": ""
+  },
+  {
+   "address": "8888 Los Coyotes Dr",
+   "allDay": false,
+   "also": [],
+   "cats": [],
+   "city": "Buena Park",
+   "cost": "",
+   "end": "",
+   "endDate": "",
+   "flags": [
+    "no-end-time"
+   ],
+   "flyers": [
+    {
+     "h": 1427,
+     "mime": "image/png",
+     "pdf": "",
+     "sha256": "7ca05bf049f31aab8bb0861df2c7092417a3b18ff316ab7d4d1da5efc8a3b385",
+     "sizes": [],
+     "url": "https://www.aanoc.org/images/events/womens_banquet_2026.png",
+     "w": 1102
+    }
+   ],
+   "format": "In person",
+   "id": "co-nocco-29th-annual-womens-banquet-luncheon-fearless-queens",
+   "lang": "English",
+   "office": "nocco",
+   "src": "https://www.aanoc.org/events/29th-annual-womens-banquet-luncheon-fearless-queens/",
+   "srcHash": "5b9f1216ae1c2ee4affaeda7ce82e77f6767262e",
+   "start": "2027-03-13T10:30:00-08:00",
+   "summary": "",
+   "title": "29th Annual Women's Banquet Luncheon — Fearless Queens",
+   "title_es": "",
+   "type": "Social",
+   "venue": "Los Coyotes Country Club",
+   "zip": ""
+  },
+  {
+   "address": "2200 East Holt Boulevard",
+   "allDay": true,
+   "also": [
+    "nocco",
+    "temecula"
+   ],
+   "cats": [
+    "conventions"
+   ],
+   "city": "Ontario",
+   "cost": "",
+   "end": "",
+   "endDate": "2027-04-18",
+   "flags": [],
+   "flyers": [
+    {
+     "h": 2000,
+     "mime": "image/png",
+     "pdf": "",
+     "sha256": "4aa1477cba04cc9fddcbf1367f9eb8c00c8c8310764ebc0b930afb5b49d40a2c",
+     "sizes": [
+      [
+       214,
+       "https://www.oc-aa.org/wp-content/uploads/2026/09/ACYPAA54_Flyer-214x300.png"
+      ],
+      [
+       732,
+       "https://www.oc-aa.org/wp-content/uploads/2026/09/ACYPAA54_Flyer-732x1024.png"
+      ],
+      [
+       768,
+       "https://www.oc-aa.org/wp-content/uploads/2026/09/ACYPAA54_Flyer-768x1075.png"
+      ],
+      [
+       1097,
+       "https://www.oc-aa.org/wp-content/uploads/2026/09/ACYPAA54_Flyer-1097x1536.png"
+      ]
+     ],
+     "url": "https://www.oc-aa.org/wp-content/uploads/2026/09/ACYPAA54_Flyer.png",
+     "w": 1429
+    }
+   ],
+   "format": "In person",
+   "id": "co-oc-central-70285",
+   "lang": "English",
+   "office": "oc-central",
+   "src": "https://www.oc-aa.org/event/54th-all-california-young-people-in-alcoholics-anonymous-acypaa-convention/",
+   "srcHash": "0aaacb4561f5e25961b2babc2708b6ab2d07fa47",
+   "start": "2027-04-15",
+   "summary": "The 54th All California Young People in Alcoholics Anonymous (ACYPAA) convention — “State of Mental Goose Flesh” (pg. 54) — comes to the Delta Marriott Hotel in Ontario, April 15–18, 2027. Featuring: AA Meetings, DJ Sets, Yoga, Games and more. ASL & Spanish interpreters available. …",
+   "title": "54th All California Young People in Alcoholics Anonymous (ACYPAA) Convention",
+   "title_es": "",
+   "type": "YPAA",
+   "venue": "Delta Marriott Hotel",
+   "zip": ""
+  }
+ ],
+ "offices": {
+  "asbco": {
+   "adapter": "tribe",
+   "count": 0,
+   "errorKind": "",
+   "failingSince": "",
+   "flyers": {},
+   "lastChange": "",
+   "pageModified": "",
+   "sources": {},
+   "status": "empty",
+   "unparsed": 0,
+   "watchModified": ""
+  },
+  "coachella-hispana": {
+   "adapter": "watch",
+   "count": 0,
+   "errorKind": "",
+   "failingSince": "",
+   "flyers": {},
+   "lastChange": "2026-11-09",
+   "pageModified": "",
+   "sources": {},
+   "status": "watch",
+   "unparsed": 0,
+   "watchModified": "2026-11-08T18:02:49"
+  },
+  "desert": {
+   "adapter": "watch",
+   "count": 0,
+   "errorKind": "",
+   "failingSince": "",
+   "flyers": {},
+   "lastChange": "",
+   "pageModified": "",
+   "sources": {},
+   "status": "watch",
+   "unparsed": 0,
+   "watchModified": "2026-02-24T17:14:56"
+  },
+  "haco": {
+   "adapter": "tribe",
+   "count": 2,
+   "errorKind": "",
+   "failingSince": "",
+   "flyers": {
+    "https://hacoaa.org/wp-content/uploads/trad-26.png": "e29fa59e5ce2ed33613154d107ecda2b2ea35ffd03ea76d3a6fcbc36020a1b32 519 675 image/png",
+    "https://hacoaa.org/wp-content/uploads/women-hispanic.png": "aa9c4f019ade25344161ee6914b1ca47a6f1b2c68cd4c055d766c8490539419f 733 515 image/png"
+   },
+   "lastChange": "2026-11-06",
+   "pageModified": "",
+   "sources": {
+    "co-haco-27509": "2026-12-12 7d3114c7c6057408a1c530770f52ed2c29aa7e7d",
+    "co-haco-27560": "2026-11-21 2b1f969f528529d52863413c78d82d7d41831ceb"
+   },
+   "status": "ok",
+   "unparsed": 0,
+   "watchModified": ""
+  },
+  "hispana-norte-orange": {
+   "adapter": "none",
+   "count": 0,
+   "errorKind": "",
+   "failingSince": "",
+   "flyers": {},
+   "lastChange": "",
+   "pageModified": "",
+   "sources": {},
+   "status": "none",
+   "unparsed": 0,
+   "watchModified": ""
+  },
+  "hispana-sur-orange": {
+   "adapter": "none",
+   "count": 0,
+   "errorKind": "",
+   "failingSince": "",
+   "flyers": {},
+   "lastChange": "",
+   "pageModified": "",
+   "sources": {},
+   "status": "none",
+   "unparsed": 0,
+   "watchModified": ""
+  },
+  "inland-empire": {
+   "adapter": "tribe",
+   "count": 0,
+   "errorKind": "",
+   "failingSince": "",
+   "flyers": {},
+   "lastChange": "",
+   "pageModified": "",
+   "sources": {},
+   "status": "empty",
+   "unparsed": 0,
+   "watchModified": "2026-11-10T08:12:07"
+  },
+  "nocco": {
+   "adapter": "aanoc",
+   "count": 7,
+   "details": {
+    "co-nocco-acypaa-54": {
+     "venue": "Delta Marriott Hotel"
+    },
+    "co-nocco-servathon": {
+     "venue": "Knights of Columbus"
+    }
+   },
+   "errorKind": "",
+   "failingSince": "",
+   "flyers": {
+    "https://www.aanoc.org/images/events/ACYPAA54_Flyer.png": "e40f7a1da82bcc7f439e7eee2b46c7513a46fd2c5eb8239ba9e76486df80fc40 1429 2000 image/png",
+    "https://www.aanoc.org/images/events/Pacific_regional_forum_SD26.png": "da02ebab669d2954c446c0c5217187c7cd9bee25753de45089399bece67aeeee 471 699 image/png",
+    "https://www.aanoc.org/images/events/friendsgiving_feast_2026.png": "a789faedb46432fc3575e90334c5633cd7dc5b783e2d8b5e01ad97c2a9a63217 1545 2000 image/png",
+    "https://www.aanoc.org/images/events/hispanic-womens-workshop26.jpeg": "d710f916ba15c4a3d2ca17061b7b0475844ba26401abd6add2ff83fec7af9edc 1072 1482 image/jpeg",
+    "https://www.aanoc.org/images/events/msca09_servathon_2026.png": "7ca1b07cc6a34358b6f5ed5c5b6bcd4f046e51ac34f9315dcade22add38e4553 1348 2048 image/png",
+    "https://www.aanoc.org/images/events/practicing-principles.jpeg": "377e0ee474654cb9a91aae7b6081c21130a63c14434f84283d408077029b469d 1179 1504 image/jpeg",
+    "https://www.aanoc.org/images/events/womens_banquet_2026.png": "7ca05bf049f31aab8bb0861df2c7092417a3b18ff316ab7d4d1da5efc8a3b385 1102 1427 image/png"
+   },
+   "lastChange": "2026-11-04",
+   "pageModified": "",
+   "sources": {
+    "co-nocco-11th-hispanic-womens-a-a-workshop": "2026-12-12 2e5624488eebf67a2f81e3e529fcf89459e42aa7",
+    "co-nocco-2026-pacific-regional-forum": "2026-12-06 c91ce529c01fe297f6cd84f97e94328a7eaeaba7",
+    "co-nocco-29th-annual-womens-banquet-luncheon-fearless-queens": "2027-03-13 5b9f1216ae1c2ee4affaeda7ce82e77f6767262e",
+    "co-nocco-acypaa-54": "2027-04-18 5c874f961beaf5186fba5ab8d37363e7109c007b",
+    "co-nocco-friendsgiving-feast-covypaa-rocypaa": "2026-11-15 2f1790c7060830185410e5c390e0ef832171880b",
+    "co-nocco-practicing-principles": "2026-11-14 c67b98b40bfc68ea2cbae9b35dd8321228090c01",
+    "co-nocco-servathon": "2026-11-14 e61c6bc2f80fa8d6b9a3878a90a6361ec8f6581d"
+   },
+   "status": "ok",
+   "unparsed": 0,
+   "watchModified": ""
+  },
+  "oc-central": {
+   "adapter": "tribe",
+   "count": 3,
+   "errorKind": "",
+   "failingSince": "",
+   "flyers": {
+    "https://www.oc-aa.org/wp-content/uploads/2026/09/ACYPAA54_Flyer.png": "4aa1477cba04cc9fddcbf1367f9eb8c00c8c8310764ebc0b930afb5b49d40a2c 1429 2000 image/png",
+    "https://www.oc-aa.org/wp-content/uploads/2026/09/doc01079620260909101242-pdf.jpg": "6c60d44ef02f4b765e5513316f8acaf0f9956efc8f9dd22a2ea670def919f35a 1088 1408 image/jpeg",
+    "https://www.oc-aa.org/wp-content/uploads/2026/11/IMG_7007.jpeg": "16f3f23c0a4bdf3c53956acac91c024c19de38dee9c2943fef4bb2756768fc76 500 647 image/jpeg"
+   },
+   "lastChange": "2026-11-05",
+   "pageModified": "",
+   "sources": {
+    "co-oc-central-70269": "2026-11-14 a92c33d95673fb234def8da6ce33c22c4d49c5aa",
+    "co-oc-central-70285": "2027-04-18 0aaacb4561f5e25961b2babc2708b6ab2d07fa47",
+    "co-oc-central-70392": "2026-11-15 6cc242ce510ae0a59142655ab39bfbbe88e6f29d"
+   },
+   "status": "ok",
+   "unparsed": 0,
+   "watchModified": ""
+  },
+  "oiaa": {
+   "adapter": "none",
+   "count": 0,
+   "errorKind": "",
+   "failingSince": "",
+   "flyers": {},
+   "lastChange": "",
+   "pageModified": "",
+   "sources": {},
+   "status": "none",
+   "unparsed": 0,
+   "watchModified": ""
+  },
+  "riverside-es": {
+   "adapter": "none",
+   "count": 0,
+   "errorKind": "",
+   "failingSince": "",
+   "flyers": {},
+   "lastChange": "",
+   "pageModified": "",
+   "sources": {},
+   "status": "none",
+   "unparsed": 0,
+   "watchModified": ""
+  },
+  "san-bernardino-es": {
+   "adapter": "none",
+   "count": 0,
+   "errorKind": "",
+   "failingSince": "",
+   "flyers": {},
+   "lastChange": "",
+   "pageModified": "",
+   "sources": {},
+   "status": "none",
+   "unparsed": 0,
+   "watchModified": ""
+  },
+  "south-oc": {
+   "adapter": "shared",
+   "count": 0,
+   "errorKind": "",
+   "failingSince": "",
+   "flyers": {},
+   "lastChange": "",
+   "pageModified": "",
+   "sources": {},
+   "status": "shared",
+   "unparsed": 0,
+   "watchModified": ""
+  },
+  "sur-bahia": {
+   "adapter": "tribe",
+   "count": 3,
+   "errorKind": "",
+   "failingSince": "",
+   "flyers": {
+    "https://aasurdelabahia.org/wp-content/uploads/2026/11/Aniversario-Intergrupal.jpg": "82ac1bc42260929d1032ddedc5eaa996d5b0e7ebb27ec8b80841e11045430a9f 1080 1387 image/jpeg",
+    "https://aasurdelabahia.org/wp-content/uploads/2026/11/Congreso-Valle-de-Coachella.jpg": "52bcffadb19912b14950421d6d7d030ac46e53d996181a758fdf683f56061bd2 671 1059 image/jpeg",
+    "https://aasurdelabahia.org/wp-content/uploads/2026/11/Ultima-Esperanza-1.jpg": "29e218d7c12f21133ff04365115ba3c72c04b969db3c6db439313810c8ba3e1d 680 1071 image/jpeg",
+    "https://aasurdelabahia.org/wp-content/uploads/2026/11/Ultima-Esperanza-2.jpg": "96dfc6a4a5632e6798566bf87caabc6b0e46239d38ccfc1a8f5f82edeee539dd 658 1047 image/jpeg"
+   },
+   "lastChange": "2026-11-09",
+   "pageModified": "",
+   "sources": {
+    "co-sur-bahia-3259": "2026-11-14 4836aaeb5dbdc1816b3a54d84b1d4741ee60ba2b",
+    "co-sur-bahia-3282": "2026-11-21 bcd2c3bcd0f3830e47b665bafc018d27cd8de1ad",
+    "co-sur-bahia-3325": "2026-11-15 1621bfc0f307a1c02fbe9c8b909980874d746578"
+   },
+   "status": "ok",
+   "unparsed": 0,
+   "watchModified": ""
+  },
+  "sureste-riverside": {
+   "adapter": "tribe",
+   "count": 4,
+   "errorKind": "",
+   "failingSince": "",
+   "flyers": {
+    "https://oiaasriverside.org/wp-content/uploads/2026/10/20260927_210553-scaled.jpg": "f74eb68b9aa148f9a8934a435ba8c5c66b2ee380cb37e1f14ffd1b3dc11d6b31 1733 2560 image/jpeg",
+    "https://oiaasriverside.org/wp-content/uploads/2026/10/Sobriedad-y-Salvacion-Aniversario_Page_1.jpg": "b198d30ab97117233aabfc0e8055f0061121ee9e2fd02f5c2844bf3cae631b9a 2200 1700 image/jpeg",
+    "https://oiaasriverside.org/wp-content/uploads/2026/10/Sobriedad-y-Salvacion-Aniversario_Page_2.jpg": "b3e2bc9f63db7bbeed76031fc9c21d2a9b908e1701418304990114bdde789b40 2200 1700 image/jpeg",
+    "https://oiaasriverside.org/wp-content/uploads/2026/10/VIII-Aniversario-Aqui-Empieza-y-termina-una-etapa_Page_1.jpg": "1f42233093c4a257322f90dd220a4e430635edd98e938b09b790871470062191 2200 1700 image/jpeg",
+    "https://oiaasriverside.org/wp-content/uploads/2026/10/VIII-Aniversario-Aqui-Empieza-y-termina-una-etapa_Page_2.jpg": "321ca67357010959af68d1bc2d36cf7f0e421b9c95abeb57e1a121b740e81f6f 2200 1700 image/jpeg"
+   },
+   "lastChange": "2026-10-30",
+   "pageModified": "",
+   "sources": {
+    "co-sureste-riverside-1303": "2026-11-29 3290b40abf5b3da5b611900dd21302eb6a3c08db",
+    "co-sureste-riverside-1337": "2026-11-14 7b7f1c7922c2cc54d3e376bf5109afa12648722b",
+    "co-sureste-riverside-1340": "2026-12-26 7b3693f9baae6fbb2a70c27af0b70b1cc418d022",
+    "co-sureste-riverside-1354": "2026-11-21 e5d2fe94f1dafa5c2269df737eddddf058555117"
+   },
+   "status": "ok",
+   "unparsed": 0,
+   "watchModified": ""
+  },
+  "temecula": {
+   "adapter": "tvco",
+   "count": 4,
+   "errorKind": "",
+   "failingSince": "",
+   "flyers": {
+    "https://www.temeculacentraloffice.org/aa/wp-content/uploads/2026ChildrensHolidayParty.pdf": "2cede80c9ddac46e546c8b6be003ee08243373525ac4203bdfcbd55b205e39f4 0 0 application/pdf",
+    "https://www.temeculacentraloffice.org/aa/wp-content/uploads/2026ThanksgivingAlcathon.pdf": "876f77e595f3a6fcbddf3925a61624f345c69cb94dbe65ca33feb2ae562f33c7 0 0 application/pdf",
+    "https://www.temeculacentraloffice.org/aa/wp-content/uploads/ACYPAA_LIV.png": "b34ea7a9b2ea252598f9738e31d04d818bb6eee6674b7dd1acab8b7ee207a3f3 1429 2000 image/png",
+    "https://www.temeculacentraloffice.org/aa/wp-content/uploads/ACYPAA_Roundup_54.jpeg": "675317c03cf1fb889c7f8ec661557cc53706e50a9ef69416926c2d1f5bd36509 1526 2048 image/jpeg",
+    "https://www.temeculacentraloffice.org/aa/wp-content/uploads/Bingo_11.14.26.pdf": "dee293ba8fcf3ec74c7814bc8509e626d6c6a741e21044826c0b466cbbcb649a 0 0 application/pdf"
+   },
+   "lastChange": "2026-10-30",
+   "pageModified": "2026-10-28T14:38:32",
+   "sources": {
+    "co-temecula-acypaa-liv-state-of-mental-goose-flesh-20270415": "2027-04-18 5f4daa43da80c39c0a1d0180467ca05e633c6e9e",
+    "co-temecula-bingo-at-unity-hall-20261114": "2026-11-14 2cecb26e61c2632df1546252d67ce62b52fdfaa5",
+    "co-temecula-children-s-holiday-party-20261219": "2026-12-19 a8148b749f43ca6d51f63fcdbfe53bc626842dfc",
+    "co-temecula-thanksgiving-alcathon-20261126": "2026-11-27 49586ce11c439c741b0509e64516e0d388db488a"
+   },
+   "status": "ok",
+   "unparsed": 0,
+   "watchModified": ""
+  },
+  "victor-valley": {
+   "adapter": "watch",
+   "count": 0,
+   "errorKind": "",
+   "failingSince": "",
+   "flyers": {},
+   "lastChange": "2026-11-10",
+   "pageModified": "",
+   "sources": {},
+   "status": "watch",
+   "unparsed": 0,
+   "watchModified": "2026-11-09T16:08:46"
+  }
+ },
+ "tz": "America/Los_Angeles",
+ "v": 1
+}

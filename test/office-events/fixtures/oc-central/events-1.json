@@ -1,0 +1,1122 @@
+{
+ "events": [
+  {
+   "id": 70135,
+   "global_id": "www.oc-aa.org?id=70135",
+   "global_id_lineage": [
+    "www.oc-aa.org?id=70135"
+   ],
+   "author": "4",
+   "status": "publish",
+   "date": "2026-07-31 08:52:44",
+   "date_utc": "2026-07-31 15:52:44",
+   "modified": "2026-10-20 14:10:42",
+   "modified_utc": "2026-10-20 21:10:42",
+   "url": "https://www.oc-aa.org/event/south-county-h-i-chili-cook-off/",
+   "rest_url": "https://www.oc-aa.org/wp-json/tribe/events/v1/events/70135",
+   "title": "South County H &#038; I Chili Cook-Off",
+   "description": "<p>Tasty Chili, Great Fellowship, Awesome Prizes! Bring the Heat!</p>",
+   "excerpt": "",
+   "slug": "south-county-h-i-chili-cook-off",
+   "image": {
+    "url": "https://www.oc-aa.org/wp-content/uploads/2026/07/HI-Chili-Cookoff-2026.jpeg",
+    "id": 70136,
+    "extension": "jpeg",
+    "width": 1054,
+    "height": 1492,
+    "filesize": 206228,
+    "sizes": {
+     "medium": {
+      "width": 212,
+      "height": 300,
+      "mime-type": "image/jpeg",
+      "filesize": 26183,
+      "url": "https://www.oc-aa.org/wp-content/uploads/2026/07/HI-Chili-Cookoff-2026-212x300.jpeg"
+     },
+     "large": {
+      "width": 723,
+      "height": 1024,
+      "mime-type": "image/jpeg",
+      "filesize": 199707,
+      "url": "https://www.oc-aa.org/wp-content/uploads/2026/07/HI-Chili-Cookoff-2026-723x1024.jpeg"
+     },
+     "thumbnail": {
+      "width": 150,
+      "height": 150,
+      "mime-type": "image/jpeg",
+      "filesize": 10865,
+      "url": "https://www.oc-aa.org/wp-content/uploads/2026/07/HI-Chili-Cookoff-2026-150x150.jpeg"
+     },
+     "medium_large": {
+      "width": 768,
+      "height": 1087,
+      "mime-type": "image/jpeg",
+      "filesize": 218499,
+      "url": "https://www.oc-aa.org/wp-content/uploads/2026/07/HI-Chili-Cookoff-2026-768x1087.jpeg"
+     }
+    }
+   },
+   "all_day": false,
+   "start_date": "2026-10-31 11:00:00",
+   "start_date_details": {
+    "year": "2026",
+    "month": "10",
+    "day": "31",
+    "hour": "11",
+    "minutes": "00",
+    "seconds": "00"
+   },
+   "end_date": "2026-10-31 14:00:00",
+   "end_date_details": {
+    "year": "2026",
+    "month": "10",
+    "day": "31",
+    "hour": "14",
+    "minutes": "00",
+    "seconds": "00"
+   },
+   "utc_start_date": "2026-10-31 18:00:00",
+   "utc_start_date_details": {
+    "year": "2026",
+    "month": "10",
+    "day": "31",
+    "hour": "18",
+    "minutes": "00",
+    "seconds": "00"
+   },
+   "utc_end_date": "2026-10-31 21:00:00",
+   "utc_end_date_details": {
+    "year": "2026",
+    "month": "10",
+    "day": "31",
+    "hour": "21",
+    "minutes": "00",
+    "seconds": "00"
+   },
+   "timezone": "America/Los_Angeles",
+   "timezone_abbr": "PDT",
+   "cost": "",
+   "cost_details": {
+    "currency_symbol": "$",
+    "currency_code": "USD",
+    "currency_position": "prefix",
+    "values": []
+   },
+   "website": "",
+   "show_map": true,
+   "show_map_link": true,
+   "hide_from_listings": false,
+   "sticky": false,
+   "featured": false,
+   "categories": [
+    {
+     "name": "Special Events",
+     "slug": "special-events",
+     "term_group": 0,
+     "term_taxonomy_id": 105,
+     "taxonomy": "tribe_events_cat",
+     "description": "",
+     "parent": 0,
+     "count": 94,
+     "filter": "raw",
+     "id": 105,
+     "urls": {
+      "self": "https://www.oc-aa.org/wp-json/tribe/events/v1/categories/105",
+      "collection": "https://www.oc-aa.org/wp-json/tribe/events/v1/categories"
+     }
+    }
+   ],
+   "tags": [],
+   "venue": {
+    "id": 70350,
+    "venue": "Norman P. Murray Community &#038; Senior Center",
+    "address": "24932 Veterans Way",
+    "city": "Mission Viejo",
+    "zip": "92692",
+    "province": "CA",
+    "stateprovince": "CA",
+    "show_map": true
+   },
+   "organizer": [],
+   "custom_fields": []
+  },
+  {
+   "id": 70310,
+   "global_id": "www.oc-aa.org?id=70310",
+   "global_id_lineage": [
+    "www.oc-aa.org?id=70310"
+   ],
+   "author": "4",
+   "status": "publish",
+   "date": "2026-10-07 16:34:28",
+   "date_utc": "2026-10-07 23:34:28",
+   "modified": "2026-10-07 16:36:10",
+   "modified_utc": "2026-10-07 23:36:10",
+   "url": "https://www.oc-aa.org/event/halloween-party/",
+   "rest_url": "https://www.oc-aa.org/wp-json/tribe/events/v1/events/70310",
+   "title": "Halloween Party",
+   "description": "<p>AA Meeting at 7pm. DJ at 8:30pm. Costume Contest &amp; Food. Presented by Young People in AA. See flyer for more info&#8230;</p>",
+   "excerpt": "",
+   "slug": "halloween-party",
+   "image": {
+    "url": "https://www.oc-aa.org/wp-content/uploads/2026/10/Halloween_Party_Flyer.jpeg",
+    "id": 70311,
+    "extension": "jpeg",
+    "width": 1546,
+    "height": 2000,
+    "filesize": 2442331,
+    "sizes": {
+     "medium": {
+      "width": 232,
+      "height": 300,
+      "mime-type": "image/jpeg",
+      "filesize": 15181,
+      "url": "https://www.oc-aa.org/wp-content/uploads/2026/10/Halloween_Party_Flyer-232x300.jpeg"
+     },
+     "large": {
+      "width": 792,
+      "height": 1024,
+      "mime-type": "image/jpeg",
+      "filesize": 91478,
+      "url": "https://www.oc-aa.org/wp-content/uploads/2026/10/Halloween_Party_Flyer-792x1024.jpeg"
+     },
+     "thumbnail": {
+      "width": 150,
+      "height": 150,
+      "mime-type": "image/jpeg",
+      "filesize": 5205,
+      "url": "https://www.oc-aa.org/wp-content/uploads/2026/10/Halloween_Party_Flyer-150x150.jpeg"
+     },
+     "medium_large": {
+      "width": 768,
+      "height": 994,
+      "mime-type": "image/jpeg",
+      "filesize": 86659,
+      "url": "https://www.oc-aa.org/wp-content/uploads/2026/10/Halloween_Party_Flyer-768x994.jpeg"
+     },
+     "1536x1536": {
+      "width": 1187,
+      "height": 1536,
+      "mime-type": "image/jpeg",
+      "filesize": 158972,
+      "url": "https://www.oc-aa.org/wp-content/uploads/2026/10/Halloween_Party_Flyer-1187x1536.jpeg"
+     }
+    }
+   },
+   "all_day": false,
+   "start_date": "2026-10-31 19:00:00",
+   "start_date_details": {
+    "year": "2026",
+    "month": "10",
+    "day": "31",
+    "hour": "19",
+    "minutes": "00",
+    "seconds": "00"
+   },
+   "end_date": "2026-10-31 23:00:00",
+   "end_date_details": {
+    "year": "2026",
+    "month": "10",
+    "day": "31",
+    "hour": "23",
+    "minutes": "00",
+    "seconds": "00"
+   },
+   "utc_start_date": "2026-11-01 02:00:00",
+   "utc_start_date_details": {
+    "year": "2026",
+    "month": "11",
+    "day": "01",
+    "hour": "02",
+    "minutes": "00",
+    "seconds": "00"
+   },
+   "utc_end_date": "2026-11-01 06:00:00",
+   "utc_end_date_details": {
+    "year": "2026",
+    "month": "11",
+    "day": "01",
+    "hour": "06",
+    "minutes": "00",
+    "seconds": "00"
+   },
+   "timezone": "America/Los_Angeles",
+   "timezone_abbr": "PDT",
+   "cost": "",
+   "cost_details": {
+    "currency_symbol": "$",
+    "currency_code": "USD",
+    "currency_position": "prefix",
+    "values": []
+   },
+   "website": "",
+   "show_map": true,
+   "show_map_link": true,
+   "hide_from_listings": false,
+   "sticky": false,
+   "featured": false,
+   "categories": [
+    {
+     "name": "Special Events",
+     "slug": "special-events",
+     "term_group": 0,
+     "term_taxonomy_id": 105,
+     "taxonomy": "tribe_events_cat",
+     "description": "",
+     "parent": 0,
+     "count": 94,
+     "filter": "raw",
+     "id": 105,
+     "urls": {
+      "self": "https://www.oc-aa.org/wp-json/tribe/events/v1/categories/105",
+      "collection": "https://www.oc-aa.org/wp-json/tribe/events/v1/categories"
+     }
+    }
+   ],
+   "tags": [],
+   "venue": [],
+   "organizer": [],
+   "custom_fields": []
+  },
+  {
+   "id": 70318,
+   "global_id": "www.oc-aa.org?id=70318",
+   "global_id_lineage": [
+    "www.oc-aa.org?id=70318"
+   ],
+   "author": "4",
+   "status": "publish",
+   "date": "2026-10-09 12:31:17",
+   "date_utc": "2026-10-09 19:31:17",
+   "modified": "2026-10-20 13:45:50",
+   "modified_utc": "2026-10-20 20:45:50",
+   "url": "https://www.oc-aa.org/event/dance-of-the-dead/",
+   "rest_url": "https://www.oc-aa.org/wp-json/tribe/events/v1/events/70318",
+   "title": "Dance of the Dead",
+   "description": "<p>4th Anniversary Dance of the Dead. Live DJ, Dancing, Costume Contest. Tickets &#8211; $20. <span data-olk-copy-source=\"MessageBody\">Online ticket sales close at 5:00 PM PT on October 31. Tickets will still be available for purchase at the door after online sales close.</span></p>",
+   "excerpt": "",
+   "slug": "dance-of-the-dead",
+   "image": {
+    "url": "https://www.oc-aa.org/wp-content/uploads/2026/10/IMG_5029.jpeg",
+    "id": 70319,
+    "extension": "jpeg",
+    "width": 1206,
+    "height": 1808,
+    "filesize": 337109,
+    "sizes": {
+     "medium": {
+      "width": 200,
+      "height": 300,
+      "mime-type": "image/jpeg",
+      "filesize": 15152,
+      "url": "https://www.oc-aa.org/wp-content/uploads/2026/10/IMG_5029-200x300.jpeg"
+     },
+     "large": {
+      "width": 683,
+      "height": 1024,
+      "mime-type": "image/jpeg",
+      "filesize": 95867,
+      "url": "https://www.oc-aa.org/wp-content/uploads/2026/10/IMG_5029-683x1024.jpeg"
+     },
+     "thumbnail": {
+      "width": 150,
+      "height": 150,
+      "mime-type": "image/jpeg",
+      "filesize": 7134,
+      "url": "https://www.oc-aa.org/wp-content/uploads/2026/10/IMG_5029-150x150.jpeg"
+     },
+     "medium_large": {
+      "width": 768,
+      "height": 1151,
+      "mime-type": "image/jpeg",
+      "filesize": 114716,
+      "url": "https://www.oc-aa.org/wp-content/uploads/2026/10/IMG_5029-768x1151.jpeg"
+     },
+     "1536x1536": {
+      "width": 1025,
+      "height": 1536,
+      "mime-type": "image/jpeg",
+      "filesize": 172870,
+      "url": "https://www.oc-aa.org/wp-content/uploads/2026/10/IMG_5029-1025x1536.jpeg"
+     }
+    }
+   },
+   "all_day": false,
+   "start_date": "2026-10-31 21:30:00",
+   "start_date_details": {
+    "year": "2026",
+    "month": "10",
+    "day": "31",
+    "hour": "21",
+    "minutes": "30",
+    "seconds": "00"
+   },
+   "end_date": "2026-11-01 02:00:00",
+   "end_date_details": {
+    "year": "2026",
+    "month": "11",
+    "day": "01",
+    "hour": "02",
+    "minutes": "00",
+    "seconds": "00"
+   },
+   "utc_start_date": "2026-11-01 04:30:00",
+   "utc_start_date_details": {
+    "year": "2026",
+    "month": "11",
+    "day": "01",
+    "hour": "04",
+    "minutes": "30",
+    "seconds": "00"
+   },
+   "utc_end_date": "2026-11-01 10:00:00",
+   "utc_end_date_details": {
+    "year": "2026",
+    "month": "11",
+    "day": "01",
+    "hour": "10",
+    "minutes": "00",
+    "seconds": "00"
+   },
+   "timezone": "America/Los_Angeles",
+   "timezone_abbr": "PDT",
+   "cost": "",
+   "cost_details": {
+    "currency_symbol": "$20",
+    "currency_code": "USD",
+    "currency_position": "prefix",
+    "values": []
+   },
+   "website": "https://urldefense.proofpoint.com/v2/url?u=https-3A__radford-2Dhall.com_halloween-3Futm-5Fsource-3Dchatgpt.com&amp;d=DwMFaQ&amp;c=euGZstcaTDllvimEN8b7jXrwqOf-v5A_CdpgnVfiiMM&amp;r=MRBKbGm90MfYUvk_R2MrxFb6NUVI16_GM5e3C7dFmiU&amp;m=ifDPq26dNx3ZV5jBakzVka3uYqE5RwyANW0BB9lr_doeqRJyfc1eg9GZmkPujaVU&amp;s=k1ODNevMJoSU1umZCYqNyFnLXRHJZTUYtd65zHMi5yM&amp;e=",
+   "show_map": true,
+   "show_map_link": true,
+   "hide_from_listings": false,
+   "sticky": false,
+   "featured": false,
+   "categories": [
+    {
+     "name": "Special Events",
+     "slug": "special-events",
+     "term_group": 0,
+     "term_taxonomy_id": 105,
+     "taxonomy": "tribe_events_cat",
+     "description": "",
+     "parent": 0,
+     "count": 94,
+     "filter": "raw",
+     "id": 105,
+     "urls": {
+      "self": "https://www.oc-aa.org/wp-json/tribe/events/v1/categories/105",
+      "collection": "https://www.oc-aa.org/wp-json/tribe/events/v1/categories"
+     }
+    }
+   ],
+   "tags": [],
+   "venue": {
+    "id": 70346,
+    "venue": "Club Radford",
+    "address": "4849 Van Nuys Blvd",
+    "city": "Sherman Oaks",
+    "zip": "91403",
+    "province": "CA",
+    "stateprovince": "CA",
+    "show_map": true
+   },
+   "organizer": [],
+   "custom_fields": []
+  },
+  {
+   "id": 70200,
+   "global_id": "www.oc-aa.org?id=70200",
+   "global_id_lineage": [
+    "www.oc-aa.org?id=70200"
+   ],
+   "author": "4",
+   "status": "publish",
+   "date": "2026-08-14 15:29:50",
+   "date_utc": "2026-08-14 22:29:50",
+   "modified": "2026-08-14 15:29:50",
+   "modified_utc": "2026-08-14 22:29:50",
+   "url": "https://www.oc-aa.org/event/bowling-event/",
+   "rest_url": "https://www.oc-aa.org/wp-json/tribe/events/v1/events/70200",
+   "title": "Bowling Event",
+   "description": "<p>OCAA Intergroup invites you strike up some fun with bowling, food and fellowship at Irvine Lanes. Cut-off for reservations is Oct. 25th. Call or text CJ at (714) 555-0100 to reserve your spot.</p>",
+   "excerpt": "",
+   "slug": "bowling-event",
+   "image": {
+    "url": "https://www.oc-aa.org/wp-content/uploads/2026/08/8EFBF189-E9B1-4ECC-8CC6-D62CF0BAAA2B.png",
+    "id": 70201,
+    "extension": "png",
+    "width": 1054,
+    "height": 1492,
+    "filesize": 2528504,
+    "sizes": {
+     "medium": {
+      "width": 212,
+      "height": 300,
+      "mime-type": "image/png",
+      "filesize": 121903,
+      "url": "https://www.oc-aa.org/wp-content/uploads/2026/08/8EFBF189-E9B1-4ECC-8CC6-D62CF0BAAA2B-212x300.png"
+     },
+     "large": {
+      "width": 723,
+      "height": 1024,
+      "mime-type": "image/png",
+      "filesize": 1130500,
+      "url": "https://www.oc-aa.org/wp-content/uploads/2026/08/8EFBF189-E9B1-4ECC-8CC6-D62CF0BAAA2B-723x1024.png"
+     },
+     "thumbnail": {
+      "width": 150,
+      "height": 150,
+      "mime-type": "image/png",
+      "filesize": 47653,
+      "url": "https://www.oc-aa.org/wp-content/uploads/2026/08/8EFBF189-E9B1-4ECC-8CC6-D62CF0BAAA2B-150x150.png"
+     },
+     "medium_large": {
+      "width": 768,
+      "height": 1087,
+      "mime-type": "image/png",
+      "filesize": 1261585,
+      "url": "https://www.oc-aa.org/wp-content/uploads/2026/08/8EFBF189-E9B1-4ECC-8CC6-D62CF0BAAA2B-768x1087.png"
+     }
+    }
+   },
+   "all_day": false,
+   "start_date": "2026-11-01 12:30:00",
+   "start_date_details": {
+    "year": "2026",
+    "month": "11",
+    "day": "01",
+    "hour": "12",
+    "minutes": "30",
+    "seconds": "00"
+   },
+   "end_date": "2026-11-01 14:00:00",
+   "end_date_details": {
+    "year": "2026",
+    "month": "11",
+    "day": "01",
+    "hour": "14",
+    "minutes": "00",
+    "seconds": "00"
+   },
+   "utc_start_date": "2026-11-01 20:30:00",
+   "utc_start_date_details": {
+    "year": "2026",
+    "month": "11",
+    "day": "01",
+    "hour": "20",
+    "minutes": "30",
+    "seconds": "00"
+   },
+   "utc_end_date": "2026-11-01 22:00:00",
+   "utc_end_date_details": {
+    "year": "2026",
+    "month": "11",
+    "day": "01",
+    "hour": "22",
+    "minutes": "00",
+    "seconds": "00"
+   },
+   "timezone": "America/Los_Angeles",
+   "timezone_abbr": "PST",
+   "cost": "",
+   "cost_details": {
+    "currency_symbol": "$",
+    "currency_code": "USD",
+    "currency_position": "prefix",
+    "values": []
+   },
+   "website": "",
+   "show_map": true,
+   "show_map_link": true,
+   "hide_from_listings": false,
+   "sticky": false,
+   "featured": false,
+   "categories": [
+    {
+     "name": "Intergroup",
+     "slug": "intergroup",
+     "term_group": 0,
+     "term_taxonomy_id": 103,
+     "taxonomy": "tribe_events_cat",
+     "description": "",
+     "parent": 0,
+     "count": 57,
+     "filter": "raw",
+     "id": 103,
+     "urls": {
+      "self": "https://www.oc-aa.org/wp-json/tribe/events/v1/categories/103",
+      "collection": "https://www.oc-aa.org/wp-json/tribe/events/v1/categories"
+     }
+    },
+    {
+     "name": "Special Events",
+     "slug": "special-events",
+     "term_group": 0,
+     "term_taxonomy_id": 105,
+     "taxonomy": "tribe_events_cat",
+     "description": "",
+     "parent": 0,
+     "count": 94,
+     "filter": "raw",
+     "id": 105,
+     "urls": {
+      "self": "https://www.oc-aa.org/wp-json/tribe/events/v1/categories/105",
+      "collection": "https://www.oc-aa.org/wp-json/tribe/events/v1/categories"
+     }
+    }
+   ],
+   "tags": [],
+   "venue": {
+    "id": 70202,
+    "venue": "Irvine Lanes",
+    "address": "2415 Michelson Dr.",
+    "city": "Irvine",
+    "zip": "92612",
+    "province": "CA",
+    "stateprovince": "CA",
+    "show_map": true
+   },
+   "organizer": [],
+   "custom_fields": []
+  },
+  {
+   "id": 70340,
+   "global_id": "www.oc-aa.org?id=70340",
+   "global_id_lineage": [
+    "www.oc-aa.org?id=70340"
+   ],
+   "author": "4",
+   "status": "publish",
+   "date": "2026-10-20 12:50:58",
+   "date_utc": "2026-10-20 19:50:58",
+   "modified": "2026-10-20 13:49:40",
+   "modified_utc": "2026-10-20 20:49:40",
+   "url": "https://www.oc-aa.org/event/traditions-day-2026/",
+   "rest_url": "https://www.oc-aa.org/wp-json/tribe/events/v1/events/70340",
+   "title": "Traditions Day 2026",
+   "description": "<p>Join the Mid Southern California Area 9 &#8211; District 12 as they present Traditions Day 2026, a free event and open invitation to enjoy a Traditions Day play, speaker, and complimentary lunch. Plus fun and fellowship!</p>",
+   "excerpt": "",
+   "slug": "traditions-day-2026",
+   "image": {
+    "url": "https://www.oc-aa.org/wp-content/uploads/2026/10/District-12-Traditions-Day-2026-Flyer-scaled.png",
+    "id": 70341,
+    "extension": "png",
+    "width": 1978,
+    "height": 2560,
+    "filesize": 1350486,
+    "sizes": {
+     "medium": {
+      "width": 232,
+      "height": 300,
+      "mime-type": "image/png",
+      "filesize": 59990,
+      "url": "https://www.oc-aa.org/wp-content/uploads/2026/10/District-12-Traditions-Day-2026-Flyer-232x300.png"
+     },
+     "large": {
+      "width": 791,
+      "height": 1024,
+      "mime-type": "image/png",
+      "filesize": 367232,
+      "url": "https://www.oc-aa.org/wp-content/uploads/2026/10/District-12-Traditions-Day-2026-Flyer-791x1024.png"
+     },
+     "thumbnail": {
+      "width": 150,
+      "height": 150,
+      "mime-type": "image/png",
+      "filesize": 22466,
+      "url": "https://www.oc-aa.org/wp-content/uploads/2026/10/District-12-Traditions-Day-2026-Flyer-150x150.png"
+     },
+     "medium_large": {
+      "width": 768,
+      "height": 994,
+      "mime-type": "image/png",
+      "filesize": 351242,
+      "url": "https://www.oc-aa.org/wp-content/uploads/2026/10/District-12-Traditions-Day-2026-Flyer-768x994.png"
+     },
+     "1536x1536": {
+      "width": 1187,
+      "height": 1536,
+      "mime-type": "image/png",
+      "filesize": 666663,
+      "url": "https://www.oc-aa.org/wp-content/uploads/2026/10/District-12-Traditions-Day-2026-Flyer-1187x1536.png"
+     },
+     "2048x2048": {
+      "width": 1583,
+      "height": 2048,
+      "mime-type": "image/png",
+      "filesize": 996383,
+      "url": "https://www.oc-aa.org/wp-content/uploads/2026/10/District-12-Traditions-Day-2026-Flyer-1583x2048.png"
+     }
+    },
+    "original_image": "District-12-Traditions-Day-2026-Flyer.png"
+   },
+   "all_day": false,
+   "start_date": "2026-11-07 11:00:00",
+   "start_date_details": {
+    "year": "2026",
+    "month": "11",
+    "day": "07",
+    "hour": "11",
+    "minutes": "00",
+    "seconds": "00"
+   },
+   "end_date": "2026-11-07 15:00:00",
+   "end_date_details": {
+    "year": "2026",
+    "month": "11",
+    "day": "07",
+    "hour": "15",
+    "minutes": "00",
+    "seconds": "00"
+   },
+   "utc_start_date": "2026-11-07 19:00:00",
+   "utc_start_date_details": {
+    "year": "2026",
+    "month": "11",
+    "day": "07",
+    "hour": "19",
+    "minutes": "00",
+    "seconds": "00"
+   },
+   "utc_end_date": "2026-11-07 23:00:00",
+   "utc_end_date_details": {
+    "year": "2026",
+    "month": "11",
+    "day": "07",
+    "hour": "23",
+    "minutes": "00",
+    "seconds": "00"
+   },
+   "timezone": "America/Los_Angeles",
+   "timezone_abbr": "PST",
+   "cost": "",
+   "cost_details": {
+    "currency_symbol": "$",
+    "currency_code": "USD",
+    "currency_position": "prefix",
+    "values": []
+   },
+   "website": "",
+   "show_map": true,
+   "show_map_link": true,
+   "hide_from_listings": false,
+   "sticky": false,
+   "featured": false,
+   "categories": [
+    {
+     "name": "Special Events",
+     "slug": "special-events",
+     "term_group": 0,
+     "term_taxonomy_id": 105,
+     "taxonomy": "tribe_events_cat",
+     "description": "",
+     "parent": 0,
+     "count": 94,
+     "filter": "raw",
+     "id": 105,
+     "urls": {
+      "self": "https://www.oc-aa.org/wp-json/tribe/events/v1/categories/105",
+      "collection": "https://www.oc-aa.org/wp-json/tribe/events/v1/categories"
+     }
+    }
+   ],
+   "tags": [],
+   "venue": {
+    "id": 67185,
+    "venue": "Laguna Country United Methodist Church",
+    "address": "24442 Moulton Pkwy.",
+    "city": "Laguna Woods",
+    "zip": "92637",
+    "state": "CA",
+    "stateprovince": "CA",
+    "country": "United States",
+    "show_map": false
+   },
+   "organizer": [],
+   "custom_fields": []
+  },
+  {
+   "id": 70269,
+   "global_id": "www.oc-aa.org?id=70269",
+   "global_id_lineage": [
+    "www.oc-aa.org?id=70269"
+   ],
+   "author": "4",
+   "status": "publish",
+   "date": "2026-09-09 10:20:02",
+   "date_utc": "2026-09-09 17:20:02",
+   "modified": "2026-10-20 13:40:41",
+   "modified_utc": "2026-10-20 20:40:41",
+   "url": "https://www.oc-aa.org/event/central-office-open-house-3/",
+   "rest_url": "https://www.oc-aa.org/wp-json/tribe/events/v1/events/70269",
+   "title": "Central Office Open House",
+   "description": "<p>Come down and visit your Central Office. See how we support and help</p>\n<p>your groups to Carry the Message to the alcoholic who is still suffering.</p>\n<p>We will have some Good Food and Fellowship! You might even want to</p>\n<p>volunteer for something. Pass it on!</p>",
+   "excerpt": "",
+   "slug": "central-office-open-house-3",
+   "image": {
+    "url": "https://www.oc-aa.org/wp-content/uploads/2026/09/doc01079620260909101242-pdf.jpg",
+    "id": 70270,
+    "extension": "pdf"
+   },
+   "all_day": false,
+   "start_date": "2026-11-14 11:00:00",
+   "start_date_details": {
+    "year": "2026",
+    "month": "11",
+    "day": "14",
+    "hour": "11",
+    "minutes": "00",
+    "seconds": "00"
+   },
+   "end_date": "2026-11-14 15:00:00",
+   "end_date_details": {
+    "year": "2026",
+    "month": "11",
+    "day": "14",
+    "hour": "15",
+    "minutes": "00",
+    "seconds": "00"
+   },
+   "utc_start_date": "2026-11-14 19:00:00",
+   "utc_start_date_details": {
+    "year": "2026",
+    "month": "11",
+    "day": "14",
+    "hour": "19",
+    "minutes": "00",
+    "seconds": "00"
+   },
+   "utc_end_date": "2026-11-14 23:00:00",
+   "utc_end_date_details": {
+    "year": "2026",
+    "month": "11",
+    "day": "14",
+    "hour": "23",
+    "minutes": "00",
+    "seconds": "00"
+   },
+   "timezone": "America/Los_Angeles",
+   "timezone_abbr": "PST",
+   "cost": "",
+   "cost_details": {
+    "currency_symbol": "$",
+    "currency_code": "USD",
+    "currency_position": "prefix",
+    "values": []
+   },
+   "website": "",
+   "show_map": true,
+   "show_map_link": true,
+   "hide_from_listings": false,
+   "sticky": false,
+   "featured": false,
+   "categories": [
+    {
+     "name": "Open House",
+     "slug": "open-house",
+     "term_group": 0,
+     "term_taxonomy_id": 1169,
+     "taxonomy": "tribe_events_cat",
+     "description": "",
+     "parent": 0,
+     "count": 7,
+     "filter": "raw",
+     "id": 1169,
+     "urls": {
+      "self": "https://www.oc-aa.org/wp-json/tribe/events/v1/categories/1169",
+      "collection": "https://www.oc-aa.org/wp-json/tribe/events/v1/categories"
+     }
+    }
+   ],
+   "tags": [],
+   "venue": {
+    "id": 70345,
+    "venue": "Orange County Central Office",
+    "address": "1526 Brookhollow Dr. #75",
+    "city": "Santa Ana",
+    "zip": "92705",
+    "province": "CA",
+    "stateprovince": "CA",
+    "show_map": true
+   },
+   "organizer": [],
+   "custom_fields": []
+  },
+  {
+   "id": 68173,
+   "global_id": "www.oc-aa.org?id=68173",
+   "global_id_lineage": [
+    "www.oc-aa.org?id=68173"
+   ],
+   "author": "3",
+   "status": "publish",
+   "date": "2025-02-12 15:00:51",
+   "date_utc": "2025-02-12 23:00:51",
+   "modified": "2026-10-16 13:59:36",
+   "modified_utc": "2026-10-16 20:59:36",
+   "url": "https://www.oc-aa.org/event/intergroup-meeting-live-only-33/",
+   "rest_url": "https://www.oc-aa.org/wp-json/tribe/events/v1/events/68173",
+   "title": "Intergroup Meeting (Live Only)",
+   "description": "",
+   "excerpt": "<p>Each group in the community is asked to send both a representative and an alternate representative to the monthly OC Intergroup meeting.  The Intergroup exists to aid the groups in their common purpose of carrying the A.A. message to the alcoholic who still suffers.</p>",
+   "slug": "intergroup-meeting-live-only-33",
+   "image": {
+    "url": "https://www.oc-aa.org/wp-content/uploads/2024/01/Intergroup-Meeting-Flyer-2024-3-pdf.jpg",
+    "id": 65987,
+    "extension": "pdf"
+   },
+   "all_day": false,
+   "start_date": "2026-11-18 19:00:00",
+   "start_date_details": {
+    "year": "2026",
+    "month": "11",
+    "day": "18",
+    "hour": "19",
+    "minutes": "00",
+    "seconds": "00"
+   },
+   "end_date": "2026-11-18 20:00:00",
+   "end_date_details": {
+    "year": "2026",
+    "month": "11",
+    "day": "18",
+    "hour": "20",
+    "minutes": "00",
+    "seconds": "00"
+   },
+   "utc_start_date": "2026-11-19 03:00:00",
+   "utc_start_date_details": {
+    "year": "2026",
+    "month": "11",
+    "day": "19",
+    "hour": "03",
+    "minutes": "00",
+    "seconds": "00"
+   },
+   "utc_end_date": "2026-11-19 04:00:00",
+   "utc_end_date_details": {
+    "year": "2026",
+    "month": "11",
+    "day": "19",
+    "hour": "04",
+    "minutes": "00",
+    "seconds": "00"
+   },
+   "timezone": "America/Los_Angeles",
+   "timezone_abbr": "PST",
+   "cost": "",
+   "cost_details": {
+    "currency_symbol": "$",
+    "currency_code": "USD",
+    "currency_position": "prefix",
+    "values": []
+   },
+   "website": "",
+   "show_map": true,
+   "show_map_link": true,
+   "hide_from_listings": false,
+   "sticky": true,
+   "featured": false,
+   "categories": [
+    {
+     "name": "Intergroup",
+     "slug": "intergroup",
+     "term_group": 0,
+     "term_taxonomy_id": 103,
+     "taxonomy": "tribe_events_cat",
+     "description": "",
+     "parent": 0,
+     "count": 57,
+     "filter": "raw",
+     "id": 103,
+     "urls": {
+      "self": "https://www.oc-aa.org/wp-json/tribe/events/v1/categories/103",
+      "collection": "https://www.oc-aa.org/wp-json/tribe/events/v1/categories"
+     }
+    }
+   ],
+   "tags": [
+    {
+     "name": "intergroup",
+     "slug": "intergroup",
+     "term_group": 0,
+     "term_taxonomy_id": 104,
+     "taxonomy": "post_tag",
+     "description": "",
+     "parent": 0,
+     "count": 38,
+     "filter": "raw",
+     "id": 104,
+     "urls": {
+      "self": "https://www.oc-aa.org/wp-json/tribe/events/v1/tags/104",
+      "collection": "https://www.oc-aa.org/wp-json/tribe/events/v1/tags"
+     }
+    }
+   ],
+   "venue": {
+    "id": 63474,
+    "venue": "Norma Hertzog Community Center",
+    "address": "1845 Park Ave",
+    "city": "Costa Mesa",
+    "zip": "92627",
+    "state": "CA",
+    "stateprovince": "CA",
+    "country": "United States",
+    "show_map": true
+   },
+   "organizer": [],
+   "custom_fields": []
+  },
+  {
+   "id": 70285,
+   "global_id": "www.oc-aa.org?id=70285",
+   "global_id_lineage": [
+    "www.oc-aa.org?id=70285"
+   ],
+   "author": "4",
+   "status": "publish",
+   "date": "2026-09-22 15:22:40",
+   "date_utc": "2026-09-22 22:22:40",
+   "modified": "2026-09-22 15:22:40",
+   "modified_utc": "2026-09-22 22:22:40",
+   "url": "https://www.oc-aa.org/event/54th-all-california-young-people-in-alcoholics-anonymous-acypaa-convention/",
+   "rest_url": "https://www.oc-aa.org/wp-json/tribe/events/v1/events/70285",
+   "title": "54th All California Young People in Alcoholics Anonymous (ACYPAA) Convention",
+   "description": "<p>The 54th All California Young People in Alcoholics Anonymous (ACYPAA) convention — “State of Mental Goose Flesh” (pg. 54) — comes to the Delta Marriott Hotel in Ontario, April 15–18, 2027. Featuring: AA Meetings, DJ Sets, Yoga, Games and more. ASL &amp; Spanish interpreters available. Website: www.acypaa.org  Instagram: @acypaa54</p>",
+   "excerpt": "",
+   "slug": "54th-all-california-young-people-in-alcoholics-anonymous-acypaa-convention",
+   "image": {
+    "url": "https://www.oc-aa.org/wp-content/uploads/2026/09/ACYPAA54_Flyer.png",
+    "id": 70286,
+    "extension": "png",
+    "width": 1429,
+    "height": 2000,
+    "filesize": 2394253,
+    "sizes": {
+     "medium": {
+      "width": 214,
+      "height": 300,
+      "mime-type": "image/png",
+      "filesize": 84216,
+      "url": "https://www.oc-aa.org/wp-content/uploads/2026/09/ACYPAA54_Flyer-214x300.png"
+     },
+     "large": {
+      "width": 732,
+      "height": 1024,
+      "mime-type": "image/png",
+      "filesize": 743195,
+      "url": "https://www.oc-aa.org/wp-content/uploads/2026/09/ACYPAA54_Flyer-732x1024.png"
+     },
+     "thumbnail": {
+      "width": 150,
+      "height": 150,
+      "mime-type": "image/png",
+      "filesize": 32900,
+      "url": "https://www.oc-aa.org/wp-content/uploads/2026/09/ACYPAA54_Flyer-150x150.png"
+     },
+     "medium_large": {
+      "width": 768,
+      "height": 1075,
+      "mime-type": "image/png",
+      "filesize": 805068,
+      "url": "https://www.oc-aa.org/wp-content/uploads/2026/09/ACYPAA54_Flyer-768x1075.png"
+     },
+     "1536x1536": {
+      "width": 1097,
+      "height": 1536,
+      "mime-type": "image/png",
+      "filesize": 1418844,
+      "url": "https://www.oc-aa.org/wp-content/uploads/2026/09/ACYPAA54_Flyer-1097x1536.png"
+     }
+    }
+   },
+   "all_day": true,
+   "start_date": "2027-04-15 00:00:00",
+   "start_date_details": {
+    "year": "2027",
+    "month": "04",
+    "day": "15",
+    "hour": "00",
+    "minutes": "00",
+    "seconds": "00"
+   },
+   "end_date": "2027-04-18 23:59:59",
+   "end_date_details": {
+    "year": "2027",
+    "month": "04",
+    "day": "18",
+    "hour": "23",
+    "minutes": "59",
+    "seconds": "59"
+   },
+   "utc_start_date": "2027-04-15 07:00:00",
+   "utc_start_date_details": {
+    "year": "2027",
+    "month": "04",
+    "day": "15",
+    "hour": "07",
+    "minutes": "00",
+    "seconds": "00"
+   },
+   "utc_end_date": "2027-04-19 06:59:59",
+   "utc_end_date_details": {
+    "year": "2027",
+    "month": "04",
+    "day": "19",
+    "hour": "06",
+    "minutes": "59",
+    "seconds": "59"
+   },
+   "timezone": "America/Los_Angeles",
+   "timezone_abbr": "PDT",
+   "cost": "",
+   "cost_details": {
+    "currency_symbol": "$",
+    "currency_code": "USD",
+    "currency_position": "prefix",
+    "values": []
+   },
+   "website": "",
+   "show_map": true,
+   "show_map_link": true,
+   "hide_from_listings": false,
+   "sticky": false,
+   "featured": false,
+   "categories": [
+    {
+     "name": "Conventions",
+     "slug": "conventions",
+     "term_group": 0,
+     "term_taxonomy_id": 106,
+     "taxonomy": "tribe_events_cat",
+     "description": "",
+     "parent": 0,
+     "count": 58,
+     "filter": "raw",
+     "id": 106,
+     "urls": {
+      "self": "https://www.oc-aa.org/wp-json/tribe/events/v1/categories/106",
+      "collection": "https://www.oc-aa.org/wp-json/tribe/events/v1/categories"
+     }
+    }
+   ],
+   "tags": [],
+   "venue": {
+    "id": 70287,
+    "venue": "Delta Marriott Hotel",
+    "address": "2200 East Holt Boulevard",
+    "city": "Ontario",
+    "province": "CA",
+    "stateprovince": "CA",
+    "show_map": true
+   },
+   "organizer": [],
+   "custom_fields": []
+  }
+ ],
+ "rest_url": "https://www.oc-aa.org/wp-json/tribe/events/v1/events/?page=1&per_page=50&start_date=2026-10-30 00:00:00&end_date=2028-05-02 23:59:59&status=publish",
+ "total": 8,
+ "total_pages": 1
+}

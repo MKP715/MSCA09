@@ -1,0 +1,47 @@
+{#-
+  "How service works": the upside-down triangle from the Panel logo, band by band — the site's one service
+  triangle (macros/triangle.njk; the same drawing as on About, Districts and How service works).
+  Hovering a line on the right lights up its band. The tip of the triangle is the General Service Board's
+  two operating corporations, A.A. World Services and AA Grapevine (band words in data/text/triangle.csv).
+  Phones get a short version: a small triangle beside the heading, the words and the buttons;
+  tablets add the big triangle, and the seven numbered steps show from 768 px.
+-#}
+{%- from "macros/triangle.njk" import triangle with context -%}
+{%- set L = lang -%}
+{%- set layers = serviceTriangle -%}
+<section class="home-service relative isolate overflow-hidden bg-ink-950 pt-14 pb-12 text-white sm:py-20 lg:py-28" aria-labelledby="home-service-title" x-data="{ on: -1 }">
+  <div class="home-service-bg absolute inset-0 -z-10" aria-hidden="true"></div>
+  <svg class="pointer-events-none absolute inset-x-0 top-0 -z-10 h-12 w-full text-sea-50 sm:h-16" viewBox="0 0 1440 64" preserveAspectRatio="none" aria-hidden="true"><path fill="currentColor" d="M0 0 H1440 V18 C1200 52 960 60 720 40 S240 6 0 30 Z"/></svg>
+  <div class="wrap grid items-center gap-12 lg:grid-cols-2 lg:gap-16 2xl:gap-24">
+    {#- the triangle (drawn once for wide screens, and once inside the text column on phones and tablets) -#}
+    {{ triangle({ lang: L, dark: true, hidden: true, on: "on", class: "hm-tri-wrap reveal hidden lg:block" }) }}
+
+    {#- the words -#}
+    <div class="min-w-0">
+      <div class="flex items-center gap-4">
+        <div class="min-w-0 flex-1">
+          <p class="mb-3 inline-flex items-center gap-2 text-xs font-bold tracking-[0.18em] text-sun-300 uppercase">{% icon "triangle", "size-4 rotate-180" %}{{ "home.service.eyebrow" | t(L) }}</p>
+          <h2 id="home-service-title" class="font-display text-3xl font-bold tracking-tight text-balance text-white sm:text-4xl 2xl:text-5xl">{{ "home.service.title" | t(L) }}</h2>
+        </div>
+        {{ triangle({ lang: L, dark: true, hidden: true, mini: true, on: "on", class: "hm-tri-wrap hm-tri-wrap--mini reveal sm:hidden" }) }}
+      </div>
+      <p class="mt-4 max-w-2xl text-lg leading-relaxed text-pretty text-ink-200 2xl:text-xl">{{ "home.service.lead" | t(L) }}</p>
+      {{ triangle({ lang: L, dark: true, hidden: true, on: "on", class: "hm-tri-wrap reveal mt-10 hidden sm:block lg:hidden" }) }}
+      <ol class="mt-8 hidden gap-2 md:grid md:grid-cols-2 lg:grid-cols-1 2xl:grid-cols-2" role="list">
+        {%- for layer in layers %}
+        <li class="hm-svc-row reveal" style="{{ layer.color | accent }}; --reveal-delay: {{ loop.index0 * 70 }}ms" @mouseenter="on = {{ loop.index0 }}" @mouseleave="on = -1" :class="on === {{ loop.index0 }} && 'is-on'">
+          <span class="hm-svc-num">{{ loop.index }}</span>
+          <span class="min-w-0">
+            <span class="block font-display font-bold text-white">{{ ("home.service." + layer.key + ".name") | t(L) }}</span>
+            <span class="mt-0.5 block text-sm leading-snug text-ink-300">{{ ("home.service." + layer.key + ".text") | t(L) }}</span>
+          </span>
+        </li>
+        {%- endfor %}
+      </ol>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="{{ '/about/structure/' | lurl(L) }}" class="btn btn-primary btn-lg">{% icon "triangle", "size-5 rotate-180" %}{{ "home.service.cta" | t(L) }}</a>
+        <a href="{{ '/service/' | lurl(L) }}" class="btn btn-glass btn-lg">{{ "home.service.cta2" | t(L) }}{% icon "arrow-right", "size-5" %}</a>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,30 @@
+{#- Online forms at the top of a committee page: the committee's rows in data/committee-resources.csv with
+    kind = form whose url is a page of this site (e.g. /service/forms/expense/). They are also listed with the
+    committee's other links further down. Wording: data/text/forms.csv (forms.cm.*). Expects: c, L. -#}
+{%- set webForms = [] -%}
+{%- for r in c.resources or [] %}{% if r.kind == "form" and r.url and r.url.charAt(0) == "/" and r.url.charAt(1) != "/" %}{% set _ = webForms.push(r) %}{% endif %}{% endfor -%}
+{%- if webForms.length %}
+<section class="ff-promo" aria-labelledby="cm-forms-h">
+  <div class="flex items-start gap-4">
+    <span class="icon-tile hidden sm:grid">{% icon "file-pen-line", "size-6" %}</span>
+    <div class="min-w-0">
+      <h2 id="cm-forms-h" class="font-display text-xl font-bold text-ink-950">{{ "forms.cm.title" | t(L) }}</h2>
+      <p class="mt-1 text-[15px] leading-relaxed text-ink-600">{{ "forms.cm.lead" | t(L) }}</p>
+    </div>
+  </div>
+  <ul class="ff-promo-links" role="list">
+    {%- for r in webForms %}
+    <li>
+      <a href="{{ r.url | lurl(L) }}" class="ff-promo-link group">
+        <span class="icon-tile">{% icon "file-pen-line", "size-5" %}</span>
+        <span class="min-w-0 flex-1">
+          <span class="block font-semibold text-ink-950 group-hover:text-[var(--a-800)]">{{ r | loc("title", L) }}</span>
+          {%- set body = r | loc("body", L) %}{% if body %}<span class="mt-0.5 block text-sm leading-snug text-ink-600">{{ body }}</span>{% endif %}
+        </span>
+        {% icon "arrow-right", "size-4 shrink-0 text-ink-400 transition group-hover:translate-x-0.5 group-hover:text-[var(--a-700)]" %}
+      </a>
+    </li>
+    {%- endfor %}
+  </ul>
+</section>
+{%- endif %}

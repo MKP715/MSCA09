@@ -1,0 +1,17 @@
+# Line endings: text files are stored with LF in the repository.
+* text=auto
+
+# The calendar mirror keeps the CRLF line endings Google sends (RFC 5545), byte for byte,
+# so the three-hourly refresh on GitHub (Linux) and a copy fetched on Windows agree.
+*.ics -text
+data/calendar.ics -text
+
+# Binary files: never touch line endings, never diff as text.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.avif binary
+*.ico binary
+*.woff2 binary
+*.pdf binary

@@ -1,0 +1,149 @@
+name: Check flyers and PDFs for personal details
+
+# Once a week (and on demand: Actions → this workflow → Run workflow) the words printed in
+# new flyers and PDFs are read (OCR) before anyone relies on them being anonymous:
+#  - every Google Drive file in an IMG: or Link: line of the Area calendar
+#  - every document published in data/documents/*.csv (publish = yes)
+# Files already listed in data/media-review.csv are skipped, so each file is read once.
+# A file showing a personal phone number, a personal e-mail address or a sobriety date is
+# added to data/flyer-holds.csv, and the website leaves it out from the next build on.
+# Flyers (pictures, and PDFs on calendar IMG:/Link: lines that are not agendas, minutes,
+# reports …) are not checked for phone numbers (owner's rule, 2026-10-22).
+# See scripts/check-media.mjs. This workflow never blocks the website: if it fails, the
+# site keeps building and publishing as usual.
+
+on:
+  schedule:
+    - cron: "37 9 * * 1" # Mondays, early morning in California
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "How many files to read at most"
+        required: false
+        default: "150"
+
+# Each job gets only what it needs; nothing by default. The check job runs outside npm packages and the OCR tools,
+# so it can only read; the save job, which has the write token, runs no package code (only git and gh).
+permissions: {}
+
+concurrency:
+  group: media-check
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    # The 45-minute reading budget is checked before each file, and one slow scanned PDF can take ~16 minutes;
+    # the results are saved only at the end, so leave room for both.
+    timeout-minutes: 90
+    permissions:
+      contents: read
+    outputs:
+      checked: ${{ steps.media.outputs.checked || 0 }}
+      held: ${{ steps.media.outputs.held || 0 }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false # nothing in this job pushes
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        # --ignore-scripts: no package runs its own install script (see deploy.yml)
+        run: npm ci --ignore-scripts --no-audit --no-fund
+
+      - name: Install the OCR and PDF readers
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq tesseract-ocr tesseract-ocr-eng tesseract-ocr-spa poppler-utils
+
+      - name: Fetch the latest Area calendar
+        run: node scripts/fetch-calendar.mjs || echo "Using the calendar copy in the repository."
+
+      - name: Read new flyers and PDFs
+        id: media
+        env:
+          LIMIT: ${{ inputs.limit || '150' }}
+        run: |
+          # a whole number only (the value typed in "Run workflow"); anything else reads the usual 150
+          case "$LIMIT" in ''|*[!0-9]*) LIMIT=150 ;; esac
+          node scripts/check-media.mjs --limit "$LIMIT" --max-minutes 45
+
+      - name: Hand the results to the save job
+        # the two lists, as they stand after this run (both are public in the repository anyway); kept for one day
+        uses: actions/upload-artifact@v7
+        with:
+          name: media-results
+          path: |
+            data/media-review.csv
+            data/flyer-holds.csv
+          retention-days: 1
+
+  save:
+    needs: check
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # commit the two lists
+      actions: write # start the website build; keep the schedules switched on
+    steps:
+      - uses: actions/checkout@v7
+        if: needs.check.result == 'success'
+        with:
+          persist-credentials: false # the token is passed to the pull and push below only
+
+      - name: Download the results
+        if: needs.check.result == 'success'
+        uses: actions/download-artifact@v8
+        with:
+          name: media-results
+          path: ${{ runner.temp }}/media
+
+      - name: Save the results
+        id: save
+        if: needs.check.result == 'success'
+        env:
+          CHECKED: ${{ needs.check.outputs.checked }}
+          HELD: ${{ needs.check.outputs.held }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp "$RUNNER_TEMP/media/media-review.csv" data/media-review.csv
+          cp "$RUNNER_TEMP/media/flyer-holds.csv" data/flyer-holds.csv
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/media-review.csv data/flyer-holds.csv
+          if git diff --cached --quiet; then
+            echo "Nothing new."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            # [skip ci] = don't start a build for this commit; the step below starts one instead.
+            git commit -m "Media check: ${CHECKED} file(s) read, ${HELD} held [skip ci]"
+            # the token is passed to these two commands only (GitHub hides it in the log). GIT_REFLOG_ACTION keeps the
+            # address, token included, out of git's own log on the runner.
+            remote="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+            # someone changed the same lines while the files were read: stop here, red, rather than save nothing quietly
+            if ! GIT_REFLOG_ACTION=pull git pull --rebase --autostash "$remote" "${GITHUB_REF_NAME}"; then
+              echo "::error::Could not put the results on top of ${GITHUB_REF_NAME}: someone changed the same lines meanwhile, so nothing was saved. Run this workflow again."
+              exit 1
+            fi
+            git push "$remote" "HEAD:${GITHUB_REF_NAME}"
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish the website again (so held files disappear now)
+        if: steps.save.outputs.changed == 'true' && needs.check.outputs.held != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy.yml --repo "$GITHUB_REPOSITORY" --ref main || echo "The next three-hourly build will pick it up."
+
+      - name: Keep the scheduled runs switched on
+        # GitHub pauses scheduled workflows after 60 days without a commit; re-enabling resets that.
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow enable media-check.yml --repo "$GITHUB_REPOSITORY" || true
+          gh workflow enable deploy.yml --repo "$GITHUB_REPOSITORY" || true

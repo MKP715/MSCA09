@@ -1,0 +1,22 @@
+{#- On the library shelf that holds the official finance forms (the documents named in data/finance-forms.csv,
+    section = official — today the Forms shelf): a card that opens the online versions. Expects: c (the shelf), L. -#}
+{%- set F = financeForms -%}
+{%- set hits = [] -%}
+{%- for id in (F.expense.official or []).concat(F.budget.official or []) %}{% set d = documents.all | find("id", id) %}{% if d and d.category == c.key %}{% set _ = hits.push(id) %}{% endif %}{% endfor -%}
+{%- if hits.length %}
+<section class="ff-promo mb-6" style="{{ 'emerald' | accent }}" aria-labelledby="ff-docs-h">
+  <div class="flex flex-col gap-4 lg:flex-row lg:items-center">
+    <div class="flex min-w-0 flex-1 items-start gap-4">
+      <span class="icon-tile">{% icon "file-pen-line", "size-6" %}</span>
+      <div class="min-w-0">
+        <h2 id="ff-docs-h" class="font-display text-lg font-bold text-ink-950">{{ "forms.docs.title" | t(L) }}</h2>
+        <p class="mt-1 text-[15px] leading-relaxed text-ink-600">{{ "forms.docs.body" | t(L) }}</p>
+      </div>
+    </div>
+    <div class="flex shrink-0 flex-wrap gap-2">
+      <a href="{{ '/service/forms/expense/' | lurl(L) }}" class="btn btn-accent">{% icon "receipt", "size-4" %}{{ "forms.expense.title" | t(L) }}</a>
+      <a href="{{ '/service/forms/budget/' | lurl(L) }}" class="btn btn-ghost bg-white">{% icon "calculator", "size-4" %}{{ "forms.budget.title" | t(L) }}</a>
+    </div>
+  </div>
+</section>
+{%- endif %}

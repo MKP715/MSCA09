@@ -1,0 +1,12 @@
+key,folder,name_en,name_es,link,sort,notes
+"# The meetings whose Zoom recordings a committee page plays (data/recordings.csv): one row per meeting folder in the Area's Drive folder MSCA09AA/Zoom Recordings/<month>/<meeting folder>/.",,,,,,
+"# key = short name used in the series column of recordings.csv (lowercase, no spaces; never change it once used) | folder = the meeting folder's name in Drive, exactly as spelled there (scripts/recordings.py uses it to file new recordings) | name_en / name_es = the meeting's name on the page and on its filter button (empty name_es = the English name)",,,,,,
+"# link = optional: the slug of a committee in committees.csv (e.g. finance) or an address on this site (e.g. /service/area-meetings/) that the meeting's name links to | sort = order of the filter buttons | notes = for editors (not shown). A meeting folder that is not listed here yet is added by scripts/recordings.py with the folder's name: give it proper names.",,,,,,
+area-meetings,MSCA09 Area Service Committee & Assembly,Area Service Committee & Assembly,Comité de Servicio de Área y Asamblea,/service/area-meetings/,10,"ASC and Assembly days, interpreted (Spanish interpretation tracks are separate recordings)"
+executive-committee,Panel 76 Executive Board Meeting,Executive Committee,Comité Ejecutivo,/about/panel/,20,The seven Area officers (the folder calls it the Executive Board)
+service-study,Service Study & Sharing Session,Monthly Service Study & Committee Sharing,Estudio de Servicio Mensual y Sesión de Compartimiento,monthly-service-study,30,3rd Thursday of the month (and its planning sessions)
+finance,MSCA Panel 76 Finance Committee,Finance Committee,Comité de Finanzas,finance,40,
+accessibilities,Accessibilities Committee Meeting,Accessibilities Committee,Comité de Accesibilidades,accessibilities,50,
+grapevine-la-vina,Grapevine La Vina Planning,Grapevine / La Viña planning,Planificación de Grapevine / La Viña,grapevine-la-vina,60,
+hispanic-womens-workshop,Hispanic Women's Workshop,Hispanic Women's Workshop planning,Planificación del Taller de Mujeres Hispanas,hispanic-womens,70,Planning meetings for the December 12 workshop
+technology,MSCA09 Tech Team,Technology Committee (Tech Team),Comité de Tecnología (equipo técnico),technology,80,"The weekly Friday meeting and office hours, and other Tech Team calls"
