@@ -3395,6 +3395,35 @@ SUMMARY:Area Service Committee (ASC 2)
 TRANSP:OPAQUE
 END:VEVENT
 BEGIN:VEVENT
+DTSTART:20261221T010000Z
+DTEND:20261221T060000Z
+UID:df5at7j2atcunvbdl7u8riautc@google.com
+CREATED:20261114T041745Z
+DESCRIPTION:MSCA09|YPAA|In person\nLanguage: English\nTítulo: 6.ª Fiesta Na
+ videña anual de ACYPAA 54\nOrganizer: ACYPAA 54 https://www.acypaa.org/\nWe
+ b: https://www.acypaa.org/\nCost: $15 suggested contribution\nIMG: Flyer (E
+ nglish) https://drive.google.com/file/d/19SqfsbSF4hJP0i1VD9fSFzTBZ4uIEmGJ/v
+ iew?usp=sharing\nIMG: Flyer (Spanish) https://drive.google.com/file/d/1xBzO
+ 0nZdCq-f3dlDhOJaU8wTC-sFWvoK/view?usp=sharing\nNote: All California Young P
+ eople in Alcoholics Anonymous (ACYPAA 54). Karaoke\, potluck\, auction and 
+ a white elephant gift exchange ($20 limit).\nNota: Jóvenes de toda Californ
+ ia en Alcohólicos Anónimos (ACYPAA 54). Karaoke\, comida compartida\, subas
+ ta e intercambio de regalos «elefante blanco» (límite de $20).\n--\nALL CAL
+ IFORNIA YOUNG PEOPLE IN ALCOHOLICS ANONYMOUS. ACYPAA 54 6TH ANNUAL CHRISTMA
+ S PARTY. TEMECULA VALLEY ALANO CLUB. SUNDAY DEC 20TH\, 5PM-10PM. 27470 COMM
+ ERCE CENTER DR UNIT C. KARAOKE\, POTLUCK\, AUCTION\, WHITE ELEPHANT $20 LIM
+ IT. $15 SUGGESTED CONTRIBUTION. @ACYPAA54 ACYPAA.ORG\nSource: ACYPAA 54's f
+ lyers\, English and Spanish (added November 13\, 2026\; the Area's copies i
+ n docs/events/2026).
+LAST-MODIFIED:20261114T041745Z
+LOCATION:Temecula Valley Alano Club\, 27470 Commerce Center Dr\, Unit C\, T
+ emecula\, CA 92590
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:ACYPAA 54 6th Annual Christmas Party
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
 DTSTART:20250620T010000Z
 DTEND:20250620T031500Z
 UID:din7avojcl1n3f4ep0tsenm23g@google.com
@@ -5660,7 +5689,7 @@ UID:msca09-d09@msca09.local
 CREATED:20260902T160059Z
 DESCRIPTION:MSCA09|District|Hybrid\nLanguage: English\nZoomID: 928 8170 409
  3\nPasscode: 642408\nZoomLink: https://zoom.us/j/92881704093?pwd=SlB2K2FZT3
- ZRWm1JSWp4VGVDQVBQZz09\nWeb: district9gs.com\nEmail: d09dcmc@msca09aa.org\n
+ ZRWm1JSWp4VGVDQVBQZz09\nWeb: district9gs.com\nEmail: dcmc9email@gmail.com\n
  Covers: Bermuda Dunes\, Blythe\, Cathedral City\, Coachella\, Desert Center
  \, Desert Hot Springs\, Eagle Mountain\, Indian Wells\, Indio\, La Quinta\,
   Mecca\, North Palm Springs\, Palm Desert\, Palm Springs\, Rancho Mirage\, 
@@ -5669,7 +5698,7 @@ DESCRIPTION:MSCA09|District|Hybrid\nLanguage: English\nZoomID: 928 8170 409
  room.\n--\nDistrict 9\n3rd Sunday of the month\, 4:00 PM to 5:00 PM (Pacifi
  c)\nIn person and on Zoom.\nSource: msca09aa.org/district-9 (checked Octobe
  r 2026)
-LAST-MODIFIED:20261017T153734Z
+LAST-MODIFIED:20261114T041800Z
 LOCATION:Central Intergroup Office of the Desert\, 35-325 Date Palm Dr\, Su
  ite 107\, Cathedral City\, CA 92234
 SEQUENCE:1
@@ -6744,6 +6773,32 @@ LAST-MODIFIED:20261013T130036Z
 SEQUENCE:0
 STATUS:CONFIRMED
 SUMMARY:2020 – 5th Annual Hispanic Women’s Workshop
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
+DTSTART:20261211T020000Z
+DTEND:20261211T050000Z
+UID:okps7cf1u82q22n0cs01e2rpl8@google.com
+CREATED:20261114T041738Z
+DESCRIPTION:MSCA09|Social|In person\nLanguage: English\nTítulo: Celebración
+  navideña – Distrito 1 y 3\nHost: D1 & D3\nCost: Free\nIMG: https://drive.g
+ oogle.com/file/d/1UJmKItg-1nIreLODptlQnDdV2g68Txp5/view?usp=sharing\nNote: 
+ District 1 & 3 invites you to celebrate the holidays — for fun and for free
+ \, all are welcome. Potluck\, live music and fellowship.\nNote: Starts at 6
+ :00 PM\; the flyer gives no end time.\nNota: El Distrito 1 y 3 te invita a 
+ celebrar las fiestas: para divertirse y gratis\, todos son bienvenidos. Com
+ ida compartida\, música en vivo y compañerismo.\nNota: Empieza a las 6:00 p
+ . m.\; el volante no dice a qué hora termina.\n--\nSeasons Greetings! Distr
+ ict 1+3 Invites You to Celebrate the Holidays! Thursday\, December 10\, 202
+ 6\, 6:00 PM. Kiwanis Hermosa Beach\, 2515 Valley Dr\, Hermosa Beach\, CA 90
+ 254. For Fun & For Free! All Are Welcome! Potluck • Live Music • Fellowship
+ \nSource: the district's flyer (added November 13\, 2026\; the Area's copy 
+ in docs/events/2026).
+LAST-MODIFIED:20261114T041739Z
+LOCATION:Kiwanis Hermosa Beach\, 2515 Valley Dr\, Hermosa Beach\, CA 90254
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Holiday Celebration – District 1 & 3
 TRANSP:OPAQUE
 END:VEVENT
 BEGIN:VEVENT
