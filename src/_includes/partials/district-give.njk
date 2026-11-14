@@ -1,10 +1,12 @@
 {#-
   The Contribute section of a district page (/districts/<slug>/#give): the district's own Seventh Tradition ways to give.
-  Shown only when the district has PayPal or Venmo (district.njk: hasGive); otherwise the Seventh Tradition line in the
-  contact box says how to give.
-  Content: data/districts.csv — paypal_url (the district's PayPal donation link), paypal_name (the name that page shows),
-  paypal_venmo (yes = that page also has a Venmo button), venmo (the district's own Venmo username), po_box — read and
-  checked in src/_lib/give.js. Wording: data/text/districts.csv (districts.give.*). QR codes: qrSvg (src/_lib/qr.js),
+  Shown only when the district has PayPal, Venmo or Zelle (district.njk: hasGive); otherwise the Seventh Tradition line
+  in the contact box says how to give.
+  Content: data/districts.csv — paypal_url (the district's PayPal contribution link), paypal_name (the name that page
+  shows), paypal_venmo (yes = that page also has a Venmo button), venmo (the district's own Venmo username), zelle_email
+  (the e-mail ID of the district's Zelle account), zelle_name (the name Zelle shows), zelle_qr (the address the
+  district's own Zelle QR code holds), po_box — read and checked in src/_lib/give.js.
+  Wording: say contribute / contribution, never donate / donation (the owner's rule). Wording: data/text/districts.csv (districts.give.*). QR codes: qrSvg (src/_lib/qr.js),
   drawn at build time from the same addresses, for people reading on a computer or on paper (hidden on phone
   screens; districts.css prints them). A district's own contributions page (contribute_url) is listed too.
   Expects (from district.njk): L, d, name.
@@ -21,7 +23,7 @@
 
   <div class="mt-6 grid grid-cols-1 gap-5">
     {%- if d.paypal_url %}
-    {#- PayPal: the district's donation page (with Venmo and card buttons when paypal_venmo = yes) -#}
+    {#- PayPal: the district's contribution page (with Venmo and card buttons when paypal_venmo = yes) -#}
     <article class="overflow-hidden rounded-3xl bg-white ring-1 ring-ink-900/10" style="{{ 'ocean' | accent }}" aria-labelledby="give-online">
       <header class="relative overflow-hidden px-5 py-5 text-white sm:px-7" style="background: linear-gradient(115deg, var(--color-ocean-800), var(--color-ocean-700) 45%, var(--color-iris-700));">
         <span class="pointer-events-none absolute -right-4 -bottom-7 text-white/15" aria-hidden="true">{% icon "hand-coins", "size-32" %}</span>
@@ -80,6 +82,48 @@
     </article>
     {%- endif %}
 
+    {%- if d.zelle_email %}
+    {#- Zelle: sent from the giver's own bank app to the district's e-mail ID (no web link); the QR code is the district's
+        own (zelle_qr), drawn again here -#}
+    <article class="overflow-hidden rounded-3xl bg-white ring-1 ring-ink-900/10" style="{{ 'iris' | accent }}" aria-labelledby="give-zelle">
+      <header class="relative overflow-hidden px-5 py-5 text-white sm:px-7" style="background: linear-gradient(115deg, var(--color-iris-800), var(--color-iris-700) 45%, var(--color-ocean-700));">
+        <span class="pointer-events-none absolute -right-4 -bottom-7 text-white/15" aria-hidden="true">{% icon "smartphone", "size-32" %}</span>
+        <div class="relative">
+          <p class="text-xs font-bold tracking-[0.18em] uppercase">{{ "districts.give.zelle_kicker" | t(L) }}</p>
+          <h3 id="give-zelle" class="mt-1 font-display text-2xl font-extrabold sm:text-3xl">{{ "districts.give.zelle_title" | t(L) }}</h3>
+          <p class="mt-1 max-w-xl text-[15px] text-white">{{ "districts.give.zelle_sub" | t(L) }}</p>
+        </div>
+      </header>
+      <div class="grid grid-cols-1 gap-6 p-5 sm:p-7 {{ 'md:grid-cols-[minmax(0,1fr)_11rem] md:items-start lg:gap-8' if d.zelle_qr }}">
+        <div class="min-w-0">
+          {{ copyRow({ label: "districts.give.zelle_mail_label" | t(L), value: d.zelle_email, lang: L, mono: true, big: true }) }}
+          <p class="mt-6 mb-4 text-xs font-bold tracking-[0.16em] text-iris-800 uppercase">{{ "districts.give.how" | t(L) }}</p>
+          {%- set zsteps = [
+            "districts.give.zelle_step_open" | t(L),
+            "districts.give.zelle_step_email" | t(L),
+            ("districts.give.zelle_step_name" | t(L, { payee: d.zelle_name }) if d.zelle_name else "districts.give.zelle_step_name_generic" | t(L)),
+            "districts.give.zelle_step_memo" | t(L)
+          ] %}
+          <ol class="space-y-3.5" role="list">
+            {%- for s in zsteps %}
+            <li class="flex items-start gap-3">
+              <span class="grid size-7 shrink-0 place-items-center rounded-full bg-gradient-to-br from-iris-700 to-ocean-700 font-display text-sm font-bold text-white">{{ loop.index }}</span>
+              {#- step 2 mentions the QR code only where it is shown: computer and tablet screens, and print (districts.css) -#}
+              <span class="min-w-0 pt-0.5 text-[15px] leading-relaxed text-ink-700 [&_strong]:font-bold [&_strong]:text-ink-950">{%- if loop.index == 2 and d.zelle_qr -%}<span class="md:hidden print:hidden">{{ s | mdi | safe }}</span><span class="hidden md:inline print:inline">{{ "districts.give.zelle_step_email_qr" | t(L) | mdi | safe }}</span>{%- else -%}{{ s | mdi | safe }}{%- endif -%}</span>
+            </li>
+            {%- endfor %}
+          </ol>
+        </div>
+        {%- if d.zelle_qr %}
+        <figure class="mx-auto hidden w-full max-w-[11rem] text-center md:block">
+          <div class="qr-frame"><div class="rounded-[1.15rem] bg-white p-2.5">{{ d.zelle_qr | qrSvg("districts.give.zelle_qr_alt" | t(L, { name: name }), "block h-auto w-full") | safe }}</div></div>
+          <figcaption class="mt-4 text-sm leading-snug font-semibold text-ink-700">{{ "districts.give.zelle_qr_caption" | t(L) }}</figcaption>
+        </figure>
+        {%- endif %}
+      </div>
+    </article>
+    {%- endif %}
+
     {%- if d.po_box %}
     {#- by mail: the district's mailing address (the same one the contact box shows) -#}
     <div class="flex items-start gap-4 rounded-3xl bg-(--a-50) p-5 ring-1 ring-(--a-200) sm:p-6">
@@ -98,7 +142,12 @@
     <li class="flex items-start gap-2">{% icon "globe", "size-4 mt-0.5 shrink-0 text-ocean-600" %}<span>{{ "districts.give.web" | t(L) }} <a href="{{ d.contribute_url }}" target="_blank" rel="noopener" class="font-semibold text-ocean-700 hover:underline">{{ d.contribute_url | hostname }}<span class="sr-only"> {{ "share.new_tab" | t(L) }}</span></a></span></li>
     {%- endif %}
     {#- where the payment is made: only the services this district offers are named -#}
+    {%- if d.paypal_url or d.venmo %}
     <li class="flex items-start gap-2">{% icon "shield-check", "size-4 mt-0.5 shrink-0 text-sage-600" %}<span>{{ ((("districts.give.safe" if (d.venmo or d.paypal_venmo) else "districts.give.safe_paypal")) if d.paypal_url else "districts.give.safe_venmo") | t(L) }}</span></li>
+    {%- endif %}
+    {%- if d.zelle_email %}
+    <li class="flex items-start gap-2">{% icon "shield-check", "size-4 mt-0.5 shrink-0 text-sage-600" %}<span>{{ "districts.give.safe_zelle" | t(L) }}</span></li>
+    {%- endif %}
     <li class="flex items-start gap-2">{% icon "split", "size-4 mt-0.5 shrink-0 text-ocean-600" %}<span>{{ "districts.give.separate" | t(L, { name: name }) }} <a href="{{ '/contribute/' | lurl(L) }}" class="font-semibold whitespace-nowrap text-ocean-700 hover:underline">{{ "districts.aside.contribute_area" | t(L) }}</a></span></li>
   </ul>
 </section>

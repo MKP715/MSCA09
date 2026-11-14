@@ -20,7 +20,7 @@
 // `calendar` and `documents` global data (other loaders' output is not visible here).
 import { DateTime } from "luxon";
 import { readCsv, list, num, yes } from "../_lib/csv.js";
-import { paypalUrl, venmoHandle, venmoRoleLike, venmoUrl } from "../_lib/give.js";
+import { paypalUrl, venmoHandle, venmoRoleLike, venmoUrl, zelleEmail, zelleQr } from "../_lib/give.js";
 import { LANGS, dictionary } from "../_lib/i18n.js";
 // the shared search matcher (src/assets/js/search.js): text prepared here is folded like the visitor's query
 import "../assets/js/search.js";
@@ -296,7 +296,13 @@ export default function () {
       venmo = "";
     }
     if (paypal === null) console.warn(`[districts] ${r.slug}: paypal_url "${r.paypal_url}" is not a PayPal donation-button link (https://www.paypal.com/donate/?hosted_button_id=…) — left off the page (data/districts.csv)`);
-    if (venmo === null) console.warn(`[districts] ${r.slug}: venmo "${r.venmo}" is not a Venmo username (5–30 letters, digits, - or _) or profile link (venmo.com/u/…) — left off the page (data/districts.csv)`);    return {
+    if (venmo === null) console.warn(`[districts] ${r.slug}: venmo "${r.venmo}" is not a Venmo username (5–30 letters, digits, - or _) or profile link (venmo.com/u/…) — left off the page (data/districts.csv)`);
+    const zelle = zelleEmail(r.zelle_email);
+    if (zelle === null) console.warn(`[districts] ${r.slug}: zelle_email "${r.zelle_email}" is not an e-mail address — left off the page (data/districts.csv)`);
+    // the QR code is drawn only when it pays the same Zelle e-mail ID the page shows
+    const zelleCode = zelle ? zelleQr(r.zelle_qr, zelle) : "";
+    if (zelleCode === null) console.warn(`[districts] ${r.slug}: zelle_qr is not a Zelle QR address for ${zelle} (https://enroll.zellepay.com/qr-codes?data=…) — no QR code on the page (data/districts.csv)`);
+    return {
       slug: r.slug,
       number: r.number,
       number_es: String(r.number || "").replace(/\s*&\s*/g, " y "),
@@ -346,6 +352,11 @@ export default function () {
       paypal_venmo: Boolean(paypal) && yes(r.paypal_venmo),
       venmo: venmo || "",
       venmo_url: venmoUrl(venmo),
+      // Zelle: the e-mail ID the district's account uses, the name Zelle shows for it (givers check it), and the
+      // address of the district's own Zelle QR code (drawn again at build time)
+      zelle_email: zelle || "",
+      zelle_name: zelle ? String(r.zelle_name || "").trim() : "",
+      zelle_qr: zelleCode || "",
       lat: Number.isFinite(lat) ? lat : null,
       lng: Number.isFinite(lng) ? lng : null,
       map_approx: yes(r.map_approx),

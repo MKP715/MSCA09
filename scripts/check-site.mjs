@@ -48,7 +48,7 @@ import { fillSettings } from "../src/_lib/i18n.js";
 import { nameHits } from "../src/_lib/names.js";
 import { normStatus, holdsSeat } from "../src/_lib/status.js";
 import { compileLinkFixes } from "../src/_lib/calendar.js";
-import { paypalUrl, venmoHandle, venmoRoleLike } from "../src/_lib/give.js";
+import { paypalUrl, venmoHandle, venmoRoleLike, zelleEmail, zelleQr, zelleQrData } from "../src/_lib/give.js";
 
 const ROOT = process.cwd();
 const SITE = path.resolve(process.argv[2] || process.env.SITE_DIR || "_site");
@@ -352,6 +352,25 @@ for (const r of readCsv("districts.csv")) {
     err(where, `venmo "${r.venmo}" — the district's own Venmo username (5–30 letters, digits, - or _, without @) or its profile link (https://venmo.com/u/…), or leave it empty`);
   else if (venmo && (!venmoRoleLike(venmo) || nameHits(venmo.replace(/[-_]+/g, " ")).length))
     err(where, `venmo "${venmo}" does not look like a district account (its name should say district/dist8/msca/area/treasurer/…, and no member's name). A personal Venmo, such as a treasurer's own, may not be published.`);
+  // Zelle: zelle_email is checked against data/contact-allowlist.csv by the contact scan below (a role mailbox only).
+  // zelle_qr must pay that same e-mail ID; the name Zelle shows must be the district's, never a member's full name.
+  const zelle = zelleEmail(r.zelle_email);
+  if (zelle === null) err(where, `zelle_email "${r.zelle_email}" — the e-mail ID the district's Zelle account uses, or leave it empty`);
+  if (!zelle && (String(r.zelle_name || "").trim() || String(r.zelle_qr || "").trim())) warn(where, `zelle_name / zelle_qr are filled but zelle_email is empty — the page shows no Zelle until zelle_email is filled`);
+  if (zelle && zelleQr(r.zelle_qr, zelle) === null)
+    err(where, `zelle_qr — must be the address the district's own Zelle QR code holds (https://enroll.zellepay.com/qr-codes?data=…), paying ${zelle} (zelle_email); or leave it empty`);
+  const qrName = zelle && r.zelle_qr ? (zelleQrData(r.zelle_qr) || {}).name || "" : "";
+  if (qrName && String(r.zelle_name || "").trim() && qrName.trim().toLowerCase() !== String(r.zelle_name).trim().toLowerCase())
+    warn(where, `zelle_name "${r.zelle_name}" is not the name in the district's Zelle QR code ("${qrName}") — copy the name Zelle shows`);
+  // the name Zelle shows must be the district's: it has to name a role (district, MSCA, area, treasurer…), and no
+  // member's name, also with a middle initial taken out ("JOHN A SMITH" → "JOHN SMITH")
+  const ZELLE_ROLE_WORD = /^(district|distrito|dist\d*|d\d+|msca|area|aa|treas\w*|tesor\w*|dcm\w*|intergroup|office|oficina|committee|comit\w*|seventh|7th)$/i;
+  for (const nm of [r.zelle_name, qrName].filter(Boolean)) {
+    const noInitials = String(nm).replace(/(^|\s)\p{L}\.?(?=\s)/gu, "$1").replace(/\s+/g, " ").trim();
+    const words = String(nm).split(/[^\p{L}\d]+/u).filter(Boolean);
+    if (nameHits(nm).length || nameHits(noInitials).length || !words.some((w) => ZELLE_ROLE_WORD.test(w)))
+      err(where, `the Zelle name "${nm}" does not look like the district's own account (it should name the district, Area, MSCA or treasurer, and no member) — only a district (business) Zelle account may be published, never a member's own`);
+  }
 }
 
 // ------------------------------------------------------------- meeting recordings

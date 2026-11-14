@@ -279,7 +279,7 @@ Reply to webmaster@msca09aa.org with **first name + last initial and role mailbo
   | 24 | Alternate DCMC (Alt. MCD) | Secretary, Treasurer, Registrar |
   | 30 | Alternate DCMC | Treasurer |
 
-  **GSR School Chair** (the sixth seat, added Oct 17): not provided yet for every district except District 5 (shown open — the district website lists the G.S.R. School chair among its open positions) and District 9 (Francine W.).
+  **GSR School Chair** (the sixth seat, added Oct 17): not provided yet for every district except District 5 (shown open — the district website lists the G.S.R. School chair among its open positions), District 9 (Francine W.) and District 1 & 3 (Erin S., since Nov 13).
 
 - [ ] **[Soon] Supply** the *name* of each meeting place listed only by street address, and confirm it is a public place, never a home: Districts 18, 20, 21, 22 (the Spanish Coachella Valley intergroup's room?), 23, 24, 25 (District 19 done Oct 22: H.U.G.). *Where:* your district page and calendar series.
 - [ ] **[Soon] Supply** date, place and flyer (role contacts only) of district events announced Aug 9: District 17 Unity Day (Oct 25 — urgent), 14 Ice Cream Social (Nov 14 — done Oct 29: 2:00–4:00 PM, Unity Valley Church, Hemet, with its flyer), 12 Traditions Day (Nov — done Oct 22: Nov 7, Laguna Woods, with its flyer), 22 local forum (Nov 22), 25 anniversary (Dec 12), 7 December event. *Where:* the calendar and `/events/`.
@@ -1080,6 +1080,28 @@ The Area Google Calendar was checked against every district, intergroup and cent
   "District 7" series (*This event*).
 - [ ] **District 7:** the flyer arrived as a small WhatsApp picture (320 × 480 pixels). Send the original file to the
   webmaster so it prints and zooms clearly; it replaces the current one under the same link.
+
+## 23. Done on November 13, 2026 — District 1 & 3 Zelle, two holiday events, District 9 DCMC e-mail
+
+- **District 1 & 3 page (`/districts/d01-03/`):** a new *Contribute* section with the district's **Zelle** — the
+  e-mail ID to send to (with a Copy button), the name Zelle shows (DIST. ONE MSCA OF AA), the steps, and the district's
+  own Zelle QR code for computer screens and print — plus its P.O. Box for checks. The contact box says groups and
+  members can contribute with Zelle. **Erin S.** is shown as the district's GSR School Chair.
+- **District 8 page:** the PayPal steps now say *contribute* / *contribution*, not *donate* / *donation* (the PayPal
+  link itself is PayPal's and keeps its own address).
+- **District 9:** the DCMC's e-mail is now DCMC9email@gmail.com on the district page, the trusted-servants list and the
+  district's meeting entry in the Area calendar.
+- **New on the calendar (Google Calendar, no notifications sent):** District 1 & 3's **Holiday Celebration**,
+  Thursday, December 10, 2026, 6:00 PM, Kiwanis Hermosa Beach — free, potluck, live music and fellowship; and
+  **ACYPAA 54's 6th Annual Christmas Party**, Sunday, December 20, 2026, 5:00–10:00 PM, Temecula Valley Alano Club —
+  karaoke, potluck, auction, white elephant ($20 limit), $15 suggested contribution (English and Spanish flyers). Both
+  flyers are on the event pages and the Event flyers page; the District 1 & 3 one is on the district page too.
+
+**Still to do**
+- [ ] **District 1 & 3 DCMC:** the holiday flyer gives a start time (6:00 PM) but no end time; the calendar shows
+  6:00–9:00 PM with a note. Send the end time to the webmaster. Also send Erin S.'s GSR School service e-mail, if there
+  is one.
+- [ ] **District 9 DCMC:** confirm that DCMC9email@gmail.com is a shared role mailbox that passes to the next DCMC.
 
 ## How to send information to the webmaster
 
