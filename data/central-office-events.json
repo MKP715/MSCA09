@@ -2,7 +2,7 @@
  "events": [
   {
    "address": "401 S. Pavilion way",
-   "allDay": false,
+   "allDay": true,
    "also": [],
    "cats": [],
    "city": "Palm Springs",
@@ -31,12 +31,12 @@
     }
    ],
    "format": "In person",
-   "id": "co-sur-bahia-3325",
+   "id": "co-sur-bahia-3330",
    "lang": "Spanish",
    "office": "sur-bahia",
-   "src": "https://aasurdelabahia.org/event/congreso-43-del-valle-de-coachella/",
-   "srcHash": "1621bfc0f307a1c02fbe9c8b909980874d746578",
-   "start": "2026-11-13T16:00:00-08:00",
+   "src": "https://aasurdelabahia.org/event/congreso-43-del-valle-de-coachella-2/",
+   "srcHash": "ee94e5c96c832ffb6d386e4f5044db7c62003349",
+   "start": "2026-11-14",
    "summary": "",
    "title": "Congreso #43 del Valle de Coachella",
    "title_es": "",
@@ -971,13 +971,13 @@
    "flags": [],
    "flyers": [
     {
-     "h": 0,
+     "h": 1576,
      "mime": "image/png",
      "pdf": "",
-     "sha256": "",
+     "sha256": "06dd68b8c63fb046bc3609a85a37ca6af50e9fc8e0c5ad6ce1b935eee5ef2e3e",
      "sizes": [],
      "url": "https://www.aanoc.org/images/events/archives_wkshp_2027.png",
-     "w": 0
+     "w": 1216
     }
    ],
    "format": "In person",
@@ -1110,6 +1110,7 @@
     "https://www.aanoc.org/images/events/ACYPAA54_Flyer.png": "e40f7a1da82bcc7f439e7eee2b46c7513a46fd2c5eb8239ba9e76486df80fc40 1429 2000 image/png",
     "https://www.aanoc.org/images/events/OCAAC_2027.png": "cd4188e9d63995b555b02bdbcef62149592b3e6088e7cd9526ace2ae3530fe8c 1114 1444 image/png",
     "https://www.aanoc.org/images/events/Pacific_regional_forum_SD26.png": "da02ebab669d2954c446c0c5217187c7cd9bee25753de45089399bece67aeeee 471 699 image/png",
+    "https://www.aanoc.org/images/events/archives_wkshp_2027.png": "06dd68b8c63fb046bc3609a85a37ca6af50e9fc8e0c5ad6ce1b935eee5ef2e3e 1216 1576 image/png",
     "https://www.aanoc.org/images/events/battleofthebands_2026.JPG": "e9e0db29ba4a52d088a0b98af205d0b41e27278a53288b31bf07ca22045bb689 1545 1999 image/jpeg",
     "https://www.aanoc.org/images/events/friendsgiving_feast_2026.png": "a789faedb46432fc3575e90334c5633cd7dc5b783e2d8b5e01ad97c2a9a63217 1545 2000 image/png",
     "https://www.aanoc.org/images/events/hauntypaa_2026.JPG": "cc263e4185573698f88236433f916e378f8a16d192f680e68a6f6df2a8403e61 1545 1999 image/jpeg",
@@ -1221,12 +1222,12 @@
     "https://aasurdelabahia.org/wp-content/uploads/2026/11/Ultima-Esperanza-1.jpg": "29e218d7c12f21133ff04365115ba3c72c04b969db3c6db439313810c8ba3e1d 680 1071 image/jpeg",
     "https://aasurdelabahia.org/wp-content/uploads/2026/11/Ultima-Esperanza-2.jpg": "96dfc6a4a5632e6798566bf87caabc6b0e46239d38ccfc1a8f5f82edeee539dd 658 1047 image/jpeg"
    },
-   "lastChange": "2026-11-09",
+   "lastChange": "2026-11-14",
    "pageModified": "",
    "sources": {
     "co-sur-bahia-3259": "2026-11-14 4836aaeb5dbdc1816b3a54d84b1d4741ee60ba2b",
     "co-sur-bahia-3282": "2026-11-21 bcd2c3bcd0f3830e47b665bafc018d27cd8de1ad",
-    "co-sur-bahia-3325": "2026-11-15 1621bfc0f307a1c02fbe9c8b909980874d746578"
+    "co-sur-bahia-3330": "2026-11-15 ee94e5c96c832ffb6d386e4f5044db7c62003349"
    },
    "status": "ok",
    "unparsed": 0,
