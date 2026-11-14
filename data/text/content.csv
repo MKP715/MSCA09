@@ -351,6 +351,7 @@ about.description,"Who Mid-Southern California Area 09 of Alcoholics Anonymous i
 about.eyebrow,Mid-Southern California Area 09,Área 09 del Medio Sur de California,
 about.lead,"One of 93 areas of A.A.'s General Service Conference — linking the A.A. groups of Orange, Riverside and San Bernardino counties, Long Beach and the South Bay with A.A. as a whole, in English and Spanish.","Una de las 93 áreas de la Conferencia de Servicios Generales de A.A., que une a los grupos de A.A. de los condados de Orange, Riverside y San Bernardino, Long Beach y el South Bay con A.A. en su conjunto, en inglés y en español.",
 about.nav_who,Who we are,Quiénes somos,
+about.nav_rules,Guidelines & Bylaws,Guías y estatutos,
 about.nav_where,Where we serve,Dónde servimos,
 about.nav_does,What we do,Qué hacemos,
 about.nav_how,How it works,Cómo funciona,
@@ -389,6 +390,9 @@ about.lang_body,"Spanish-speaking districts support the Spanish-speaking groups 
 about.selfsupport_title,Supported by A.A. members,Sostenida por miembros de A.A.,
 about.selfsupport_body,The Area accepts contributions only from A.A. sources and carries out no fund-raising of any kind.,El Área acepta contribuciones solo de fuentes de A.A. y no realiza ninguna actividad de recaudación de fondos.,Area Guidelines Art. I.F
 about.selfsupport_cta,How to contribute,Cómo contribuir,
+about.rules_title,Area Guidelines & Bylaws,Guías y Estatutos del Área,
+about.rules_body,"The latest approved Area Guidelines (how the Area is structured and does its business) and the Bylaws of the Area corporation. Each opens in English or Spanish.","Las Guías del Área aprobadas más recientes (cómo se organiza el Área y cómo trabaja) y los Estatutos de la corporación del Área. Cada una se abre en inglés o en español.","Which documents: data/settings.csv about_rule_docs (document ids from data/documents/current.csv)"
+about.rules_all,"All guidelines & bylaws, with each committee's guidelines","Todas las guías y estatutos, con las guías de cada comité",
 about.glance_title,At a glance,De un vistazo,
 about.glance_legal,Legal name,Nombre legal,
 about.glance_legal_value,Mid-Southern California Area Assembly of Alcoholics Anonymous,Mid-Southern California Area Assembly of Alcoholics Anonymous,

@@ -12,6 +12,7 @@ mailing_name,MSCA09,
 mailing_po_box,P.O. Box 51446,
 mailing_city,"Irvine, CA 92619-1446",
 email_webmaster,webmaster@msca09aa.org,Where site problems and posting requests go.
+about_rule_docs,guidelines-area-guidelines-revision-p-september-2023-en; guidelines-area-guidelines-revision-p-september-2023-es; guidelines-area-bylaws-revised-may-2022-en; guidelines-area-bylaws-revised-may-2022-es,"The Area Guidelines and Bylaws linked on the About page (Who we are → Area Guidelines & Bylaws): document ids from data/documents/current.csv, separated by ;. The English and Spanish copies of one document share a row. When a new revision is approved, add it to the library and put its ids here in place of the old ones."
 webmail_url,https://sm09.internetmailserver.net/,"Web login page of the Area's @msca09aa.org mailboxes. The footer links to it below the webmaster e-mail; leave empty to hide the link."
 email_contributions,contributions@msca09aa.org,Zelle account e-mail ID.
 email_secretary,secretary@msca09aa.org,"Area Secretary: where requests for minutes go (motions and Area meetings pages, and the ""not posted yet"" lines)."
