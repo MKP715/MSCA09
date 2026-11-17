@@ -218,9 +218,64 @@
    "zip": "90731"
   },
   {
-   "address": "27574 Commerce Center Dr # 139",
+   "address": "",
    "allDay": false,
    "also": [],
+   "cats": [
+    "memorial"
+   ],
+   "city": "",
+   "cost": "",
+   "end": "2026-11-22T16:30:00-08:00",
+   "endDate": "",
+   "flags": [
+    "place-on-flyer"
+   ],
+   "flyers": [
+    {
+     "h": 1536,
+     "mime": "image/png",
+     "pdf": "",
+     "sha256": "de4553b69787017632d090f4b70105e187c12a97ce821489b04a9c528e0774b3",
+     "sizes": [
+      [
+       200,
+       "https://www.oc-aa.org/wp-content/uploads/2026/11/IMG_20261116_061001-200x300.png"
+      ],
+      [
+       683,
+       "https://www.oc-aa.org/wp-content/uploads/2026/11/IMG_20261116_061001-683x1024.png"
+      ],
+      [
+       768,
+       "https://www.oc-aa.org/wp-content/uploads/2026/11/IMG_20261116_061001-768x1152.png"
+      ]
+     ],
+     "url": "https://www.oc-aa.org/wp-content/uploads/2026/11/IMG_20261116_061001.png",
+     "w": 1024
+    }
+   ],
+   "format": "In person",
+   "id": "co-oc-central-70398",
+   "lang": "English",
+   "office": "oc-central",
+   "src": "https://www.oc-aa.org/event/effie-r-celebration-of-life/",
+   "srcHash": "3e3e13333417df3a6c66b781493603914919b441",
+   "start": "2026-11-22T13:30:00-08:00",
+   "summary": "Join us in celebrating Effie R.’s incredible journey of sobriety at the Costa Mesa Alano Club. Please bring a dish for Potluck. See flyer for more info…",
+   "title": "Effie R. – Celebration of Life",
+   "title_es": "",
+   "type": "Event",
+   "venue": "",
+   "zip": ""
+  },
+  {
+   "address": "27574 Commerce Center Dr # 139",
+   "allDay": false,
+   "also": [
+    "oc-central",
+    "south-oc"
+   ],
    "cats": [],
    "city": "Temecula",
    "cost": "",
@@ -630,7 +685,7 @@
      "h": 791,
      "mime": "image/jpeg",
      "pdf": "",
-     "sha256": "",
+     "sha256": "425c1d14e8635779555c5b8e921b2d8e73cb053090eaa1f895e64842f34aebe1",
      "sizes": [
       [
        195,
@@ -644,7 +699,7 @@
      "h": 805,
      "mime": "image/jpeg",
      "pdf": "",
-     "sha256": "",
+     "sha256": "889c5c95c7ab658f4596d2f862d7929e51ebf5dcfd70d6a6c1c495a7de3c9927",
      "sizes": [
       [
        189,
@@ -658,7 +713,7 @@
      "h": 817,
      "mime": "image/jpeg",
      "pdf": "",
-     "sha256": "",
+     "sha256": "2d75904cba040cec27d832b4033791a9b34f4eed02a38e15eacff2aea67e8190",
      "sizes": [
       [
        186,
@@ -1107,16 +1162,20 @@
   },
   "oc-central": {
    "adapter": "tribe",
-   "count": 1,
+   "count": 3,
    "errorKind": "",
    "failingSince": "",
    "flyers": {
-    "https://www.oc-aa.org/wp-content/uploads/2026/09/ACYPAA54_Flyer.png": "4aa1477cba04cc9fddcbf1367f9eb8c00c8c8310764ebc0b930afb5b49d40a2c 1429 2000 image/png"
+    "https://www.oc-aa.org/wp-content/uploads/2026/09/ACYPAA54_Flyer.png": "4aa1477cba04cc9fddcbf1367f9eb8c00c8c8310764ebc0b930afb5b49d40a2c 1429 2000 image/png",
+    "https://www.oc-aa.org/wp-content/uploads/2026/11/IMG_20261116_061001.png": "de4553b69787017632d090f4b70105e187c12a97ce821489b04a9c528e0774b3 1024 1536 image/png",
+    "https://www.oc-aa.org/wp-content/uploads/2026/11/Thanksgiving-2026-Flyer-Saddleback-Vally-Fellowship-Center.png": "71d4e0e4aa8b5aae0207760e01c5109155fae4b69468224a4ccc61090e32c6ed 683 1024 image/png"
    },
-   "lastChange": "2026-11-05",
+   "lastChange": "2026-11-17",
    "pageModified": "",
    "sources": {
-    "co-oc-central-70285": "2027-04-18 0aaacb4561f5e25961b2babc2708b6ab2d07fa47"
+    "co-oc-central-70285": "2027-04-18 0aaacb4561f5e25961b2babc2708b6ab2d07fa47",
+    "co-oc-central-70398": "2026-11-22 3e3e13333417df3a6c66b781493603914919b441",
+    "co-oc-central-70401": "2026-11-26 187a606936437a21e636b9a0615d544803fff790"
    },
    "status": "ok",
    "unparsed": 0,
@@ -1163,7 +1222,7 @@
   },
   "south-oc": {
    "adapter": "shared",
-   "count": 0,
+   "count": 1,
    "errorKind": "",
    "failingSince": "",
    "flyers": {},
@@ -1183,7 +1242,10 @@
     "https://aasurdelabahia.org/wp-content/uploads/2026/11/Aniversario-Intergrupal.jpg": "82ac1bc42260929d1032ddedc5eaa996d5b0e7ebb27ec8b80841e11045430a9f 1080 1387 image/jpeg",
     "https://aasurdelabahia.org/wp-content/uploads/2026/11/Catarsis-1.jpg": "1ecaa10b0312ce5cc0c091eb5dd748333469b0b5bd3f07aa253dbbc0a6545917 675 1071 image/jpeg",
     "https://aasurdelabahia.org/wp-content/uploads/2026/11/Catarsis-2.jpg": "62aefd9d6a35b728bb8777261b545bccc6969333a60bab39f43a37ec3732606c 657 1061 image/jpeg",
-    "https://aasurdelabahia.org/wp-content/uploads/2026/11/Catarsis-3.jpg": "7d1b47c9eb91cb99dc68a186793f94b7c4188deba1bde4a51b3f7d28d10931cd 665 1066 image/jpeg"
+    "https://aasurdelabahia.org/wp-content/uploads/2026/11/Catarsis-3.jpg": "7d1b47c9eb91cb99dc68a186793f94b7c4188deba1bde4a51b3f7d28d10931cd 665 1066 image/jpeg",
+    "https://aasurdelabahia.org/wp-content/uploads/2026/11/El-Ultimo-Milagro-2.jpg": "425c1d14e8635779555c5b8e921b2d8e73cb053090eaa1f895e64842f34aebe1 513 791 image/jpeg",
+    "https://aasurdelabahia.org/wp-content/uploads/2026/11/El-Ultimo-Milagro-3.jpg": "889c5c95c7ab658f4596d2f862d7929e51ebf5dcfd70d6a6c1c495a7de3c9927 507 805 image/jpeg",
+    "https://aasurdelabahia.org/wp-content/uploads/2026/11/El-Ultimo-Milagro-4.jpg": "2d75904cba040cec27d832b4033791a9b34f4eed02a38e15eacff2aea67e8190 506 817 image/jpeg"
    },
    "lastChange": "2026-11-16",
    "pageModified": "",
