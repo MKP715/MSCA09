@@ -446,6 +446,156 @@
    "zip": "90804"
   },
   {
+   "address": "",
+   "allDay": false,
+   "also": [],
+   "cats": [
+    "special-meeting-or-event"
+   ],
+   "city": "",
+   "cost": "",
+   "end": "2026-11-28T18:00:00-08:00",
+   "endDate": "",
+   "flags": [],
+   "flyers": [
+    {
+     "h": 1844,
+     "mime": "image/jpeg",
+     "pdf": "",
+     "sha256": "7cb68204e1529b4b432261699b8a9dac20abcaac845f1d9006f5ecf16b52bfb9",
+     "sizes": [
+      [
+       200,
+       "https://www.oc-aa.org/wp-content/uploads/2026/11/2026-11-28-msca09-service-committees-1-200x300.jpg"
+      ],
+      [
+       682,
+       "https://www.oc-aa.org/wp-content/uploads/2026/11/2026-11-28-msca09-service-committees-1-682x1024.jpg"
+      ],
+      [
+       768,
+       "https://www.oc-aa.org/wp-content/uploads/2026/11/2026-11-28-msca09-service-committees-1-768x1152.jpg"
+      ],
+      [
+       1024,
+       "https://www.oc-aa.org/wp-content/uploads/2026/11/2026-11-28-msca09-service-committees-1-1024x1536.jpg"
+      ]
+     ],
+     "url": "https://www.oc-aa.org/wp-content/uploads/2026/11/2026-11-28-msca09-service-committees-1.jpg",
+     "w": 1229
+    }
+   ],
+   "format": "In person",
+   "id": "co-oc-central-70407",
+   "lang": "English",
+   "office": "oc-central",
+   "src": "https://www.oc-aa.org/event/area-09-service-committees-zoom/",
+   "srcHash": "6c8f0e6426e48bbccc7dd340abd8fbfe2f8511c5",
+   "start": "2026-11-28T16:00:00-08:00",
+   "summary": "",
+   "title": "Area 09 Service Committees Zoom",
+   "title_es": "",
+   "type": "Event",
+   "venue": "Via Zoom",
+   "zip": ""
+  },
+  {
+   "address": "4311 Olanda St.",
+   "allDay": false,
+   "also": [],
+   "cats": [
+    "aniversario"
+   ],
+   "city": "Lynwood",
+   "cost": "",
+   "end": "2026-11-29T22:00:00-08:00",
+   "endDate": "",
+   "flags": [],
+   "flyers": [
+    {
+     "h": 1035,
+     "mime": "image/jpeg",
+     "pdf": "",
+     "sha256": "2410f8c4144f1a36f9a6aaabe42e4b91dabb4a89418407f233aefe7fa2219764",
+     "sizes": [
+      [
+       194,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Llegamosa-Creer-1-194x300.jpg"
+      ],
+      [
+       661,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Llegamosa-Creer-1-661x1024.jpg"
+      ]
+     ],
+     "url": "https://aasurdelabahia.org/wp-content/uploads/2026/11/Llegamosa-Creer-1.jpg",
+     "w": 668
+    },
+    {
+     "h": 1023,
+     "mime": "image/jpeg",
+     "pdf": "",
+     "sha256": "f53694587131c125d9f51313d7ec808f674eb605e0c35f7db90f3ca0f678a421",
+     "sizes": [
+      [
+       195,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Llegamos-a-creer-2-195x300.jpg"
+      ]
+     ],
+     "url": "https://aasurdelabahia.org/wp-content/uploads/2026/11/Llegamos-a-creer-2.jpg",
+     "w": 664
+    },
+    {
+     "h": 1067,
+     "mime": "image/jpeg",
+     "pdf": "",
+     "sha256": "4fb26e3971e9c4edf69260043555f50622156066ac4d9e080b1145e1f34fe121",
+     "sizes": [
+      [
+       185,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Llegamos-a-creer-3-185x300.jpg"
+      ],
+      [
+       631,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Llegamos-a-creer-3-631x1024.jpg"
+      ]
+     ],
+     "url": "https://aasurdelabahia.org/wp-content/uploads/2026/11/Llegamos-a-creer-3.jpg",
+     "w": 657
+    },
+    {
+     "h": 1044,
+     "mime": "image/jpeg",
+     "pdf": "",
+     "sha256": "",
+     "sizes": [
+      [
+       186,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Llegamos-a-creer-4-186x300.jpg"
+      ],
+      [
+       636,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Llegamos-a-creer-4-636x1024.jpg"
+      ]
+     ],
+     "url": "https://aasurdelabahia.org/wp-content/uploads/2026/11/Llegamos-a-creer-4.jpg",
+     "w": 648
+    }
+   ],
+   "format": "In person",
+   "id": "co-sur-bahia-3379",
+   "lang": "Spanish",
+   "office": "sur-bahia",
+   "src": "https://aasurdelabahia.org/event/aniversario-43-grupo-llegamos-a-creer/",
+   "srcHash": "b150737e7db3013ba71a8d68a16ce8a374339dca",
+   "start": "2026-11-29T13:00:00-08:00",
+   "summary": "",
+   "title": "Aniversario #43 grupo Llegamos a Creer",
+   "title_es": "",
+   "type": "Social",
+   "venue": "St. Philip Neri Church",
+   "zip": "90262"
+  },
+  {
    "address": "1355 North Harbor Drive",
    "allDay": true,
    "also": [],
@@ -739,6 +889,48 @@
    "zip": "90716"
   },
   {
+   "address": "9845 Belfast Drive",
+   "allDay": false,
+   "also": [],
+   "cats": [
+    "special-events"
+   ],
+   "city": "Garden Grove",
+   "cost": "",
+   "end": "2026-12-14T19:30:00-08:00",
+   "endDate": "",
+   "flags": [],
+   "flyers": [
+    {
+     "h": 480,
+     "mime": "image/jpeg",
+     "pdf": "",
+     "sha256": "b72326899add35679c798cb7abc189cf7c9badbfc794682df7dd3a8d96d176fa",
+     "sizes": [
+      [
+       200,
+       "https://www.oc-aa.org/wp-content/uploads/2026/11/International-Holiday-Potluck-District-7-2026-200x300.jpg"
+      ]
+     ],
+     "url": "https://www.oc-aa.org/wp-content/uploads/2026/11/International-Holiday-Potluck-District-7-2026.jpg",
+     "w": 320
+    }
+   ],
+   "format": "In person",
+   "id": "co-oc-central-70410",
+   "lang": "English",
+   "office": "oc-central",
+   "src": "https://www.oc-aa.org/event/international-holiday-potluck/",
+   "srcHash": "ac490178c5979494ce19739cbab3547b65619b40",
+   "start": "2026-12-14T18:00:00-08:00",
+   "summary": "Please join District 7’s Holiday Potluck featuring a skit on Robert’s Rules of Order and a special guest singer from Argentina! Bring your favorite International dish to share.",
+   "title": "International Holiday Potluck",
+   "title_es": "",
+   "type": "Social",
+   "venue": "Garden Grove Alano Club",
+   "zip": "92844"
+  },
+  {
    "address": "27574 Commerce Center Dr # 139",
    "allDay": false,
    "also": [],
@@ -901,7 +1093,9 @@
   {
    "address": "3050 Bristol St",
    "allDay": true,
-   "also": [],
+   "also": [
+    "oc-central"
+   ],
    "cats": [],
    "city": "Costa Mesa",
    "cost": "",
@@ -1162,20 +1356,26 @@
   },
   "oc-central": {
    "adapter": "tribe",
-   "count": 3,
+   "count": 6,
    "errorKind": "",
    "failingSince": "",
    "flyers": {
     "https://www.oc-aa.org/wp-content/uploads/2026/09/ACYPAA54_Flyer.png": "4aa1477cba04cc9fddcbf1367f9eb8c00c8c8310764ebc0b930afb5b49d40a2c 1429 2000 image/png",
+    "https://www.oc-aa.org/wp-content/uploads/2026/11/2026-11-28-msca09-service-committees-1.jpg": "7cb68204e1529b4b432261699b8a9dac20abcaac845f1d9006f5ecf16b52bfb9 1229 1844 image/jpeg",
     "https://www.oc-aa.org/wp-content/uploads/2026/11/IMG_20261116_061001.png": "de4553b69787017632d090f4b70105e187c12a97ce821489b04a9c528e0774b3 1024 1536 image/png",
+    "https://www.oc-aa.org/wp-content/uploads/2026/11/International-Holiday-Potluck-District-7-2026.jpg": "b72326899add35679c798cb7abc189cf7c9badbfc794682df7dd3a8d96d176fa 320 480 image/jpeg",
+    "https://www.oc-aa.org/wp-content/uploads/2026/11/OCAA-Convention-2027.jpg": "bfbd0aefef481195f6b20869ea1aa81b3ad74418a2b42b5b93b71a14d0568121 1600 2067 image/jpeg",
     "https://www.oc-aa.org/wp-content/uploads/2026/11/Thanksgiving-2026-Flyer-Saddleback-Vally-Fellowship-Center.png": "71d4e0e4aa8b5aae0207760e01c5109155fae4b69468224a4ccc61090e32c6ed 683 1024 image/png"
    },
-   "lastChange": "2026-11-17",
+   "lastChange": "2026-11-18",
    "pageModified": "",
    "sources": {
     "co-oc-central-70285": "2027-04-18 0aaacb4561f5e25961b2babc2708b6ab2d07fa47",
     "co-oc-central-70398": "2026-11-22 3e3e13333417df3a6c66b781493603914919b441",
-    "co-oc-central-70401": "2026-11-26 187a606936437a21e636b9a0615d544803fff790"
+    "co-oc-central-70401": "2026-11-26 187a606936437a21e636b9a0615d544803fff790",
+    "co-oc-central-70407": "2026-11-28 6c8f0e6426e48bbccc7dd340abd8fbfe2f8511c5",
+    "co-oc-central-70410": "2026-12-14 ac490178c5979494ce19739cbab3547b65619b40",
+    "co-oc-central-70413": "2027-03-28 a6997d69a53c1956daafef67fc4172d9c8a39bd2"
    },
    "status": "ok",
    "unparsed": 0,
@@ -1235,7 +1435,7 @@
   },
   "sur-bahia": {
    "adapter": "tribe",
-   "count": 4,
+   "count": 5,
    "errorKind": "",
    "failingSince": "",
    "flyers": {
@@ -1245,15 +1445,19 @@
     "https://aasurdelabahia.org/wp-content/uploads/2026/11/Catarsis-3.jpg": "7d1b47c9eb91cb99dc68a186793f94b7c4188deba1bde4a51b3f7d28d10931cd 665 1066 image/jpeg",
     "https://aasurdelabahia.org/wp-content/uploads/2026/11/El-Ultimo-Milagro-2.jpg": "425c1d14e8635779555c5b8e921b2d8e73cb053090eaa1f895e64842f34aebe1 513 791 image/jpeg",
     "https://aasurdelabahia.org/wp-content/uploads/2026/11/El-Ultimo-Milagro-3.jpg": "889c5c95c7ab658f4596d2f862d7929e51ebf5dcfd70d6a6c1c495a7de3c9927 507 805 image/jpeg",
-    "https://aasurdelabahia.org/wp-content/uploads/2026/11/El-Ultimo-Milagro-4.jpg": "2d75904cba040cec27d832b4033791a9b34f4eed02a38e15eacff2aea67e8190 506 817 image/jpeg"
+    "https://aasurdelabahia.org/wp-content/uploads/2026/11/El-Ultimo-Milagro-4.jpg": "2d75904cba040cec27d832b4033791a9b34f4eed02a38e15eacff2aea67e8190 506 817 image/jpeg",
+    "https://aasurdelabahia.org/wp-content/uploads/2026/11/Llegamos-a-creer-2.jpg": "f53694587131c125d9f51313d7ec808f674eb605e0c35f7db90f3ca0f678a421 664 1023 image/jpeg",
+    "https://aasurdelabahia.org/wp-content/uploads/2026/11/Llegamos-a-creer-3.jpg": "4fb26e3971e9c4edf69260043555f50622156066ac4d9e080b1145e1f34fe121 657 1067 image/jpeg",
+    "https://aasurdelabahia.org/wp-content/uploads/2026/11/Llegamosa-Creer-1.jpg": "2410f8c4144f1a36f9a6aaabe42e4b91dabb4a89418407f233aefe7fa2219764 668 1035 image/jpeg"
    },
-   "lastChange": "2026-11-16",
+   "lastChange": "2026-11-18",
    "pageModified": "",
    "sources": {
     "co-sur-bahia-3282": "2026-11-21 bcd2c3bcd0f3830e47b665bafc018d27cd8de1ad",
     "co-sur-bahia-3359": "2026-12-06 e4d9ad863810cab21973058b3885e1032835036a",
     "co-sur-bahia-3365": "2026-12-12 b69d1f7d8f71b41d95768a20572be1bbd903f076",
-    "co-sur-bahia-3373": "2026-11-28 03c026029491a9f22760119b1ce7d56b2b3f64b7"
+    "co-sur-bahia-3373": "2026-11-28 03c026029491a9f22760119b1ce7d56b2b3f64b7",
+    "co-sur-bahia-3379": "2026-11-29 b150737e7db3013ba71a8d68a16ce8a374339dca"
    },
    "status": "ok",
    "unparsed": 0,
@@ -1293,7 +1497,7 @@
     "https://www.temeculacentraloffice.org/aa/wp-content/uploads/ACYPAA_Roundup_54.jpeg": "675317c03cf1fb889c7f8ec661557cc53706e50a9ef69416926c2d1f5bd36509 1526 2048 image/jpeg"
    },
    "lastChange": "2026-10-30",
-   "pageModified": "2026-10-28T14:38:32",
+   "pageModified": "2026-11-17T14:38:49",
    "sources": {
     "co-temecula-acypaa-liv-state-of-mental-goose-flesh-20270415": "2027-04-18 5f4daa43da80c39c0a1d0180467ca05e633c6e9e",
     "co-temecula-children-s-holiday-party-20261219": "2026-12-19 a8148b749f43ca6d51f63fcdbfe53bc626842dfc",
