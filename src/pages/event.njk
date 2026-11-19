@@ -115,12 +115,14 @@ eleventyComputed:
         </ul>
         {%- endif %}
 
-        {#- ended banner: shown at build for past events, and revealed in the browser once an upcoming one-off is over
-            (kept out of site search, or a search excerpt of an upcoming event would say it has ended) -#}
+        {#- ended banner: shown at build for past events, and revealed in the browser once an upcoming one-off is over.
+            The upcoming one's words wait in data-reveal-text and app.js writes them in when it shows the banner: as text
+            they would be read by site search and by AI answer engines (which read pages without scripts or CSS), and an
+            excerpt of an upcoming event would say it has ended -#}
         {%- if isPastOneOff or (s.recurring and s.ended) %}
         <p class="ended-banner mt-6">{% icon "history", "size-5 shrink-0" %}<span>{{ ("calendar.event.ended" if not s.recurring else "calendar.event.ended_series") | t(L, { date: s.lastDate | dt("full", L) }) }}</span></p>
         {%- elif not s.recurring %}
-        <p class="ended-banner mt-6" data-reveal-after="{{ s.end }}" data-pagefind-ignore hidden>{% icon "history", "size-5 shrink-0" %}<span>{{ "calendar.event.ended" | t(L, { date: s.lastDate | dt("full", L) }) }}</span></p>
+        <p class="ended-banner mt-6" data-reveal-after="{{ s.end }}" data-pagefind-ignore hidden>{% icon "history", "size-5 shrink-0" %}<span data-reveal-text="{{ 'calendar.event.ended' | t(L, { date: s.lastDate | dt('full', L) }) }}"></span></p>
         {%- endif %}
 
         <div class="mt-8 flex flex-wrap gap-3">
@@ -265,7 +267,14 @@ eleventyComputed:
           {%- endfor %}
         </ol>
         {%- endif %}
-        <p id="{{ dl }}-empty" class="mt-4 text-sm text-ink-500" {% if s.upcomingDates.length %}hidden{% endif %}>{{ ("calendar.event.no_dates_ended" if s.ended else "calendar.event.no_dates") | t(L) }}</p>
+        {#- "No dates in the coming months": as text only when the build found none; while dates are listed its words
+            wait in data-reveal-text until app.js shows it (data-empty) -#}
+        {%- set noDates = ("calendar.event.no_dates_ended" if s.ended else "calendar.event.no_dates") | t(L) %}
+        {%- if s.upcomingDates.length %}
+        <p id="{{ dl }}-empty" class="mt-4 text-sm text-ink-500" data-reveal-text="{{ noDates }}" hidden></p>
+        {%- else %}
+        <p id="{{ dl }}-empty" class="mt-4 text-sm text-ink-500">{{ noDates }}</p>
+        {%- endif %}
         {%- if s.cancelledDates.length %}
         <p class="mt-4 rounded-2xl bg-red-50 p-3 text-sm text-red-800">{% icon "ban", "mr-1 inline size-4 align-[-2px]" %}{{ "calendar.event.skipped" | t(L) }}
           {% for d in s.cancelledDates %}<s>{{ d | dt("date", L) }}</s>{% if not loop.last %}, {% endif %}{% endfor %}</p>
@@ -283,7 +292,9 @@ eleventyComputed:
           <div class="cd-box"><span class="cd-num" x-text="m">–</span><span class="cd-lbl">{{ "time.minutes" | t(L) }}</span></div>
           <div class="cd-box"><span class="cd-num" x-text="s">–</span><span class="cd-lbl">{{ "time.seconds" | t(L) }}</span></div>
         </div>
-        <p x-cloak x-show="past" class="mt-3 font-display text-2xl font-bold">{{ "time.in_progress" | t(L) }}</p>
+        {#- "Happening now": written by the script once it is true (as text, crawlers that read the page without
+            scripts would say an upcoming event is under way) -#}
+        <p x-cloak x-show="past" class="mt-3 font-display text-2xl font-bold" x-text="past ? MSCA.tr('time.in_progress') : ''"></p>
         <p class="mt-4 text-sm text-white"><span class="inline-block first-letter:uppercase">{{ s.start | dt("long", L) }}</span> · {{ s | calLoc("timeLabel", L) }}</p>
       </section>
       {%- endif %}

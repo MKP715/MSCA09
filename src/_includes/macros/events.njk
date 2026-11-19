@@ -372,9 +372,17 @@
   {{ eventCard({ occ: occ, lang: L, variant: v, tag: "li", sizes: o.sizes, prio: (('high' if loop.first else 'eager') if (loop.index0 < (o.eager or 0) and not occ.seriesNext) else '') }) }}
   {%- endfor %}
 </ul>
+{#- the "nothing is scheduled" notice: as text only when the build found nothing. Otherwise it is sent hidden with its
+    words in data-reveal-text, and app.js writes them in if the list empties (data-empty) - as text, crawlers that read
+    the page without scripts or CSS would quote it next to the list it contradicts -#}
+{%- set emptyText = o.emptyText or ("calendar.upcoming_empty" | t(L)) %}
 <div id="{{ listId }}-empty" class="ev-empty" {% if items.length %}hidden{% endif %}>
   <span class="icon-tile-soft size-11">{% icon "calendar-search", "size-5" %}</span>
-  <p>{{ o.emptyText or ("calendar.upcoming_empty" | t(L)) }}</p>
+  {%- if items.length %}
+  <p data-reveal-text="{{ emptyText }}"></p>
+  {%- else %}
+  <p>{{ emptyText }}</p>
+  {%- endif %}
   <a href="{{ '/calendar/' | lurl(L) }}" class="btn btn-ghost btn-sm">{% icon "calendar-days", "size-4" %}{{ "calendar.open_calendar" | t(L) }}</a>
 </div>
 {% endmacro %}

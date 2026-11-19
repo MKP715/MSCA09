@@ -33,10 +33,18 @@ scripts: ["/assets/js/service.js"]
         {{ nextMeeting({ occ: next, calendar: calendar, lang: L }) }}
       </div>
       {%- endif %}
+      {#- "The next Area meeting will be posted soon": as text only when the build found no meeting. Otherwise app.js
+          shows it once the meeting above has passed (data-empty) and writes its words in from data-reveal-text - as
+          text, crawlers that read the page without scripts or CSS would quote it next to the meeting -#}
       <div id="next-none" class="card flex flex-col items-start gap-4 p-8 lg:p-10" style="{{ 'iris' | accent }}" {% if next %}hidden{% endif %}>
         <span class="icon-tile">{% icon "calendar-clock", "size-6" %}</span>
+        {%- if next %}
+        <h3 class="font-display text-2xl font-bold text-ink-950" data-reveal-text="{{ 'service.next.none_title' | t(L) }}"></h3>
+        <p class="max-w-2xl text-ink-600" data-reveal-text="{{ 'service.next.none_body' | t(L) }}"></p>
+        {%- else %}
         <h3 class="font-display text-2xl font-bold text-ink-950">{{ "service.next.none_title" | t(L) }}</h3>
         <p class="max-w-2xl text-ink-600">{{ "service.next.none_body" | t(L) }}</p>
+        {%- endif %}
         <a href="{{ '/calendar/' | lurl(L) }}" class="btn btn-ocean">{% icon "calendar-days", "size-4" %}{{ "service.next.open_calendar" | t(L) }}</a>
       </div>
       <p class="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-ink-600">

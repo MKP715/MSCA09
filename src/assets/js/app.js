@@ -14,6 +14,11 @@
     data-series="key"       on a data-limit list's children: only the first child with that key shows
                             (a repeating event's next date; its following date takes over once it has passed)
     data-empty="#id"        on a list: if it ends up empty, the element #id is shown
+    data-reveal-text="…"    on an element sent EMPTY inside one of those notices (or on the notice itself): its words,
+                            written in just before the notice shows. A notice that is not true when the page is built
+                            ("This event has ended", "Nothing is scheduled right now") must not be in the page's text:
+                            AI answer engines read pages without running scripts or CSS, so they would quote a hidden
+                            notice as if it were shown. A notice the build itself found true keeps its words as text
 
   Motion: endless decorative animations can be paused by the visitor (footer button, or any
   element with x-data="motionToggle"). The choice is remembered on this device and sets
@@ -96,6 +101,14 @@
     return { text: tr("time.in_days", { n: d }), tone: d <= 7 ? "week" : "later" };
   };
 
+  // A notice about to be shown gets its words (data-reveal-text, see the top of this file). Written only when they
+  // differ, so the check every minute changes nothing on screen or for a screen reader
+  const fillText = (el) =>
+    [el, ...el.querySelectorAll("[data-reveal-text]")].forEach((n) => {
+      const s = n.dataset.revealText;
+      if (s != null && n.textContent !== s) n.textContent = s;
+    });
+
   M.applyTime = function (root = document) {
     const now = Date.now();
     root.querySelectorAll("[data-hide-after]").forEach((el) => {
@@ -108,7 +121,9 @@
     });
     root.querySelectorAll("[data-reveal-after]").forEach((el) => {
       const t = Date.parse(el.dataset.revealAfter);
-      if (!isNaN(t) && now > t) el.hidden = false;
+      if (isNaN(t) || now <= t) return;
+      fillText(el);
+      el.hidden = false;
     });
     root.querySelectorAll("[data-when]").forEach((el) => {
       const slot = el.querySelector("[data-rel]");
@@ -134,7 +149,10 @@
     root.querySelectorAll("[data-empty]").forEach((list) => {
       const target = document.querySelector(list.dataset.empty);
       const visible = [...list.children].some((c) => !c.hidden);
-      if (target) target.hidden = visible;
+      if (target) {
+        if (!visible) fillText(target);
+        target.hidden = visible;
+      }
       if (!visible) list.hidden = true;
     });
   };

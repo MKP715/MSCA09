@@ -16,6 +16,9 @@ description_key: home.description
 accent: ocean
 bodyClass: home
 scripts: ["/assets/js/home.js"]
+# notices the scripts write in when they are true (partials/home-next-meeting.njk, partials/home-districts.njk), so
+# they are never in the page's text
+jsText: ["home.next.ended", "home.districts.none"]
 headInclude: partials/home-head.njk
 ---
 {% include "partials/home-hero.njk" %}

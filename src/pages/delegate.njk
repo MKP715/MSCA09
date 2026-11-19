@@ -175,7 +175,9 @@ scripts: ["/assets/js/service.js"]
       {{ gscCard({ row: r, lang: L, calendar: calendar }) }}
       {%- endif %}{% endfor %}
     </div>
-    <p id="coming-empty" hidden class="card p-8 text-center text-ink-500">{{ "service.delegate.coming_empty" | t(L) }}</p>
+    {#- shown by app.js if the list above ends up empty; its words wait in data-reveal-text till then (as text, crawlers
+        that read the page without scripts or CSS would quote it next to the list) -#}
+    <p id="coming-empty" hidden class="card p-8 text-center text-ink-500" data-reveal-text="{{ 'service.delegate.coming_empty' | t(L) }}"></p>
   </section>
   {%- endif %}
 

@@ -11,7 +11,7 @@ meta_title_key: calendar.offices.meta_title
 description_key: calendar.offices.description
 accent: copper
 scripts: ["/assets/js/flyers.js"]
-jsText: ["calendar.offices.count_one", "calendar.offices.count_n", "calendar.offices.count_of"]
+jsText: ["calendar.offices.count_one", "calendar.offices.count_n", "calendar.offices.count_of", "calendar.offices.empty_title", "calendar.flyers.empty_body"]
 source: "README.md#central-office-events"
 ---
 {#-
@@ -203,10 +203,11 @@ source: "README.md#central-office-events"
       </div>
     </section>
 
-    {#- nothing matches the filters -#}
+    {#- nothing matches the filters. Its words come from the script (jsText above), never as text: crawlers that read
+        the page without scripts or CSS would say no office event matches, next to the events -#}
     <div class="ev-empty" x-cloak x-show="shown === 0" data-pagefind-ignore>
       <span class="icon-tile-soft size-11">{% icon "search-x", "size-5" %}</span>
-      <p><strong class="block text-ink-900">{{ "calendar.offices.empty_title" | t(L) }}</strong>{{ "calendar.flyers.empty_body" | t(L) }}</p>
+      <p><strong class="block text-ink-900" x-text="shown === 0 ? MSCA.tr('calendar.offices.empty_title') : ''"></strong><span x-text="shown === 0 ? MSCA.tr('calendar.flyers.empty_body') : ''"></span></p>
       <button type="button" class="btn btn-ghost btn-sm" @click="clear(true)">{% icon "x", "size-4" %}{{ "calendar.flyers.clear" | t(L) }}</button>
     </div>
   </div>

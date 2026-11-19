@@ -54,7 +54,9 @@
           {#- more cities match than are listed (not an option: the arrow keys skip it) -#}
           {%- set moreTpl = "home.districts.more" | t(L) %}
           <li x-show="more > 0" role="presentation" class="px-4 pt-2 pb-1 text-sm text-ink-500" x-text="{{ moreTpl | json }}.replace('{n}', more)"></li>
-          <li x-show="!results.length" class="px-4 py-3 text-sm text-ink-500">{{ "home.districts.none" | t(L) }}</li>
+          {#- "No city by that name…" comes from the script (home.districts.none, pages/index.njk jsText): as text,
+              crawlers that read the page without scripts or CSS would quote it -#}
+          <li x-show="!results.length" class="px-4 py-3 text-sm text-ink-500" x-text="results.length ? '' : MSCA.tr('home.districts.none')"></li>
         </ul>
         {#- read out: "3 results", "12 results +4 more — keep typing…" -#}
         <p class="sr-only" role="status" aria-live="polite" x-ref="status"

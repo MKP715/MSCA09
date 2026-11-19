@@ -258,12 +258,19 @@
 </a>
 {% endmacro %}
 
-{#- Friendly empty state. o: { icon, title, body, color } -#}
+{#- Friendly empty state. o: { icon, title, body, color, later }
+    later: true when it is sent hidden and app.js shows it only if its list empties (data-empty): its words then wait
+    in data-reveal-text, so crawlers that read the page without scripts or CSS do not quote a notice that is not true -#}
 {% macro emptyState(o) %}
 <div class="card flex flex-col items-center gap-3 p-10 text-center" style="{{ (o.color or 'ocean') | accent }}">
   <span class="icon-tile-soft size-14">{% icon o.icon or "sparkles", "size-7" %}</span>
+  {%- if o.later %}
+  <p class="font-display text-lg font-bold text-ink-900" data-reveal-text="{{ o.title }}"></p>
+  {%- if o.body %}<p class="max-w-md text-ink-500" data-reveal-text="{{ o.body }}"></p>{% endif %}
+  {%- else %}
   <p class="font-display text-lg font-bold text-ink-900">{{ o.title }}</p>
   {%- if o.body %}<p class="max-w-md text-ink-500">{{ o.body }}</p>{% endif %}
+  {%- endif %}
 </div>
 {% endmacro %}
 
