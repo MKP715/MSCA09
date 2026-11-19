@@ -5,7 +5,7 @@ panel: 70
 author_en: "Ed L., Panel 70 Delegate"
 author_es: "Ed L., Delegado del Panel 70"
 kind: reflection
-summary: "'Lessons from La Vina!' - reflection after La Vina's 25th anniversary event."
+summary: "A reflection after La Viña's 25th anniversary celebration."
 words: 838
 old_url: "https://msca09aa.org/2021/07/07-31-21-lessons-from-la-vina/"
 ---

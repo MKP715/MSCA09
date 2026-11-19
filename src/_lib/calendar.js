@@ -617,7 +617,52 @@ function parseLink(v, problems) {
 
 /* ------------------------------------------------------------------ location / zoom */
 
-const STATE_RE = /^(CA|California|NV|Nevada|AZ|UT|NY|HI|AK|TX|OR|WA|BC|NM)\.?(?:\s+(\d{5})(?:-\d{4})?)?$/i;
+// The state of a Location ("…, St. Louis, MO", "…, Laguna Niguel, California 92677"): any of the 50 states, D.C. and
+// Canada's provinces and territories, by postal code or full name. The part before it is the city, and search engines
+// get both (calJsonLd): an event whose Location names no city or street gets no Event data at all. A part counts only
+// when it is the whole text between two commas, and:
+//  - a code only in capitals ("MO", "D.C.", "OR 97204"), so a lone "in", "or" or "me" between commas is not a state;
+//  - a full name however it is typed ("california", "New York"); a province's only when "Canada" follows, because
+//    Ontario is also a city of the Area ("Ontario, CA");
+//  - "LA" only with a ZIP code: on its own it is how people write Los Angeles.
+// The last part that is a state wins: in "New York, NY" the city is New York.
+const US_STATES = {
+  AL: 'Alabama', AK: 'Alaska', AZ: 'Arizona', AR: 'Arkansas', CA: 'California', CO: 'Colorado', CT: 'Connecticut',
+  DE: 'Delaware', DC: 'District of Columbia', FL: 'Florida', GA: 'Georgia', HI: 'Hawaii', ID: 'Idaho', IL: 'Illinois',
+  IN: 'Indiana', IA: 'Iowa', KS: 'Kansas', KY: 'Kentucky', LA: 'Louisiana', ME: 'Maine', MD: 'Maryland',
+  MA: 'Massachusetts', MI: 'Michigan', MN: 'Minnesota', MS: 'Mississippi', MO: 'Missouri', MT: 'Montana',
+  NE: 'Nebraska', NV: 'Nevada', NH: 'New Hampshire', NJ: 'New Jersey', NM: 'New Mexico', NY: 'New York',
+  NC: 'North Carolina', ND: 'North Dakota', OH: 'Ohio', OK: 'Oklahoma', OR: 'Oregon', PA: 'Pennsylvania',
+  RI: 'Rhode Island', SC: 'South Carolina', SD: 'South Dakota', TN: 'Tennessee', TX: 'Texas', UT: 'Utah',
+  VT: 'Vermont', VA: 'Virginia', WA: 'Washington', WV: 'West Virginia', WI: 'Wisconsin', WY: 'Wyoming',
+};
+const CA_PROVINCES = {
+  AB: 'Alberta', BC: 'British Columbia', MB: 'Manitoba', NB: 'New Brunswick', NL: 'Newfoundland and Labrador',
+  NS: 'Nova Scotia', NT: 'Northwest Territories', NU: 'Nunavut', ON: 'Ontario', PE: 'Prince Edward Island',
+  QC: 'Quebec', SK: 'Saskatchewan', YT: 'Yukon',
+};
+const byName = (o) => Object.fromEntries(Object.entries(o).map(([c, n]) => [n.toLowerCase(), c]));
+const STATE_BY_NAME = byName(US_STATES);
+const PROVINCE_BY_NAME = byName(CA_PROVINCES);
+// a US ZIP code (its +4 left out) or a Canadian postal code ("M5V 2T6") may follow
+const POSTAL = String.raw`(?:\s+(\d{5})(?:-\d{4})?|\s+([A-Z]\d[A-Z] ?\d[A-Z]\d))?`;
+const STATE_CODE_RE = new RegExp(String.raw`^([A-Z])\.?([A-Z])\.?${POSTAL}$`);
+const STATE_NAME_RE = new RegExp(String.raw`^([a-z][a-z .'-]*?)\.?${POSTAL}$`, 'i');
+/** The state a part of a Location names, { code, zip } or null; next = the part after it. */
+function stateOf(part, next) {
+  const c = STATE_CODE_RE.exec(part);
+  if (c) {
+    const code = c[1] + c[2];
+    const zip = c[3] || c[4] || null;
+    if (code === 'LA' && !zip) return null;
+    return US_STATES[code] || CA_PROVINCES[code] ? { code, zip } : null;
+  }
+  const n = STATE_NAME_RE.exec(fold(part));
+  if (!n) return null;
+  const name = n[1].trim().toLowerCase().replace(/\s+/g, ' ');
+  const code = STATE_BY_NAME[name] || (/^canada$/i.test(String(next || '').trim()) ? PROVINCE_BY_NAME[name] : null);
+  return code ? { code, zip: n[2] || (n[3] ? n[3].toUpperCase() : null) } : null;
+}
 export function parseLocation(raw) {
   const s = (raw || '').trim();
   if (!s) return { kind: 'none', raw: '' };
@@ -629,12 +674,12 @@ export function parseLocation(raw) {
   for (const p of parts) if (!dedup.some(q => q.toLowerCase().replace(/\.$/, '') === p.toLowerCase().replace(/\.$/, ''))) dedup.push(p);
   const repeated = dedup.length !== parts.length;
   parts = dedup;
-  let stateIdx = parts.findIndex(p => STATE_RE.test(p));
+  let stateIdx = -1, found = null;
+  for (let i = parts.length - 1; i >= 0 && !found; i--) if ((found = stateOf(parts[i], parts[i + 1]))) stateIdx = i;
   let state = null, zip = null, city = null, country = null;
-  if (stateIdx >= 0) {
-    const m = STATE_RE.exec(parts[stateIdx]);
-    state = m[1].length === 2 ? m[1].toUpperCase() : ({ california: 'CA', nevada: 'NV' }[m[1].toLowerCase()] || m[1]);
-    zip = m[2] || null;
+  if (found) {
+    state = found.code;
+    zip = found.zip;
     city = stateIdx > 0 ? parts[stateIdx - 1] : null;
   } else {
     const zi = parts.findIndex(p => /^\d{5}$/.test(p));
@@ -1222,7 +1267,9 @@ function formatChecks(e, ctx) {
   if (e.format === 'In person' && e.zoom && e.zoom.idDigits)
     pr.push(P('W_INPERSON_WITH_ZOOM', 'warn', 'In person, but it has Zoom details — Hybrid?'));
   if ((e.format === 'In person' || e.format === 'Hybrid') && e.location.kind === 'address' && !e.location.street)
-    pr.push(P('W_LOCATION_NO_STREET', 'warn', `Location "${e.location.raw}" has no street address — people cannot find the room`));
+    // a one-time event whose Location gives neither a street nor a city gets no Event data for search engines (calJsonLd)
+    pr.push(P('W_LOCATION_NO_STREET', 'warn', `Location "${e.location.raw}" has no street address — people cannot find the room` +
+      (!e.recurrence && !e.location.city ? ', and no city with its state ("…, Riverside, CA"), so search engines get no Event data for it' : '')));
   // anonymity safety net: a bare street address could be someone's home
   if ((e.format === 'In person' || e.format === 'Hybrid') && e.location.kind === 'address' && e.location.street && !e.location.venue && /^\s*\d/.test(e.location.raw))
     pr.push(P('W_LOCATION_NO_VENUE', 'warn', `Location "${e.location.raw}" starts with a street address and names no place — put the venue first ("Alano Club, 123 Main St, …"); never use a private home`));

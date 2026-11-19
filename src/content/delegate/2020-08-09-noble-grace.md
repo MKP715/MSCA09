@@ -5,7 +5,7 @@ panel: 70
 author_en: "Ed L., Panel 70 Delegate"
 author_es: "Ed L., Delegado del Panel 70"
 kind: reflection
-summary: "'Noble Grace' - personal reflection prompted by a call from the alternate delegate about a schedule change."
+summary: "A personal reflection prompted by a call from the alternate delegate about a schedule change."
 words: 644
 old_url: "https://msca09aa.org/2020/08/08-09-2020/"
 ---

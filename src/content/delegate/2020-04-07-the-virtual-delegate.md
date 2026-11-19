@@ -5,7 +5,7 @@ panel: 70
 author_en: "Ed L., Panel 70 Delegate"
 author_es: "Ed L., Delegado del Panel 70"
 kind: reflection
-summary: "'The Virtual Delegate' - delegate's story for Harbor Area Archives' 'A.A. in the Time of Coronavirus' collection."
+summary: "The delegate's story of serving as a virtual delegate, written for the Harbor Area Archives' 'A.A. in the Time of Coronavirus' collection."
 words: 1436
 old_url: "https://msca09aa.org/2020/04/04-07-2020/"
 ---

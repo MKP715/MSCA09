@@ -595,7 +595,8 @@ export function districtMetaTitle(d, lang) {
 }
 
 /**
- * Search-result description of a district page: its region (region_en / region_es). A short one (under 100 characters)
+ * Search-result description of a district page: what the page is, then its region (region_en / region_es) —
+ * "District 10, A.A. Area 09 – North-west Orange County: …" (districts.meta_lead). A short region (under 100 characters)
  * also gets the business meeting, from the calendar series like the page: "… A.A. district business meeting: Every 2nd
  * Tuesday, Costa Mesa." (districts.meta_meeting; an online-only meeting districts.meta_meeting_online).
  */
@@ -603,16 +604,54 @@ export function districtMetaDescription(d, lang, calendar) {
   if (!d) return "";
   const L = code(lang);
   const region = String(loc(d, "region", L) || "").trim();
-  if (region.length >= 100) return region;
+  const lead = region ? t("districts.meta_lead", L, { name: loc(d, "name", L), region }) : "";
+  if (region.length >= 100) return lead;
   const series = districtSeries(calendar, d);
   const { pattern } = meetingParts(d, L, series);
-  if (!pattern) return region;
+  if (!pattern) return lead;
   const place = series ? series.location : null;
   const city = series ? (place && !place.tba && place.city) || "" : (d.meeting && d.meeting.city) || "";
   const online = !city && !place && /virtual|online/i.test(String((series && series.format) || (d.meeting && d.meeting.format) || ""));
-  if (!city && !online) return region;
+  if (!city && !online) return lead;
   const sentence = online ? t("districts.meta_meeting_online", L, { rule: pattern }) : t("districts.meta_meeting", L, { rule: pattern, city });
-  return [region && (/[.!?]$/.test(region) ? region : `${region}.`), sentence].filter(Boolean).join(" ");
+  return [lead && (/[.!?]$/.test(lead) ? lead : `${lead}.`), sentence].filter(Boolean).join(" ");
+}
+
+// ---------------------------------------------------------------- structured data
+/** The @id of a district's Organization for search engines, the same on its English and Spanish pages
+ *  ("https://msca09aa.org/districts/d05/#organization"). The Event organizers that name a district
+ *  (src/_lib/plugins/calendar.js) use it too, so search engines know they are the same district. */
+export function districtOrgId(base, slug) {
+  return `${String(base || "").replace(/\/+$/, "")}/districts/${slug}/#organization`;
+}
+
+/**
+ * The district as a schema.org Organization (JSON-LD on its page), from data/districts.csv only: its name (the other
+ * language's as alternateName), its page, the Area as its parent, its role e-mail, its own website (sameAs) and the
+ * year it was formed (foundingDate, when established is a year). Left out on purpose: an address or map position (a
+ * district has a P.O. box at most, and its map pin is approximate) and areaServed (the cities column carries notes such
+ * as "Hawthorne (south of Rosecrans Ave)" or "Compton (portion)", which are not place names).
+ */
+export function districtOrgLd(d, lang, base) {
+  if (!d || !d.slug) return null;
+  const L = code(lang);
+  const root = String(base || "").replace(/\/+$/, "");
+  const name = loc(d, "name", L);
+  const other = loc(d, "name", L === "es" ? "en" : "es");
+  const year = String(d.established || "").trim();
+  const website = String(d.website || "").trim();
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": districtOrgId(root, d.slug),
+    name,
+    ...(other && other !== name ? { alternateName: other } : {}),
+    url: root + lurl(`/districts/${d.slug}/`, L),
+    parentOrganization: { "@id": `${root}/#organization` },
+    ...(d.email ? { email: String(d.email).trim() } : {}),
+    ...(/^https?:\/\//i.test(website) ? { sameAs: [website] } : {}),
+    ...(/^\d{4}$/.test(year) ? { foundingDate: year } : {}),
+  };
 }
 
 /** Map pins (with a small popup) for the Leaflet map. */
@@ -737,6 +776,7 @@ export default function (eleventyConfig) {
   eleventyConfig.addFilter("dxMeetingLine", meetingLine);
   eleventyConfig.addFilter("dxMetaTitle", districtMetaTitle);
   eleventyConfig.addFilter("dxMetaDescription", districtMetaDescription);
+  eleventyConfig.addFilter("dxOrgLd", districtOrgLd);
   eleventyConfig.addFilter("dxFinderData", finderData);
   eleventyConfig.addFilter("dxCardMeta", cardMeta);
   eleventyConfig.addFilter("dxDocsByYear", docsByYear);

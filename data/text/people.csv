@@ -64,6 +64,7 @@ people.previous_title,Previous panel: Panel {n},Panel anterior: Panel {n},
 people.previous_lead,{n} trusted servants who served the Area — thank you.,{n} servidores de confianza que sirvieron al Área: ¡gracias!,
 contact.title,Contact the Area,Contacto con el Área,
 contact.description,"Service e-mail addresses for every Area 09 officer, committee and district, our mailing address, and where to send events, minutes and website updates.","Direcciones de correo de servicio de cada oficial, comité y distrito del Área 09, nuestra dirección postal y adónde enviar eventos, actas y cambios para el sitio web.",
+contact.meta_title,"Contact Area officers, committees & districts","Contacto: oficiales, comités y distritos","Search-result and link-preview title of /contact/ (the page heading stays contact.title); "" · A.A. Area 09"" is added after it when there is room (keep the whole under about 60 characters)"
 contact.eyebrow,We're glad to hear from you,Nos alegra saber de ti,
 contact.lead,"Every service position in Area 09 has its own e-mail address. It stays the same when the trusted servant rotates, so your message always reaches whoever is serving now.","Cada puesto de servicio del Área 09 tiene su propia dirección de correo. No cambia cuando rota el servidor de confianza, así que tu mensaje siempre llega a quien sirve ahora.",
 contact.quick,Quick contacts,Contactos rápidos,

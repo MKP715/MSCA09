@@ -5,7 +5,7 @@ panel: 70
 author_en: "Ed L., Panel 70 Delegate"
 author_es: "Ed L., Delegado del Panel 70"
 kind: reflection
-summary: "'Step 7 Serenity Prayer' - short spiritual essay."
+summary: "A short spiritual essay on the Serenity Prayer as a formula for working Step 7: accept, know and change."
 words: 514
 old_url: "https://msca09aa.org/2020/09/09-06-2020/"
 ---

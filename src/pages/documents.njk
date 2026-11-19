@@ -3,11 +3,12 @@ pagination: { data: langs, size: 1, alias: lang, addAllPagesToCollections: true 
 permalink: "{{ lang.prefix }}/documents/"
 layout: page.njk
 title_key: documents.title
+meta_title_key: documents.meta_title
 description_key: documents.description
 eyebrow_key: documents.eyebrow
 heroIcon: library
 accent: sea
-crumbs: [{ label_key: "documents.crumb_service", url: "/service/" }]
+crumbs: [{ label_key: "service.title", url: "/service/" }]
 bare: true
 source: data/documents/
 scripts: ["/assets/js/documents.js"]

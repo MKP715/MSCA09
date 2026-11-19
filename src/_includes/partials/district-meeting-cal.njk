@@ -5,6 +5,11 @@
   Spanish pages: when the calendar has English Note lines but no Spanish ones, the district's own
   Spanish notes (data/districts.csv meeting_note_es, gsr_note_es) take their place (dxNoteOverride);
   district.njk then leaves out its "Good to know" / GSR boxes when they would repeat a note shown here.
+  Below it, a link to the meeting's own page (/events/district-8/: every date, the flyer, the .ics file), the same
+  link the GSR School card has (partials/district-gsr.njk); that page links back up to this one.
 -#}
 {%- from "macros/events.njk" import meetingInfo with context -%}
 <div class="dx-meeting-cal">{{ meetingInfo({ series: series, lang: L, noteOverride: d | dxNoteOverride(series, L) }) }}</div>
+{%- if series.url %}
+<a href="{{ series.url | lurl(L) }}" class="gsr-more">{% icon "calendar-search", "size-4" %}{{ "districts.meeting.event_page" | t(L) }}{% icon "arrow-right", "size-4" %}</a>
+{%- endif %}

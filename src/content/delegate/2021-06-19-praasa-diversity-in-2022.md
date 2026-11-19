@@ -5,7 +5,7 @@ panel: 70
 author_en: "Ed L., Panel 70 Delegate"
 author_es: "Ed L., Delegado del Panel 70"
 kind: conference
-summary: "'PRAASA Diversity in 2022' - inclusivity statement from the PRAASA 2022 chair."
+summary: "The PRAASA 2022 chair's inclusivity statement, so that Area 09's volunteer slate reflects the diversity of the Area."
 words: 408
 old_url: "https://msca09aa.org/2021/06/06-19-2021-praasa-diversity-in-2022/"
 ---

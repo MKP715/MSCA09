@@ -5,7 +5,7 @@ panel: 70
 author_en: "Ed L., Panel 70 Delegate"
 author_es: "Ed L., Delegado del Panel 70"
 kind: reflection
-summary: "'The Heart and Soul of A.A.' - essay on the importance of district-level general servants."
+summary: "An essay on why the general servants at the district level are the heart and soul of A.A."
 words: 556
 old_url: "https://msca09aa.org/2020/06/06-23-2020/"
 ---

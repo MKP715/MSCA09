@@ -108,6 +108,12 @@ jobs:
         if: github.event_name == 'push'
         run: npm run test:offices || echo "::warning::The central-office importer's tests failed (npm run test:offices)."
 
+      - name: Test the calendar's Location reader (pushes only; never blocks)
+        # test/calendar: cities and states read from a Location line (no network). A state the reader does not know
+        # costs an event its Event data in search results.
+        if: github.event_name == 'push'
+        run: npm run test:calendar || echo "::warning::The calendar's Location tests failed (npm run test:calendar)."
+
       - name: Today's date in California
         id: day
         run: echo "day=$(TZ=America/Los_Angeles date +%F)" >> "$GITHUB_OUTPUT"

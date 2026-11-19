@@ -20,6 +20,7 @@
     "check": "node scripts/check-site.mjs",
     "test:search": "node scripts/test-search.mjs",
     "test:offices": "node --test \"test/office-events/*.test.mjs\"",
+    "test:calendar": "node --test \"test/calendar/*.test.mjs\"",
     "offices": "node scripts/office-events.mjs",
     "check:media": "node scripts/check-media.mjs",
     "dev:site": "eleventy --serve --quiet",

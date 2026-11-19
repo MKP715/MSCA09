@@ -278,15 +278,18 @@ export function cmApproved(v, lang) {
 }
 
 /**
- * Search-result description of a committee page: its tagline (summary_en / summary_es), then that it is part of Area 09
- * of A.A. and when it meets, from meets_en / meets_es (committees.meta_tail); with no meeting line, or once the committee
- * has completed its work, committees.meta_tail_nomeet.
+ * Search-result description of a committee page: its tagline (summary_en / summary_es), then its name, that it is part
+ * of Area 09 of A.A. and when it meets, from meets_en / meets_es (committees.meta_tail: "Hospitality / Coffee, A.A.
+ * Area 09. Meets: At every Area meeting."); with no meeting line, or once the committee has completed its work,
+ * committees.meta_tail_nomeet. The name is the one its search title uses ("Archives Committee", "Public Information
+ * Committee (PI)"), except that a service event keeps its own name, without the "– Area service event" of its title.
  */
 export function cmMetaDescription(c, lang) {
   if (!c) return "";
   const sum = String(loc(c, "summary", lang) || "").trim();
   const meets = c.status === "completed" ? "" : String(loc(c, "meets", lang) || "").trim().replace(/[.\s]+$/, "");
-  const tail = meets ? t("committees.meta_tail", lang, { meets }) : t("committees.meta_tail_nomeet", lang);
+  const name = String(c.category || "").trim().toLowerCase() === "service-event" ? String(loc(c, "name", lang) || "").trim() : committeeMetaTitle(c, lang);
+  const tail = meets ? t("committees.meta_tail", lang, { meets, name }) : t("committees.meta_tail_nomeet", lang, { name });
   return [sum && (/[.!?…]$/.test(sum) ? sum : `${sum}.`), tail].filter(Boolean).join(" ");
 }
 

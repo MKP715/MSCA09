@@ -5,7 +5,7 @@ panel: 70
 author_en: "Ed L., Panel 70 Delegate"
 author_es: "Ed L., Delegado del Panel 70"
 kind: reflection
-summary: "'My Reflections on Concept 2' - essay on the Conference as the voice and conscience of A.A."
+summary: "The delegate's reflections on Concept 2: the Conference as the voice and conscience of A.A."
 words: 1706
 old_url: "https://msca09aa.org/2020/07/07-20-2020/"
 ---

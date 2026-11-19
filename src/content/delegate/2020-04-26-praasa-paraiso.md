@@ -5,7 +5,7 @@ panel: 70
 author_en: "Ed L., Panel 70 Delegate"
 author_es: "Ed L., Delegado del Panel 70"
 kind: conference
-summary: "'PRAASA Paraiso' - reflection on PRAASA and International Conventions with a personal prayer."
+summary: "A reflection on PRAASA and the International Conventions, with a personal prayer."
 words: 666
 old_url: "https://msca09aa.org/2020/04/04-26-2020/"
 ---
