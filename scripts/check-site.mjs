@@ -4,18 +4,19 @@
 //   node scripts/check-site.mjs _site_preview   (checks another output folder)
 //
 // Stops the deploy (exit code 1) when it finds:
-//   - a personal e-mail address or phone number on a page, in a calendar (.ics) or
-//     data (.json) file the site serves, or in a data file (Tradition Eleven — see
-//     "Anonymity" in README.md)
+//   - a personal e-mail address or phone number on a page, in a calendar (.ics), data (.json)
+//     or plain-text file (robots.txt, llms.txt) the site serves, or in a data file (Tradition
+//     Eleven — see "Anonymity" in README.md)
 //   - a servant's own address (contact-allowlist.csv kind email-approved) anywhere but on that
 //     servant's card under its "own e-mail" label, or kept after the seat opens
 //   - a trusted servant written with a surname instead of a last initial, or what looks
 //     like a full name (first name + surname) on the panel, committee, district or event pages
+//     or in the guide for AI assistants (/llms.txt, /es/llms.txt)
 //   - a link to a Google Drive file that is held for anonymity review (data/flyer-holds.csv)
 //   - a broken row in a data/*.csv file (wrong number of values, a stray " quote)
 //   - a link to a page or file of this site that does not exist
 //   - a link to a site that data/link-fixes.csv keeps off the site (a hacked site), anywhere in a page,
-//     calendar file, data file or sitemap
+//     calendar file, data file, sitemap or plain-text file (llms.txt)
 //   - an old-address forwarding row (data/redirects.csv) that points nowhere or
 //     collides with a real page (a row that a Google Calendar edit has overtaken only warns:
 //     the build forwards it to the calendar instead)
@@ -592,6 +593,40 @@ for (const file of walk(SITE, [".json", ".ics"])) {
   checkHeld(text, rel);
 }
 
+// Plain-text files the site writes for programs: /robots.txt, and /llms.txt and /es/llms.txt — the guide for AI
+// assistants (src/pages/llms-txt.11ty.js), which they quote out of context. The same contact rules as a page; a full
+// name stops the deploy here (as on the panel, district and committee pages, where the same text is checked); no held
+// Drive file; and every link to a page of this site must lead somewhere. The IndexNow key file (<32 characters
+// 0–9 a–f>.txt, src/static/) holds only its own name.
+{
+  // the address this build was made for: robots.txt names the sitemap with it (src/pages/robots.njk, site.url)
+  let ownBase = "";
+  try {
+    ownBase = (/^Sitemap:\s*(\S+?)sitemap\.xml\s*$/m.exec(fs.readFileSync(path.join(SITE, "robots.txt"), "utf8")) || [])[1] || "";
+  } catch {}
+  for (const file of walk(SITE, [".txt"])) {
+    const rel = "/" + path.relative(SITE, file).replace(/\\/g, "/");
+    if (rel.startsWith("/pagefind") || /^\/[0-9a-f]{32}\.txt$/.test(rel)) continue;
+    const text = fs.readFileSync(file, "utf8");
+    for (const m of text.matchAll(/[\w.+-]+@[\w-]+(\.[\w-]+)+/g)) {
+      checkEmail(m[0], rel);
+      const a = m[0].toLowerCase().replace(/[.,;:]+$/, "");
+      if (approvedEmails.has(a)) err(rel, `"${a}" is a servant's own address (kind email-approved): it may appear only on that servant's card, labelled as an own e-mail — not in a file for programs.`);
+    }
+    checkPhones(text, rel);
+    checkHeld(text, rel);
+    for (const h of nameHits(text))
+      err(rel, `"${h.name}" looks like a full name — members appear as first name + last initial ("${h.name.split(" ")[0]} ${h.name.split(" ")[1][0]}."). If it is a place, venue, book or public figure, add it to data/name-allowlist.csv. Context: …${h.ctx}…`);
+    if (!ownBase) continue;
+    // Markdown links: "[Districts](https://msca09aa.org/districts/)"
+    for (const m of text.matchAll(/\]\((https?:\/\/[^)\s]+)\)/g)) {
+      if (!m[1].startsWith(ownBase)) continue;
+      checkedLinks++;
+      if (!exists("/" + m[1].slice(ownBase.length))) err(rel, `broken link to ${m[1]}`);
+    }
+  }
+}
+
 // ------------------------------------------------------------- central-office events
 // The events read from the central offices' websites (src/_data/officeEvents.js, scripts/office-events.mjs). Their
 // text is checked with every page and with events.json above; here: what may never come with them (a Zoom link, an
@@ -692,7 +727,7 @@ for (const file of walk(SITE, [".json", ".ics"])) {
   // percent-escapes of plain characters ("%3A%2F%2F"), twice for an address inside an address
   const unescape = (s) => decode(s).replace(/%25([0-7][0-9a-f])/gi, "%$1").replace(/%([0-7][0-9a-f])/gi, (m, h) => String.fromCharCode(parseInt(h, 16)));
   if (banned.length) {
-    for (const file of walk(SITE, [".html", ".ics", ".json", ".xml"])) {
+    for (const file of walk(SITE, [".html", ".ics", ".json", ".xml", ".txt"])) {
       const rel = "/" + path.relative(SITE, file).replace(/\\/g, "/");
       if (rel.startsWith("/pagefind/")) continue;
       let text = fs.readFileSync(file, "utf8");

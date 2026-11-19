@@ -23,6 +23,7 @@ const PATH_PREFIX = process.env.ELEVENTY_PATH_PREFIX || "/";
 const RESERVED = new Set([
   "", "es", "assets", "pagefind", "calendar", "events", "districts", "committees", "service", "documents",
   "about", "contact", "newcomers", "resources", "contribute", "404.html", "sitemap.xml", "sitemap-old-addresses.xml", "robots.txt",
+  "llms.txt", // the guide for AI assistants (src/pages/llms-txt.11ty.js), also /es/llms.txt
   "calendar.ics", "calendar-es.ics", "site.webmanifest", "favicon.ico", "favicon-32.png", "apple-touch-icon.png", "icon-192.png", "icon-512.png",
   "offline", "sw.js", "version.json", // the installable app (scripts/build-pwa.mjs, src/pages/offline.njk)
 ]);
