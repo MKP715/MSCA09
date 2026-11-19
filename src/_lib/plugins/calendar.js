@@ -11,7 +11,8 @@ import { readCsv } from "../csv.js";
 import { t, code, dictionary } from "../i18n.js";
 import { iconSvg } from "../shortcodes.js";
 import { formatDate, ownUrl } from "../filters.js";
-import { googleAddUrl, outlookAddUrl, seriesToIcs, slugify, driveImageUrl, parseOrganizer, compileOrganizers, resolveOrganizers } from "../calendar.js";
+import { googleAddUrl, outlookAddUrl, seriesToIcs, slugify, driveImageUrl, parseOrganizer, compileOrganizers, resolveOrganizers, ownSitePath } from "../calendar.js";
+import { districtOrgId } from "./districts.js";
 
 // strings the calendar page's script needs (data/text/calendar.csv, keys "calendar.js.<name>")
 const JS_KEYS = [
@@ -88,7 +89,8 @@ export default function (eleventyConfig) {
   // (AREA_HOSTED), else the one district that hosts it (the page's "Hosted by"). Never a person, and no performer:
   // the speakers are A.A. members, and a host is not a performer. No stand-in image or place name either: Google wants
   // the event's own picture and the venue's real name, or nothing.
-  // The price (offers) is given only when the Cost: line states one plainly (offersOf).
+  // The price (offers) is given only when the Cost: line states one plainly (offersOf), with the registration or ticket
+  // page, or else the event's own website, as its address (offerUrl).
   // The 2028 Pacific Regional Forum has its own pages, whose overview carries its Event (partials/prf-head.njk): its
   // calendar entry (on the opening day in data/prf/forum.csv, of type Forum or linking to the Forum pages) gives none,
   // so search engines do not find the same event at two addresses.
@@ -101,9 +103,14 @@ export default function (eleventyConfig) {
     .map((r) => String(r.date_start || "").slice(0, 10))
     .filter(Boolean);
   const isGscEntry = (s) => s.type === "Conference" && gscDays.includes(s.startDate);
+  // A one-time entry further ahead than the calendar's window (a convention years away, the 2030 International
+  // Convention) has no dates in it yet, like the "Further ahead" list of /events/ (src/_data/calendar.js furtherAhead):
+  // the entry's own start and end stand in for its coming date.
+  const furtherAhead = (s) => !s.ended && !s.occurrenceCount && s.status !== "cancelled" && !(s.upcomingDates || []).length;
   eleventyConfig.addFilter("calJsonLd", (s, lang, description) => {
     if (!s || s.recurring || isPrfEntry(s) || isGscEntry(s)) return [];
-    return (s.upcomingDates || []).slice(0, 1).map((o) => jsonLd(s, o, lang, description)).filter(Boolean);
+    const dates = furtherAhead(s) ? [null] : (s.upcomingDates || []).slice(0, 1);
+    return dates.map((o) => jsonLd(s, o, lang, description)).filter(Boolean);
   });
   // calendar types (data/event-types.csv keys) whose events the Area itself holds
   const AREA_HOSTED = ["Area", "Area Committee", "Assembly", "Servathon", "Area Event"];
@@ -128,8 +135,10 @@ export default function (eleventyConfig) {
   // "USA" or "United States" in a Location becomes the ISO code; another country stays as typed; none means the US
   const countryCode = (c) => (!c || /^(u\.?s\.?(a\.?)?|united states( of america)?)$/i.test(c.trim()) ? "US" : c.trim());
   // The district that hosts an event, as its organizer: exactly one district on the page (its own, or "Hosted by"),
-  // named as in data/districts.csv (name_en / name_es) with its page on this site, as part of the Area. None for the
-  // Area's business (types of the "area" group, e.g. the Foro: a district hosts it for the Area) or a shared event.
+  // named as in data/districts.csv (name_en / name_es) with its page on this site, as part of the Area, and with the
+  // @id of the Organization on that district page (dxOrgLd, src/_lib/plugins/districts.js), so search engines know
+  // they are the same district. None for the Area's business (types of the "area" group, e.g. the Foro: a district
+  // hosts it for the Area) or a shared event.
   const districtRows = new Map(readCsv("districts.csv").map((r) => [r.slug, r]));
   const districtOrganizer = (s, L) => {
     if (s.group === "area") return null;
@@ -138,6 +147,7 @@ export default function (eleventyConfig) {
     if (!row || (row.status || "active").toLowerCase() !== "active") return null;
     return {
       "@type": "Organization",
+      "@id": districtOrgId(base, row.slug),
       name: (L === "es" && row.name_es) || row.name_en || row.slug,
       url: `${base}${L === "es" ? "/es" : ""}/districts/${row.slug}/`,
       parentOrganization: { "@id": `${base}/#organization` },
@@ -162,6 +172,30 @@ export default function (eleventyConfig) {
       if (m && !c.includes("$", 1)) price = Number(m[1]);
     }
     return price === null ? null : { "@type": "Offer", price, priceCurrency: "USD" };
+  };
+  // Where that ticket or registration is to be had (the offer's url), in this order:
+  //  1. a Link: line whose label says Register / Registration / Inscripción / Registro / Tickets / Boletos, in the page's
+  //     language when the entry has one per language (PRAASA: /register/ on English pages, /registro/ on Spanish ones);
+  //  2. else the entry's Web: line (the event's or its host's own website);
+  //  3. else none.
+  // Only an https address on another site: never a page of this site, a Google Drive file, a PDF or a picture (a flyer
+  // or a form to print, like the Archives Workshop's registration form), nor a hotel's booking page. No availability or
+  // sale dates are made up.
+  const REGISTER_LABEL = /regist|inscrip|ticket|boleto|\bentradas?\b/i;
+  const LODGING = /hotel|lodging|room block|hospedaje|alojamiento/i;
+  const PRINTED = /\.(?:pdf|jpe?g|png|gif|webp|heic)(?:[?#]|$)/i;
+  const GOOGLE_FILE = /^https:\/\/(?:drive\.google\.com|docs\.google\.com\/(?!forms\/)|[\w-]+\.googleusercontent\.com)\//i;
+  const ownSite = (u) => !!ownSitePath(u) || [...homeUrls].some((h) => u.toLowerCase().startsWith(h.toLowerCase()));
+  const offerTarget = (u) => /^https:\/\/[^/\s]+\.[^/\s]+/i.test(u) && !PRINTED.test(u) && !GOOGLE_FILE.test(u) && !ownSite(u);
+  const offerUrl = (s, L) => {
+    const reg = (s.links || []).filter((k) => {
+      const label = `${(k && k.label_en) || ""} ${(k && k.label_es) || ""}`;
+      return k && !k.driveId && !k.isPdf && REGISTER_LABEL.test(label) && !LODGING.test(label) && offerTarget(String(k.url || ""));
+    });
+    const link = reg.find((k) => k.lang === L) || reg.find((k) => !k.lang) || reg[0];
+    if (link) return link.url;
+    const web = String(s.web || "").trim();
+    return web && offerTarget(web) ? web : "";
   };
   const jsonLd = (s, o, lang, description) => {
     const fmt = (s.format || "").toLowerCase();
@@ -202,7 +236,10 @@ export default function (eleventyConfig) {
       if (host) out.organizer = host;
     }
     const offers = offersOf(s.cost);
-    if (offers) out.offers = offers;
+    if (offers) {
+      const where = offerUrl(s, L);
+      out.offers = where ? { ...offers, url: where } : offers;
+    }
     if (desc) out.description = desc;
     // flyers on hold (data/flyer-holds.csv) never reach s.flyers; the flyer in the page's language leads (flyers_en / flyers_es)
     const fl = s[`flyers_${L}`] || s.flyers;

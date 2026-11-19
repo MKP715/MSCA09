@@ -5,7 +5,7 @@ panel: 70
 author_en: "Romy S., District 12 DCMC (shared by the Delegate)"
 author_es: "Romy S., CMCD del Distrito 12 (compartido por el Delegado)"
 kind: reflection
-summary: "'Gotta Getta Grapevine!' - District 12 DCMC Romy S.'s PRAASA 2021 talk on the value of the Grapevine."
+summary: "District 12 DCMC Romy S.'s PRAASA 2021 talk on the value of the Grapevine."
 words: 1484
 old_url: "https://msca09aa.org/2021/03/03-22-2021/"
 ---

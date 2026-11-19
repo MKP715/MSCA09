@@ -5,7 +5,7 @@ panel: 70
 author_en: "Ed L., Panel 70 Delegate"
 author_es: "Ed L., Delegado del Panel 70"
 kind: conference
-summary: "'Can the Conference Be Perceived as a Remote Community?' - essay on accessibility of general servants in the virtual era."
+summary: "An essay asking whether the Conference can be perceived as a remote community, and on how accessible general servants are in the virtual era."
 words: 941
 old_url: "https://msca09aa.org/2021/04/04-17-2021-can-the-conference-be-perceived-as-a-remote-community/"
 ---

@@ -10,8 +10,8 @@ scripts: ["/assets/js/districts.js"]
 eleventyComputed:
   title: "{{ entry.item | loc('name', entry.lang) }}"
   # search results and link previews: the name with its place ("District 5 – Orange County"; Spanish-speaking districts
-  # say so), and the region with the business meeting when the region is short (dxMetaTitle / dxMetaDescription,
-  # src/_lib/plugins/districts.js); the heading, breadcrumbs and share button keep the name
+  # say so), and the name with "A.A. Area 09" and the region, plus the business meeting when the region is short
+  # (dxMetaTitle / dxMetaDescription, src/_lib/plugins/districts.js); the heading, breadcrumbs and share button keep the name
   metaTitle: "{{ entry.item | dxMetaTitle(entry.lang) | safe }}"
   description: "{{ entry.item | dxMetaDescription(entry.lang, calendar) | safe }}"
   accent: "{{ entry.item.color }}"
@@ -73,6 +73,9 @@ eleventyComputed:
       </ol>
     </nav>
     {{ breadcrumbLd({ lang: L, crumbs: crumbs, title: name, base: site.url }) }}
+    {#- the district itself for search engines: an Organization within the Area, from data/districts.csv, with the @id
+        the calendar's Event organizers use for it (dxOrgLd, src/_lib/plugins/districts.js) -#}
+    <script type="application/ld+json">{{ d | dxOrgLd(L, site.url) | json | safe }}</script>
     <div class="flex flex-col gap-6 sm:flex-row sm:items-center sm:gap-8 2xl:gap-10">
       {{ numTile({ d: d, lang: L, size: "xl", invert: true }) }}
       <div class="min-w-0 max-w-4xl">

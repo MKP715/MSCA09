@@ -6,7 +6,7 @@ scripts: ["/assets/js/committees.js"]
 eleventyComputed:
   title: "{{ entry.item | loc('name', entry.lang) }}"
   # search results and link previews: "Archives Committee", "Public Information Committee (PI)", "FORO – Area service event"
-  # (src/_lib/page-titles.js), and the tagline with when the committee meets (cmMetaDescription,
+  # (src/_lib/page-titles.js), and the tagline with the committee's name and when it meets (cmMetaDescription,
   # src/_lib/plugins/committees.js); the heading, breadcrumbs and share button keep the name
   metaTitle: "{{ entry.item | cmMetaTitle(entry.lang) | safe }}"
   description: "{{ entry.item | cmMetaDescription(entry.lang) | safe }}"

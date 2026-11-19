@@ -1,7 +1,6 @@
 key,en,es,notes
 "# Wording for the online Area finance forms: /service/forms/ (hub), /service/forms/expense/ (Expense Reimbursement Request) and /service/forms/budget/ (Annual Budget Request), the forms card on committee pages and on the Forms shelf of the library. The choices, columns and lines of the forms themselves are in data/finance-forms.csv; the mileage rate, budget year and deadline in data/settings.csv.",,,
 "# Words in curly brackets ({rate}, {example}, {year}, {date}, {n}, {name}, {to}, {cc} …) are filled in by the site: keep them in both languages. forms.js.* rows are used by the page script (src/assets/js/forms.js): error messages, the e-mail summary and announcements. Spanish speaks to the reader as tú.",,,
-forms.crumb_service,Service,Servicio,
 forms.choose,Choose…,Elige…,
 forms.private,"Nothing you type leaves your device: this page sends nothing to the website. Your form goes only where you send it, by e-mail or on paper.","Nada de lo que escribes sale de tu dispositivo: esta página no envía nada al sitio web. Tu formulario va solo adonde tú lo envíes, por correo o en papel.",
 forms.start_over,Start over,Empezar de nuevo,

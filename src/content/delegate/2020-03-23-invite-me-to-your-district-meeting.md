@@ -5,7 +5,7 @@ panel: 70
 author_en: "Ed L., Panel 70 Delegate"
 author_es: "Ed L., Delegado del Panel 70"
 kind: reflection
-summary: "'Invite Me to Your District Meeting' - delegate asks districts to invite him to virtual business meetings; online-meeting resources."
+summary: "The delegate asks districts to invite him to their virtual business meetings, and shares online-meeting resources."
 words: 231
 old_url: "https://msca09aa.org/2020/03/03-23-2020/"
 ---

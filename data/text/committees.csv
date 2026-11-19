@@ -2,6 +2,7 @@
 "# Wording for the committee pages (/committees/ and /committees/<slug>/). {n}, {name}, {date} are filled in by the site.",,,
 committees.title,Area committees,Comités del Área,
 committees.description,"Every Area 09 committee, service school and service event: what it does, when it meets, who serves and how you can help — in English and Spanish.","Todos los comités, escuelas y eventos de servicio del Área 09: qué hacen, cuándo se reúnen, quién sirve y cómo puedes ayudar, en inglés y en español.",
+committees.hub_meta_title,"Area committees, service schools & events","Comités, escuelas y eventos de servicio","Search-result and link-preview title of /committees/ (the page heading stays committees.title); "" · A.A. Area 09"" is added after it when there is room (keep the whole under about 60 characters)"
 committees.eyebrow,Service in Area 09,El servicio en el Área 09,
 committees.lead,Every committee has one simple job: helping the alcoholic who still suffers find A.A. Every one of them needs servants — and every one of them started with somebody raising a hand.,"Cada comité tiene un trabajo sencillo: que el alcohólico que todavía sufre encuentre A.A. Todos necesitan servidores, y todos empezaron con alguien que levantó la mano.",
 committees.glance,Committees at a glance,Los comités de un vistazo,
@@ -46,8 +47,8 @@ committees.cat.service-event,Area service event,Evento de servicio del Área,
 committees.cat.officer,Area officer,Oficial del Área,
 committees.meta_title.standing,{name} Committee,Comité de {name},Search-result and link-preview title of a standing committee's page whose name does not already say Committee / Comité: Archives Committee. The heading stays the name; the short form (short_en / short_es in data/committees.csv) is added in brackets: Public Information Committee (PI)
 committees.meta_title.event,{name} – Area service event,{name} – evento de servicio del Área,"Same, for a service event's page (FORO – Area service event); left out when the title would get longer than 65 characters"
-committees.meta_tail,Area 09 of A.A. When: {meets}.,Área 09 de A.A. Cuándo: {meets}.,"Search-result description of a committee page, after its summary; {meets} = meets_en / meets_es in data/committees.csv. Kept short so the meeting time stays within the ~155 characters search results show"
-committees.meta_tail_nomeet,Part of Mid-Southern California Area 09 of A.A.,Parte del Área 09 del Medio Sur de California de A.A.,"Same, for a committee with no meets text, or one that has completed its work"
+committees.meta_tail,"{name}, A.A. Area 09. Meets: {meets}.","{name}, Área 09 de A.A. Se reúne: {meets}.","Search-result description of a committee page, after its summary, so it names the committee: Hospitality / Coffee, A.A. Area 09. Meets: At every Area meeting. {name} = the name its search title uses (Archives Committee, Public Information Committee (PI); a service event's own name); {meets} = meets_en / meets_es in data/committees.csv. Kept short so the meeting time stays within the ~155 characters search results show"
+committees.meta_tail_nomeet,Part of Mid-Southern California Area 09 of A.A.,Parte del Área 09 del Medio Sur de California de A.A.,"Same, for a committee with no meets text, or one that has completed its work ({name} can be used here too)"
 committees.notice.link,Read the full notice,Leer el aviso completo,Button on a committee page's notice (notice_url in data/committees.csv)
 committees.officers_eyebrow,Executive Committee,Comité Ejecutivo,
 committees.officers_title,The Area officers,Los oficiales del Área,

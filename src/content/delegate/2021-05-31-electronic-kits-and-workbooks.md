@@ -5,7 +5,7 @@ panel: 70
 author_en: "Ed L., Panel 70 Delegate"
 author_es: "Ed L., Delegado del Panel 70"
 kind: reflection
-summary: "'Electronic Kits and Workbooks' - GSO links to the electronic GSR and DCM kits and committee workbooks (EN/ES)."
+summary: "GSO links to the electronic GSR and DCM kits and the committee workbooks, in English and Spanish."
 words: 189
 old_url: "https://msca09aa.org/2021/05/05-30-21-electronic-kits-and-workbooks/"
 ---

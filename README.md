@@ -129,7 +129,7 @@ and CSV file and come from `data/settings.csv`, so nothing needs editing when th
 | Show the Zelle QR code on /contribute/ | Only after the Treasurer A/R has test-scanned it: set `show` to `yes` on the `zelle-qr` row of `data/resources.csv` and write who confirmed it, and when, in `notes`. |
 | Update the contributions flyer on /contribute/ | The flyer card at the top of *Ways to give* uses two rows of `data/resources.csv`: `contribute-flyer` (the PDF, English and Spanish; `show` = `no` hides the card) and `contribute-flyer-pages` (a picture of its English page in `url` and of its Spanish page in `url_es`, which open full size). In Drive, upload the new PDF and the new page pictures as new versions of the same files in `docs/flyers/` (*Manage versions*), so the links stay, and check them like any flyer (see [Flyers and PDFs on hold](#flyers-and-pdfs-on-hold); record them in `data/media-review.csv`). |
 | Help the site search find a page | Add a row `search.kw./page-address/` to `data/text/common.csv` with extra words in `en` and `es` (they are not shown), e.g. `search.kw./newcomers/`. |
-| Change a page's title in search results | The browser-tab and search-result title is the page's title followed by ` · A.A. Area 09` (`site.title_suffix` in `data/text/common.csv`); a title longer than 55 characters gets nothing after it. Some pages have a longer search title of their own in a `….meta_title` row (e.g. `newcomers.meta_title` in `data/text/content.csv`): change it there, and the page's heading stays as it is. The home page's title is `site.home_title`; the Forum pages end with `prf.title_suffix`. Some search titles are built for you, with nothing to fill in: a district page says its counties ("District 5 – Orange County"; `districts.meta_title`), or the place in its optional `title_area_en` / `title_area_es` columns in `data/districts.csv` (e.g. Costa Mesa & Irvine); a committee page adds "Committee" and its short form ("Public Information Committee (PI)"; `committees.meta_title.*`); a document shelf adds its years (`documents.cat_title`); a Delegate's Corner post adds its date. `site.alt_names` lists other names of the site for search engines (separated by `\|`), and `site.og_image_alt` describes the default link-preview picture. |
+| Change a page's title in search results | The browser-tab and search-result title is the page's title followed by ` · A.A. Area 09` (`site.title_suffix` in `data/text/common.csv`); a title longer than 55 characters gets nothing after it. Some pages have a longer search title of their own in a `….meta_title` row (e.g. `newcomers.meta_title` in `data/text/content.csv`): change it there, and the page's heading stays as it is. The home page's title is `site.home_title`; the Forum pages end with `prf.title_suffix`. Some search titles are built for you, with nothing to fill in: a district page says its counties ("District 5 – Orange County"; `districts.meta_title`), or the place in its optional `title_area_en` / `title_area_es` columns in `data/districts.csv` (e.g. Costa Mesa & Irvine); a committee page adds "Committee" and its short form ("Public Information Committee (PI)"; `committees.meta_title.*`); a document shelf adds its years (`documents.cat_title`), and so does the archive (`documents.arch_meta_title`); a Delegate's Corner post adds its date. A district page's search-result description starts with its name and "A.A. Area 09", then its region (`districts.meta_lead`), and a committee page's ends with its name and when it meets (`committees.meta_tail`). `site.alt_names` lists other names of the site for search engines (separated by `\|`), and `site.og_image_alt` describes the default link-preview picture. |
 | Make a city box find another name for a place | Add a row to `districts.city_alias.*` in `data/text/districts.csv` or `content.city_alias.*` in `data/text/content.csv` (e.g. "29 Palms" → Twentynine Palms). Common misspellings go in the `.misspellings` field of the content rows. |
 | Teach every search box another word for the same thing | The page search boxes all match through one file, `src/assets/js/search.js` (accents, plurals, "District 5" = "D5", Tesorera = Tesorero …). Its `GROUPS` list holds names that mean the same thing (minutes = actas, H&I = hospitals and institutions); add a group there and a test case to `scripts/test-search.mjs`, then run `npm run test:search`. |
 | Forward an old msca09aa.org address | Add a row to `data/redirects.csv` — see [Old msca09aa.org addresses](#old-msca09aaorg-addresses). |
@@ -226,12 +226,14 @@ the name of an entry that already has its page, add a row `calendar.title_en.<sl
 | `Nota:` | The same note in Spanish: shown on the Spanish pages instead of the English `Note:` lines |
 | `Registration:` (or `Inscripción:`) | When doors or registration open, as a time: `Registration: 8:00 AM`. The site shows "Registration from 8:00 AM" / "Inscripción desde las 8:00 a. m." Keep the entry's start time at the time the meeting itself starts. |
 | `Topic:` | What a workshop or school is about, e.g. `Topic: Concepts` or `Topic: Steps, Sponsorship` |
-| `Cost:` | e.g. `$25`, `Free`, `$15 suggested contribution`, or `Registration $70; Saturday banquet $65` (the registration first, the extras after a `;`). Search engines get a price only from `Free`, a single `$` amount at the start, or `Registration $NN; …`. A suggested or voluntary contribution gives none. Leave the line out while the host has not published a price. |
+| `Cost:` | e.g. `$25`, `Free`, `$15 suggested contribution`, or `Registration $70; Saturday banquet $65` (the registration first, the extras after a `;`). Search engines get a price only from `Free`, a single `$` amount at the start, or `Registration $NN; …`. A suggested or voluntary contribution gives none. Leave the line out while the host has not published a price. With the price they also get where to register: a `Link:` labelled *Register*, *Registration*, *Inscripción*, *Registro* or *Tickets* (in the page's language when there is one of each; never a Drive file or PDF), else the `Web:` line. |
 | `Covers:` | The cities a district meeting serves |
 
 **Location:** for anything people can attend in person, put the **venue name first**, then the street
 address with its ZIP code (`Imperial Alano Club, 8021 Rosecrans Ave, Paramount, CA 90723`). Never a
-private home. For an online-only meeting, put the Zoom join link here.
+private home. Outside California, end with the city and the state, in two capital letters or in full
+(`…, St. Louis, MO 63101`, `…, Toronto, ON, Canada`): search engines list a one-time event only when its Location
+gives a street or a city with its state. For an online-only meeting, put the Zoom join link here.
 
 **Flyers** (`IMG:` and `Link:` files) may show only **role e-mail addresses** (`…@msca09aa.org`, a
 district's service mailbox) and **public office or hotline numbers** — never a member's own phone number,
@@ -733,6 +735,7 @@ npm run build        # full build into _site/ (pages + CSS + search index; CSS/J
 npm run check        # anonymity, links, CSV and missing-text checks on _site/
 node scripts/check-site.mjs _site_preview   # the same checks on another output folder
 npm run check:calendar                      # calendar entries that need fixing in Google Calendar
+npm run test:calendar                       # how a Location line is read (city, state, ZIP code); no network
 npm run check:media -- --dry-run            # read new flyers/PDFs (needs tesseract + poppler); changes nothing
 npm run drive:recordings                    # add new Zoom recordings to data/recordings.csv (Drive for Desktop + ffprobe)
 npm run social-card                         # redraw src/assets/img/social-card.jpg and social-card-es.jpg (Python + pillow)
@@ -778,7 +781,12 @@ Conventions:
   their own `crumbs` list and draw it from that) is also given to search engines as a BreadcrumbList by `breadcrumbLd`
   in `macros/ui.njk`: Home plus the page at least, so a page right under Home ("Home › Districts") gets one too; the
   hubs that draw their own trail (calendar, districts, newcomers) call it with the name their trail shows. Change the
-  list, not the markup, so both agree.
+  list, not the markup, so both agree. A trail through /service/ always names it with `service.title`, so the step
+  reads the same on every page.
+- District pages also describe the district as an Organization (`dxOrgLd` in `src/_lib/plugins/districts.js`): its
+  name in both languages, page, role e-mail, own website and founding year from `data/districts.csv`, as part of the
+  Area. Its `@id` (`/districts/<slug>/#organization`, the same in both languages) is also on the Event organizer the
+  calendar writes for a district's event, so search engines join the two. No address, map position or area served.
 
 ---
 

@@ -26,7 +26,7 @@ jsText: ["prf.js.days", "prf.js.hours", "prf.js.minutes", "prf.js.seconds"]
 {%- from "macros/prf.njk" import prfAddCal with context -%}
 {%- set L = lang -%}
 {#- the breadcrumb trail between Home and this page: shown in the hero and given to search engines (breadcrumbLd) -#}
-{%- set crumbs = [{ label_key: "prf.crumb_service", url: "/service/" }] -%}
+{%- set crumbs = [{ label_key: "service.title", url: "/service/" }] -%}
 {%- set P = prf -%}
 {%- set S = P.set -%}
 {%- set es = L.code == "es" -%}

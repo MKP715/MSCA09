@@ -7,12 +7,15 @@ description_key: documents.arch_description
 eyebrow_key: documents.cat_eyebrow
 heroIcon: archive
 accent: iris
-crumbs: [{ label_key: "documents.crumb_service", url: "/service/" }, { label_key: "documents.title", url: "/documents/" }]
+crumbs: [{ label_key: "service.title", url: "/service/" }, { label_key: "documents.title", url: "/documents/" }]
 bare: true
 source: data/documents/
 scripts: ["/assets/js/documents.js"]
 eleventyComputed:
   lead: "{{ 'documents.arch_lead' | t(lang, { n: documents.stats.archive | docNum(lang), first: documents.stats.archiveFirstYear, last: documents.stats.archiveLastYear, from: documents.stats.currentFrom }) | safe }}"
+  # search results and link previews: what the archive holds and its years (documents.arch_meta_title); the heading and
+  # breadcrumbs keep documents.arch_title
+  metaTitle: "{{ (('documents.arch_meta_title' | t(lang, { first: documents.stats.archiveFirstYear, last: documents.stats.archiveLastYear })) if documents.stats.archiveFirstYear else ('documents.arch_title' | t(lang))) | safe }}"
 ---
 {#- What the archive is, where it came from, what it holds, and why some files are held back. -#}
 {%- from "macros/ui.njk" import sectionHead -%}

@@ -5,7 +5,7 @@ layout: page.njk
 bare: true
 source: data/documents/
 scripts: ["/assets/js/documents.js"]
-crumbs: [{ label_key: "documents.crumb_service", url: "/service/" }, { label_key: "documents.title", url: "/documents/" }]
+crumbs: [{ label_key: "service.title", url: "/service/" }, { label_key: "documents.title", url: "/documents/" }]
 eyebrow_key: documents.cat_eyebrow
 eleventyComputed:
   title: "{{ entry.item | loc('label', entry.lang) | safe }}"

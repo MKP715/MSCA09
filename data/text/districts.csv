@@ -11,6 +11,7 @@ districts.meta_and,&,y,Joins the last two counties in a district's search title
 districts.meta_county_name.los-angeles,Los Angeles,Los Ángeles,"A county's name in a district's search title, only where the Spanish differs from the counties column of data/districts.csv (add a row districts.meta_county_name.<county-name> for another one)"
 districts.meta_meeting,"A.A. district business meeting: {rule}, {city}.","Reunión de negocios del distrito de A.A.: {rule}, {city}.","Added to a district page's search-result description when its region text is short (under 100 characters); {rule} and {city} come from the calendar: Every 2nd Tuesday, Costa Mesa"
 districts.meta_meeting_online,"A.A. district business meeting: {rule}, online.","Reunión de negocios del distrito de A.A.: {rule}, en línea.","Same, for a district whose business meeting is online only"
+districts.meta_lead,"{name}, A.A. Area 09 – {region}","{name}, Área 09 de A.A. – {region}","Start of a district page's search-result description, so it says what the page is: District 10, A.A. Area 09 – North-west Orange County: … {name} = the district's name, {region} = region_en / region_es in data/districts.csv"
 districts.description,"Find your A.A. district in Mid-Southern California Area 09: business meetings, cities, trusted servants and contacts for every English- and Spanish-speaking district.","Encuentra tu distrito de A.A. en el Área 09: reuniones de negocios, ciudades, servidores de confianza y contactos de cada distrito de habla inglesa o hispana.",
 districts.eyebrow,Service close to home,El servicio cerca de ti,
 districts.lead,"Area 09 has {n} districts — {en} English-speaking and {es} Spanish-speaking. Each one links the A.A. groups of its cities to the Area. Find yours, see when its GSRs meet and who to write to.","El Área 09 tiene {n} distritos: {en} de habla inglesa y {es} de habla hispana. Cada uno une a los grupos de A.A. de sus ciudades con el Área. Encuentra el tuyo, cuándo se reúnen sus RSG y a quién escribir.",{n} {en} {es} are counted from data/districts.csv
@@ -169,6 +170,7 @@ districts.meeting.good_to_know,Good to know:,Para tener en cuenta:,
 districts.meeting.gsr,For new GSRs:,Para RSG nuevos:,
 districts.meeting.upcoming,Next dates,Próximas fechas,
 districts.meeting.flyer,Meeting flyer,Volante de la reunión,Over the meeting's flyer on a district page (from the calendar entry's IMG: line)
+districts.meeting.event_page,All meeting dates and details,Todas las fechas y detalles de la reunión,"Link under the business meeting on a district page, to the meeting's own page on the Area calendar (/events/district-8/)"
 districts.meeting.no_dates,No upcoming dates are listed. Please check with the district.,No hay fechas próximas publicadas. Consulta con el distrito.,
 districts.meeting.source_cal,Dates and times come from the Area calendar (Pacific time).,Las fechas y horas vienen del calendario del Área (hora del Pacífico).,
 districts.meeting.source_csv,Dates follow the district's usual schedule (Pacific time). Please confirm with the district.,Las fechas siguen el horario habitual del distrito (hora del Pacífico). Confírmalas con el distrito.,

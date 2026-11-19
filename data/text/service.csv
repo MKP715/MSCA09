@@ -3,6 +3,7 @@ key,en,es,notes
 "# Words in curly brackets — {n}, {panel}, {date}, {year}, {name} … — are filled in by the site: keep them, unchanged, in both languages. Spanish follows A.A. usage: RSG, MCD, CMCD, CSA, Asamblea, Conferencia de Servicios Generales (CSG), Junta de Servicios Generales (JSG).",,,
 service.am.title,Assemblies & ASCs,Asambleas y CSA,
 service.am.description,"Every Area 09 meeting of this panel — Assemblies, ASCs, Pre-Conference, FORO, Servathon — with hosts, places, online links, flyers, agendas and minutes.","Todas las reuniones del Área 09 en este panel —Asambleas, CSA, Pre-Conferencia, FORO, Servathon— con anfitriones, lugares, acceso en línea, volantes, agendas y actas.",
+service.am.meta_title,Assemblies & Area Service Committee meetings,Asambleas y Comité de Servicio de Área,"Search-result and link-preview title of /service/area-meetings/ (the page heading stays service.am.title); "" · A.A. Area 09"" is added after it when there is room (keep the whole under about 60 characters)"
 service.am.eyebrow,Area meetings,Reuniones del Área,
 service.am.lead,"Where the groups of Area 09 do the Area's business — usually on the 2nd Sunday of the month, in person and on Zoom, in English and Spanish.","Donde los grupos del Área 09 realizan los asuntos del Área: por lo general el 2.º domingo del mes, en persona y por Zoom, en inglés y en español.",
 service.am.attend_title,How to attend,Cómo asistir,
@@ -92,6 +93,7 @@ service.am.day_home_body,"GSRs report to their groups: what was decided, and wha
 service.am.day_note,"ASCs follow a similar pattern; some committees, such as DCM School and Guidelines & Policies, also meet in a break-out during the day.","Las reuniones del CSA siguen un orden parecido; algunos comités, como la Escuela de MCD y Guías y Políticas, también se reúnen por separado durante el día.",
 service.delegate.title,Delegate's corner,Rincón del Delegado,
 service.delegate.description,"Area 09 at the General Service Conference: the latest Conference, the year ahead, agenda items, Pre-Conference, PRAASA, regional forums and the Delegate's Corner.","El Área 09 en la Conferencia de Servicios Generales: la última Conferencia y el año que viene, los puntos de agenda, la Pre-Conferencia, PRAASA, los foros y el Rincón del Delegado.",
+service.delegate.meta_title,Delegate's corner: General Service Conference,Rincón del Delegado: la Conferencia de Servicios Generales,"Search-result and link-preview title of /service/delegate/ (the page heading stays service.delegate.title); "" · A.A. Area 09"" is added after it when there is room (keep the whole under about 60 characters). The Spanish one is long enough to have nothing added after it"
 service.delegate.eyebrow,General Service Conference,Conferencia de Servicios Generales,
 service.delegate.lead,"Area 09's voice in A.A. as a whole: what the last Conference did, what is coming at the next one, and how your group's conscience gets there.","La voz del Área 09 en A.A. en su totalidad: lo que hizo la última Conferencia, lo que viene en la próxima y cómo llega allí la conciencia de tu grupo.",
 service.delegate.just_held,The most recent Conference,La Conferencia más reciente,
@@ -194,7 +196,7 @@ service.delegate.link_region,Pacific Region contacts,Contactos de la Región del
 service.delegate.link_gso,The General Service Office,La Oficina de Servicios Generales,
 service.delegate.link_concepts,The Twelve Concepts,Los Doce Conceptos,
 service.delegate.highlights_more,Show {n} more highlights,Ver {n} puntos más,
-service.title,Area business,Asuntos del Área,
+service.title,Area business,Asuntos del Área,"Heading of /service/, and its name in every breadcrumb trail that passes through it (documents, forms, reports, Delegate's Corner, Forum pages …), for visitors and search engines alike"
 service.description,"How Area 09 does its business: the next Area meeting, this panel's Assemblies and ASCs, motions, minutes, the Delegate's corner and where a new GSR can start.","Cómo trabaja el Área 09: la próxima reunión, las Asambleas y reuniones del CSA de este panel, mociones, actas, el rincón del Delegado y por dónde empezar como nuevo RSG.",
 service.meta_title,"General service in Area 09: Assemblies, ASCs, motions & minutes","Servicios generales en el Área 09: asambleas, CSA, mociones y actas","Search-result and link-preview title of /service/ (the page heading stays service.title). Over 55 characters, so nothing is added after it; keep it under about 70"
 service.eyebrow,General service in Area 09,Servicios generales en el Área 09,
@@ -360,7 +362,6 @@ service.docs.motions_none,No motions are on the floor right now.,Por ahora no ha
 service.docs.reports,Reports,Informes,
 service.docs.reports_send,Send yours to the Secretary,Envía el tuyo al Secretario(a),Link under the Reports column on /service/ (opens /service/reports/)
 service.reports.title,Send your report to the Secretary,Envía tu informe al Secretario(a),"Page title of /service/reports/, where officers, committee chairs, DCMCs and anyone else who reports at an Area meeting send their reports for the minutes"
-service.reports.crumb_service,Service,Servicio,Breadcrumb
 service.reports.description,"Area 09 officers, committee chairs and DCMCs: upload your monthly report for the Secretary and the minutes (by the 1st of the month), or e-mail it to the Area Secretary.","Si eres oficial, coordinador(a) de comité o CMCD del Área 09, sube tu informe mensual para el Secretario(a) y las actas (antes del día 1 del mes) o envíalo por correo.",
 service.reports.eyebrow,Area business · Secretary,Asuntos del Área · Secretario(a),
 service.reports.lead,"Area officers, committee chairs and DCMCs: upload your written report here so the Secretary can include it in the minutes.","Si eres oficial del Área, coordinador(a) de comité o CMCD, sube aquí tu informe por escrito para que el/la Secretario(a) pueda incluirlo en las actas.",
@@ -405,6 +406,7 @@ service.reports.tip_late_body,Write to the Secretary at {email} as soon as you c
 service.reports.correction,Is something on this page out of date? Write to,¿Algo de esta página está desactualizado? Escribe a,
 service.motions.title,Agendas & motions,Agendas y mociones,
 service.motions.description,"What Area 09 is deciding and has decided: every motion of this panel and the last, by status, with background papers — and how a motion works.","Lo que el Área 09 está decidiendo y lo que ya decidió: cada moción de este panel y del anterior, por estado, con sus antecedentes, y cómo funciona una moción.",
+service.motions.meta_title,"Area motions, agendas & decisions","Mociones, agendas y decisiones del Área","Search-result and link-preview title of /service/motions/ (the page heading stays service.motions.title); "" · A.A. Area 09"" is added after it when there is room (keep the whole under about 60 characters)"
 service.motions.eyebrow,Area decisions,Decisiones del Área,
 service.motions.lead,"What Area 09 is deciding, what it has decided, and how any member's idea becomes an Area motion.","Lo que el Área 09 está decidiendo, lo que ya decidió y cómo la idea de cualquier miembro se convierte en una moción del Área.",
 service.motions.now_eyebrow,On the floor · Panel {panel},En discusión · Panel {panel},{panel} = current panel (settings.csv)

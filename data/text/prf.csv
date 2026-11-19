@@ -3,7 +3,6 @@ key,en,es,notes
 "# Words in curly brackets ({n}, {name}, {email}, {url}, {date}) are filled in by the site: keep them in both languages. prf.js.* rows are used by the page script (src/assets/js/prf.js). Spanish speaks to the reader as tú, as the rest of the site does.",,,
 "# The dates are written out here (prf.dates_long, prf.fact.when_value, prf.flyer.dates, prf.flyer.announcement): if the Forum dates change, change them here and in data/prf/forum.csv (start, end).",,,
 prf.crumb,Pacific Regional Forum 2028,Foro Regional del Pacífico 2028,Breadcrumb and short name of the Forum pages
-prf.crumb_service,Area business,Asuntos del Área,
 prf.dates_long,"Friday, December 1 – Sunday, December 3, 2028",Del viernes 1 al domingo 3 de diciembre de 2028,The Forum dates in words
 prf.tba,To be announced,Por anunciar,
 prf.nav.label,Pacific Regional Forum 2028 pages,Páginas del Foro Regional del Pacífico 2028,Name of the tab row (screen readers)
