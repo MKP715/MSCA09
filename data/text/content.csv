@@ -18,7 +18,7 @@ offices.region.desert,Coachella Valley & Morongo Basin,Valle de Coachella y cuen
 offices.region.highdesert,High Desert,Alto Desierto,
 offices.region.online,Online,En línea,
 newcomers.title,New to A.A.?,¿Nuevo en A.A.?,
-newcomers.meta_title,New to A.A.? Find a meeting in Orange County & the Inland Empire,Reuniones de A.A. en español – condado de Orange e Inland Empire,"Search-result and link-preview title of /newcomers/ (newcomers.title stays the share-button title). Over 55 characters, so nothing is added after it; keep it under about 65"
+newcomers.meta_title,New to A.A.? Find a meeting in Orange County & the Inland Empire,Reuniones de A.A. en español – condado de Orange e Inland Empire,"Search-result and link-preview title of /newcomers/ (newcomers.title stays the share-button title). Nothing is added after it (with "" · A.A. Area 09"" it would be over 60 characters); keep it under about 65"
 newcomers.description,"New to A.A.? Find an A.A. meeting today in Orange, Riverside and San Bernardino counties, Long Beach and the South Bay, in English or Spanish: by phone, app or online.","¿Nuevo en A.A.? Reuniones de A.A. en español e inglés en los condados de Orange, Riverside y San Bernardino, Long Beach y el South Bay: por teléfono, en la app o en línea.",
 newcomers.crumb,New to A.A.?,¿Nuevo en A.A.?,
 newcomers.eyebrow,Newcomers welcome,Recién llegados: bienvenidos,
@@ -190,7 +190,7 @@ newcomers.area_cta,About Area 09,Sobre el Área 09,
 newcomers.fab,Call now,Llamar,Floating button on phones
 contribute.title,Contribute,Contribuir,
 contribute.description,"How an A.A. group, district or member can make a Seventh Tradition contribution to Mid-Southern California Area 09 — by Zelle, by mail or in person — and what to include.","Contribuciones de la Séptima Tradición al Área 09 de A.A.: cómo puede aportar un grupo, distrito o miembro por Zelle, por correo o en persona, y qué datos incluir.",
-contribute.meta_title,Seventh Tradition contributions to Area 09: Zelle or mail,Contribuciones de la Séptima Tradición al Área 09: Zelle o correo,"Search-result and link-preview title of /contribute/ (the page heading stays contribute.title). Over 55 characters, so nothing is added after it; keep it under about 65 and keep Area 09 in it"
+contribute.meta_title,Seventh Tradition contributions to Area 09: Zelle or mail,Contribuciones de la Séptima Tradición al Área 09: Zelle o correo,"Search-result and link-preview title of /contribute/ (the page heading stays contribute.title). Nothing is added after it (with "" · A.A. Area 09"" it would be over 60 characters); keep it under about 65 and keep Area 09 in it"
 contribute.eyebrow,Seventh Tradition,Séptima Tradición,
 contribute.lead,"How a group, a district or an A.A. member can send a Seventh Tradition contribution to Area 09 — by Zelle, by mail, or in person at an Area meeting.","Cómo un grupo, un distrito o un miembro de A.A. puede enviar una contribución de la Séptima Tradición al Área 09: por Zelle, por correo o en persona en una reunión del Área.",
 contribute.nav_why,Why,Por qué,
@@ -345,7 +345,7 @@ contribute.print_body,Print these instructions for your group's treasurer or bus
 contribute.print_cta,Print this page,Imprimir esta página,
 contribute.print_flyer,The printable flyer,El volante para imprimir,"Link from the Take it with you card up to the flyer card in Ways to give (shown while the contribute-flyer row of data/resources.csv has show = yes)"
 about.title,About Area 09,Sobre el Área 09,
-about.meta_title,About A.A. Area 09 – where we serve in Southern California,Sobre el Área 09 de A.A. – dónde servimos en el sur de California,"Search-result and link-preview title of /about/ (the page heading stays about.title). Over 55 characters, so nothing is added after it; keep it under about 65"
+about.meta_title,About A.A. Area 09 – where we serve in Southern California,Sobre el Área 09 de A.A. – dónde servimos en el sur de California,"Search-result and link-preview title of /about/ (the page heading stays about.title). Nothing is added after it (with "" · A.A. Area 09"" it would be over 60 characters); keep it under about 65"
 about.crumb,About,Nosotros,Breadcrumb on pages under /about/
 about.description,"Who Mid-Southern California Area 09 of Alcoholics Anonymous is, where it serves, what it does, how it is organized, when it meets and its history since 1958.","Quién es el Área 09 del Medio Sur de California de Alcohólicos Anónimos, dónde sirve, qué hace, cómo se organiza, cuándo se reúne y su historia desde 1958.",
 about.eyebrow,Mid-Southern California Area 09,Área 09 del Medio Sur de California,
@@ -809,7 +809,7 @@ policy.credits_note,"Quotations from A.A. literature are short excerpts credited
 policy.reading_title,Read more about anonymity,Más sobre el anonimato,
 resources.title,A.A. resources,Recursos de A.A.,
 resources.description,"A.A. resources for Area 09: literature online, Grapevine and La Viña, the Meeting Guide app, central offices and intergroups, H&I, PRAASA and the Pacific Region.","Recursos de A.A. del Área 09: literatura en línea, Grapevine y La Viña, la app Meeting Guide, oficinas centrales e intergrupos, H&I, PRAASA y la Región del Pacífico.",
-resources.meta_title,"A.A. literature, central offices & hotlines",Literatura de A.A. y oficinas centrales,"Search-result and link-preview title of /resources/ (the page heading stays resources.title); "" · A.A. Area 09"" is added after it while it is 55 characters or shorter"
+resources.meta_title,"A.A. literature, central offices & hotlines",Literatura de A.A. y oficinas centrales,"Search-result and link-preview title of /resources/ (the page heading stays resources.title); "" · A.A. Area 09"" (Spanish "" · Área 09 de A.A."") is added after it while the whole title stays within 60 characters"
 resources.eyebrow,Straight to the source,Directo a la fuente,
 resources.lead,"We link to aa.org, Grapevine and La Viña rather than copying them, so you always get the current, Conference-approved version — plus the central offices, H&I committees and service bodies near you.","Enlazamos a aa.org, Grapevine y La Viña en lugar de copiarlos, para que siempre tengas la versión actual aprobada por la Conferencia, además de las oficinas centrales, comités de H&I y entidades de servicio cerca de ti.",
 resources.filter_label,Filter resources,Filtrar recursos,

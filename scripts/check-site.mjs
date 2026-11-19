@@ -21,6 +21,8 @@
 //     the build forwards it to the calendar instead)
 //   - wording a page asks for that is missing from data/text/*.csv
 //   - a page title or meta description escaped twice ("&amp;amp;" shows as "&amp;")
+//   - a page search engines may index that is over 1.9 MB: Googlebot reads only the first 2 MB of a page, so the end of
+//     it (the last rows of a long document list, their links) would never be indexed
 //   - a meeting recording (data/recordings.csv) without a Drive id, a real date, a committee of
 //     data/committees.csv or a meeting of data/recording-series.csv, or whose show is not yes / no;
 //     a meeting (data/recording-series.csv) listed twice, without a name or linking nowhere
@@ -28,7 +30,7 @@
 // percent-encoded inside another address), pages
 // without a title or heading, a <title> shared by several indexable pages, a meta description cut short
 // ("…", over 300 characters), a page description written in data/text over 200 characters (link previews cut it),
-// very large pages, full-name look-alikes elsewhere, Zoom IDs that
+// very large pages (over 1.5 MB: an indexable one nears Googlebot's 2 MB), full-name look-alikes elsewhere, Zoom IDs that
 // look like a member's own phone number, committee website, flyer or work-log rows
 // (data/committee-resources.csv) that are missing their address, description, pictures or PDF,
 // and recordings whose show is empty or whose length, part or track cannot be read.
@@ -516,7 +518,15 @@ for (const file of pages) {
     if (twice) err(rel, `"${twice[0]}" in ${m[1] != null ? "<title>" : "a content=\"…\" attribute"} is escaped twice (shows as "${twice[0].replace("&amp;", "&")}"). Context: ${v.slice(0, 120)}`);
   }
   if (!/<h1[\s>]/.test(html) && !/404/.test(rel) && !/redirect|http-equiv="refresh"/i.test(html)) warn(rel, "page has no <h1>");
-  if (html.length > 1_500_000) warn(rel, `page is large (${Math.round(html.length / 1024)} KB)`);
+  // Page size, in bytes as served. Googlebot reads only the first 2 MB of a page
+  // (developers.google.com/search/docs/crawling-indexing/googlebot): an indexable page over 1.9 MB stops the deploy,
+  // over 1.5 MB is a warning, in time to make it smaller (split a long list by year, or lighten its rows). Pages kept
+  // out of search engines (noindex, forwarding pages) only get the warning.
+  const bytes = Buffer.byteLength(html);
+  const size = `${(bytes / 1_000_000).toFixed(2)} MB`;
+  const indexable = !isStub && !/<meta name="robots" content="noindex"/.test(html) && !/<meta http-equiv="refresh" content="0;/.test(html);
+  if (indexable && bytes > 1_900_000) err(rel, `page is ${size}: Googlebot reads only the first 2 MB of a page, and the rest would never be indexed — make it smaller (split a long list by year, or lighten its rows)`);
+  else if (bytes > 1_500_000) warn(rel, `page is large (${size}${indexable ? "; Googlebot reads only the first 2 MB, and over 1.9 MB stops the deploy" : ""})`);
 
   for (const m of html.matchAll(/\s(?:href|src)="([^"]+)"/g)) {
     const u = m[1];
