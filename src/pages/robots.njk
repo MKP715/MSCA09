@@ -2,8 +2,12 @@
 permalink: /robots.txt
 eleventyExcludeFromCollections: true
 ---
+{#- The site search's index files are not pages: pagefind/ holds every page's index, pagefind-posts/ the small index of
+    the Spanish copies of the Delegate's Corner posts (scripts/build-search.mjs). "pagefind/" alone does not cover the
+    second folder. -#}
 User-agent: *
 Allow: /
 Disallow: {{ site.base }}pagefind/
+Disallow: {{ site.base }}pagefind-posts/
 
 Sitemap: {{ "/sitemap.xml" | absUrl(site.url + "/") }}

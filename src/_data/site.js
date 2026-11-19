@@ -15,6 +15,9 @@ export default function () {
   // markup in base.njk. When mailing_city is not written that way, the markup leaves the address out.
   const m = String(settings.mailing_city || "").trim().match(/^(.+),\s*([A-Z]{2})\s+(\d{5}(?:-\d{4})?)$/);
   const mailing = { mailing_locality: m ? m[1].trim() : "", mailing_region: m ? m[2] : "", mailing_postal: m ? m[3] : "" };
+  // The year the Area was formed (founding_year), for the same markup's foundingDate: only four digits, so an
+  // empty or mistyped row leaves it out rather than giving search engines a wrong date.
+  const founded = String(settings.founding_year || "").trim();
 
   return {
     ...settings,
@@ -29,6 +32,7 @@ export default function () {
           addressCountry: "US",
         }
       : undefined,
+    foundingDate: /^\d{4}$/.test(founded) ? founded : undefined,
     url,
     // Path prefix when served from https://<user>.github.io/<repo>/ (set by the deploy workflow).
     base: (process.env.ELEVENTY_PATH_PREFIX || "/").replace(/\/?$/, "/"),

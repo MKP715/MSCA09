@@ -399,7 +399,11 @@
     // Every word is matched as a prefix, so "District 2" also matches 2026, 20, 21 …:
     // termSimilarity 10 ranks the whole word (the page's own title) above words that only start with it;
     // pageLength 0.5 (default 0.75) keeps long hub pages (districts, committees) above short event pages.
-    const RANKING = { termSimilarity: 10, pageLength: 0.5 };
+    // metaWeights: a hub page's meta fields (base.njk), so the hub comes before the many event pages and posts that
+    // mention it. "name" (its own name, D5/D05 …) counts 10 times; "keywords" (search.kw.* in data/text/common.csv)
+    // 3 times, less than a page title (5, Pagefind's default): extra words lift a page, its name lifts it more.
+    // npm run test:site-search (after a build) checks a set of searches, and every hub among the first 3 for its own name.
+    const RANKING = { termSimilarity: 10, pageLength: 0.5, metaWeights: { name: 10, keywords: 3 } };
     Alpine.data("searchModal", () => ({
       open: false,
       ready: false,
@@ -495,12 +499,13 @@
               // Other pages ignore the parameter (Pagefind's own highlighting script is not loaded).
               highlightParam: "highlight",
               // Each page stores its kind as meta "type", an internal word (district, committee, post …) that stays
-              // in the index; show it in the box's language instead: "Tipo: Distrito".
+              // in the index; show it in the box's language instead: "Tipo: Distrito". Meta "name" and "keywords"
+              // (a hub page's search words) are for ranking only: never shown (the box shows other meta as tags).
               processResult: (r) => {
                 const m = r && r.meta;
-                if (m && m.type) {
-                  const { type, ...rest } = m;
-                  const label = w.types && w.types[type];
+                if (m && (m.type || "name" in m || "keywords" in m)) {
+                  const { type, name, keywords, ...rest } = m;
+                  const label = type && w.types && w.types[type];
                   r.meta = label ? { ...rest, [say("meta_type")]: label } : rest;
                 }
                 return r;

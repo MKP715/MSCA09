@@ -2,6 +2,7 @@ key,value,notes
 # One setting per row: key = its name (do not change it); value = what you may edit; notes = what it does.,,
 site_url,https://msca09aa.org,"The public web address, used for share links, the sitemap and link previews in local builds. On GitHub the address comes from the SITE_URL repository variable (Settings → Secrets and variables → Actions → Variables) or, if that is not set, from the GitHub Pages address."
 area_number,09,
+founding_year,1958,"The year the Area was formed (as California Southern Coastal: the About page says so in about.glance_formed_value, data/text/content.csv; keep the two in step). Search engines read it as the Area's founding date (the Organization markup on every page). Four digits, or empty to leave it out."
 panel,76,"The current panel number. Change it (and panel_years and previous_panel) when the panel rotates: menus, headings and the link-preview picture follow."
 panel_years,2026–2027,The two years of the current panel.
 previous_panel,74,
