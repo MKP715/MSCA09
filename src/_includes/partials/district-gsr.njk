@@ -89,9 +89,9 @@
               <p class="mi-reg">{% icon "door-open", "size-4 shrink-0" %}<span>{{ reg }}</span></p>
               {%- endif %}
               {%- if s and not s.recurring and not s.ended %}
-              <p class="mt-2" data-when="{{ s.start }}" data-until="{{ s.end }}" data-hide-after="{{ s.end }}"><span data-rel hidden class="rel-badge"></span></p>
+              <p class="mt-2" data-when="{{ s.start }}" data-until="{{ s.end }}" data-hide-after="{{ s.end }}" data-lastmod-skip><span data-rel hidden class="rel-badge"></span></p>
               {%- elif it.dates.length %}
-              <ul class="mt-2" data-limit="1" role="list">
+              <ul class="mt-2" data-limit="1" role="list" data-lastmod-skip>
                 {%- for n in it.dates %}
                 <li class="mi-next" data-hide-after="{{ n.end or n.start }}" data-when="{{ n.start }}" data-until="{{ n.end or n.start }}">
                   <span class="inline-flex items-center gap-1.5 whitespace-nowrap">{% icon "arrow-right", "size-3.5 shrink-0" %}{{ "calendar.info.next" | t(L) }}:</span>

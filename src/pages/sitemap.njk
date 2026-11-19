@@ -11,7 +11,9 @@ eleventyExcludeFromCollections: true
   The other-language alternate is listed only when that page exists and is indexable.
   <lastmod> appears only for pages that give a real date (front matter `lastmod`; event pages use the
   day their calendar entry was last edited): a build time would change eight times a day and teach
-  search engines to ignore it.
+  search engines to ignore it. After the build, scripts/sitemap-dates.mjs adds the day the page's text
+  last changed (compared with the live site's /assets/data/page-dates.json) to the pages without one,
+  and to an event page whose text changed after its calendar entry; never the build time either.
 -#}
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">

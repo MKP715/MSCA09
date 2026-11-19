@@ -91,7 +91,8 @@ jsText: ["calendar.flyers.count_one", "calendar.flyers.count_n", "calendar.flyer
 {%- if all.length %}
 <div x-data="flyerWall" class="fw-page wrap pt-6 pb-16 sm:pt-8 lg:pt-10 lg:pb-20">
   {#- ---------------------------------------------------------- filters (with JavaScript only) -#}
-  <form class="fw-bar" role="search" aria-label="{{ 'calendar.flyers.filters_label' | t(L) }}" @submit.prevent data-pagefind-ignore>
+  {#- data-lastmod-skip: the filters list and count what is coming up, which changes as days pass (scripts/sitemap-dates.mjs) -#}
+  <form class="fw-bar" role="search" aria-label="{{ 'calendar.flyers.filters_label' | t(L) }}" @submit.prevent data-pagefind-ignore data-lastmod-skip>
     <div class="fw-bar__top">
       <label class="cal-search fw-search">
         {% icon "search", "size-5 shrink-0 text-ink-500" %}
@@ -213,7 +214,7 @@ jsText: ["calendar.flyers.count_one", "calendar.flyers.count_n", "calendar.flyer
         <h2 id="fw-events-title" class="h-section text-balance">{{ "calendar.events.upcoming" | t(L) }}</h2>
         <p class="lead mt-2 text-pretty">{{ "calendar.flyers.events_lead" | t(L) }}</p>
       </div>
-      <div class="fw-months">
+      <div class="fw-months" data-lastmod-skip>
       {%- for m in W.months %}
       {#- the heading is the month alone (its name for screen readers and its title in site search); the count beside it
           is for the eye (a list says how many items it has) -#}

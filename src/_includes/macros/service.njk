@@ -51,7 +51,7 @@
 {%- set agenda = s | svcLinks("agenda|orden del d") -%}
 {%- set flyers = (s.flyers if s else []) or [] -%}
 <article class="svc-next relative isolate overflow-hidden rounded-[2rem] text-white shadow-lift" style="{{ info.color | accent }}"
-         data-hide-after="{{ occ.end }}" data-when="{{ occ.start }}" data-until="{{ occ.end }}">
+         data-hide-after="{{ occ.end }}" data-when="{{ occ.start }}" data-until="{{ occ.end }}" data-lastmod-skip>
   <div class="svc-next__bg absolute inset-0 -z-10" aria-hidden="true"></div>
   <div class="svc-next__waves absolute inset-x-0 bottom-0 -z-10 h-24 opacity-30" aria-hidden="true"></div>
   <div class="grid grid-cols-1 gap-8 p-6 sm:p-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:p-10 2xl:p-12">
@@ -184,8 +184,8 @@
       <span class="svc-tl__day">{{ occ.start | dt("day", L) }}</span>
       <span class="svc-tl__kind">{{ ("service.kind." + kind) | t(L) }}</span>
       <span class="svc-tl__host">{% if hosts.length %}{% for h in hosts %}{{ "service.district_short" | t(L, { n: h | svcDistrictNum(L) }) }}{% if not loop.last %} · {% endif %}{% endfor %}{% elif kind != "other" %}{{ "service.timeline.host_tba" | t(L) }}{% endif %}</span>
-      {%- if isNext %}<span class="svc-tl__flag">{{ "service.timeline.next" | t(L) }}</span>{% endif %}
-      {%- if past %}<span class="svc-tl__done" title="{{ 'service.timeline.done' | t(L) }}">{% icon "check", "size-3" %}<span class="sr-only">{{ "service.timeline.done" | t(L) }}</span></span>{% endif %}
+      {%- if isNext %}<span class="svc-tl__flag" data-lastmod-skip>{{ "service.timeline.next" | t(L) }}</span>{% endif %}
+      {%- if past %}<span class="svc-tl__done" data-lastmod-skip title="{{ 'service.timeline.done' | t(L) }}">{% icon "check", "size-3" %}<span class="sr-only">{{ "service.timeline.done" | t(L) }}</span></span>{% endif %}
     </a>
   </li>
   {%- endfor %}

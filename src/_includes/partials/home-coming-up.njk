@@ -39,7 +39,7 @@
         </div>
       </div>
       {%- if events.length %}
-      <div class="home-swiper swiper reveal" x-ref="swiper" role="region" aria-roledescription="{{ 'home.carousel.role' | t(L) }}" aria-label="{{ 'home.coming.title' | t(L) }}">
+      <div class="home-swiper swiper reveal" data-lastmod-skip x-ref="swiper" role="region" aria-roledescription="{{ 'home.carousel.role' | t(L) }}" aria-label="{{ 'home.coming.title' | t(L) }}">
         <div class="swiper-wrapper" id="home-events" data-empty="#home-events-empty">
           {%- set part = "slides" %}{% include evPartial %}
         </div>
@@ -59,7 +59,7 @@
         </h3>
         <a href="{{ '/service/area-meetings/' | lurl(L) }}" class="text-sm font-semibold text-iris-700 hover:underline">{{ "home.next.all" | t(L) }} →</a>
       </div>
-      <ol class="hm-area-list" role="list" data-limit="4">
+      <ol class="hm-area-list" role="list" data-limit="4" data-lastmod-skip>
         {%- for o in areaNext %}
         {%- set hosts = o | homeHosts(calendar, districts, L) %}
         <li class="reveal" data-hide-after="{{ o.end }}" style="{{ (o.color or 'iris') | accent(loop.index0) }}; --reveal-delay: {{ (loop.index0 % 4) * 70 }}ms">
@@ -94,7 +94,7 @@
             <p class="mt-1 hidden text-sm leading-snug text-ink-500 sm:block">{{ "home.week.lead" | t(L) }}</p>
           </div>
         </div>
-        <div class="hm-week-list mt-5">
+        <div class="hm-week-list mt-5" data-lastmod-skip>
           {%- set part = "week" %}{% include evPartial %}
         </div>
         <a href="{{ '/calendar/' | lurl(L) }}" class="btn btn-ocean mt-6 w-full">{% icon "calendar-days", "size-4" %}{{ "home.week.all" | t(L) }}</a>

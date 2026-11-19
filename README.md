@@ -278,7 +278,9 @@ where, whether it is on Zoom and in which language ("District 5 (A.A. district b
 meeting named like a district or committee page gets its pattern in its title ("District 5 – business meeting, Every 2nd
 Monday"), so the two pages don't share a title. Search engines are told to skip a finished series two years after its
 last meeting, or straight away while a live series has the same title, and a one-time event two years after it took
-place; the pages stay on the site. The sitemap dates each event page by the day its entry was last edited in Google Calendar.
+place; the pages stay on the site. The sitemap dates each event page by the day its entry was last edited in Google Calendar
+(the page's footer says "Updated" with that day), or by the day the page itself last changed when that is later (the
+event has ended, a title override in `data/text/calendar.csv`, a flyer put on hold).
 Links to this site in the calendar text (the old `mkp715.github.io/MSCA09` address, `www.` or `http:`) are changed to
 `https://msca09aa.org`. On the site's own pages such a link opens in the same tab, and on a Spanish page it goes to the
 Spanish copy of the page (the `ownUrl` filter); the `.ics` files and `events.json` keep the full address.
@@ -495,7 +497,10 @@ and an optional `note`.
 - A row that forwards to an event page the calendar no longer has (the entry was renamed, moved or deleted) forwards to the
   Events page (`/calendar/`) instead, and the build warns: point it at the event's new page.
 - `/sitemap-old-addresses.xml` lists every old address that has a forwarding page. It is for submitting in Google
-  Search Console during the move (not listed in robots.txt) and can be removed about six months after the move.
+  Search Console during the move (not listed in robots.txt) and can be removed about six months after the move. After
+  each deploy, the addresses that are new in it (a row just added here) are announced to Bing and the other IndexNow
+  engines. Once after the move, announce all of them: *Actions → Build and publish the website → Run workflow*, tick
+  **announce_old_addresses**.
 
 ---
 
@@ -606,7 +611,8 @@ GitHub pauses the scheduled runs of a workflow after 60 days without a commit to
 prevents that by itself: the three-hourly build switches both workflows back on once a day, and the Monday
 flyer check does the same. Nobody needs to do anything.
 
-If the site ever stops updating on its own (the "Updated" date at the bottom of every page stays old), open
+If the site ever stops updating on its own (the "Calendar refreshed" date at the bottom of the calendar page,
+`/calendar/`, stays old: it is the day of the last build), open
 **Actions**, choose *Build and publish the website* (and *Check flyers and PDFs for personal details*), and
 press **Enable workflow** if GitHub shows it. Then press **Run workflow** once.
 
@@ -640,7 +646,7 @@ the last page read inside the app).
   and only once the new page has really arrived. It never reloads while someone is typing, a window or the photo
   viewer is open, a recording is playing, something the visitor opened (a fold, "Show more") is open, or on the
   pages with a form (budget request, expense report, Forum volunteers): those pages update at the next click. The
-  date at the bottom of every page does not count as a change;
+  "Calendar refreshed" date at the bottom of the calendar page does not count as a change;
 - new styles, scripts and the offline copy follow at the next visit (the service worker updates itself).
 
 GitHub's servers keep a copy of each file for up to 10 minutes, so a change can take about 10 minutes after the
@@ -712,7 +718,12 @@ from testing a build on the same address is removed).
    **Bing Webmaster Tools** (and submitting that sitemap there) is still done by the site owner, with the owner's own
    account. Nothing else to do: after each published build, the workflow tells Bing and the other IndexNow search
    engines (Yandex, Seznam, Naver …) which pages are new, gone or have a new date in the sitemap
-   (`scripts/indexnow-urls.mjs`; Google ignores IndexNow and keeps reading the sitemap). That step never stops the
+   (`scripts/indexnow-urls.mjs`; Google ignores IndexNow and keeps reading the sitemap). Pages with no date of their
+   own (the home pages, About, the districts, committees, document shelves and service pages …) are dated by what they
+   say: each build compares a fingerprint of every page's text with the live site's `/assets/data/page-dates.json`
+   and gives the pages whose text changed that day's date (`scripts/sitemap-dates.mjs`; never the time of the build,
+   and no date at all while the live site has no such file). An edit to a CSV row therefore reaches Bing the same day,
+   for every page that shows it. That step never stops the
    site from being published. It sends nothing from a github.io address, nor when the `SITE_URL` variable and
    `site_url` in `data/settings.csv` name different domains (after a domain change, update both). It proves the
    site is ours with the key file `src/static/f1f9a3cf3b8c585da33183d939e2933f.txt`, published at the root of the
@@ -752,7 +763,7 @@ npm run social-card                         # redraw src/assets/img/social-card.
 | `src/_includes/` | Layouts, partials and macros (`macros/ui.njk`, `macros/events.njk`, …) |
 | `src/assets/` | CSS (Tailwind input + per-section files), browser scripts, images |
 | `src/content/delegate/` | Archived Delegate's Corner posts (Markdown) |
-| `scripts/` | Calendar fetch and check, Drive listing and id filler, Zoom recordings list, site check, flyer/PDF check, document scanner, social-card builder, CSS/JS content hashes, the IndexNow list of changed pages, the installable app (`build-pwa.mjs`, `sw-template.js`) |
+| `scripts/` | Calendar fetch and check, Drive listing and id filler, Zoom recordings list, site check, flyer/PDF check, document scanner, social-card builder, CSS/JS content hashes, the sitemap's content dates (`sitemap-dates.mjs`), the IndexNow list of changed pages, the installable app (`build-pwa.mjs`, `sw-template.js`) |
 | `.github/workflows/deploy.yml` | Build and deploy on push, every 3 hours, and on demand (a scheduled build identical to the last published site is not deployed again); after a deploy, the changed pages are announced to IndexNow |
 | `.github/workflows/media-check.yml` | The Monday flyer and PDF check |
 
@@ -770,6 +781,13 @@ Conventions:
   shows the notice. In an Alpine component, use `x-text="MSCA.tr('key')"` and list the key in the page's `jsText`
   (front matter). A notice keeps its words as text only where the build itself found it true (the `{% else %}` branch
   when a list is empty at build time).
+- Sitemap dates (`scripts/sitemap-dates.mjs`, `npm run test:dates`): a page is dated by its title, description and
+  `<main>` text with its link and picture addresses. A block that rolls forward by itself as days pass or only lists
+  other pages (next dates, "Coming up", countdowns, counts of what is coming) carries `data-lastmod-skip`, which does
+  nothing on the page, so it never re-dates the page; mark any new such block the same way (the macros in
+  `macros/events.njk` already do). A page's own `lastmod` (front matter, YYYY-MM-DD) wins and is shown in the footer
+  ("Updated …"); no page ever shows the time of the build, except the calendar page's "Calendar refreshed" line
+  (`data-msca-volatile`).
 - Search engines: a page with `noindex: true` gets no canonical or hreflang links and stays out of the
   sitemap; `altNoindex: true` drops the hreflang alternates when the other-language copy is noindex (the
   English Delegate's Corner posts get it automatically). `searchExclude: true` keeps a page out of the site search only.

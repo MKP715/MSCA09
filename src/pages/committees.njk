@@ -37,7 +37,7 @@ scripts: ["/assets/js/committees.js"]
       <span><span class="block font-display text-3xl font-extrabold text-coral-700 2xl:text-4xl"><span x-data="countUp({{ st.open or 0 }})" x-intersect.once="start()" x-text="display">{{ st.open or 0 }}</span></span><span class="block text-sm font-medium text-ink-500">{{ "committees.stat_open" | t(L) }}</span></span>
     </button>
     {%- if nextArea %}
-    <a href="{{ nextArea.url | lurl(L) }}" class="card card-hover flex items-center gap-4 p-4 sm:p-5" style="{{ 'sun' | accent }}" data-hide-after="{{ nextArea.end }}" data-when="{{ nextArea.start }}" data-until="{{ nextArea.end }}">
+    <a href="{{ nextArea.url | lurl(L) }}" class="card card-hover flex items-center gap-4 p-4 sm:p-5" style="{{ 'sun' | accent }}" data-hide-after="{{ nextArea.end }}" data-when="{{ nextArea.start }}" data-until="{{ nextArea.end }}" data-lastmod-skip>
       <span class="icon-tile hidden sm:grid">{% icon "calendar-clock", "size-6" %}</span>
       <span class="min-w-0"><span class="block font-display text-xl leading-tight font-extrabold text-ink-950 2xl:text-2xl">{{ nextArea.start | dt("short", L) }} <span data-rel hidden class="ml-1 align-middle text-xs font-bold text-sun-700"></span></span><span class="block text-sm font-medium text-ink-500">{{ "committees.stat_next_area" | t(L) }}</span></span>
     </a>

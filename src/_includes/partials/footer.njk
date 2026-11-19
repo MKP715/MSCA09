@@ -79,9 +79,20 @@
     <div class="wrap grid gap-3 py-6 text-xs leading-relaxed text-ink-300 sm:gap-4 sm:py-8 lg:grid-cols-12 lg:items-start">
       <p class="lg:col-span-7 2xl:col-span-8">{{ "footer.legal" | t(L) }}</p>
       <div class="flex flex-wrap items-center gap-x-5 gap-y-1 lg:col-span-5 lg:justify-end lg:gap-y-2 2xl:col-span-4">
-        {#- data-msca-volatile: the date of every build, left out of the page's fingerprint (scripts/build-pwa.mjs), so the
-            date alone never makes an open page reload -#}
-        <span data-msca-volatile>{{ "footer.updated" | t(L, { date: site.build.iso | dt("date", L) }) }}</span>
+        {#- The page's own date, where the page has one when the site is built: an event page, the day its Google Calendar
+            entry was last edited; a Delegate's Corner post, its `updated` day, else the day it was posted (the same front
+            matter the sitemap reads). Other pages show none: the date of the build would say that every page changed today
+            (search engines and AI answers read it as the page's date). -#}
+        {%- set ownDay = (lastmod or updated) | isoDate %}
+        {%- if ownDay %}
+        <span>{{ "footer.updated" | t(L, { date: ownDay | dt("date", L) }) }}</span>
+        {%- endif %}
+        {#- /calendar/ only: the day of the build that last read the Area's Google Calendar, the site's sign of health (README
+            "Staying switched on": an old date means the builds have stopped). data-msca-volatile: left out of the page's
+            fingerprint (scripts/build-pwa.mjs), so the date alone never makes an open page reload. -#}
+        {%- if page.url == "/calendar/" or page.url == "/es/calendar/" %}
+        <span data-msca-volatile>{{ "footer.calendar_refreshed" | t(L, { date: site.build.iso | dt("date", L) }) }}</span>
+        {%- endif %}
         <a href="{{ '/about/policy/' | lurl(L) }}" class="inline-flex min-h-11 items-center hover:text-white lg:min-h-0">{{ "footer.policy" | t(L) }}</a>
         {%- if site.repo %}
         {#- "Edit" goes to the file that holds this page's information (editSource, from _data/eleventyComputed.js):

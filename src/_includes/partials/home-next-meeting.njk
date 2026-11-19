@@ -12,7 +12,7 @@
 {%- set loc_ = series.location if series else null -%}
 {%- set place = ((loc_.name + ", ") if (loc_ and loc_.name and occ.city and loc_.name != occ.city) else (loc_.name if (loc_ and loc_.name) else "")) + (occ.city or "") -%}
 {%- set hosts = occ | homeHosts(calendar, districts, L) -%}
-<div class="hm-next-card {{ 'hm-next-card--glass' if glass else 'hm-next-card--light' }}" x-data="countdown({{ occ.start | json }})">
+<div class="hm-next-card {{ 'hm-next-card--glass' if glass else 'hm-next-card--light' }}" x-data="countdown({{ occ.start | json }})" data-lastmod-skip>
   <div class="hm-next-main">
   <p class="hm-next-eyebrow">
     <span class="relative flex size-2.5" aria-hidden="true"><span class="absolute inline-flex size-full animate-ping rounded-full bg-current opacity-60 [animation-iteration-count:3]"></span><span class="relative inline-flex size-2.5 rounded-full bg-current"></span></span>

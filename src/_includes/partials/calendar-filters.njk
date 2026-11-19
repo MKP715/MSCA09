@@ -1,6 +1,7 @@
-{#- Calendar filters: a sticky sidebar from 1280px, an off-canvas drawer below. Part of /calendar/. -#}
+{#- Calendar filters: a sticky sidebar from 1280px, an off-canvas drawer below. Part of /calendar/.
+    data-lastmod-skip: the choices follow what is coming up (the offices with events now …), not a change of the page. -#}
 {%- set L = lang -%}
-<div class="cal-filters__inner">
+<div class="cal-filters__inner" data-lastmod-skip>
   <div class="cal-filters__head">
     <h2 class="flex items-center gap-2 font-display text-lg font-bold text-ink-950">
       <span class="icon-tile-soft size-9" style="{{ 'iris' | accent }}">{% icon "sliders-horizontal", "size-4" %}</span>{{ "ui.filters" | t(L) }}
