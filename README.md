@@ -800,6 +800,24 @@ Conventions:
   Area. Its `@id` (`/districts/<slug>/#organization`, the same in both languages) is also on the Event organizer the
   calendar writes for a district's event, so search engines join the two. No address, map position or area served.
 
+### The guide for AI assistants (`/llms.txt`)
+
+`https://msca09aa.org/llms.txt` (English) and `/es/llms.txt` (Spanish) are a short plain-text map of the site in the
+[llms.txt](https://llmstxt.org) format, for AI assistants and other programs that someone points at the site: what
+Area 09 is, that it does not run A.A. meetings and how to find one, that times are Pacific, the anonymity rule, and
+lists of the key pages, the districts, the central offices, the officers' role e-mail addresses and the calendar
+files. Search engines do not need it (they read the pages and the sitemap), and it is not in the sitemap, the site
+search or the app.
+
+Nothing in it is typed by hand: `src/pages/llms-txt.11ty.js` builds both files from the data, so they follow every
+edit by themselves.
+- Its sentences and headings: `data/text/llms.csv` (`en` / `es`).
+- The lists: the menu (`data/nav.csv`) with each page's own search-engine description, `data/districts.csv`,
+  `data/central-offices.csv`, the officer rows of `data/committees.csv` (role mailboxes `…@msca09aa.org` only, plus
+  `email_footer` in `data/settings.csv` as the general contact), `data/document-categories.csv` and the committees.
+- Never in it: servants' names, personal e-mails or phones, Zoom details, or a build date — so the files change only
+  when the data does. `npm run check` checks them like a page (contacts, full names, held files, links to this site).
+
 ---
 
 ## Credits and licences
