@@ -48,5 +48,11 @@
   <li data-hide-after="{{ occ.end }}">{{ fbRow(occ, L) }}</li>
   {%- endfor %}
 </ul>
-<p id="home-week-empty" class="rounded-2xl bg-ink-50 p-4 text-sm text-ink-600" {% if week.length %}hidden{% endif %}>{{ "home.week.empty" | t(L) }}</p>
+{#- as text only when the build found nothing this week; otherwise app.js writes the words in (data-reveal-text) if the
+    list empties - as text, crawlers that read the page without scripts or CSS would quote it next to the list -#}
+{%- if week.length %}
+<p id="home-week-empty" class="rounded-2xl bg-ink-50 p-4 text-sm text-ink-600" data-reveal-text="{{ 'home.week.empty' | t(L) }}" hidden></p>
+{%- else %}
+<p id="home-week-empty" class="rounded-2xl bg-ink-50 p-4 text-sm text-ink-600">{{ "home.week.empty" | t(L) }}</p>
+{%- endif %}
 {%- endif -%}

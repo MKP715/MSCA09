@@ -11,6 +11,8 @@ meta_title_key: districts.hub_meta_title
 description_key: districts.description
 accent: coral
 scripts: ["/assets/js/districts.js"]
+# "No city found…" is written by the script when it is true (the city finder below), so it is never in the page's text
+jsText: ["districts.finder.none"]
 ---
 {#-
   /districts/ — every district of Area 09: city search, map, filterable cards, every city A to Z, the
@@ -87,11 +89,12 @@ scripts: ["/assets/js/districts.js"]
               {%- set moreTpl = "districts.finder.more" | t(L) %}
               <li x-show="more > 0" role="presentation" class="px-3 pt-2 pb-1 text-xs font-medium text-ink-500" x-text="{{ moreTpl | json }}.replace('{n}', more)"></li>
             </ul>
+            {#- "No city found…" comes from the script (jsText above): as text, crawlers that read the page without
+                scripts or CSS would quote it -#}
             <p x-cloak x-show="open && none"
                x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 -translate-y-1" x-transition:enter-end="opacity-100 translate-y-0"
-               class="absolute z-30 mt-2 w-full rounded-2xl bg-white p-4 text-sm text-ink-700 shadow-lift" role="status">
-              {{ "districts.finder.none" | t(L) }}
-            </p>
+               class="absolute z-30 mt-2 w-full rounded-2xl bg-white p-4 text-sm text-ink-700 shadow-lift" role="status"
+               x-text="open && none ? MSCA.tr('districts.finder.none') : ''"></p>
             {#- read out: "3 results", "12 results. +4 more — keep typing…" (the "none" line above speaks for itself) -#}
             <p class="sr-only" role="status" aria-live="polite"
                x-text="open && q.trim() && results.length ? (results.length === 1 ? {{ ('districts.finder.count_one' | t(L)) | json }} : {{ ('districts.finder.count' | t(L)) | json }}.replace('{n}', results.length)) + (more > 0 ? '. ' + {{ moreTpl | json }}.replace('{n}', more) : '') : ''"></p>
@@ -402,7 +405,7 @@ scripts: ["/assets/js/districts.js"]
               {% include "partials/district-upcoming.njk" %}
             {%- elif interItems | length %}
               <ul class="-mx-3" data-limit="3" data-empty="#dx-inter-empty">{% for e in interItems %}{{ occRow({ occ: e, lang: L }) }}{% endfor %}</ul>
-              <p id="dx-inter-empty" hidden class="text-ink-600">{{ "districts.inter.none" | t(L) }}</p>
+              <p id="dx-inter-empty" hidden class="text-ink-600" data-reveal-text="{{ 'districts.inter.none' | t(L) }}"></p>
             {%- else %}
               <p class="text-ink-600">{{ "districts.inter.none" | t(L) }}</p>
             {%- endif %}

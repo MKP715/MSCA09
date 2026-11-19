@@ -455,7 +455,10 @@
 
   /* ---- the surface */
   .cal-surface { @apply relative min-h-[26rem] rounded-3xl bg-white p-2 ring-1 ring-ink-900/5 shadow-soft sm:p-4 2xl:p-5; }
-  .cal-ssr__note { @apply flex items-center gap-2 px-2 pt-1 pb-3 text-sm text-ink-500; }
+  /* "Loading the live calendar…": its words come from the script (calendar-views.njk), so the line keeps its height
+     before they arrive and the list below does not move; without JavaScript nothing loads, so it is not shown */
+  .cal-ssr__note { @apply flex min-h-9 items-center gap-2 px-2 pt-1 pb-3 text-sm text-ink-500; }
+  html:not(.js) .cal-ssr__note { @apply hidden; }
   .cal-error, .cal-none { @apply m-1 flex flex-wrap items-start gap-4 rounded-2xl bg-ink-50 p-5 sm:m-0; }
   .cal-none { @apply mb-4 items-center; }
   .cal-none__text { @apply min-w-0 flex-1 basis-[calc(100%-4rem)] sm:basis-0; }

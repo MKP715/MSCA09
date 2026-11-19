@@ -118,7 +118,9 @@
       {#- live countdown -#}
       <div class="mt-8" x-data="countdown({{ occ.start | json }})">
         <p class="text-xs font-bold tracking-[0.18em] text-white/90 uppercase" x-show="!past">{{ "service.next.countdown" | t(L) }}</p>
-        <p x-cloak x-show="past" class="text-lg font-bold">{{ "time.in_progress" | t(L) }}</p>
+        {#- "Happening now" is written by the script once it is true, never sent as text (crawlers that read the page
+            without scripts would say the meeting is under way) -#}
+        <p x-cloak x-show="past" class="text-lg font-bold" x-text="past ? MSCA.tr('time.in_progress') : ''"></p>
         <div class="mt-2 flex gap-2 sm:gap-3" x-show="!past" aria-hidden="true">
           {%- for u in [["d", "time.days"], ["h", "time.hours"], ["m", "time.minutes"], ["s", "time.seconds"]] %}
           <div class="svc-count">

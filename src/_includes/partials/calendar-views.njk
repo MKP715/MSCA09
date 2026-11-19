@@ -30,9 +30,13 @@
 {%- endmacro -%}
 
 <div class="cal-surface">
-  {#- ---- before the script runs (and without JavaScript): the next entries, from the build -#}
+  {#- ---- before the script runs (and without JavaScript): the next entries, from the build.
+         "Loading the live calendar…", "The calendar didn't load", "Nothing matches these filters" and "Nothing
+         scheduled on this day" are written by the script (x-text, keys in pages/calendar.njk's jsText), never sent as
+         text: crawlers that read the page without scripts or CSS would quote them next to the list. Without
+         JavaScript nothing loads, so the loading line is not shown at all (pages/calendar.css) -#}
   <div x-show="!ready" class="cal-ssr">
-    <p class="cal-ssr__note">{% icon "loader-circle", "size-4 animate-spin" %}<span>{{ "calendar.loading" | t(L) }}</span></p>
+    <p class="cal-ssr__note">{% icon "loader-circle", "size-4 animate-spin" %}<span x-text="MSCA.tr('calendar.loading')"></span></p>
     {%- set ssr = calendar.upcoming | limit(24) %}
     <ul class="ev-list" role="list" data-limit="16">
       {%- for occ in ssr %}
@@ -45,8 +49,8 @@
   <div x-cloak x-show="failed" class="cal-error" role="alert">
     <span class="icon-tile-soft size-12" style="{{ 'coral' | accent }}">{% icon "triangle-alert", "size-6" %}</span>
     <div>
-      <p class="font-display text-lg font-bold text-ink-950">{{ "calendar.error.title" | t(L) }}</p>
-      <p class="mt-1 text-ink-600">{{ "calendar.error.body" | t(L) }}</p>
+      <p class="font-display text-lg font-bold text-ink-950" x-text="failed ? MSCA.tr('calendar.error.title') : ''"></p>
+      <p class="mt-1 text-ink-600" x-text="failed ? MSCA.tr('calendar.error.body') : ''"></p>
       <div class="mt-4 flex flex-wrap gap-2">
         <button type="button" class="btn btn-ocean btn-sm" onclick="location.reload()">{% icon "rotate-cw", "size-4" %}{{ "calendar.error.retry" | t(L) }}</button>
         <a href="{{ calendar.embedUrlEs if L.code == 'es' else calendar.embedUrl }}" target="_blank" rel="noopener" class="btn btn-white btn-sm">{% icon "external-link", "size-4" %}{{ "calendar.browse.google" | t(L) }}</a>
@@ -69,7 +73,7 @@
   <div x-cloak x-show="ready && counts.total === 0 && !elsewhereText()" class="cal-none" role="status">
     <span class="icon-tile-soft size-12 shrink-0" style="{{ 'iris' | accent }}">{% icon "search-x", "size-6" %}</span>
     <div class="cal-none__text">
-      <p class="font-display text-lg font-bold text-ink-950">{{ "calendar.none.title" | t(L) }}</p>
+      <p class="font-display text-lg font-bold text-ink-950" x-text="ready && counts.total === 0 ? MSCA.tr('calendar.none.title') : ''"></p>
       <p class="mt-1 text-ink-600" x-show="searching()">{{ "calendar.none.search" | t(L) }}</p>
       <p class="mt-1 text-ink-600" x-show="!searching() && view === 'agenda'">{{ "calendar.none.agenda" | t(L) }}</p>
       <p class="mt-1 text-ink-600" x-show="!searching() && view !== 'agenda'">{{ "calendar.none.range" | t(L) }}</p>
@@ -148,6 +152,6 @@
         {{ agendaRow(L) }}
       </template>
     </ul>
-    <p class="mini-empty" x-show="!mini.items.length">{{ "calendar.mini.empty" | t(L) }}</p>
+    <p class="mini-empty" x-show="!mini.items.length" x-text="mini.items.length ? '' : MSCA.tr('calendar.mini.empty')"></p>
   </div>
 </div>

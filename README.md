@@ -758,6 +758,14 @@ Conventions:
 - Internal links are written as `/path/` and passed through `| lurl(lang)`.
 - Colours come from palette names (`ocean iris coral sun sage copper blush lilac sea`) set with `style="{{ color | accent }}"`.
 - Data files in `src/_data/` must have a single default export.
+- Notices that only the browser can know are true ("This event has ended", "Happening now", "Nothing is scheduled
+  right now", "The calendar didn't load", a city finder's "No city found") are never sent as page text. AI answer
+  engines (ChatGPT, Claude, Perplexity, Common Crawl) read the HTML without running scripts or CSS, so a hidden
+  notice reads to them as if it were shown, right next to the events it contradicts. Send the element empty, with its
+  words in `data-reveal-text="{{ 'key' | t(lang) }}"`: `app.js` writes them in when `data-reveal-after` or `data-empty`
+  shows the notice. In an Alpine component, use `x-text="MSCA.tr('key')"` and list the key in the page's `jsText`
+  (front matter). A notice keeps its words as text only where the build itself found it true (the `{% else %}` branch
+  when a list is empty at build time).
 - Search engines: a page with `noindex: true` gets no canonical or hreflang links and stays out of the
   sitemap; `altNoindex: true` drops the hreflang alternates when the other-language copy is noindex (the
   English Delegate's Corner posts get it automatically). `searchExclude: true` keeps a page out of the site search only.

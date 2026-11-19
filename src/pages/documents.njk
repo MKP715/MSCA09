@@ -11,6 +11,8 @@ crumbs: [{ label_key: "documents.crumb_service", url: "/service/" }]
 bare: true
 source: data/documents/
 scripts: ["/assets/js/documents.js"]
+# "The full library could not be loaded just now…" is written by the script when it is true, never sent as text
+jsText: ["documents.load_failed"]
 eleventyComputed:
   lead: "{{ 'documents.lead' | t(lang, { first: documents.stats.firstYear }) | safe }}"
 ---
@@ -359,7 +361,9 @@ eleventyComputed:
 
       {#- Without JavaScript (or before the index loads): the newest documents + links to every shelf -#}
       <div x-show="!ready" class="doc-fallback mt-6">
-        <p class="mb-4 text-sm text-ink-500" x-show="failed" x-cloak>{{ "documents.load_failed" | t(L) }}</p>
+        {#- written by the script only when the library did not load (jsText above): as text, crawlers that read the
+            page without scripts or CSS would say the library is broken -#}
+        <p class="mb-4 text-sm text-ink-500" x-show="failed" x-cloak x-text="failed ? MSCA.tr('documents.load_failed') : ''"></p>
         {{ docList({ docs: (D.all or []) | limit(24), lang: L, groupByYear: true, showCategory: true, columns: 2 }) }}
         <noscript><p class="mt-6 text-ink-600">{{ "documents.noscript" | t(L) }}</p></noscript>
       </div>

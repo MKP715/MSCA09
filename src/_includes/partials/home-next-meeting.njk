@@ -60,9 +60,12 @@
       {%- endfor %}
     </div>
   </div>
+  {#- "Happening now" / "This meeting has ended": written by the script once the meeting has started (as text, crawlers
+      that read the page without scripts would quote them about an upcoming meeting). home.next.ended reaches the
+      script through the home page's jsText (pages/index.njk) -#}
   <p x-cloak x-show="past" class="hm-cd-live mt-5">
-    <span x-show="past && Date.now() < {{ occ.end | homeMs }}" class="inline-flex items-center gap-2">{% icon "radio", "size-4" %}{{ "time.in_progress" | t(L) }}</span>
-    <span x-show="past && Date.now() >= {{ occ.end | homeMs }}" class="inline-flex items-center gap-2">{% icon "calendar-clock", "size-4" %}{{ "home.next.ended" | t(L) }}</span>
+    <span x-show="past && Date.now() < {{ occ.end | homeMs }}" class="inline-flex items-center gap-2">{% icon "radio", "size-4" %}<span x-text="past ? MSCA.tr('time.in_progress') : ''"></span></span>
+    <span x-show="past && Date.now() >= {{ occ.end | homeMs }}" class="inline-flex items-center gap-2">{% icon "calendar-clock", "size-4" %}<span x-text="past ? MSCA.tr('home.next.ended') : ''"></span></span>
   </p>
 
   <div class="mt-5 flex flex-wrap gap-2">

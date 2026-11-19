@@ -47,7 +47,7 @@
       </div>
       {%- endif %}
       <div id="home-events-empty" {% if events.length %}hidden{% endif %}>
-        {{ emptyState({ icon: "calendar-clock", title: "home.coming.empty_title" | t(L), body: "home.coming.empty_body" | t(L), color: "coral" }) }}
+        {{ emptyState({ icon: "calendar-clock", title: "home.coming.empty_title" | t(L), body: "home.coming.empty_body" | t(L), color: "coral", later: events.length > 0 }) }}
       </div>
     </div>
 

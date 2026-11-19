@@ -208,7 +208,9 @@ eleventyComputed:
             </li>
             {%- endfor %}
           </ol>
-          <p id="dx-nodates" hidden class="text-ink-600">{{ "districts.meeting.no_dates" | t(L) }}</p>
+          {#- shown by app.js only if every date above passes before the next build; its words wait in data-reveal-text
+              (as text, crawlers that read the page without scripts or CSS would quote it next to the dates) -#}
+          <p id="dx-nodates" hidden class="text-ink-600" data-reveal-text="{{ 'districts.meeting.no_dates' | t(L) }}"></p>
           {%- else %}
           <p class="text-ink-600">{{ "districts.meeting.no_dates" | t(L) }}</p>
           {%- endif %}
@@ -509,7 +511,7 @@ eleventyComputed:
             {% include "partials/district-upcoming.njk" %}
           {%- else %}
             <ul class="-mx-3 divide-y divide-ink-100" data-limit="6" data-empty="#dx-noevents">{% for e in events %}{{ occRow({ occ: e, lang: L }) }}{% endfor %}</ul>
-            <p id="dx-noevents" hidden class="text-ink-600">{{ "districts.events.none" | t(L) }}</p>
+            <p id="dx-noevents" hidden class="text-ink-600" data-reveal-text="{{ 'districts.events.none' | t(L) }}"></p>
           {%- endif %}
         </div>
         {%- endif %}

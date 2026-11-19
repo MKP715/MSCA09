@@ -11,7 +11,7 @@ meta_title_key: calendar.flyers.meta_title
 description_key: calendar.flyers.description
 accent: coral
 scripts: ["/assets/js/flyers.js"]
-jsText: ["calendar.flyers.count_one", "calendar.flyers.count_n", "calendar.flyers.count_of"]
+jsText: ["calendar.flyers.count_one", "calendar.flyers.count_n", "calendar.flyers.count_of", "calendar.flyers.empty_title", "calendar.flyers.empty_body"]
 ---
 {#-
   /calendar/flyers/ — every upcoming event and meeting flyer (calendar.flyerWall, src/_data/calendar.js: the whole build
@@ -242,10 +242,11 @@ jsText: ["calendar.flyers.count_one", "calendar.flyers.count_n", "calendar.flyer
       </ul>
     </section>
 
-    {#- nothing matches the filters -#}
+    {#- nothing matches the filters. Its words come from the script (jsText above), never as text: crawlers that read
+        the page without scripts or CSS would say no flyer matches, next to the flyers -#}
     <div class="ev-empty" x-cloak x-show="shown === 0">
       <span class="icon-tile-soft size-11">{% icon "search-x", "size-5" %}</span>
-      <p><strong class="block text-ink-900">{{ "calendar.flyers.empty_title" | t(L) }}</strong>{{ "calendar.flyers.empty_body" | t(L) }}</p>
+      <p><strong class="block text-ink-900" x-text="shown === 0 ? MSCA.tr('calendar.flyers.empty_title') : ''"></strong><span x-text="shown === 0 ? MSCA.tr('calendar.flyers.empty_body') : ''"></span></p>
       <button type="button" class="btn btn-ghost btn-sm" @click="clear(true)">{% icon "x", "size-4" %}{{ "calendar.flyers.clear" | t(L) }}</button>
     </div>
   </div>

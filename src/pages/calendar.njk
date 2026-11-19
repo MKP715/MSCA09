@@ -11,6 +11,8 @@ meta_title_key: calendar.meta_title
 description_key: calendar.description
 accent: ocean
 scripts: ["/assets/js/calendar.js"]
+# notices the script writes in when they are true (partials/calendar-views.njk), so they are never in the page's text
+jsText: ["calendar.loading", "calendar.error.title", "calendar.error.body", "calendar.none.title", "calendar.mini.empty"]
 ---
 {#-
   /calendar/ — the Area calendar. From the top:
