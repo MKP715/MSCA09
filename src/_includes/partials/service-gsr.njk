@@ -22,7 +22,8 @@
       <ol class="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2" role="list">
         {%- for s in steps %}
         <li class="reveal" style="{{ s.color | accent }}; --reveal-delay: {{ loop.index0 * 70 }}ms">
-          <a href="{{ s.url }}" {% if s.ext %}target="_blank" rel="noopener"{% endif %} class="group flex h-full gap-4 rounded-3xl bg-white p-4 shadow-soft ring-1 ring-ink-900/5 transition hover:-translate-y-0.5 hover:shadow-lift sm:p-5">
+          {#- step 5 names and links the next Area meeting, which rolls forward by itself (data-lastmod-skip) -#}
+          <a href="{{ s.url }}" {% if s.ext %}target="_blank" rel="noopener"{% endif %} class="group flex h-full gap-4 rounded-3xl bg-white p-4 shadow-soft ring-1 ring-ink-900/5 transition hover:-translate-y-0.5 hover:shadow-lift sm:p-5"{% if s.n == 5 and nextArea %} data-lastmod-skip{% endif %}>
             <span class="relative shrink-0">
               <span class="icon-tile size-12">{% icon s.icon, "size-6" %}</span>
               <span class="absolute -top-2 -left-2 grid size-6 place-items-center rounded-full bg-ink-950 text-xs font-extrabold text-white ring-2 ring-white">{{ s.n }}</span>

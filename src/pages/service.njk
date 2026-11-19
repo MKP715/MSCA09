@@ -184,7 +184,7 @@ scripts: ["/assets/js/service.js"]
         <div class="mt-6 flex flex-wrap gap-2.5">
           {%- if so and so.joinUrl %}<a href="{{ so.joinUrl }}" target="_blank" rel="noopener" class="btn bg-white text-ink-950 shadow-soft hover:-translate-y-0.5">{% icon "video", "size-4 text-iris-600" %}{{ "service.next.join" | t(L) }}</a>{% endif %}
           {%- if study and study.next %}
-          <a href="{{ study.url | lurl(L) }}" class="btn svc-glass" data-hide-after="{{ study.next.end }}">{% icon "calendar-check", "size-4" %}{{ "service.learn.next" | t(L, { date: (study.next.start | dt("date", L)) }) }}</a>
+          <a href="{{ study.url | lurl(L) }}" class="btn svc-glass" data-hide-after="{{ study.next.end }}" data-lastmod-skip>{% icon "calendar-check", "size-4" %}{{ "service.learn.next" | t(L, { date: (study.next.start | dt("date", L)) }) }}</a>
           {%- endif %}
         </div>
       </article>
@@ -218,7 +218,8 @@ scripts: ["/assets/js/service.js"]
             </div>
           </div>
           <p class="text-[15px] leading-relaxed text-ink-600">{{ ("service.learn." + e.key + "_body") | t(L) }}</p>
-          <p class="mt-auto flex flex-wrap items-center gap-2 text-sm font-semibold text-(--a-700)">
+          {#- data-lastmod-skip: the next or last date rolls forward by itself -#}
+          <p class="mt-auto flex flex-wrap items-center gap-2 text-sm font-semibold text-(--a-700)" data-lastmod-skip>
             {%- if e.series and e.series.next %}
             {% icon "calendar-check", "size-4" %}<span>{{ "service.learn.next" | t(L, { date: (e.series.next.start | dt("date", L)) }) }}</span>
             {%- elif found %}

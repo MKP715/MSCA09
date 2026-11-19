@@ -1,4 +1,5 @@
-// The installable app — the last step of `npm run build`, after asset-hash.mjs. README "The app" explains it all.
+// The installable app — the last step of `npm run build`, after asset-hash.mjs and sitemap-dates.mjs. README "The app"
+// explains it all.
 //
 //   node scripts/build-pwa.mjs [site folder, default _site]
 //
@@ -9,9 +10,9 @@
 //     data/text/common.csv (app.*). Every icon address carries its own hash (?v=…), so a new logo reaches installed apps
 //  3. a fingerprint of every page (<meta name="msca-page">) and of the whole site (<meta name="msca-build"> on every
 //     page, and version.json): an open page compares them with the published ones to know when it is out of date
-//     (pwa.js). Spans marked data-msca-volatile (the footer's "Updated <date>") do not count, so the date alone never
-//     reloads anything. Both are written in the letters a–p only: digits in version.json could look like a phone
-//     number to scripts/check-site.mjs
+//     (pwa.js). Spans marked data-msca-volatile (the calendar page's "Calendar refreshed <date>" in the footer) do not
+//     count, so the date alone never reloads anything. Both are written in the letters a–p only: digits in
+//     version.json could look like a phone number to scripts/check-site.mjs
 //  4. sw.js, the service worker, from scripts/sw-template.js, with the files the offline pages need (precache)
 // Everything comes from the built files alone (no clock, no random, files in a fixed order), so an identical build
 // gives identical files and deploy.yml still skips publishing it.

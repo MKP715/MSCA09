@@ -80,7 +80,7 @@
       </div>
 
       {#- next Area meeting (wide screens; phones and tablets get it below the banner) -#}
-      <div class="hm-hero-aside">
+      <div class="hm-hero-aside" data-lastmod-skip>
         {%- if nm %}{{ nextMeetingCard({ occ: nm, lang: L, variant: "glass" }) }}{% else %}{{ nextMeetingFallback({ lang: L, variant: "glass" }) }}{% endif %}
       </div>
     </div>
@@ -118,6 +118,6 @@
 </section>
 
 {#- phones and tablets: the next Area meeting sits just under the banner -#}
-<div class="home-next-mobile wrap relative z-10 -mt-4 xl:hidden">
+<div class="home-next-mobile wrap relative z-10 -mt-4 xl:hidden" data-lastmod-skip>
   {%- if nm %}{{ nextMeetingCard({ occ: nm, lang: L, variant: "light" }) }}{% else %}{{ nextMeetingFallback({ lang: L, variant: "light" }) }}{% endif %}
 </div>

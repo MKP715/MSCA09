@@ -8,7 +8,7 @@
 <section class="area-next" aria-labelledby="area-next-title">
   <div class="area-next__glow" aria-hidden="true"></div>
   <p id="area-next-title" class="flex items-center gap-2 text-xs font-bold tracking-[0.18em] text-white uppercase">{% icon "landmark", "size-4" %}{{ "calendar.rail.next_area" | t(L) }}</p>
-  <ul data-limit="1" data-empty="#area-next-empty" role="list">
+  <ul data-limit="1" data-empty="#area-next-empty" role="list" data-lastmod-skip>
     {%- for o in C.nextAreaMeetings %}
     {%- set host = C.districts | find("slug", o.district) %}
     <li data-hide-after="{{ o.end }}" data-when="{{ o.start }}" data-until="{{ o.end }}">

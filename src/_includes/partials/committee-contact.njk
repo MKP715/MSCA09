@@ -54,7 +54,7 @@
 
   {#- next meeting -#}
   {%- if nextInfo and nextInfo.occ %}
-  <div class="rounded-3xl p-5 ring-1 ring-ink-900/5" style="background: linear-gradient(160deg, var(--a-50), white);" data-hide-after="{{ nextInfo.occ.end }}">
+  <div class="rounded-3xl p-5 ring-1 ring-ink-900/5" style="background: linear-gradient(160deg, var(--a-50), white);" data-hide-after="{{ nextInfo.occ.end }}" data-lastmod-skip>
     <h2 class="mb-3 flex items-center gap-2 font-display text-base font-bold text-ink-950">{% icon "calendar-clock", "size-5 text-[var(--a-600)]" %}{{ ("committees.next_area_meeting" if nextInfo.kind == "area" else ("committees.next_event" if nextInfo.kind == "event" else "committees.next_meeting")) | t(L) }}</h2>
     {{ nextCard({ occ: nextInfo.occ, lang: L, kind: nextInfo.kind }) }}
   </div>

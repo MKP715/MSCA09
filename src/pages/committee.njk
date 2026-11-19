@@ -220,11 +220,11 @@ eleventyComputed:
         {%- if c.slug == "gsr-school" %}{% include "partials/committee-district-gsr.njk" %}{% endif %}
 
         {%- if events.length %}
-        <h3 class="mt-10 mb-4 flex items-center gap-2 font-display text-xl font-bold text-ink-950">{% icon "sparkles", "size-5 text-[var(--a-600)]" %}{{ "committees.coming_up" | t(L) }}</h3>
+        <h3 class="mt-10 mb-4 flex items-center gap-2 font-display text-xl font-bold text-ink-950" data-lastmod-skip>{% icon "sparkles", "size-5 text-[var(--a-600)]" %}{{ "committees.coming_up" | t(L) }}</h3>
         {%- if hasEv %}
         {% include "partials/committee-ev-upcoming.njk" %}
         {%- else %}
-        <ul class="grid grid-cols-1 gap-3 sm:grid-cols-2" data-limit="6">
+        <ul class="grid grid-cols-1 gap-3 sm:grid-cols-2" data-limit="6" data-lastmod-skip>
           {%- for x in events | limit(12) %}<li data-hide-after="{{ x.end }}">{{ nextCard({ occ: x, lang: L, kind: "event" }) }}</li>{% endfor %}
         </ul>
         {%- endif %}

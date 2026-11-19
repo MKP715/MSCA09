@@ -175,7 +175,8 @@ export default async function (eleventyConfig) {
   // exists and is indexable too (the Spanish copies of the old Delegate's Corner posts are not).
   // Event pages of a series marked noindex (events and finished series that ended over two years ago, or that a live
   // series with the same title replaces: src/_data/calendar.js) stay out even if the page's own flag is missing.
-  // <lastmod> comes from a page's own `lastmod` (event pages: the calendar entry's LAST-MODIFIED day), never the build time.
+  // <lastmod> comes from a page's own `lastmod` (event pages: the calendar entry's LAST-MODIFIED day), never the build time;
+  // scripts/sitemap-dates.mjs then dates the other pages by the day their text last changed (src/pages/sitemap.njk).
   eleventyConfig.addFilter("sitemapEntries", (all) => {
     const pages = (all || []).filter((p) => p.url && p.url.endsWith("/") && !p.data.eleventyExcludeFromCollections);
     const noindex = (p) => !!p.data.noindex || !!(/^\/(es\/)?events\//.test(p.url) && p.data.entry?.item?.noindex);

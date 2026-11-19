@@ -59,7 +59,8 @@ scripts: ["/assets/js/calendar.js"]
           <a href="{{ '/calendar/central-offices/' | lurl(L) }}" class="mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-copper-700 hover:underline">{% icon "building-2", "size-4" %}{{ "calendar.offices.link" | t(L) }}{% icon "arrow-right", "size-3.5" %}</a>
         </div>
       </div>
-      <dl class="cal-stats" aria-label="{{ 'calendar.stats.label' | t(L) }}">
+      {#- data-lastmod-skip: counts that change as days pass are not a change of the page (scripts/sitemap-dates.mjs) -#}
+      <dl class="cal-stats" aria-label="{{ 'calendar.stats.label' | t(L) }}" data-lastmod-skip>
         <div class="cal-stat" style="{{ 'ocean' | accent }}"><dt>{{ "calendar.stats.next30" | t(L) }}</dt><dd>{{ C.stats.occurrencesNext30Days }}</dd></div>
         <div class="cal-stat" style="{{ 'sea' | accent }}"><dt>{{ "calendar.stats.regular" | t(L) }}</dt><dd>{{ C.stats.series }}</dd></div>
         <div class="cal-stat" style="{{ 'coral' | accent }}"><dt>{{ "calendar.stats.events" | t(L) }}</dt><dd>{{ C.stats.eventsUpcoming }}</dd></div>
@@ -161,11 +162,11 @@ scripts: ["/assets/js/calendar.js"]
   <div class="reveal grid gap-5 md:grid-cols-2 xl:grid-cols-4">
     <a href="{{ '/events/' | lurl(L) }}#meetings" class="browse-card group" style="{{ 'sea' | accent }}">
       <span class="icon-tile">{% icon "repeat", "size-6" %}</span>
-      <span class="min-w-0"><span class="browse-card__title">{{ "calendar.browse.meetings" | t(L) }}</span><span class="browse-card__body">{{ "calendar.browse.meetings_body" | t(L, { n: C.stats.series }) }}</span></span>
+      <span class="min-w-0"><span class="browse-card__title">{{ "calendar.browse.meetings" | t(L) }}</span><span class="browse-card__body" data-lastmod-skip>{{ "calendar.browse.meetings_body" | t(L, { n: C.stats.series }) }}</span></span>
     </a>
     <a href="{{ '/events/' | lurl(L) }}#archive" class="browse-card group" style="{{ 'copper' | accent }}">
       <span class="icon-tile">{% icon "history", "size-6" %}</span>
-      <span class="min-w-0"><span class="browse-card__title">{{ "calendar.browse.archive" | t(L) }}</span><span class="browse-card__body">{{ "calendar.browse.archive_body" | t(L, { n: C.stats.pastEvents }) }}</span></span>
+      <span class="min-w-0"><span class="browse-card__title">{{ "calendar.browse.archive" | t(L) }}</span><span class="browse-card__body" data-lastmod-skip>{{ "calendar.browse.archive_body" | t(L, { n: C.stats.pastEvents }) }}</span></span>
     </a>
     <a href="{{ (C.embedUrlEs if L.code == 'es' else C.embedUrl) }}" target="_blank" rel="noopener" class="browse-card group" style="{{ 'iris' | accent }}">
       <span class="icon-tile">{% icon "calendar-check", "size-6" %}</span>
@@ -176,7 +177,8 @@ scripts: ["/assets/js/calendar.js"]
       <span class="min-w-0"><span class="browse-card__title">{{ "calendar.browse.area" | t(L) }}</span><span class="browse-card__body">{{ "calendar.browse.area_body" | t(L) }}</span></span>
     </a>
   </div>
-  <p class="mt-10 flex items-start gap-3 rounded-3xl bg-ink-50 p-5 text-sm leading-relaxed text-ink-600 sm:items-center">
+  {#- data-lastmod-skip: the note carries the day of the build -#}
+  <p class="mt-10 flex items-start gap-3 rounded-3xl bg-ink-50 p-5 text-sm leading-relaxed text-ink-600 sm:items-center" data-lastmod-skip>
     {% icon "info", "size-5 shrink-0 text-ocean-600" %}
     <span>{{ "calendar.footnote" | t(L, { date: C.generated | dt("date", L) }) }} <a href="mailto:{{ site.email_webmaster }}" class="font-semibold text-ocean-700 hover:underline">{{ site.email_webmaster }}</a></span>
   </p>

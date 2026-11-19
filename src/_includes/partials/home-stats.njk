@@ -33,7 +33,8 @@
     </div>
     <ul class="hm-stat-grid" role="list" style="--n: {{ stats.length }}">
       {%- for s in stats %}
-      <li class="reveal" style="{{ s.color | accent }}; --reveal-delay: {{ loop.index0 * 80 }}ms">
+      {#- data-lastmod-skip: this month's meetings, the coming events and the years count change as days pass, not the page -#}
+      <li class="reveal" style="{{ s.color | accent }}; --reveal-delay: {{ loop.index0 * 80 }}ms"{% if s.key in ['meetings', 'events', 'years'] %} data-lastmod-skip{% endif %}>
         <a href="{{ s.url | lurl(L) }}" class="hm-stat-card group">
           <span class="icon-tile transition duration-300 group-hover:scale-110 group-hover:rotate-[-6deg]">{% icon s.icon, "size-6" %}</span>
           <span class="hm-stat-num"><span x-data="countUp({{ s.value }})" x-intersect.once="start()" x-text="display">{{ s.value }}</span></span>

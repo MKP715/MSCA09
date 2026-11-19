@@ -67,7 +67,8 @@ source: "README.md#central-office-events"
           <p class="mt-1 text-[15px] leading-snug text-pretty text-ink-600 sm:text-base">{{ "calendar.offices.lead" | t(L) }}</p>
         </div>
       </div>
-      <dl class="cal-stats" aria-label="{{ 'calendar.stats.label' | t(L) }}">
+      {#- data-lastmod-skip: counts that change as days pass are not a change of the page (scripts/sitemap-dates.mjs) -#}
+      <dl class="cal-stats" aria-label="{{ 'calendar.stats.label' | t(L) }}" data-lastmod-skip>
         <div class="cal-stat" style="{{ 'copper' | accent }}"><dt>{{ "calendar.offices.stat_events" | t(L) }}</dt><dd>{{ all.length }}</dd></div>
         <div class="cal-stat" style="{{ 'ocean' | accent }}"><dt>{{ "calendar.offices.stat_offices" | t(L) }}</dt><dd>{{ CO.stats.auto }}</dd></div>
       </dl>
@@ -82,7 +83,7 @@ source: "README.md#central-office-events"
 {%- if all.length %}
 <div x-data="flyerWall" data-fw-count="calendar.offices" class="fw-page wrap pt-6 pb-10 sm:pt-8 lg:pt-10 lg:pb-14">
   {#- ---------------------------------------------------------- filters (with JavaScript only) -#}
-  <form class="fw-bar" role="search" aria-label="{{ 'calendar.offices.filters_label' | t(L) }}" @submit.prevent data-pagefind-ignore>
+  <form class="fw-bar" role="search" aria-label="{{ 'calendar.offices.filters_label' | t(L) }}" @submit.prevent data-pagefind-ignore data-lastmod-skip>
     <div class="fw-bar__top">
       <label class="cal-search fw-search">
         {% icon "search", "size-5 shrink-0 text-ink-500" %}
@@ -189,7 +190,7 @@ source: "README.md#central-office-events"
         <h2 id="fw-events-title" class="h-section text-balance">{{ "calendar.offices.events_title" | t(L) }}</h2>
         <p class="lead mt-2 text-pretty">{{ "calendar.offices.events_lead" | t(L) }}</p>
       </div>
-      <div class="fw-months">
+      <div class="fw-months" data-lastmod-skip>
       {%- for m in CO.months %}
       <section class="fw-month" data-fw-month="{{ m.key }}" aria-labelledby="fw-m-{{ m.key }}">
         <div class="fw-month__title"><h3 id="fw-m-{{ m.key }}" class="first-letter:uppercase">{{ m.key | dt("month", L) }}</h3><span class="chip chip-accent" data-fw-n aria-hidden="true">{{ m.cards.length }}</span></div>

@@ -98,7 +98,7 @@
       <p class="flex items-start gap-2 text-ink-600">{% icon coIcon, "mt-0.5 size-4 shrink-0 text-[var(--a-600)]" %}<span>{{ ("calendar.offices.status." + co.status) | t(L, { office: ((shared.name_es if L.code == 'es' else shared.name_en) if shared else "") }) }}</span></p>
       <div class="mt-3 flex flex-wrap gap-2">
         {%- if co.count %}
-        <a href="?office={{ co.key }}#events" class="btn btn-white btn-sm" data-fw-office-link="{{ co.key }}">{% icon "calendar-days", "size-4 text-[var(--a-600)]" %}{{ ("calendar.offices.upcoming_one" | t(L)) if co.count == 1 else ("calendar.offices.upcoming_n" | t(L, { n: co.count })) }}</a>
+        <a href="?office={{ co.key }}#events" class="btn btn-white btn-sm" data-fw-office-link="{{ co.key }}" data-lastmod-skip>{% icon "calendar-days", "size-4 text-[var(--a-600)]" %}{{ ("calendar.offices.upcoming_one" | t(L)) if co.count == 1 else ("calendar.offices.upcoming_n" | t(L, { n: co.count })) }}</a>
         {%- endif %}
         {%- if co.events_page %}
         <a href="{{ co.events_page }}" target="_blank" rel="noopener" class="btn btn-ghost btn-sm">{% icon "external-link", "size-4" %}{{ "calendar.offices.events_page" | t(L) }}</a>
@@ -223,7 +223,7 @@
 {% macro nextMeetingCard(o) %}
 {%- set m = o.occ -%}{%- set L = o.lang -%}
 {%- if m and m.start %}
-<a href="{{ m.url | lurl(L) }}" class="group flex items-center gap-4 rounded-3xl bg-white/90 p-4 shadow-soft ring-1 ring-ink-900/5 transition hover:-translate-y-0.5 hover:shadow-lift" data-hide-after="{{ m.end or m.start }}" data-when="{{ m.start }}" data-until="{{ m.end }}">
+<a href="{{ m.url | lurl(L) }}" class="group flex items-center gap-4 rounded-3xl bg-white/90 p-4 shadow-soft ring-1 ring-ink-900/5 transition hover:-translate-y-0.5 hover:shadow-lift" data-hide-after="{{ m.end or m.start }}" data-when="{{ m.start }}" data-until="{{ m.end }}" data-lastmod-skip>
   <span class="grid w-16 shrink-0 overflow-hidden rounded-2xl text-center shadow-soft ring-1 ring-ink-900/5">
     <span class="bg-coral-700 py-1 text-[11px] font-bold tracking-widest text-white uppercase">{{ m.start | dt("mon", L) }}</span>
     <span class="bg-white py-1.5 font-display text-2xl leading-none font-extrabold text-ink-950">{{ m.start | dt("day", L) }}</span>

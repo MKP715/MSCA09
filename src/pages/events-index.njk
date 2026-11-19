@@ -85,7 +85,7 @@ crumbs: [{ label_key: "nav.calendar", url: "/calendar/" }]
 
     {#- one-time events too far ahead for the calendar's dates (a convention years away): their pages are linked from here -#}
     {%- if C.furtherAhead and C.furtherAhead.length %}
-    <div id="further-ahead" class="reveal mt-14 scroll-mt-28" style="{{ 'iris' | accent }}">
+    <div id="further-ahead" class="reveal mt-14 scroll-mt-28" style="{{ 'iris' | accent }}" data-lastmod-skip>
       <h3 class="mb-2 flex flex-wrap items-center gap-3 font-display text-2xl font-bold text-ink-950">
         <span class="icon-tile size-10">{% icon "telescope", "size-5" %}</span>{{ "calendar.events.further_ahead" | t(L) }}
         <span class="chip chip-accent">{{ C.furtherAhead.length }}</span>
@@ -111,8 +111,8 @@ crumbs: [{ label_key: "nav.calendar", url: "/calendar/" }]
   </div>
 </section>
 
-{#- ---- past events, by year -#}
-<section id="archive" class="wrap scroll-mt-28 py-14 lg:py-20" aria-labelledby="archive-title">
+{#- ---- past events, by year (data-lastmod-skip: it grows as events end, and lists other pages) -#}
+<section id="archive" class="wrap scroll-mt-28 py-14 lg:py-20" aria-labelledby="archive-title" data-lastmod-skip>
   {{ sectionHead({ eyebrow: "calendar.events.archive_eyebrow" | t(L), title: "calendar.events.archive" | t(L), lead: "calendar.events.archive_lead" | t(L, { n: C.stats.pastEvents }), id: "archive-title" }) }}
   <div class="space-y-4">
     {%- for y in C.archive %}

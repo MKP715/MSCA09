@@ -133,7 +133,7 @@ scripts: ["/assets/js/districts.js"]
             and the page below does not move. -#}
         {%- set soon = D.list | dxUpcoming(calendar) %}
         {%- if soon | length %}
-        <div class="mt-7 lg:mt-9">
+        <div class="mt-7 lg:mt-9" data-lastmod-skip>
           <p class="mb-3 flex items-center gap-2 text-xs font-bold tracking-[0.18em] text-white/90 uppercase">{% icon "calendar-clock", "size-4" %}{{ "districts.soon.title" | t(L) }}</p>
           <ul class="dx-soon no-scrollbar" data-limit="6">
             {%- for m in soon %}
@@ -396,7 +396,7 @@ scripts: ["/assets/js/districts.js"]
         <div class="dx-panel">
           <h3 class="flex items-center gap-2 font-display text-lg font-bold text-ink-950">{% icon "calendar-days", "size-5 text-(--a-600)" %}{{ "districts.inter.next" | t(L) }}</h3>
           {%- set interItems = calendar | dxInterEvents %}
-          <div class="mt-4">
+          <div class="mt-4" data-lastmod-skip>
             {%- if hasEventMacros and interItems | length %}
               {%- set upItems = interItems %}{% set upLimit = 3 %}{% set upEmpty = "districts.inter.none" | t(L) %}{% set upId = "dx-inter-list" %}{% set upVariant = "compact" %}
               {% include "partials/district-upcoming.njk" %}

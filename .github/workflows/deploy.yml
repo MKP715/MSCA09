@@ -6,7 +6,8 @@ name: Build and publish the website
 #    and so "upcoming" lists roll forward on their own. A scheduled build identical to the
 #    last published site is not published again (GitHub Pages would re-date every file, and
 #    returning visitors would download them all again); pushes and manual runs always publish.
-#  - on demand: Actions tab → "Build and publish the website" → Run workflow
+#  - on demand: Actions tab → "Build and publish the website" → Run workflow (once after the move from the old site:
+#    tick "announce_old_addresses" to tell Bing where every old WordPress address went)
 #  - once a day (the first run of the Pacific day), it also reads the central offices' event lists from their own
 #    websites (scripts/office-events.mjs → data/central-office-events.json; README "Central-office events"). A manual
 #    run can force that read again, or skip it.
@@ -37,6 +38,10 @@ on:
         type: choice
         options: [due, force, skip]
         default: due
+      announce_old_addresses:
+        description: "Also tell Bing and the other IndexNow engines about EVERY old WordPress address that forwards to a new page (once, after the move; new ones are announced by themselves)"
+        type: boolean
+        default: false
 
 # Each job gets only what it needs (below); nothing by default. The build job runs some 330 outside npm packages, so
 # it can only read: it cannot push to the repository or call the Pages deploy API (the deploy job publishes the files
@@ -266,9 +271,27 @@ jobs:
             && python scripts/build-social-card.py \
             || echo "::warning::Could not redraw the link-preview picture; using the one in the repository."
 
+      - name: Recall the pages' dates on the live site (never blocks)
+        # The build dates every page of the sitemap that has no date of its own (the home pages, districts, committees,
+        # documents …) by the day what it says last changed (scripts/sitemap-dates.mjs): a page that says the same as on
+        # the live site keeps the live date, so an unchanged build stays identical and is not published again (below),
+        # and search engines are told about a page only when it really changed. None on the live site (the first
+        # deploy): those pages get no date. Not readable this time (an outage): the live sitemap's dates are kept, so one
+        # failed download never wipes them. (?run=: the copy just published, not one GitHub's servers still keep.)
+        env:
+          SITE_URL: ${{ vars.SITE_URL || steps.pages.outputs.base_url }}
+        run: |
+          curl -fsS --retry 3 --max-time 20 -o "$RUNNER_TEMP/live-page-dates.json" "${SITE_URL%/}/assets/data/page-dates.json?run=${GITHUB_RUN_ID}" \
+            || { rm -f "$RUNNER_TEMP/live-page-dates.json"; echo "No page dates from the live site."; }
+          curl -fsS --retry 3 --max-time 20 -o "$RUNNER_TEMP/live-sitemap-dates.xml" "${SITE_URL%/}/sitemap.xml?run=${GITHUB_RUN_ID}" \
+            || { rm -f "$RUNNER_TEMP/live-sitemap-dates.xml"; echo "No sitemap from the live site."; }
+
       - name: Build
         env:
           SITE_URL: ${{ vars.SITE_URL || steps.pages.outputs.base_url }}
+          # the step above; a missing file is no live copy (scripts/sitemap-dates.mjs)
+          PAGE_DATES_LIVE: ${{ runner.temp }}/live-page-dates.json
+          PAGE_DATES_LIVE_SITEMAP: ${{ runner.temp }}/live-sitemap-dates.xml
         run: npm run build
 
       - name: Check the built site (anonymity, links, data files, missing text)
@@ -287,6 +310,8 @@ jobs:
       - name: Compare with the last published site
         # One SHA-1 over every file's name and content. The search index (pagefind*) is left out: Pagefind writes
         # the same index in a different byte order each time, and it is made from the pages, which are counted.
+        # The sitemap's dates and assets/data/page-dates.json are counted too: they come from the live site while the
+        # pages say the same ("Recall the pages' dates"), so they change only with the pages.
         # Only a scheduled run may skip publishing; a push or a manual run always publishes.
         id: fingerprint
         run: |
@@ -302,19 +327,26 @@ jobs:
           fi
 
       - name: List the changed pages for Bing and other IndexNow search engines (never blocks)
-        # Pages that are new, gone or have a new <lastmod> compared with the sitemap on the live site
-        # (scripts/indexnow-urls.mjs); the deploy job announces them once this build is published. The list is
-        # empty when the live sitemap cannot be read, and for a build that is not the site at the root of
-        # site_url in data/settings.csv (e.g. on https://<user>.github.io/<repository>/).
+        # Pages that are new, gone or have a new <lastmod> compared with the sitemap on the live site (the build dated
+        # the pages without a date of their own by what they say: "Recall the pages' dates" above), and old WordPress
+        # addresses that are new or gone in /sitemap-old-addresses.xml (every one of them on a manual run with
+        # "announce_old_addresses"); scripts/indexnow-urls.mjs. The deploy job announces them once this build is
+        # published. The list is empty when the live sitemap cannot be read, and for a build that is not the site at
+        # the root of site_url in data/settings.csv (e.g. on https://<user>.github.io/<repository>/).
         id: indexnow
         if: steps.fingerprint.outputs.skip != 'true'
         continue-on-error: true
         env:
           SITE_URL: ${{ vars.SITE_URL || steps.pages.outputs.base_url }}
+          ALL_OLD: ${{ inputs.announce_old_addresses }}
         run: |
           live="$RUNNER_TEMP/live-sitemap.xml"
           curl -fsS --max-time 20 -o "$live" "${SITE_URL%/}/sitemap.xml" || rm -f "$live"
-          urls=$(node scripts/indexnow-urls.mjs "$live" _site/sitemap.xml) || urls="[]"
+          old="$RUNNER_TEMP/live-sitemap-old-addresses.xml"
+          curl -fsS --max-time 20 -o "$old" "${SITE_URL%/}/sitemap-old-addresses.xml" || rm -f "$old"
+          all=""
+          if [ "$ALL_OLD" = "true" ]; then all="--all-old"; fi
+          urls=$(node scripts/indexnow-urls.mjs "$live" _site/sitemap.xml --old "$old" _site/sitemap-old-addresses.xml $all) || urls="[]"
           key=$(cd _site && ls | grep -xE '[0-9a-f]{32}\.txt' | head -n 1 || true)
           if [ -z "$key" ]; then
             echo "::warning::The IndexNow key file (src/static/<32 characters 0-9 and a-f>.txt) is missing: changed pages are not announced to Bing."

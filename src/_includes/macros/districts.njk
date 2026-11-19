@@ -34,7 +34,7 @@
 {#- Upcoming meeting dates that prune themselves in the browser. o: { dates:[{start,end}], lang, limit, id, prefix } -#}
 {% macro nextDates(o) %}
 {%- if o.dates and o.dates | length %}
-<ul class="dx-dates" data-limit="{{ o.limit or 1 }}" {% if o.id %}id="{{ o.id }}"{% endif %}>
+<ul class="dx-dates" data-limit="{{ o.limit or 1 }}" data-lastmod-skip {% if o.id %}id="{{ o.id }}"{% endif %}>
   {%- for x in o.dates %}
   <li data-hide-after="{{ x.end or x.start }}" data-when="{{ x.start }}" data-until="{{ x.end or x.start }}">
     {%- if o.prefix %}<span class="dx-dates-label">{{ o.prefix }}</span>{% endif -%}
@@ -125,7 +125,7 @@
       <span class="block truncate font-display text-[17px] leading-tight font-bold text-ink-950">{{ d | loc("name", L) }}</span>
       <span class="dx-row-meta">
         {%- if dates | length %}
-        <span class="dx-row-next" data-limit="1">
+        <span class="dx-row-next" data-limit="1" data-lastmod-skip>
           {%- for x in dates %}
           <span data-hide-after="{{ x.end or x.start }}" data-when="{{ x.start }}" data-until="{{ x.end or x.start }}">
             <span class="sr-only">{{ "districts.card.next" | t(L) }}</span><time datetime="{{ x.start }}" class="font-semibold text-ink-800">{{ x.start | dt("wkd", L) | replace(".", "") }} {{ x.start | dt("short", L) }}</time><span data-rel hidden class="dx-rel"></span>
@@ -193,7 +193,7 @@
 {#- One upcoming event row, used only when the calendar's own macros are not available. o: { occ, lang } -#}
 {% macro occRow(o) %}
 {%- set e = o.occ -%}
-<li data-hide-after="{{ e.end or e.start }}" data-when="{{ e.start }}" data-until="{{ e.end or e.start }}">
+<li data-hide-after="{{ e.end or e.start }}" data-when="{{ e.start }}" data-until="{{ e.end or e.start }}" data-lastmod-skip>
   <a href="{{ (e.url or '/calendar/') | lurl(o.lang) }}" class="group flex items-center gap-4 rounded-2xl p-3 transition hover:bg-ink-50">
     <span class="grid grid-cols-1 w-14 shrink-0 place-items-center rounded-2xl bg-(--a-100) py-2 text-(--a-800)">
       <span class="text-[11px] font-bold uppercase">{{ e.start | dt("mon", o.lang) }}</span>

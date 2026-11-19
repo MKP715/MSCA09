@@ -34,7 +34,9 @@
     dateBadge({ iso, lang, color, size })          stacked month / day / weekday badge (size: "sm" | "md" | "lg")
 
   Occ and Series objects come from src/_data/calendar.js (BUILD-SPEC §9.1). Everything
-  time-sensitive carries data-hide-after / data-when so it updates itself in the browser.
+  time-sensitive carries data-hide-after / data-when so it updates itself in the browser, and data-lastmod-skip
+  (it changes nothing on the page) so dates rolling forward by themselves never count as a change of the page in
+  the sitemap (scripts/sitemap-dates.mjs).
   The macros only use their arguments, so they work with or without "with context".
 -#}
 {%- from "macros/ui.njk" import formatBadge, langBadge, copyable, emailLink -%}
@@ -147,7 +149,7 @@
 {%- for d in (o.dates or []) %}{% set _ = dl.push([d.start, d.end, d.start | dt("mon", L) | replace(".", ""), d.start | dt("day", L), d.start | dt("wkd", L) | replace(".", ""), ("" + _whenText(d, L)) | trim]) %}{% endfor -%}
 {#- seriesKey / seriesNext (dxEvents): a repeating event sent with its following date, which stays hidden
     until the first has passed (data-series in app.js) -#}
-<{{ tag }} class="ev ev--{{ v }}{{ ' is-cancelled' if cancelled }}" style="{{ occ.color | accent }}" data-hide-after="{{ o.hideAfter or occ.end }}" data-when="{{ occ.start }}" data-until="{{ occ.end }}"{% if occ.seriesKey %} data-series="{{ occ.seriesKey }}"{% endif %}{% if occ.seriesNext %} hidden{% endif %}{% if zoom %} data-gallery{% endif %}{% if dl.length %} data-dates="{{ dl | json }}"{% endif %}{% for dk, dv in (o.data or {}) %} data-{{ dk }}="{{ dv }}"{% endfor %}>
+<{{ tag }} class="ev ev--{{ v }}{{ ' is-cancelled' if cancelled }}" style="{{ occ.color | accent }}" data-hide-after="{{ o.hideAfter or occ.end }}" data-when="{{ occ.start }}" data-until="{{ occ.end }}" data-lastmod-skip{% if occ.seriesKey %} data-series="{{ occ.seriesKey }}"{% endif %}{% if occ.seriesNext %} hidden{% endif %}{% if zoom %} data-gallery{% endif %}{% if dl.length %} data-dates="{{ dl | json }}"{% endif %}{% for dk, dv in (o.data or {}) %} data-{{ dk }}="{{ dv }}"{% endfor %}>
 {%- if v == "flyer" %}
   {%- if zoom %}
   <div class="ev-flyer ev-flyer--zoom group">
@@ -282,7 +284,7 @@
 {%- set sz = o.sizes or "(min-width: 1920px) 18vw, (min-width: 1536px) 22vw, (min-width: 1024px) 30vw, (min-width: 480px) 45vw, 92vw" -%}
 {%- set tlang = ("es" if ev.language == "Spanish" else ("en" if ev.language == "English" else "")) -%}
 {%- set dl = [[ev.start, ev.end, ev.start | dt("mon", L) | replace(".", ""), ev.start | dt("day", L), ev.start | dt("wkd", L) | replace(".", ""), ("" + _whenText(ev, L)) | trim]] -%}
-<{{ o.tag or "li" }}{% if wall %} id="{{ ev.id }}"{% endif %} class="ev ev--flyer ev--co scroll-mt-28" style="{{ ev.color | accent }}" data-hide-after="{{ ev.end }}" data-when="{{ ev.start }}" data-until="{{ ev.end }}"{% if zoom %} data-gallery{% endif %}{% if wall %} data-dates="{{ dl | json }}" data-fw-card="{{ ev.id }}" data-fw-kind="event" data-fw-type="{{ ev.typeSlug }}" data-fw-lang="{{ ev.langKey }}" data-fw-format="{{ ev.formatKey }}" data-fw-offices="{{ ev.offices | join(' ') }}" data-search="{{ ev.search }}"{% endif %}>
+<{{ o.tag or "li" }}{% if wall %} id="{{ ev.id }}"{% endif %} class="ev ev--flyer ev--co scroll-mt-28" style="{{ ev.color | accent }}" data-hide-after="{{ ev.end }}" data-when="{{ ev.start }}" data-until="{{ ev.end }}" data-lastmod-skip{% if zoom %} data-gallery{% endif %}{% if wall %} data-dates="{{ dl | json }}" data-fw-card="{{ ev.id }}" data-fw-kind="event" data-fw-type="{{ ev.typeSlug }}" data-fw-lang="{{ ev.langKey }}" data-fw-format="{{ ev.formatKey }}" data-fw-offices="{{ ev.offices | join(' ') }}" data-search="{{ ev.search }}"{% endif %}>
   {%- if wall %}
   <div class="ev-flyer ev-flyer--zoom group">
   {%- else %}
@@ -384,7 +386,8 @@
 {%- set s = o.series -%}
 {%- if s -%}
 {%- set L = o.lang -%}
-<div class="add-cal{{ ' add-cal--compact' if o.compact }}">
+{#- data-lastmod-skip: the Google and Outlook links carry the next date -#}
+<div class="add-cal{{ ' add-cal--compact' if o.compact }}" data-lastmod-skip>
   {%- if not o.compact %}<p class="add-cal__label">{% icon "calendar-plus", "size-4" %}{{ "calendar.add.title" | t(L) }}</p>{% endif %}
   <div class="flex flex-wrap gap-2">
     <a href="{{ s | calGoogle(o.occ, L) }}" target="_blank" rel="noopener" class="btn btn-white btn-sm">{% icon "calendar-plus", "size-4 text-ocean-600" %}{{ "calendar.add.google" | t(L) }}</a>
@@ -429,7 +432,7 @@
         {%- endif %}
         {%- set nexts = (s.upcomingDates or []) | where("status", "confirmed") | limit(4) %}
         {%- if s.recurring and nexts.length %}
-        <ul class="mt-2" data-limit="1" role="list">
+        <ul class="mt-2" data-limit="1" role="list" data-lastmod-skip>
           {%- for n in nexts %}
           <li class="mi-next" data-hide-after="{{ n.end }}" data-when="{{ n.start }}" data-until="{{ n.end }}">
             <span class="inline-flex items-center gap-1.5 whitespace-nowrap">{% icon "arrow-right", "size-3.5 shrink-0" %}{{ "calendar.info.next" | t(L) }}:</span>

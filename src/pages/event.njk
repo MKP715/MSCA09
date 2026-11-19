@@ -104,7 +104,7 @@ eleventyComputed:
             line is as tall and wraps as it will (Spanish, on phones) and the buttons below do not move. -#}
         {%- set nexts = (s.upcomingDates or []) | where("status", "confirmed") | limit(4) %}
         {%- if nexts.length %}
-        <ul class="mt-5" data-limit="1" role="list">
+        <ul class="mt-5" data-limit="1" role="list" data-lastmod-skip>
           {%- for n in nexts %}
           {%- set inDays = n.start | svcDaysFrom %}
           <li class="flex flex-wrap items-center gap-2 text-ink-700"{% if not loop.first %} hidden{% endif %} data-hide-after="{{ n.end }}" data-when="{{ n.start }}" data-until="{{ n.end }}">
@@ -159,7 +159,7 @@ eleventyComputed:
         <div class="ev-hero__art" aria-hidden="true">
           <span class="ev-hero__art-icon">{% icon s.icon or "calendar", "size-20 xl:size-24" %}</span>
           {%- set heroIso = s.next.start if s.next else s.start %}
-          <div class="absolute bottom-5 left-5">{{ dateBadge({ iso: heroIso, lang: L, color: s.color, size: "lg" }) }}</div>
+          <div class="absolute bottom-5 left-5" data-lastmod-skip>{{ dateBadge({ iso: heroIso, lang: L, color: s.color, size: "lg" }) }}</div>
           <p class="absolute right-5 bottom-6 max-w-[60%] text-right font-display text-lg font-bold text-white/95 drop-shadow">{{ s | calTypeLabel(L) }}</p>
         </div>
         {%- endif %}
@@ -248,7 +248,8 @@ eleventyComputed:
     {#- ======================================================== aside -#}
     <aside class="min-w-0 space-y-6 xl:sticky xl:top-28 xl:self-start">
       {%- if s.recurring %}
-      <section class="card p-5 sm:p-6" style="{{ s.color | accent }}">
+      {#- data-lastmod-skip: the dates roll forward by themselves (an edit in Google Calendar dates the page: lastmod) -#}
+      <section class="card p-5 sm:p-6" style="{{ s.color | accent }}" data-lastmod-skip>
         <h2 class="flex items-center gap-2.5 font-display text-lg font-bold text-ink-950"><span class="icon-tile-soft size-9">{% icon "calendar-range", "size-5" %}</span>{{ "calendar.event.next_dates" | t(L) }}</h2>
         {%- set dl = "dates" | calUid %}
         {%- if s.upcomingDates.length %}
@@ -351,7 +352,8 @@ eleventyComputed:
   </div>
 
   {%- if s.related and s.related.length %}
-  <section class="reveal mt-16 lg:mt-20">
+  {#- data-lastmod-skip: other pages, rolling forward by themselves, are never a change of this page in the sitemap -#}
+  <section class="reveal mt-16 lg:mt-20" data-lastmod-skip>
     {{ sectionHead({ eyebrow: "calendar.event.related_eyebrow" | t(L), title: "calendar.event.related" | t(L), action: { label: "calendar.open_calendar" | t(L), url: "/calendar/" | lurl(L), icon: "calendar-days" } }) }}
     {%- set withFlyers = s.related | where("flyer") %}
     {{ upcomingList({ items: s.related, lang: L, limit: 4, variant: ("flyer" if withFlyers.length >= 2 else "default"), class: ("ev-grid ev-grid--rel" if withFlyers.length >= 2 else "ev-grid ev-grid--4") }) }}
