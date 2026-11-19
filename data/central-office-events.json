@@ -416,7 +416,7 @@
      "h": 1071,
      "mime": "image/jpeg",
      "pdf": "",
-     "sha256": "",
+     "sha256": "e63d354f48705bb1216cbc246f279a4061105aec481ca1b45ff8318cb3dbeb1b",
      "sizes": [
       [
        188,
@@ -566,7 +566,7 @@
      "h": 1044,
      "mime": "image/jpeg",
      "pdf": "",
-     "sha256": "",
+     "sha256": "0189e929c00e31ce2cac41b93f6c1e68b8b578e87afff5f85d41b75854ac2974",
      "sizes": [
       [
        186,
@@ -684,7 +684,7 @@
      "h": 1080,
      "mime": "image/jpeg",
      "pdf": "",
-     "sha256": "",
+     "sha256": "a72ed796888b533ae9e37015ff76893e149c581dd9db7c484aaeacffc5af8655",
      "sizes": [
       [
        199,
@@ -1316,7 +1316,7 @@
    "sources": {},
    "status": "empty",
    "unparsed": 0,
-   "watchModified": "2026-11-12T13:23:31"
+   "watchModified": "2026-11-18T12:04:46"
   },
   "nocco": {
    "adapter": "aanoc",
@@ -1440,14 +1440,17 @@
    "failingSince": "",
    "flyers": {
     "https://aasurdelabahia.org/wp-content/uploads/2026/11/Aniversario-Intergrupal.jpg": "82ac1bc42260929d1032ddedc5eaa996d5b0e7ebb27ec8b80841e11045430a9f 1080 1387 image/jpeg",
+    "https://aasurdelabahia.org/wp-content/uploads/2026/11/Camino-de-Luz-1.jpg": "a72ed796888b533ae9e37015ff76893e149c581dd9db7c484aaeacffc5af8655 715 1080 image/jpeg",
     "https://aasurdelabahia.org/wp-content/uploads/2026/11/Catarsis-1.jpg": "1ecaa10b0312ce5cc0c091eb5dd748333469b0b5bd3f07aa253dbbc0a6545917 675 1071 image/jpeg",
     "https://aasurdelabahia.org/wp-content/uploads/2026/11/Catarsis-2.jpg": "62aefd9d6a35b728bb8777261b545bccc6969333a60bab39f43a37ec3732606c 657 1061 image/jpeg",
     "https://aasurdelabahia.org/wp-content/uploads/2026/11/Catarsis-3.jpg": "7d1b47c9eb91cb99dc68a186793f94b7c4188deba1bde4a51b3f7d28d10931cd 665 1066 image/jpeg",
+    "https://aasurdelabahia.org/wp-content/uploads/2026/11/Catarsis-4.jpg": "e63d354f48705bb1216cbc246f279a4061105aec481ca1b45ff8318cb3dbeb1b 670 1071 image/jpeg",
     "https://aasurdelabahia.org/wp-content/uploads/2026/11/El-Ultimo-Milagro-2.jpg": "425c1d14e8635779555c5b8e921b2d8e73cb053090eaa1f895e64842f34aebe1 513 791 image/jpeg",
     "https://aasurdelabahia.org/wp-content/uploads/2026/11/El-Ultimo-Milagro-3.jpg": "889c5c95c7ab658f4596d2f862d7929e51ebf5dcfd70d6a6c1c495a7de3c9927 507 805 image/jpeg",
     "https://aasurdelabahia.org/wp-content/uploads/2026/11/El-Ultimo-Milagro-4.jpg": "2d75904cba040cec27d832b4033791a9b34f4eed02a38e15eacff2aea67e8190 506 817 image/jpeg",
     "https://aasurdelabahia.org/wp-content/uploads/2026/11/Llegamos-a-creer-2.jpg": "f53694587131c125d9f51313d7ec808f674eb605e0c35f7db90f3ca0f678a421 664 1023 image/jpeg",
     "https://aasurdelabahia.org/wp-content/uploads/2026/11/Llegamos-a-creer-3.jpg": "4fb26e3971e9c4edf69260043555f50622156066ac4d9e080b1145e1f34fe121 657 1067 image/jpeg",
+    "https://aasurdelabahia.org/wp-content/uploads/2026/11/Llegamos-a-creer-4.jpg": "0189e929c00e31ce2cac41b93f6c1e68b8b578e87afff5f85d41b75854ac2974 648 1044 image/jpeg",
     "https://aasurdelabahia.org/wp-content/uploads/2026/11/Llegamosa-Creer-1.jpg": "2410f8c4144f1a36f9a6aaabe42e4b91dabb4a89418407f233aefe7fa2219764 668 1035 image/jpeg"
    },
    "lastChange": "2026-11-18",
@@ -1497,14 +1500,14 @@
     "https://www.temeculacentraloffice.org/aa/wp-content/uploads/ACYPAA_Roundup_54.jpeg": "675317c03cf1fb889c7f8ec661557cc53706e50a9ef69416926c2d1f5bd36509 1526 2048 image/jpeg"
    },
    "lastChange": "2026-10-30",
-   "pageModified": "2026-11-17T14:38:49",
+   "pageModified": "2026-11-18T06:28:03",
    "sources": {
     "co-temecula-acypaa-liv-state-of-mental-goose-flesh-20270415": "2027-04-18 5f4daa43da80c39c0a1d0180467ca05e633c6e9e",
     "co-temecula-children-s-holiday-party-20261219": "2026-12-19 a8148b749f43ca6d51f63fcdbfe53bc626842dfc",
     "co-temecula-thanksgiving-alcathon-20261126": "2026-11-27 49586ce11c439c741b0509e64516e0d388db488a"
    },
    "status": "ok",
-   "unparsed": 0,
+   "unparsed": 4,
    "watchModified": ""
   },
   "victor-valley": {
