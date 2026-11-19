@@ -18,7 +18,7 @@ scripts: ["/assets/js/content.js"]
 {%- set R = resources.byKey or {} -%}
 {%- set software = (resources.groups | find("key", "software")) if resources and resources.groups else null -%}
 {%- set photos = heroCredits or [] -%}
-{%- set webmaster = site.email_webmaster or "webmaster@msca09aa.org" -%}
+{%- set webmaster = site.email_webmaster -%}
 {%- set navItems = [
   { id: "tradition", label: "policy.nav_tradition" | t(L), icon: "eye-off", color: "iris" },
   { id: "publish", label: "policy.nav_publish" | t(L), icon: "list-checks", color: "sage" },

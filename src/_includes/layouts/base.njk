@@ -171,7 +171,7 @@
     "url": site.url + "/",
     "description": "site.description" | t(L),
     "logo": site.url + "/assets/img/logo/logo-en-512.png",
-    "email": site.email_webmaster,
+    "email": site.email_footer or site.email_webmaster,
     "address": site.postalAddress
   } | json | safe }}</script>
   {%- if page.url == "/" %}

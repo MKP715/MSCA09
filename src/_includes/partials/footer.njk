@@ -31,7 +31,7 @@
         </address>
         <p class="flex items-center gap-3 text-sm">
           <span class="text-ocean-300">{% icon "at-sign", "size-5" %}</span>
-          <a class="inline-flex min-h-11 items-center hover:text-white hover:underline lg:min-h-0" href="mailto:{{ site.email_webmaster }}">{{ site.email_webmaster }}</a>
+          <a class="inline-flex min-h-11 items-center hover:text-white hover:underline lg:min-h-0" href="mailto:{{ site.email_footer or site.email_webmaster }}">{{ site.email_footer or site.email_webmaster }}</a>
         </p>
         {%- if site.webmail_url %}
         <p class="flex items-center gap-3 text-sm">

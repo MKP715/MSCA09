@@ -134,7 +134,8 @@ and CSV file and come from `data/settings.csv`, so nothing needs editing when th
 | Teach every search box another word for the same thing | The page search boxes all match through one file, `src/assets/js/search.js` (accents, plurals, "District 5" = "D5", Tesorera = Tesorero …). Its `GROUPS` list holds names that mean the same thing (minutes = actas, H&I = hospitals and institutions); add a group there and a test case to `scripts/test-search.mjs`, then run `npm run test:search`. |
 | Forward an old msca09aa.org address | Add a row to `data/redirects.csv` — see [Old msca09aa.org addresses](#old-msca09aaorg-addresses). |
 | Stop the site linking to a site that was hacked, or to an old file that moved | Add a row to `data/link-fixes.csv`: `match` = the site's name (e.g. `aadistrict17.info`) or the start of the address, beginning with the site's name (`msca09aa.org/wp-content/`, no `*`), `replace_with` = the new address (starting with `https://`), or empty for no link at all. A row that is not written this way is ignored, and the build says so. It applies to every link typed into Google Calendar, at once; `npm run check:calendar` then lists the entries to clean in Google Calendar. Remove the link from any `data/*.csv` file yourself: the site check stops while a data file still links to a site whose `replace_with` is empty. |
-| Change the Secretary's, webmaster's or contributions e-mail | Edit `email_secretary`, `email_webmaster` or `email_contributions` in `data/settings.csv`. |
+| Change the Secretary's, webmaster's or contributions e-mail | Edit `email_secretary`, `email_webmaster` or `email_contributions` in `data/settings.csv`. The webmaster's address is also typed out in `data/committees.csv` (technology: email_other), the Technology FAQ in `data/committee-resources.csv` (English and Spanish) and the Web Servant row in `data/trusted-servants.csv`: change those too. |
+| Change the e-mail address in the footer | Edit `email_footer` in `data/settings.csv` (it is also the Area's contact address for search engines). |
 | Change the footer's "Webmail login" link | Edit `webmail_url` in `data/settings.csv` (leave it empty to hide the link). |
 | Change the mileage rate or the budget-request year and deadline | Edit `mileage_rate`, `budget_request_year` or `budget_request_deadline` in `data/settings.csv`; the online forms at /service/forms/ follow. When the Finance Committee or Treasurer A/P publishes a new paper form, put its document ids in the `official` rows of `data/finance-forms.csv`. |
 | Show or change a district's GSR School | Edit its row in `data/gsr-schools.csv` (the comment rows at the top explain each column). Times come from the Area calendar when the row names a `calendar_uid`, otherwise from the district meeting. The section appears at `/districts/<id>/#gsr` and in the list on the Area GSR School page. |
@@ -562,7 +563,7 @@ repository has a ruleset (see [One-time setup](#one-time-setup-webmaster), step 
 Git keeps history, and GitHub keeps more than git: removing something private in a new commit does not erase it,
 and neither does rewriting the history on its own (a squash or a force-push). GitHub still shows an old commit to anyone
 who has its id, and the **Actions** tab lists every build with the commit it built. If something private was committed or
-published, tell the webmaster at once (webmaster@msca09aa.org). The webmaster then:
+published, tell the webmaster at once (Info@ManPasand.com). The webmaster then:
 1. removes it at its source (the CSV, the Google Calendar entry, the Drive file) and commits, and changes any password,
    key or Zoom passcode it showed. For a password or key that may be enough: GitHub Support does not purge what a
    change of password already fixes;

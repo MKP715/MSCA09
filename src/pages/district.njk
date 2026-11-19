@@ -538,7 +538,7 @@ eleventyComputed:
             <h3 class="font-display text-lg font-bold text-ink-950">{{ "districts.events.host_title" | t(L) }}</h3>
             <p class="mt-1 text-[15px] text-ink-700">{{ "districts.events.host_body" | t(L) }}</p>
             <div class="mt-2.5 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-[15px]">
-              {{ emailLink({ email: site.email_webmaster or "webmaster@msca09aa.org", lang: L }) }}
+              {{ emailLink({ email: site.email_webmaster, lang: L }) }}
               <a href="{{ '/about/policy/' | lurl(L) }}#submit" class="inline-flex items-center gap-1.5 font-semibold text-ocean-700 hover:underline">{% icon "list-checks", "size-4" %}{{ "districts.events.host_rules" | t(L) }}</a>
             </div>
           </div>
@@ -609,7 +609,7 @@ eleventyComputed:
         <p class="mt-2 text-ink-700">{{ "districts.fix.body" | t(L) }}</p>
         <div class="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-[15px]">
           {{ emailLink({ email: d.email, lang: L }) }}
-          {{ emailLink({ email: site.email_webmaster or "webmaster@msca09aa.org", lang: L }) }}
+          {{ emailLink({ email: site.email_webmaster, lang: L }) }}
         </div>
       </section>
 

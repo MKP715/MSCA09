@@ -29,7 +29,7 @@ footer.legal,"© Mid-Southern California Area 09 of Alcoholics Anonymous. A.A.®
 footer.updated,Updated {date},Actualizado {date},
 footer.policy,Website & anonymity policy,Política del sitio y anonimato,
 footer.edit,Site files on GitHub,Archivos del sitio en GitHub,
-footer.webmail,Webmail login,Acceso al correo web,"Footer link below the webmaster e-mail to the web login of the Area's @msca09aa.org mailboxes (webmail_url in data/settings.csv)"
+footer.webmail,Webmail login,Acceso al correo web,"Footer link below the footer e-mail (email_footer) to the web login of the Area's @msca09aa.org mailboxes (webmail_url in data/settings.csv)"
 search.title,Search the site,Buscar en el sitio,
 search.placeholder,"Search meetings, districts, committees, documents…","Buscar reuniones, distritos, comités, documentos…",
 search.unavailable,Search is available on the published site. (It is built after the pages.),La búsqueda está disponible en el sitio publicado. (Se genera después de las páginas.),

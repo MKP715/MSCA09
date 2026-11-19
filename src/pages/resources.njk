@@ -91,7 +91,7 @@ scripts: ["/assets/js/content.js"]
               </li>
               {%- endfor %}
             </ul>
-            <p class="mt-8 flex items-start gap-2 text-sm leading-relaxed text-ink-500">{% icon "info", "mt-0.5 size-4 shrink-0" %}{{ "resources.offices_note" | t(L) }}</p>
+            <p class="mt-8 flex items-start gap-2 text-sm leading-relaxed text-ink-500">{% icon "info", "mt-0.5 size-4 shrink-0" %}<span>{{ "resources.offices_note" | t(L) }} <a href="mailto:{{ site.email_webmaster }}" class="font-semibold text-ocean-700 hover:underline">{{ site.email_webmaster }}</a></span></p>
           </div>
         </section>
         {%- endif %}
