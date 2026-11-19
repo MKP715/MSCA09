@@ -86,7 +86,6 @@ home.service.cta2,The Area's business,Los asuntos del Área,
 home.stats.eyebrow,Area 09 at a glance,El Área 09 de un vistazo,
 home.stats.title,Carrying the message across Southern California,Llevando el mensaje por el sur de California,
 home.stats.lead,"Area 09 serves the A.A. groups of Orange and Riverside counties, most of San Bernardino County, and Long Beach, the South Bay, the Harbor area and Catalina in Los Angeles County.","El Área 09 sirve a los grupos de A.A. de los condados de Orange y Riverside, la mayor parte del condado de San Bernardino, y Long Beach, el South Bay, la zona del puerto y Catalina en el condado de Los Ángeles.","Sentence under the ""Area 09 at a glance"" heading on the home page: says which region the Area serves. Leave both empty to hide it"
-home.stats.founded_year,1958,1958,"Year the Area was formed (approved at the 8th General Service Conference, April 1958). Used to count the years of service."
 home.stats.districts,Districts,Distritos,
 home.stats.spanish,Spanish-speaking districts,Distritos de habla hispana,
 home.stats.committees,Standing committees,Comités permanentes,"Counts the committees whose category is standing in data/committees.csv, the same number as the Committees page; the service schools are counted in home.stats.schools below it"

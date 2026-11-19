@@ -1106,6 +1106,9 @@
     initLightbox();
     // Re-check the clock every minute so long-open pages stay right.
     setInterval(() => M.applyTime(), 60 * 1000);
+    // A page the browser brings back with Back/Forward (bfcache) resumes its paused timer where it stopped: re-check
+    // at once, so an event that ended meanwhile says so right away (applyTime only writes what differs).
+    window.addEventListener("pageshow", (e) => e.persisted && M.applyTime());
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();

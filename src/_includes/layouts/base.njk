@@ -42,7 +42,12 @@
 {%- set coreTitle = metaTitle or title -%}
 {%- set titleSuffix = (title_suffix_key or "site.title_suffix") | t(L) -%}
 {%- set shortCore = ((coreTitle | strip) + " · " + titleSuffix) | length <= 60 -%}
-{%- set pageTitle = (coreTitle + (" · " + titleSuffix if (shortCore and titleSuffix) else "")) if (coreTitle and not isHome) else homeTitle -%}
+{#- When the full suffix does not fit, a title that does not say A.A. (or Alcoholics Anonymous) by itself still gets the
+    short " · A.A." (site.title_suffix_short), so "District 8 – Riverside & San Bernardino counties" is not mistaken
+    for anything else; search results may cut it off on screen, but search engines and AI answers still read it. -#}
+{%- set saysAA = r/\bA\.\s?A\.|\bAA\b|Alcoh/.test(coreTitle or "") -%}
+{%- set titleSuffixShort = "" if (title_suffix_key or saysAA) else ("site.title_suffix_short" | t(L)) -%}
+{%- set pageTitle = (coreTitle + (" · " + titleSuffix if (shortCore and titleSuffix) else (" · " + titleSuffixShort if titleSuffixShort else ""))) if (coreTitle and not isHome) else homeTitle -%}
 {#- Link previews show og:title as the card's headline: a section's own suffix stays on it ("Save the date · Pacific
     Regional Forum 2028"), while the generic " · A.A. Area 09" is left to og:site_name. -#}
 {%- set ogTitle = ((coreTitle + (" · " + titleSuffix if (title_suffix_key and titleSuffix) else "")) if (coreTitle and not isHome) else homeTitle) | strip -%}

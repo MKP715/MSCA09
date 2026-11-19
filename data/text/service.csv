@@ -3,7 +3,7 @@ key,en,es,notes
 "# Words in curly brackets — {n}, {panel}, {date}, {year}, {name} … — are filled in by the site: keep them, unchanged, in both languages. Spanish follows A.A. usage: RSG, MCD, CMCD, CSA, Asamblea, Conferencia de Servicios Generales (CSG), Junta de Servicios Generales (JSG).",,,
 service.am.title,Assemblies & ASCs,Asambleas y CSA,
 service.am.description,"Every Area 09 meeting of this panel — Assemblies, ASCs, Pre-Conference, FORO, Servathon — with hosts, places, online links, flyers, agendas and minutes.","Todas las reuniones del Área 09 en este panel —Asambleas, CSA, Pre-Conferencia, FORO, Servathon— con anfitriones, lugares, acceso en línea, volantes, agendas y actas.",
-service.am.meta_title,Assemblies & Area Service Committee meetings,Asambleas y Comité de Servicio de Área,"Search-result and link-preview title of /service/area-meetings/ (the page heading stays service.am.title); "" · A.A. Area 09"" is added after it when there is room (keep the whole under about 60 characters)"
+service.am.meta_title,Assemblies & Area Service Committee meetings,Asambleas y reuniones del Comité de Servicio de Área,"Search-result and link-preview title of /service/area-meetings/ (the page heading stays service.am.title); "" · A.A. Area 09"" is added after it when there is room (keep the whole under about 60 characters)"
 service.am.eyebrow,Area meetings,Reuniones del Área,
 service.am.lead,"Where the groups of Area 09 do the Area's business — usually on the 2nd Sunday of the month, in person and on Zoom, in English and Spanish.","Donde los grupos del Área 09 realizan los asuntos del Área: por lo general el 2.º domingo del mes, en persona y por Zoom, en inglés y en español.",
 service.am.attend_title,How to attend,Cómo asistir,

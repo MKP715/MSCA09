@@ -5,7 +5,8 @@
 {#- the same count as the Committees page (category "standing"); the service schools are named under it -#}
 {%- set nStanding = cgroups | homeGroupCount(["standing"]) -%}
 {%- set nSchools = cgroups | homeGroupCount(["school"]) -%}
-{%- set founded = "home.stats.founded_year" | t(L) -%}
+{#- the year the Area was formed: founding_year in data/settings.csv (also the Organization markup's foundingDate) -#}
+{%- set founded = site.founding_year -%}
 {%- set years = founded | homeYearsSince(site.build.year) -%}
 {%- set monthCount = (calendar.occurrences if calendar else []) | homeMonthCount(calendar.typeMap if calendar else {}, site.build.iso) -%}
 {#- the same count as the calendar page: each upcoming event once, however many days it runs -#}

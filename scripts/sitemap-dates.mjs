@@ -235,17 +235,20 @@ export function dateSitemap({ xml, pageOf, live, fallback = null, today, prefix 
     // the live sitemap's date when there is one, else none
     const date = !live ? (fallback && fallback.get(p)) || "" : before && before[0] === fp ? before[1] : today;
     if (live && !(before && before[0] === fp)) counts.changed++;
-    entries.set(p, [fp, date]);
-
     const ownMatch = block.match(/<lastmod>\s*([^<]+?)\s*<\/lastmod>/);
     const own = ownMatch ? ownMatch[1] : "";
+    // Without the live page-dates.json, the live sitemap's date stands in only for a page with no date of its own: for
+    // a post or an event page it is that page's own (or later calendar) date, not the day its text changed, and
+    // keeping it would change this file although nothing changed (an unchanged scheduled build must stay identical).
+    entries.set(p, [fp, !live && own ? "" : date]);
     let lastmod = own;
     if (!own) lastmod = date;
     else if (isEventPage(p) && date > own.slice(0, 10)) lastmod = date;
     if (!lastmod) return whole;
     if (lastmod !== own) counts.dated++;
     if (ownMatch) return whole.replace(ownMatch[0], `<lastmod>${lastmod}</lastmod>`);
-    return whole.replace(/\s*<\/url>$/, `\n    <lastmod>${lastmod}</lastmod>\n  </url>`);
+    // right after <loc>, as sitemap.njk writes it (the sitemap schema wants loc, lastmod, then xhtml:link)
+    return whole.replace(/<\/loc>/, `</loc>\n    <lastmod>${lastmod}</lastmod>`);
   });
   const keys = [...entries.keys()].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
   // one page per line: small, and easy to compare between two deploys

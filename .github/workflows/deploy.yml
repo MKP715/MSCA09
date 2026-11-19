@@ -119,6 +119,11 @@ jobs:
         if: github.event_name == 'push'
         run: npm run test:calendar || echo "::warning::The calendar's Location tests failed (npm run test:calendar)."
 
+      - name: Test the sitemap dates and the IndexNow list (pushes only; never blocks)
+        # test/sitemap-dates: what dates a page in the sitemap, and which pages are announced to Bing (no network).
+        if: github.event_name == 'push'
+        run: npm run test:dates || echo "::warning::The sitemap-date tests failed (npm run test:dates)."
+
       - name: Today's date in California
         id: day
         run: echo "day=$(TZ=America/Los_Angeles date +%F)" >> "$GITHUB_OUTPUT"
@@ -281,16 +286,47 @@ jobs:
         # The build dates every page of the sitemap that has no date of its own (the home pages, districts, committees,
         # documents …) by the day what it says last changed (scripts/sitemap-dates.mjs): a page that says the same as on
         # the live site keeps the live date, so an unchanged build stays identical and is not published again (below),
-        # and search engines are told about a page only when it really changed. None on the live site (the first
-        # deploy): those pages get no date. Not readable this time (an outage): the live sitemap's dates are kept, so one
-        # failed download never wipes them. (?run=: the copy just published, not one GitHub's servers still keep.)
+        # and search engines are told about a page only when it really changed. Not found on the live site (HTTP 404:
+        # the first deploy): those pages get no date. Not readable this time (an outage, a network fault): that is not
+        # the first deploy, so the copy saved by the last publishing run is used instead (next step), a scheduled run
+        # does not publish (it tries again 3 hours later), and the live sitemap's dates are the last resort — so a failed
+        # download never wipes the dates. (?run=: the copy just published, not one GitHub's servers still keep.)
+        id: dates
         env:
           SITE_URL: ${{ vars.SITE_URL || steps.pages.outputs.base_url }}
         run: |
-          curl -fsS --retry 3 --max-time 20 -o "$RUNNER_TEMP/live-page-dates.json" "${SITE_URL%/}/assets/data/page-dates.json?run=${GITHUB_RUN_ID}" \
-            || { rm -f "$RUNNER_TEMP/live-page-dates.json"; echo "No page dates from the live site."; }
-          curl -fsS --retry 3 --max-time 20 -o "$RUNNER_TEMP/live-sitemap-dates.xml" "${SITE_URL%/}/sitemap.xml?run=${GITHUB_RUN_ID}" \
+          code=$(curl -sS --retry 4 --retry-all-errors --max-time 20 -o "$RUNNER_TEMP/live-page-dates.json" -w '%{http_code}' \
+            "${SITE_URL%/}/assets/data/page-dates.json?run=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}") || code=000
+          [ "$code" = 200 ] || rm -f "$RUNNER_TEMP/live-page-dates.json"
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          case "$code" in
+            200) echo "Page dates read from the live site." ;;
+            404) echo "No page dates on the live site yet (the first deploy of them): pages without a date of their own get none." ;;
+            *) echo "::warning::Could not read the live site's page dates (HTTP $code): using the copy saved by the last publishing run; a scheduled run does not publish." ;;
+          esac
+          curl -fsS --retry 3 --max-time 20 -o "$RUNNER_TEMP/live-sitemap-dates.xml" "${SITE_URL%/}/sitemap.xml?run=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
             || { rm -f "$RUNNER_TEMP/live-sitemap-dates.xml"; echo "No sitemap from the live site."; }
+
+      # Only when the live page-dates.json could not be read (neither found nor missing): the copy the last publishing run
+      # saved (below, "Save the pages' dates").
+      - name: Recall the pages' dates saved by the last publishing run (only if the live copy could not be read)
+        if: steps.dates.outputs.code != '200' && steps.dates.outputs.code != '404'
+        id: dates-saved
+        uses: actions/cache/restore@v6
+        continue-on-error: true
+        with:
+          path: .page-dates
+          key: page-dates-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: page-dates-
+
+      - name: Use the saved pages' dates
+        if: steps.dates.outputs.code != '200' && steps.dates.outputs.code != '404'
+        run: |
+          if [ -s .page-dates/page-dates.json ]; then
+            cp .page-dates/page-dates.json "$RUNNER_TEMP/live-page-dates.json" && echo "Using the page dates saved by the last publishing run."
+          else
+            echo "::warning::No saved page dates either: the live sitemap's dates are kept for this build."
+          fi
 
       - name: Build
         env:
@@ -324,13 +360,31 @@ jobs:
           hash=$(cd _site && find . -type f -not -path './pagefind/*' -not -path './pagefind-posts/*' -print0 | LC_ALL=C sort -z | xargs -0 sha1sum | sha1sum | cut -d' ' -f1)
           last=$(cat .site-hash/sha1 2>/dev/null || true)
           echo "hash=$hash" >> "$GITHUB_OUTPUT"
+          dates="${{ steps.dates.outputs.code }}"
           if [ "${{ github.event_name }}" = "schedule" ] && [ -n "$last" ] && [ "$hash" = "$last" ]; then
             echo "skip=true" >> "$GITHUB_OUTPUT"
             echo "The built site is the same as the one published last ($hash): not publishing it again."
+          elif [ "${{ github.event_name }}" = "schedule" ] && [ "$dates" != 200 ] && [ "$dates" != 404 ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "The live site's page dates could not be read (HTTP $dates): not publishing; the next scheduled run tries again."
           else
             echo "skip=false" >> "$GITHUB_OUTPUT"
             echo "Publishing (site $hash, last published ${last:-unknown})."
           fi
+
+      # Every run that publishes keeps its pages' dates, for a later run that cannot read them on the live site.
+      - name: Save the pages' dates (only when this build is published)
+        if: steps.fingerprint.outputs.skip != 'true'
+        continue-on-error: true
+        run: mkdir -p .page-dates && cp _site/assets/data/page-dates.json .page-dates/page-dates.json
+
+      - name: Save them for a later run
+        if: steps.fingerprint.outputs.skip != 'true'
+        uses: actions/cache/save@v6
+        continue-on-error: true
+        with:
+          path: .page-dates
+          key: page-dates-${{ github.run_id }}-${{ github.run_attempt }}
 
       - name: List the changed pages for Bing and other IndexNow search engines (never blocks)
         # Pages that are new, gone or have a new <lastmod> compared with the sitemap on the live site (the build dated
@@ -347,9 +401,9 @@ jobs:
           ALL_OLD: ${{ inputs.announce_old_addresses }}
         run: |
           live="$RUNNER_TEMP/live-sitemap.xml"
-          curl -fsS --max-time 20 -o "$live" "${SITE_URL%/}/sitemap.xml" || rm -f "$live"
+          curl -fsS --max-time 20 -o "$live" "${SITE_URL%/}/sitemap.xml?run=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" || rm -f "$live"
           old="$RUNNER_TEMP/live-sitemap-old-addresses.xml"
-          curl -fsS --max-time 20 -o "$old" "${SITE_URL%/}/sitemap-old-addresses.xml" || rm -f "$old"
+          curl -fsS --max-time 20 -o "$old" "${SITE_URL%/}/sitemap-old-addresses.xml?run=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" || rm -f "$old"
           all=""
           if [ "$ALL_OLD" = "true" ]; then all="--all-old"; fi
           urls=$(node scripts/indexnow-urls.mjs "$live" _site/sitemap.xml --old "$old" _site/sitemap-old-addresses.xml $all) || urls="[]"
