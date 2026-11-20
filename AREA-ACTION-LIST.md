@@ -307,7 +307,7 @@ Reply to webmaster@msca09aa.org with **first name + last initial and role mailbo
 
 #### District 4 — DCMC
 
-- [ ] **[When possible] Supply** a direct Seventh Tradition contribution page (the link goes to the longbeachaa.org home page), and confirm hybrid at LBCC until 8:30 PM. *Where:* `/districts/d04/`.
+- [ ] **[When possible] Confirm** hybrid at LBCC until 8:30 PM. *Where:* `/districts/d04/`. (The direct contribution page is done: since Nov 20 the district page links to longbeachaa.org/contributions/ and shows the district's Zelle — see section 24.)
 
 #### District 5 — DCMC
 
@@ -1102,6 +1102,23 @@ The Area Google Calendar was checked against every district, intergroup and cent
   6:00–9:00 PM with a note. Send the end time to the webmaster. Also send Erin S.'s GSR School service e-mail, if there
   is one.
 - [ ] **District 9 DCMC:** confirm that DCMC9email@gmail.com is a shared role mailbox that passes to the next DCMC.
+
+## 24. Done on November 20, 2026 — District 4 Zelle, November meeting recordings
+
+- **District 4 page (`/districts/d04/`):** a new *Contribute* section with the district's **Zelle** — the e-mail ID
+  to send to, **treasurer@longbeachaa.org** (with a Copy button), and the steps — plus its P.O. Box for checks
+  (P.O. Box 9972, Long Beach, CA 90810). The district's own contributions page is now linked directly
+  (longbeachaa.org/contributions/) instead of its home page. The contact box says groups and members can contribute
+  with Zelle.
+- **Technology Committee page (`/committees/technology/#recordings`):** the November Zoom recordings can be played —
+  Grapevine / La Viña planning (Nov 12) and the Monthly Service Study & Committee Sharing (Nov 19, Parts 1 and 2).
+
+**Still to do**
+- [ ] **District 4 Treasurer:** the Zelle QR code sent for the page (also on the district's website) opens Zelle's
+  "how to use Zelle" page; it does not pay the district, so the page shows no QR code for now. For a scan-to-pay code
+  like District 1 & 3's, send the webmaster the QR code your bank app's Zelle makes for the district's account
+  (usually under *Receive* or *My QR code*), and the name Zelle shows when someone sends to
+  treasurer@longbeachaa.org — the page asks givers to check that name before they send.
 
 ## How to send information to the webmaster
 
