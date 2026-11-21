@@ -270,6 +270,80 @@
    "zip": ""
   },
   {
+   "address": "13000 San Antonio Dr.",
+   "allDay": false,
+   "also": [],
+   "cats": [],
+   "city": "Norwalk",
+   "cost": "",
+   "end": "2026-11-25T21:30:00-08:00",
+   "endDate": "2026-11-25",
+   "flags": [],
+   "flyers": [
+    {
+     "h": 1650,
+     "mime": "image/jpeg",
+     "pdf": "",
+     "sha256": "7ef349320c01b04026c92aa95b85fb28e4c8a3545ad5c53d3eed26bf28dd9133",
+     "sizes": [
+      [
+       232,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Despertar-Espiritual-11-232x300.jpg"
+      ],
+      [
+       768,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Despertar-Espiritual-11-768x994.jpg"
+      ],
+      [
+       791,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Despertar-Espiritual-11-791x1024.jpg"
+      ],
+      [
+       1187,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Despertar-Espiritual-11-1187x1536.jpg"
+      ]
+     ],
+     "url": "https://aasurdelabahia.org/wp-content/uploads/2026/11/Despertar-Espiritual-11.jpg",
+     "w": 1275
+    },
+    {
+     "h": 1054,
+     "mime": "image/jpeg",
+     "pdf": "",
+     "sha256": "c80ba7a529300e64ba519c9cddc6b02eb3a3ac6887d69f1347d3357562e8ea08",
+     "sizes": [
+      [
+       276,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Despertar-Espiritual-2-276x300.jpg"
+      ],
+      [
+       768,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Despertar-Espiritual-2-768x834.jpg"
+      ],
+      [
+       943,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Despertar-Espiritual-2-943x1024.jpg"
+      ]
+     ],
+     "url": "https://aasurdelabahia.org/wp-content/uploads/2026/11/Despertar-Espiritual-2.jpg",
+     "w": 971
+    }
+   ],
+   "format": "In person",
+   "id": "co-sur-bahia-3312",
+   "lang": "Spanish",
+   "office": "sur-bahia",
+   "src": "https://aasurdelabahia.org/event/juntas-de-unidad-grupo-despertar-espiritual-6/",
+   "srcHash": "98b9cae96f5e1beb3aaa4f40a526255842feab82",
+   "start": "2026-11-23T19:30:00-08:00",
+   "summary": "",
+   "title": "Juntas de Unidad Grupo Despertar Espiritual",
+   "title_es": "",
+   "type": "Event",
+   "venue": "Despertar Espiritual",
+   "zip": "90650"
+  },
+  {
    "address": "27574 Commerce Center Dr # 139",
    "allDay": false,
    "also": [
@@ -344,6 +418,80 @@
    "type": "Convention",
    "venue": "",
    "zip": ""
+  },
+  {
+   "address": "13000 San Antonio Dr.",
+   "allDay": false,
+   "also": [],
+   "cats": [],
+   "city": "Norwalk",
+   "cost": "",
+   "end": "2026-11-28T21:00:00-08:00",
+   "endDate": "2026-11-28",
+   "flags": [],
+   "flyers": [
+    {
+     "h": 1650,
+     "mime": "image/jpeg",
+     "pdf": "",
+     "sha256": "7ef349320c01b04026c92aa95b85fb28e4c8a3545ad5c53d3eed26bf28dd9133",
+     "sizes": [
+      [
+       232,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Despertar-Espiritual-11-232x300.jpg"
+      ],
+      [
+       768,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Despertar-Espiritual-11-768x994.jpg"
+      ],
+      [
+       791,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Despertar-Espiritual-11-791x1024.jpg"
+      ],
+      [
+       1187,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Despertar-Espiritual-11-1187x1536.jpg"
+      ]
+     ],
+     "url": "https://aasurdelabahia.org/wp-content/uploads/2026/11/Despertar-Espiritual-11.jpg",
+     "w": 1275
+    },
+    {
+     "h": 1054,
+     "mime": "image/jpeg",
+     "pdf": "",
+     "sha256": "c80ba7a529300e64ba519c9cddc6b02eb3a3ac6887d69f1347d3357562e8ea08",
+     "sizes": [
+      [
+       276,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Despertar-Espiritual-2-276x300.jpg"
+      ],
+      [
+       768,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Despertar-Espiritual-2-768x834.jpg"
+      ],
+      [
+       943,
+       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Despertar-Espiritual-2-943x1024.jpg"
+      ]
+     ],
+     "url": "https://aasurdelabahia.org/wp-content/uploads/2026/11/Despertar-Espiritual-2.jpg",
+     "w": 971
+    }
+   ],
+   "format": "In person",
+   "id": "co-sur-bahia-3321",
+   "lang": "Spanish",
+   "office": "sur-bahia",
+   "src": "https://aasurdelabahia.org/event/juntas-de-unidad-grupo-despertar-espiritual-9/",
+   "srcHash": "92f99885ff5cb128cf31824d0292246a8d21adfb",
+   "start": "2026-11-27T19:30:00-08:00",
+   "summary": "",
+   "title": "Juntas de Unidad Grupo Despertar Espiritual",
+   "title_es": "",
+   "type": "Event",
+   "venue": "Despertar Espiritual",
+   "zip": "90650"
   },
   {
    "address": "5325 Pacific Coast Hwy",
@@ -738,7 +886,7 @@
      "h": 1100,
      "mime": "image/jpeg",
      "pdf": "",
-     "sha256": "",
+     "sha256": "d98fbcf41379260e953f56d5f4c5e8dd5ff2d59d8fb081ea776c9034e948d58c",
      "sizes": [
       [
        191,
@@ -1435,18 +1583,21 @@
   },
   "sur-bahia": {
    "adapter": "tribe",
-   "count": 5,
+   "count": 7,
    "errorKind": "",
    "failingSince": "",
    "flyers": {
     "https://aasurdelabahia.org/wp-content/uploads/2026/11/Aniversario-Intergrupal.jpg": "82ac1bc42260929d1032ddedc5eaa996d5b0e7ebb27ec8b80841e11045430a9f 1080 1387 image/jpeg",
     "https://aasurdelabahia.org/wp-content/uploads/2026/11/Camino-de-Luz-1.jpg": "a72ed796888b533ae9e37015ff76893e149c581dd9db7c484aaeacffc5af8655 715 1080 image/jpeg",
     "https://aasurdelabahia.org/wp-content/uploads/2026/11/Camino-de-Luz-3.jpg": "c8401c0377ba17ab42f61cd672082b34ea49dda9833093d3d7f0bfa17b029833 706 1071 image/jpeg",
+    "https://aasurdelabahia.org/wp-content/uploads/2026/11/Camino-de-Luz-4.jpg": "d98fbcf41379260e953f56d5f4c5e8dd5ff2d59d8fb081ea776c9034e948d58c 701 1100 image/jpeg",
     "https://aasurdelabahia.org/wp-content/uploads/2026/11/Caminode-Luz-2.jpg": "1b4d9348944cd522d376f010dfebf8416b5b0c5853c2eb7712a23f2c4f646e51 703 1095 image/jpeg",
     "https://aasurdelabahia.org/wp-content/uploads/2026/11/Catarsis-1.jpg": "1ecaa10b0312ce5cc0c091eb5dd748333469b0b5bd3f07aa253dbbc0a6545917 675 1071 image/jpeg",
     "https://aasurdelabahia.org/wp-content/uploads/2026/11/Catarsis-2.jpg": "62aefd9d6a35b728bb8777261b545bccc6969333a60bab39f43a37ec3732606c 657 1061 image/jpeg",
     "https://aasurdelabahia.org/wp-content/uploads/2026/11/Catarsis-3.jpg": "7d1b47c9eb91cb99dc68a186793f94b7c4188deba1bde4a51b3f7d28d10931cd 665 1066 image/jpeg",
     "https://aasurdelabahia.org/wp-content/uploads/2026/11/Catarsis-4.jpg": "e63d354f48705bb1216cbc246f279a4061105aec481ca1b45ff8318cb3dbeb1b 670 1071 image/jpeg",
+    "https://aasurdelabahia.org/wp-content/uploads/2026/11/Despertar-Espiritual-11.jpg": "7ef349320c01b04026c92aa95b85fb28e4c8a3545ad5c53d3eed26bf28dd9133 1275 1650 image/jpeg",
+    "https://aasurdelabahia.org/wp-content/uploads/2026/11/Despertar-Espiritual-2.jpg": "c80ba7a529300e64ba519c9cddc6b02eb3a3ac6887d69f1347d3357562e8ea08 971 1054 image/jpeg",
     "https://aasurdelabahia.org/wp-content/uploads/2026/11/El-Ultimo-Milagro-1.jpg": "2ef224d576dc396717526698aa30f0b1b284873571a3e4c1ec79c1f7ec759b77 507 798 image/jpeg",
     "https://aasurdelabahia.org/wp-content/uploads/2026/11/El-Ultimo-Milagro-2.jpg": "425c1d14e8635779555c5b8e921b2d8e73cb053090eaa1f895e64842f34aebe1 513 791 image/jpeg",
     "https://aasurdelabahia.org/wp-content/uploads/2026/11/El-Ultimo-Milagro-3.jpg": "889c5c95c7ab658f4596d2f862d7929e51ebf5dcfd70d6a6c1c495a7de3c9927 507 805 image/jpeg",
@@ -1456,10 +1607,12 @@
     "https://aasurdelabahia.org/wp-content/uploads/2026/11/Llegamos-a-creer-4.jpg": "0189e929c00e31ce2cac41b93f6c1e68b8b578e87afff5f85d41b75854ac2974 648 1044 image/jpeg",
     "https://aasurdelabahia.org/wp-content/uploads/2026/11/Llegamosa-Creer-1.jpg": "2410f8c4144f1a36f9a6aaabe42e4b91dabb4a89418407f233aefe7fa2219764 668 1035 image/jpeg"
    },
-   "lastChange": "2026-11-18",
+   "lastChange": "2026-11-21",
    "pageModified": "",
    "sources": {
     "co-sur-bahia-3282": "2026-11-21 bcd2c3bcd0f3830e47b665bafc018d27cd8de1ad",
+    "co-sur-bahia-3312": "2026-11-25 98b9cae96f5e1beb3aaa4f40a526255842feab82",
+    "co-sur-bahia-3321": "2026-11-28 92f99885ff5cb128cf31824d0292246a8d21adfb",
     "co-sur-bahia-3359": "2026-12-06 e4d9ad863810cab21973058b3885e1032835036a",
     "co-sur-bahia-3365": "2026-12-12 b69d1f7d8f71b41d95768a20572be1bbd903f076",
     "co-sur-bahia-3373": "2026-11-28 03c026029491a9f22760119b1ce7d56b2b3f64b7",
