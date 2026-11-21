@@ -279,7 +279,7 @@ Reply to webmaster@msca09aa.org with **first name + last initial and role mailbo
   | 24 | Alternate DCMC (Alt. MCD) | Secretary, Treasurer, Registrar |
   | 30 | Alternate DCMC | Treasurer |
 
-  **GSR School Chair** (the sixth seat, added Oct 17): not provided yet for every district except District 5 (shown open — the district website lists the G.S.R. School chair among its open positions), District 9 (Francine W.) and District 1 & 3 (Erin S., since Nov 13).
+  **GSR School Chair** (the sixth seat, added Oct 17): not provided yet for every district except District 5 (shown open — the district website lists the G.S.R. School chair among its open positions), District 9 (Francine W.), District 1 & 3 (Erin S., since Nov 13) and District 12 (Bob M., since Nov 21).
 
 - [ ] **[Soon] Supply** the *name* of each meeting place listed only by street address, and confirm it is a public place, never a home: Districts 18, 20, 21, 22 (the Spanish Coachella Valley intergroup's room?), 23, 24, 25 (District 19 done Oct 22: H.U.G.). *Where:* your district page and calendar series.
 - [ ] **[Soon] Supply** date, place and flyer (role contacts only) of district events announced Aug 9: District 17 Unity Day (Oct 25 — urgent), 14 Ice Cream Social (Nov 14 — done Oct 29: 2:00–4:00 PM, Unity Valley Church, Hemet, with its flyer), 12 Traditions Day (Nov — done Oct 22: Nov 7, Laguna Woods, with its flyer), 22 local forum (Nov 22), 25 anniversary (Dec 12), 7 December event. *Where:* the calendar and `/events/`.
@@ -340,7 +340,7 @@ Your item is **2.7** (Zoom meeting). Note: your Nov 21 Heritage Day overlaps the
 
 #### District 12 — DCMC
 
-- [ ] **[Soon] Verify** the new Archives Chair (elected per Aug 9), that the @mscadistrict12.org addresses are live, and the other officer names (copied while the old Area page showed the previous panel). Also: is Bob M. (gsr.school@mscadistrict12.org, in the Area's roster before Oct 8) still your GSR School Chair? The seat shows "Not provided yet" until you confirm. *Where:* `/districts/d12/`.
+- [x] **Done Nov 21:** the district's current officer list confirmed the names and @mscadistrict12.org addresses: Trish G. (DCMC), Tom K. (Alternate DCMC), **Andrea C. (Secretary, replaces Stan M.)**, Cyndi C. (Treasurer), Dawn M. (Registrar) and **Bob M. (GSR School Chair, gsr.school@mscadistrict12.org)** — see section 25. The district's Archives Chair is not listed: district pages show only the six seats (since Oct 17). *Was:* **[Soon] Verify** the new Archives Chair (elected per Aug 9), that the @mscadistrict12.org addresses are live, and the other officer names; is Bob M. still your GSR School Chair? *Where:* `/districts/d12/`.
 
 #### District 15 — DCMC
 
@@ -1119,6 +1119,17 @@ The Area Google Calendar was checked against every district, intergroup and cent
   like District 1 & 3's, send the webmaster the QR code your bank app's Zelle makes for the district's account
   (usually under *Receive* or *My QR code*), and the name Zelle shows when someone sends to
   treasurer@longbeachaa.org — the page asks givers to check that name before they send.
+
+## 25. Done on November 21, 2026 — District 12 officers
+
+- **District 12 page (`/districts/d12/`) and the Area panel page (`/about/panel/#districts`):** the trusted servants now
+  match the district's current officer list — Trish G. (DCMC), Tom K. (Alternate DCMC), **Andrea C. (Secretary)**,
+  Cyndi C. (Treasurer), Dawn M. (Registrar) and **Bob M. (GSR School Chair)**, each with the district's own
+  @mscadistrict12.org role mailbox. Andrea C. replaces Stan M. as Secretary.
+- **District 12 DCMC's e-mail:** the district page, the Area panel page and the district's meeting entry in the Area
+  calendar now show the district's own **dcmc@mscadistrict12.org** (in place of d12dcmc@msca09aa.org).
+- **GSR School:** the District 12 GSR School card (on the district page and `/committees/gsr-school/`) now names
+  Bob M. as its contact, with gsr.school@mscadistrict12.org.
 
 ## How to send information to the webmaster
 

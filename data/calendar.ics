@@ -5821,14 +5821,16 @@ RRULE:FREQ=MONTHLY;UNTIL=20280101T075959Z;BYDAY=1TH
 UID:msca09-d12@msca09.local
 CREATED:20260902T160059Z
 DESCRIPTION:MSCA09|District|In person\nLanguage: English\nWeb: mscadistrict
- 12.org\nEmail: d12dcmc@msca09aa.org\nCovers: Aliso Viejo\, Capistrano Beach
- \, Dana Point\, Laguna Beach\, Laguna Hills\, Laguna Woods\, Laguna Niguel\
- , Lake Forest\, Mission Viejo\, Modjeska Canyon\, Rancho Santa Margarita\, 
- San Clemente\, San Juan Capistrano\, Silverado Canyon\, South Laguna\, Coto
-  de Caza and Ladera Ranch\nNote: GSR School at 6:45 PM. No longer meets on 
- Zoom.\n--\nDistrict 12\n1st Thursday of the month\, 7:15 PM to 8:15 PM (Pac
- ific)\nIn person.\nSource: msca09aa.org/district-12 (checked October 2026)
-LAST-MODIFIED:20261013T130404Z
+ 12.org\nEmail: dcmc@mscadistrict12.org\nCovers: Aliso Viejo\, Capistrano Be
+ ach\, Dana Point\, Laguna Beach\, Laguna Hills\, Laguna Woods\, Laguna Nigu
+ el\, Lake Forest\, Mission Viejo\, Modjeska Canyon\, Rancho Santa Margarita
+ \, San Clemente\, San Juan Capistrano\, Silverado Canyon\, South Laguna\, C
+ oto de Caza and Ladera Ranch\nNote: GSR School at 6:45 PM. No longer meets 
+ on Zoom.\n--\nDistrict 12\n1st Thursday of the month\, 7:15 PM to 8:15 PM (
+ Pacific)\nIn person.\nSource: msca09aa.org/district-12 (checked October 202
+ 6)\; Email line changed to the district's dcmc@mscadistrict12.org at the ow
+ ner's request\, November 21\, 2026
+LAST-MODIFIED:20261121T135221Z
 LOCATION:Laguna Niguel Presbyterian Church\, 30071 Ivy Glenn Dr\, Laguna Ni
  guel\, CA 92677
 SEQUENCE:0
