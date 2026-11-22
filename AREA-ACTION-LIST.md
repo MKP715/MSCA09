@@ -93,7 +93,7 @@ Items in sections 1, 2, 5 and 6 are not repeated; each role starts with a pointe
 - [ ] **[Before switch-over] Confirm** your last initial: **Charles A. or Charles R.?** Most sources say A.; the Feb 2026 tool kits say R. *Where:* `/about/panel/` ("to be confirmed").
 - [ ] **[Before switch-over] Supply** the current Area Service Committee roster (Guidelines II.D.7.d) — positions, first name + last initial, role mailboxes; no phones — with the Delegate and Communications (ES) Chair, who updated the Delegate's list. *Where:* [data/trusted-servants.csv](data/trusted-servants.csv).
 - [ ] **[Soon] Confirm** the Google Forms the site links (group/GSR registration, Archives group history): only needed questions, responses in an Area role account, old event forms closed; is there a Spanish registration form? (Archives Chair and Alternate Delegate check theirs.) *Where:* `/service/`, `/committees/archives/`. *How:* once confirmed, the webmaster links the registration form from step 1 of "new GSR" on `/service/` (today it says only "E-mail the Registrar").
-- [ ] **[When possible] Supply** last initials for 14 seats listed by first name only: Literature (ES); three YPAA members; District 4 Treatment, LGBTQ+, YPAA liaison; District 6 PI; District 7 Registrar; District 8 Intergroup; District 9 Secretary; District 15 Young People and CPC; District 30 "GSR for District 22". *Where:* `/about/panel/`, the district pages.
+- [ ] **[When possible] Supply** last initials for 13 seats listed by first name only: Literature (ES); three YPAA members; District 4 Treatment, LGBTQ+, YPAA liaison; District 6 PI; District 7 Registrar; District 8 Intergroup; District 15 Young People and CPC; District 30 "GSR for District 22". *Where:* `/about/panel/`, the district pages.
 - [ ] **[When possible] Verify** possible double spellings: Hailie W. / Halie W.; Teddi G. / Teddi P.; Erika D. / Erica D.; and whether one member holds four seats (Registration (ES) and three District 22 seats). With Archives: fix the Panel 74 "thank you" roster (duplicates in Districts 10 and 14, three misspellings, 4 empty seats counted) and send the final Panel 74 ASC roster (first name + initial) so missing seats can be added. *Where:* `/about/panel/`, `/districts/`.
 - [ ] **[When possible] Verify** group districts in Fellowship Connection: a group still in District 11 (now 8); two groups listed in District 5 whose towns are in District 12; about 15 Zelle gifts ($416.90) with no group. *Where:* the Oct 11 A/R report (section 6).
 
@@ -1130,6 +1130,15 @@ The Area Google Calendar was checked against every district, intergroup and cent
   calendar now show the district's own **dcmc@mscadistrict12.org** (in place of d12dcmc@msca09aa.org).
 - **GSR School:** the District 12 GSR School card (on the district page and `/committees/gsr-school/`) now names
   Bob M. as its contact, with gsr.school@mscadistrict12.org.
+
+## 26. Done on November 22, 2026 — District 9 Secretary
+
+- **District 9 page (`/districts/d09/`) and the Area panel page (`/about/panel/#districts`):** the Secretary is now
+  **Victoria A.** (the last initial was missing), with the Secretary's e-mail **D09Secretary@outlook.com**.
+
+**Still to do**
+- [ ] **District 9 DCMC:** confirm that D09Secretary@outlook.com is a shared role mailbox that passes to the next
+  Secretary.
 
 ## How to send information to the webmaster
 
