@@ -1,58 +1,6 @@
 {
  "events": [
   {
-   "address": "",
-   "allDay": false,
-   "also": [],
-   "cats": [
-    "memorial"
-   ],
-   "city": "",
-   "cost": "",
-   "end": "2026-11-22T16:30:00-08:00",
-   "endDate": "",
-   "flags": [
-    "place-on-flyer"
-   ],
-   "flyers": [
-    {
-     "h": 1536,
-     "mime": "image/png",
-     "pdf": "",
-     "sha256": "de4553b69787017632d090f4b70105e187c12a97ce821489b04a9c528e0774b3",
-     "sizes": [
-      [
-       200,
-       "https://www.oc-aa.org/wp-content/uploads/2026/11/IMG_20261116_061001-200x300.png"
-      ],
-      [
-       683,
-       "https://www.oc-aa.org/wp-content/uploads/2026/11/IMG_20261116_061001-683x1024.png"
-      ],
-      [
-       768,
-       "https://www.oc-aa.org/wp-content/uploads/2026/11/IMG_20261116_061001-768x1152.png"
-      ]
-     ],
-     "url": "https://www.oc-aa.org/wp-content/uploads/2026/11/IMG_20261116_061001.png",
-     "w": 1024
-    }
-   ],
-   "format": "In person",
-   "id": "co-oc-central-70398",
-   "lang": "English",
-   "office": "oc-central",
-   "src": "https://www.oc-aa.org/event/effie-r-celebration-of-life/",
-   "srcHash": "3e3e13333417df3a6c66b781493603914919b441",
-   "start": "2026-11-22T13:30:00-08:00",
-   "summary": "Join us in celebrating Effie R.’s incredible journey of sobriety at the Costa Mesa Alano Club. Please bring a dish for Potluck. See flyer for more info…",
-   "title": "Effie R. – Celebration of Life",
-   "title_es": "",
-   "type": "Event",
-   "venue": "",
-   "zip": ""
-  },
-  {
    "address": "13000 San Antonio Dr.",
    "allDay": false,
    "also": [],
@@ -1283,13 +1231,12 @@
   },
   "oc-central": {
    "adapter": "tribe",
-   "count": 6,
+   "count": 5,
    "errorKind": "",
    "failingSince": "",
    "flyers": {
     "https://www.oc-aa.org/wp-content/uploads/2026/09/ACYPAA54_Flyer.png": "4aa1477cba04cc9fddcbf1367f9eb8c00c8c8310764ebc0b930afb5b49d40a2c 1429 2000 image/png",
     "https://www.oc-aa.org/wp-content/uploads/2026/11/2026-11-28-msca09-service-committees-1.jpg": "7cb68204e1529b4b432261699b8a9dac20abcaac845f1d9006f5ecf16b52bfb9 1229 1844 image/jpeg",
-    "https://www.oc-aa.org/wp-content/uploads/2026/11/IMG_20261116_061001.png": "de4553b69787017632d090f4b70105e187c12a97ce821489b04a9c528e0774b3 1024 1536 image/png",
     "https://www.oc-aa.org/wp-content/uploads/2026/11/International-Holiday-Potluck-District-7-2026.jpg": "b72326899add35679c798cb7abc189cf7c9badbfc794682df7dd3a8d96d176fa 320 480 image/jpeg",
     "https://www.oc-aa.org/wp-content/uploads/2026/11/OCAA-Convention-2027.jpg": "bfbd0aefef481195f6b20869ea1aa81b3ad74418a2b42b5b93b71a14d0568121 1600 2067 image/jpeg",
     "https://www.oc-aa.org/wp-content/uploads/2026/11/Thanksgiving-2026-Flyer-Saddleback-Vally-Fellowship-Center.png": "71d4e0e4aa8b5aae0207760e01c5109155fae4b69468224a4ccc61090e32c6ed 683 1024 image/png"
@@ -1298,7 +1245,6 @@
    "pageModified": "",
    "sources": {
     "co-oc-central-70285": "2027-04-18 0aaacb4561f5e25961b2babc2708b6ab2d07fa47",
-    "co-oc-central-70398": "2026-11-22 3e3e13333417df3a6c66b781493603914919b441",
     "co-oc-central-70401": "2026-11-26 187a606936437a21e636b9a0615d544803fff790",
     "co-oc-central-70407": "2026-11-28 6c8f0e6426e48bbccc7dd340abd8fbfe2f8511c5",
     "co-oc-central-70410": "2026-12-14 ac490178c5979494ce19739cbab3547b65619b40",
