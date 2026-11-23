@@ -248,7 +248,8 @@ Items in sections 1, 2, 5 and 6 are not repeated; each role starts with a pointe
 
 #### Young People (YPAA)
 
-- [ ] **[Soon] Say** if the ROCYPAA business meeting stops so the series can end (its flyer is shown as published since Oct 22).
+- [ ] **[Soon] Say** if the ROCYPAA business meeting stops or changes again so the calendar can follow (since
+  Nov 23 it shows the 1st & 3rd Sundays, 1–3 PM, at the Costa Mesa Alano Club — see section 27).
 
 - [ ] **[Soon] Confirm** the chair's initial — **Marissa S. or Marissa M.?** (same person as the District 17 DCMC and District 4 YPAA liaison?) and whether the ACYPAA reporter is an Area liaison. (The Spanish-speaking chair, Tony C., was confirmed on Oct 17.) *Where:* `/committees/ypaa/`, `/about/panel/`.
 - [ ] **[Soon] Correct** `/committees/ypaa/`: it shows the ACYPAA host committee's business meeting as the Area committee's. Send your own meeting, the ACYPAA entry fixes (section 4) and the revised guidelines when approved.
@@ -1139,6 +1140,22 @@ The Area Google Calendar was checked against every district, intergroup and cent
 **Still to do**
 - [ ] **District 9 DCMC:** confirm that D09Secretary@outlook.com is a shared role mailbox that passes to the next
   Secretary.
+
+## 27. Done on November 23, 2026 — ROCYPAA business meeting: new days, time and place
+
+- **ROCYPAA Business Meeting (`/events/rocypaa-business-meeting/`):** now on the **1st and 3rd Sundays of every month,
+  1:00–3:00 PM, at the Costa Mesa Alano Club**, 2040 Placentia Ave, Costa Mesa, CA 92627, from December 6, 2026 —
+  with ROCYPAA's updated flyer (also on the Event flyers page and the Spanish pages) and a link to rocypaa.com. The
+  old 4th-Sunday meeting in Irvine (5:00–7:00 PM) is shown as ended after November 22, 2026. Changed in the Google
+  Calendar, no notifications sent.
+
+**Still to do**
+- [ ] **YPAA Committee / ROCYPAA:** say when the first meeting at the Costa Mesa Alano Club was (or will be). The
+  calendar shows the Irvine meeting through November 22 and the new one from December 6; if the new days started
+  earlier (for example November 15), the calendar keeper moves the change to that date.
+- [ ] **Calendar keeper (after the January 2027 meetings):** remove the last sentence ("New days, time and place …" /
+  "Nuevos días, hora y lugar …") from the Note and Nota of the ROCYPAA Business Meeting entry, so the page stops calling
+  the days new.
 
 ## How to send information to the webmaster
 
