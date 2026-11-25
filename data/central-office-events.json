@@ -8,7 +8,7 @@
    "city": "Norwalk",
    "cost": "",
    "end": "2026-11-25T21:30:00-08:00",
-   "endDate": "2026-11-25",
+   "endDate": "",
    "flags": [],
    "flyers": [
     {
@@ -61,12 +61,12 @@
     }
    ],
    "format": "In person",
-   "id": "co-sur-bahia-3314",
+   "id": "co-sur-bahia-3316",
    "lang": "Spanish",
    "office": "sur-bahia",
-   "src": "https://aasurdelabahia.org/event/juntas-de-unidad-grupo-despertar-espiritual-7/",
-   "srcHash": "2d9010ddccc566c159d49447f90eba49f98a4011",
-   "start": "2026-11-24T19:30:00-08:00",
+   "src": "https://aasurdelabahia.org/event/juntas-de-unidad-grupo-despertar-espiritual-8/",
+   "srcHash": "87d7351df25cada038b6ad9f2f0b7bf54478bef3",
+   "start": "2026-11-25T19:30:00-08:00",
    "summary": "",
    "title": "Juntas de Unidad Grupo Despertar Espiritual",
    "title_es": "",
@@ -477,7 +477,9 @@
   {
    "address": "1355 North Harbor Drive",
    "allDay": true,
-   "also": [],
+   "also": [
+    "sureste-riverside"
+   ],
    "cats": [],
    "city": "San Diego",
    "cost": "",
@@ -972,6 +974,64 @@
    "zip": ""
   },
   {
+   "address": "",
+   "allDay": false,
+   "also": [],
+   "cats": [],
+   "city": "",
+   "cost": "",
+   "end": "2026-12-31T18:30:00-08:00",
+   "endDate": "",
+   "flags": [
+    "place-on-flyer"
+   ],
+   "flyers": [
+    {
+     "h": 2560,
+     "mime": "image/jpeg",
+     "pdf": "",
+     "sha256": "024f435cf60826d152b966ebe80f033f8c61ebac6065263e2bc534d32dea43be",
+     "sizes": [
+      [
+       235,
+       "https://oiaasriverside.org/wp-content/uploads/2026/11/Perfecta-235x300.jpg"
+      ],
+      [
+       768,
+       "https://oiaasriverside.org/wp-content/uploads/2026/11/Perfecta-768x981.jpg"
+      ],
+      [
+       802,
+       "https://oiaasriverside.org/wp-content/uploads/2026/11/Perfecta-802x1024.jpg"
+      ],
+      [
+       1202,
+       "https://oiaasriverside.org/wp-content/uploads/2026/11/Perfecta-1202x1536.jpg"
+      ],
+      [
+       1603,
+       "https://oiaasriverside.org/wp-content/uploads/2026/11/Perfecta-1603x2048.jpg"
+      ]
+     ],
+     "url": "https://oiaasriverside.org/wp-content/uploads/2026/11/Perfecta-scaled.jpg",
+     "w": 2004
+    }
+   ],
+   "format": "In person",
+   "id": "co-sureste-riverside-1369",
+   "lang": "Spanish",
+   "office": "sureste-riverside",
+   "src": "https://oiaasriverside.org/event/new-alateen-meeting-information-09-02-2026/",
+   "srcHash": "c6a9c1adbcfab98b02f0937c71affdea3cc66f19",
+   "start": "2026-12-31T17:30:00-08:00",
+   "summary": "",
+   "title": "New Alateen Meeting information",
+   "title_es": "",
+   "type": "Event",
+   "venue": "",
+   "zip": ""
+  },
+  {
    "address": "8888 Los Coyotes Dr",
    "allDay": false,
    "also": [],
@@ -1377,10 +1437,10 @@
     "https://aasurdelabahia.org/wp-content/uploads/2026/11/Llegamos-a-creer-4.jpg": "0189e929c00e31ce2cac41b93f6c1e68b8b578e87afff5f85d41b75854ac2974 648 1044 image/jpeg",
     "https://aasurdelabahia.org/wp-content/uploads/2026/11/Llegamosa-Creer-1.jpg": "2410f8c4144f1a36f9a6aaabe42e4b91dabb4a89418407f233aefe7fa2219764 668 1035 image/jpeg"
    },
-   "lastChange": "2026-11-24",
+   "lastChange": "2026-11-25",
    "pageModified": "",
    "sources": {
-    "co-sur-bahia-3314": "2026-11-25 2d9010ddccc566c159d49447f90eba49f98a4011",
+    "co-sur-bahia-3316": "2026-11-25 87d7351df25cada038b6ad9f2f0b7bf54478bef3",
     "co-sur-bahia-3321": "2026-11-28 92f99885ff5cb128cf31824d0292246a8d21adfb",
     "co-sur-bahia-3359": "2026-12-06 e4d9ad863810cab21973058b3885e1032835036a",
     "co-sur-bahia-3365": "2026-12-12 b69d1f7d8f71b41d95768a20572be1bbd903f076",
@@ -1393,18 +1453,22 @@
   },
   "sureste-riverside": {
    "adapter": "tribe",
-   "count": 2,
+   "count": 4,
    "errorKind": "",
    "failingSince": "",
    "flyers": {
     "https://oiaasriverside.org/wp-content/uploads/2026/10/Sobriedad-y-Salvacion-Aniversario_Page_1.jpg": "b198d30ab97117233aabfc0e8055f0061121ee9e2fd02f5c2844bf3cae631b9a 2200 1700 image/jpeg",
-    "https://oiaasriverside.org/wp-content/uploads/2026/10/Sobriedad-y-Salvacion-Aniversario_Page_2.jpg": "b3e2bc9f63db7bbeed76031fc9c21d2a9b908e1701418304990114bdde789b40 2200 1700 image/jpeg"
+    "https://oiaasriverside.org/wp-content/uploads/2026/10/Sobriedad-y-Salvacion-Aniversario_Page_2.jpg": "b3e2bc9f63db7bbeed76031fc9c21d2a9b908e1701418304990114bdde789b40 2200 1700 image/jpeg",
+    "https://oiaasriverside.org/wp-content/uploads/2026/11/Perfecta-scaled.jpg": "024f435cf60826d152b966ebe80f033f8c61ebac6065263e2bc534d32dea43be 2004 2560 image/jpeg",
+    "https://oiaasriverside.org/wp-content/uploads/2026/11/foro-scaled.jpg": "d83b4119db918ff29bd397d7be85893369e318f86314bae2402d7c85aac919a9 1877 2560 image/jpeg"
    },
-   "lastChange": "2026-10-30",
+   "lastChange": "2026-11-25",
    "pageModified": "",
    "sources": {
     "co-sureste-riverside-1303": "2026-11-29 3290b40abf5b3da5b611900dd21302eb6a3c08db",
-    "co-sureste-riverside-1340": "2026-12-26 7b3693f9baae6fbb2a70c27af0b70b1cc418d022"
+    "co-sureste-riverside-1340": "2026-12-26 7b3693f9baae6fbb2a70c27af0b70b1cc418d022",
+    "co-sureste-riverside-1369": "2026-12-31 c6a9c1adbcfab98b02f0937c71affdea3cc66f19",
+    "co-sureste-riverside-1379": "2026-12-06 e3ac65f5cb6b19be65c730be507ff41b406b3e8a"
    },
    "status": "ok",
    "unparsed": 0,
