@@ -21,8 +21,8 @@ The site is live at **[msca09aa.org](https://msca09aa.org/)** (switched over fro
 | Technology Chair | 7 | 2.4 Test every role mailbox · the new app on a real iPhone and Android phone (section 19) |
 | Webmaster | 14 | 2.9 Owner's private clean-up checklist |
 | Committee chairs | 33 | Archives: confirm the collections now on the site · YPAA: Marissa S. or M.? |
-| Districts (DCMCs / MCDs) | 40 | **District 17: your website sends visitors to other sites** · Your six district seats — five officers and the GSR School Chair (table) · Districts 10 & 15: Dec 13 ASC venue |
-| Calendar keeper | 1 + the items left in sections 4, 12 and 18 | Apr 11, 2027 Pre-Conference clashes with the 77th Conference (section 12) · Dec 13 ASC venue |
+| Districts (DCMCs / MCDs) | 40 | **District 17: your website sends visitors to other sites** · Your six district seats — five officers and the GSR School Chair (table) · Districts 10 & 15: Dec 13 ASC room and flyer |
+| Calendar keeper | 1 + the items left in sections 4, 12 and 18 | Apr 11, 2027 Pre-Conference clashes with the 77th Conference (section 12) |
 | Everyone with an old-site login | 1 | 2.2 Stop editing the old site |
 
 Shared items are counted once, under the role that leads.
@@ -33,7 +33,7 @@ Shared items are counted once, under the role that leads.
 - [ ] **1.2 [Before Oct 11] Verify** — *Treasurer A/R.* Test the Zelle QR now on [/contribute/](https://msca09aa.org/contribute/): scan it in your bank app and send $1, send $1 to the typed ID contributions@msca09aa.org, and check both reach the Area account. *Why:* the QR carries a Zelle token (as on the Treasurers' flyer), not the typed ID, and members may scan it at the ASC. *How:* reply "QR confirmed on <date>"; if anything is wrong, the QR comes off at once.
 - [ ] **1.3 [Before Oct 11] Correct** — *Calendar keeper; District 5 DCMC (room); Archives Chair / District 14 DCMC (host).* The **Oct 11 ASC** entry was fixed on Oct 7 (9:00 AM start, `Registration: 8:00 AM`, Long Beach City College, bilingual, agenda and Delegate-report links, the day's schedule). Still open: the building and room as a Note/Nota (District 5), and **Oct 10 Heritage Day:** `Host: D14`, `Email: archiveschair@msca09aa.org`.
 - [ ] **1.4 [Before Oct 11] Confirm** — *Area Secretary, with the Area Chair and GAP Chair. The updated Oct 11 agenda has no motions, so also say at which meeting 76-7 and 76-8 come up (is the GAP Committee presentation where 76-8 is discussed?).* (a) **Sept 13 Assembly results** of 76-1 to 76-6 — whether 76-1 passed decides if 76-7 is a limit or conflicts with Bylaws 9.2; was the 2027 calendar (76-6) adopted? (b) **Which body decides 76-7** (ASC, Assembly, or Board resolution under Bylaws 9.2). (c) **Route of 76-8:** Bylaws/Guidelines changes need an Assembly vote with notice (2/3 for Guidelines), adopted by the Sept 12, 2027 Assembly to apply at the Oct 2027 elections — reword its closing paragraph. *Where:* `/service/motions/` still shows "old business". *How:* e-mail results, even "per unapproved minutes".
-- [ ] **1.5 [Before Oct 11] Do** — *Area Chair.* Use the ASC to collect quick answers and pass them to the webmaster: the **Registrar's initial (Charles A. or Charles R.?)**, the YPAA chair's initial, which Literature seat is vacant, which listed Area seats are still open, the Web Servant, the **Dec 13 ASC venue** (Districts 10 and 15), the District 8 Zoom meeting (2.7), the Hispanic Women's flyers, the 2026 Grapevine & La Viña date.
+- [ ] **1.5 [Before Oct 11] Do** — *Area Chair.* Use the ASC to collect quick answers and pass them to the webmaster: the **Registrar's initial (Charles A. or Charles R.?)**, the YPAA chair's initial, which Literature seat is vacant, which listed Area seats are still open, the Web Servant, the **Dec 13 ASC venue** (Districts 10 and 15 — received Nov 25: Hunt Branch Library, Fullerton; see section 28), the District 8 Zoom meeting (2.7), the Hispanic Women's flyers, the 2026 Grapevine & La Viña date.
 - [ ] **1.6 [Before Oct 11] Correct** — *Treasurer A/R.* Announce the two clear packet errors and send corrected copies if you can: the A/R Zelle total is **$2,814.49** (printed $2,784.49) and its date is **Oct 11** (printed Oct 13). All fixes: section 6.
 
 - [ ] **1.7 [Before Oct 11] Correct** — *Area Secretary.* Send a short correction to the Oct 5 ASC e-mail: the Monthly Service Study & Sharing Session is **Thursday, Oct 15** (the 3rd Thursday), not Oct 8 — the Delegate's report and the calendar agree on Oct 15; Oct 11 is an ASC, not an Assembly; the August minutes are **unapproved** in Spanish too ("Actas no aprobadas"); "Service Manual" (not "Manuel"). *Where:* the Area e-mail list. *Why:* members may join on the wrong Thursday.
@@ -337,7 +337,7 @@ Your item is **2.7** (Zoom meeting). Note: your Nov 21 Heritage Day overlaps the
 #### District 10 — DCMC
 
 - [ ] **[Before switch-over] Supply** venue name, address and ZIP of the Fullerton meeting, and confirm it is hybrid — the page shows only "Fullerton". *Where:* `/districts/d10/`.
-- [ ] **[Soon] Supply** with District 15 (co-hosts) venue, room, Zoom plan and flyer for the **Dec 13, 2026 ASC**. *Where:* `/service/area-meetings/`, the calendar.
+- [ ] **[Soon] Supply** with District 15 (co-hosts) the room and flyer (role contacts only) for the **Dec 13, 2026 ASC**. The venue is done (Nov 25: Hunt Branch Library, 201 S. Basque Ave, Fullerton — section 28) and the calendar shows it as hybrid with the Area Zoom; say if the Zoom plan is different. *Where:* `/service/area-meetings/`, the calendar.
 
 #### District 12 — DCMC
 
@@ -395,7 +395,7 @@ Most of this section was done on October 13, 2026 (see section 12). **Done** row
 | Date / entry | Done | Still |
 |---|---|---|
 | Oct 11 ASC, Oct 10 Heritage Day | See 1.3 | — |
-| Dec 13, 2026 ASC 2 | Oct 13: Hybrid with the Area Zoom; 9:00 AM–3:00 PM with `Registration: 8:00 AM`; `Título: Comité de Servicio de Área (CSA 2)` | **Location** → the venue from Districts 10 & 15 (the page shows "place to be announced" until then) |
+| Dec 13, 2026 ASC 2 | Oct 13: Hybrid with the Area Zoom; 9:00 AM–3:00 PM with `Registration: 8:00 AM`; `Título: Comité de Servicio de Área (CSA 2)`; Nov 25: **Location** → Hunt Branch Library, 201 S. Basque Ave, Fullerton, CA 92833 (section 28) | The room (as a Note/Nota) and the flyer, when Districts 10 & 15 send them |
 | "MSCA09 Area Meeting" 2027 series | Oct 13: replaced by one entry per 2027 meeting (section 10) | **Apr 11, 2027 Pre-Conference** is the opening day of the 77th Conference in New York (Apr 11–17), so the Delegate cannot attend — see section 12 |
 | Past 2026 Area meetings | Oct 13: Aug 9 → Hybrid + Zoom; Aug 9, Sep 13, May 17 → 9:00 start + `Registration: 8:00 AM`; Mar 8 → Long Beach City College; Apr 12 → "Area 09 Pre-Conference" / `Título: Pre-Conferencia del Área 09`; accented `Título:` lines | Jan 11 → venue name before the street address (District 2 host confirms) |
 | Jun 8 and Dec 14, 2025 | Oct 13: both are online ASCs (`MSCA09\|Area Committee\|Virtual`); Dec 14 title no longer holds the times | — |
@@ -1156,6 +1156,18 @@ The Area Google Calendar was checked against every district, intergroup and cent
 - [ ] **Calendar keeper (after the January 2027 meetings):** remove the last sentence ("New days, time and place …" /
   "Nuevos días, hora y lugar …") from the Note and Nota of the ROCYPAA Business Meeting entry, so the page stops calling
   the days new.
+
+## 28. Done on November 25, 2026 — December 13 ASC venue
+
+- **Area Service Committee (ASC 2), Sunday, December 13, 2026:** the place is now the **Hunt Branch Library**,
+  201 S. Basque Ave, Fullerton, CA 92833 (hosted by Districts 10 & 15). The event page, the Area meetings page
+  (`/service/area-meetings/`), the calendar and its map link show it in place of "to be announced". Unchanged:
+  9:00 AM–3:00 PM, registration 8:00 AM, bilingual, hybrid with the Area Zoom (896 6166 6203, passcode Panel76).
+  Changed in the Google Calendar, no notifications sent.
+
+**Still to do**
+- [ ] **Districts 10 & 15 DCMCs:** send the room and the flyer (role contacts only), and say if the Zoom plan differs
+  from the Area Zoom.
 
 ## How to send information to the webmaster
 
