@@ -1,80 +1,6 @@
 {
  "events": [
   {
-   "address": "13000 San Antonio Dr.",
-   "allDay": false,
-   "also": [],
-   "cats": [],
-   "city": "Norwalk",
-   "cost": "",
-   "end": "2026-11-25T21:30:00-08:00",
-   "endDate": "",
-   "flags": [],
-   "flyers": [
-    {
-     "h": 1650,
-     "mime": "image/jpeg",
-     "pdf": "",
-     "sha256": "7ef349320c01b04026c92aa95b85fb28e4c8a3545ad5c53d3eed26bf28dd9133",
-     "sizes": [
-      [
-       232,
-       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Despertar-Espiritual-11-232x300.jpg"
-      ],
-      [
-       768,
-       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Despertar-Espiritual-11-768x994.jpg"
-      ],
-      [
-       791,
-       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Despertar-Espiritual-11-791x1024.jpg"
-      ],
-      [
-       1187,
-       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Despertar-Espiritual-11-1187x1536.jpg"
-      ]
-     ],
-     "url": "https://aasurdelabahia.org/wp-content/uploads/2026/11/Despertar-Espiritual-11.jpg",
-     "w": 1275
-    },
-    {
-     "h": 1054,
-     "mime": "image/jpeg",
-     "pdf": "",
-     "sha256": "c80ba7a529300e64ba519c9cddc6b02eb3a3ac6887d69f1347d3357562e8ea08",
-     "sizes": [
-      [
-       276,
-       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Despertar-Espiritual-2-276x300.jpg"
-      ],
-      [
-       768,
-       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Despertar-Espiritual-2-768x834.jpg"
-      ],
-      [
-       943,
-       "https://aasurdelabahia.org/wp-content/uploads/2026/11/Despertar-Espiritual-2-943x1024.jpg"
-      ]
-     ],
-     "url": "https://aasurdelabahia.org/wp-content/uploads/2026/11/Despertar-Espiritual-2.jpg",
-     "w": 971
-    }
-   ],
-   "format": "In person",
-   "id": "co-sur-bahia-3316",
-   "lang": "Spanish",
-   "office": "sur-bahia",
-   "src": "https://aasurdelabahia.org/event/juntas-de-unidad-grupo-despertar-espiritual-8/",
-   "srcHash": "87d7351df25cada038b6ad9f2f0b7bf54478bef3",
-   "start": "2026-11-25T19:30:00-08:00",
-   "summary": "",
-   "title": "Juntas de Unidad Grupo Despertar Espiritual",
-   "title_es": "",
-   "type": "Event",
-   "venue": "Despertar Espiritual",
-   "zip": "90650"
-  },
-  {
    "address": "23401 El Toro",
    "allDay": false,
    "also": [
@@ -1625,7 +1551,7 @@
    "sources": {},
    "status": "empty",
    "unparsed": 0,
-   "watchModified": "2026-11-18T12:04:46"
+   "watchModified": "2026-11-25T11:00:10"
   },
   "nocco": {
    "adapter": "aanoc",
@@ -1747,7 +1673,7 @@
   },
   "sur-bahia": {
    "adapter": "tribe",
-   "count": 7,
+   "count": 6,
    "errorKind": "",
    "failingSince": "",
    "flyers": {
@@ -1773,7 +1699,6 @@
    "lastChange": "2026-11-25",
    "pageModified": "",
    "sources": {
-    "co-sur-bahia-3316": "2026-11-25 87d7351df25cada038b6ad9f2f0b7bf54478bef3",
     "co-sur-bahia-3321": "2026-11-28 92f99885ff5cb128cf31824d0292246a8d21adfb",
     "co-sur-bahia-3359": "2026-12-06 e4d9ad863810cab21973058b3885e1032835036a",
     "co-sur-bahia-3365": "2026-12-12 b69d1f7d8f71b41d95768a20572be1bbd903f076",
@@ -1787,8 +1712,8 @@
   "sureste-riverside": {
    "adapter": "tribe",
    "count": 4,
-   "errorKind": "",
-   "failingSince": "",
+   "errorKind": "robots",
+   "failingSince": "2026-11-26",
    "flyers": {
     "https://oiaasriverside.org/wp-content/uploads/2026/10/Sobriedad-y-Salvacion-Aniversario_Page_1.jpg": "b198d30ab97117233aabfc0e8055f0061121ee9e2fd02f5c2844bf3cae631b9a 2200 1700 image/jpeg",
     "https://oiaasriverside.org/wp-content/uploads/2026/10/Sobriedad-y-Salvacion-Aniversario_Page_2.jpg": "b3e2bc9f63db7bbeed76031fc9c21d2a9b908e1701418304990114bdde789b40 2200 1700 image/jpeg",
@@ -1803,7 +1728,7 @@
     "co-sureste-riverside-1369": "2026-12-31 c6a9c1adbcfab98b02f0937c71affdea3cc66f19",
     "co-sureste-riverside-1379": "2026-12-06 e3ac65f5cb6b19be65c730be507ff41b406b3e8a"
    },
-   "status": "ok",
+   "status": "error",
    "unparsed": 0,
    "watchModified": ""
   },
