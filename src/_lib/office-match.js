@@ -18,10 +18,17 @@
 //   url   the record's event page (host without www., path without the closing "/") is in the item's web, links or About
 //   host  the item's organizers include the office's website (ctx.officeHosts[office])
 //   words distinctive title words both share (accents, capitals, short words, numbers, ordinals, Roman numerals and
-//         common words such as annual, central, office, district, group, anniversary dropped)
+//         common words such as annual, central, office, district, group, anniversary, new, information dropped:
+//         "New Year's Eve Party" and "New Alateen Meeting information" share none)
 //   city  the same city
+//   clash both name a city and they differ ("Lake Forest" and "Temecula"). Compared without accents, capitals and
+//         punctuation, without what follows a comma and without a closing state and ZIP ("Lake Forest CA 92630" is
+//         Lake Forest); a value that is only a state ("NV", which an address without a ZIP can leave as the city), a
+//         ZIP or an online place ("Via Zoom", "Online") names no city
 //   time  both timed and starting at most 60 minutes apart, or both all-day over the same days
-// Twin when: url, or words ≥ 2, or (words ≥ 1 and (host or city or time)), or (host and time).
+// Twin when: url, or words ≥ 2, or (words ≥ 1 and (host or city or flyer or (time and not clash))), or (host and time),
+// or (flyer and time). One shared word and the same hour in two different cities are two events (OC's Thanksgiving
+// marathon in Lake Forest and Temecula's Thanksgiving Alcathon, Nov 26, 2026).
 // Overrides (data/central-office-overrides.csv) are applied by the caller: same-as and show win over the matcher.
 import { DateTime } from "luxon";
 
@@ -33,7 +40,8 @@ const STOP = new Set(
   `annual anual central office oficina offices oficinas intergroup intergrupal intergrupo county condado orange district distrito area msca
    panel event evento events eventos group grupo grupos alcoholics alcoholicos anonymous anonimos anniversary aniversario celebration celebracion
    meeting meetings reunion reuniones junta the and for with from our your you all are this that its into will join come
-   del las los una uno por para con que sus nuestra nuestro como mas annual`.split(/\s+/),
+   del las los una uno por para con que sus nuestra nuestro como mas annual
+   new nuevo nueva nuevos nuevas info information informacion`.split(/\s+/),
 );
 const ROMAN = /^m{0,4}(?:cm|cd|d?c{0,3})(?:xc|xl|l?x{0,3})(?:ix|iv|v?i{0,3})$/;
 const ORDINAL = /^\d+(?:st|nd|rd|th|vo|va|ro|ra|do|da|to|ta|er|o|a|°|º|ª)$/;
@@ -61,6 +69,34 @@ export function normUrl(u) {
 }
 
 const dt = (iso) => DateTime.fromISO(String(iso || ""), { setZone: true }).setZone(TZ);
+// a city as compared for a clash (see the header): "" when it names no city
+const US_STATES = new Set(
+  `al ak az ar ca co ct de dc fl ga hi id il in ia ks ky la me md ma mi mn ms mo mt ne nv nh nj nm ny nc nd oh ok or pa ri sc
+   sd tn tx ut vt va wa wv wi wy alabama alaska arizona arkansas california colorado connecticut delaware florida georgia
+   hawaii idaho illinois indiana iowa kansas kentucky louisiana maine maryland massachusetts michigan minnesota
+   mississippi missouri montana nebraska nevada ohio oklahoma oregon pennsylvania tennessee texas utah vermont virginia
+   washington wisconsin wyoming`.split(/\s+/),
+);
+// an online place anywhere in the value ("Via Zoom", "Zoom Meeting", "Online/Zoom", "En línea")
+const ONLINE_PLACE = /\b(?:zoom|online|virtual|en linea|internet|google meet|teams|webinar)\b/;
+// what may close a city's name besides a US state: a Mexican state as addresses write it near the border, a country
+const REGION_TAIL = /\s+(?:b c s|b c|bcs|bc|baja california(?: sur)?|baja|son|sonora|mexico|mex|usa|us|united states)$/;
+function cityName(c) {
+  let s = fold(c).toLowerCase().replace(/,.*$/, "").replace(/[^a-z0-9]+/g, " ").trim();
+  if (ONLINE_PLACE.test(s)) return "";
+  for (let i = 0; i < 4; i++) {
+    const before = s;
+    s = s.replace(/\s+\d{5}(?:\s+\d{4})?$/, "").replace(REGION_TAIL, "").trim(); // a closing ZIP, region or country
+    const words = s.split(" ");
+    // a closing state ("Lake Forest CA", "Reno Nevada", "New York NY"), never the whole value
+    while (words.length > 1 && US_STATES.has(words[words.length - 1])) words.pop();
+    s = words.join(" ");
+    if (s === before) break;
+  }
+  // a value that is only a state, a region, a country or a ZIP names no city ("NV", "B.C.", "Baja", "92630")
+  if (!s || /^\d+$/.test(s) || US_STATES.has(s) || REGION_TAIL.test(` ${s}`)) return "";
+  return s;
+}
 /** [first day, last day, timed start (DateTime or null), has a known end] of a record or an Area item. */
 function span(x) {
   if (!x || !x.start) return ["", "", null, false];
@@ -92,11 +128,14 @@ export function signals(a, b, { hostA = [], hostB = [], flyer = false } = {}) {
   const cityA = fold(a.city).toLowerCase().trim();
   const time = a.allDay && b.allDay ? af === bf && al === bl : !a.allDay && !b.allDay && as && bs ? Math.abs(as.diff(bs, "minutes").minutes) <= 60 : false;
   const city = !!cityA && cityA === fold(b.city).toLowerCase().trim();
+  const placeA = cityName(a.city);
+  const placeB = cityName(b.city);
+  const clash = !!placeA && !!placeB && placeA !== placeB;
   const host = hostA.length > 0 && hostA.some((h) => hostB.includes(h));
-  return { words, city, time, host, flyer };
+  return { words, city, time, host, flyer, clash };
 }
 
-const isTwin = (s, url) => url || s.words >= 2 || (s.words >= 1 && (s.host || s.city || s.time || s.flyer)) || (s.host && s.time) || (s.flyer && s.time);
+const isTwin = (s, url) => url || s.words >= 2 || (s.words >= 1 && (s.host || s.city || s.flyer || (s.time && !s.clash))) || (s.host && s.time) || (s.flyer && s.time);
 const reasonOf = (s, url) =>
   [url && "url", s.words && `${s.words} word${s.words > 1 ? "s" : ""}`, s.host && "host", s.city && "city", s.time && "time", s.flyer && "flyer"].filter(Boolean).join(" + ");
 const score = (s, url) => (url ? 100 : 0) + s.words * 10 + (s.host ? 5 : 0) + (s.time ? 4 : 0) + (s.city ? 3 : 0) + (s.flyer ? 6 : 0);

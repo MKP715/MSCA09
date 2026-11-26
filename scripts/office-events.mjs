@@ -45,13 +45,14 @@
 import fs from "node:fs";
 import path from "node:path";
 import { createHash } from "node:crypto";
-import { readCsv } from "../src/_lib/csv.js";
+import { readCsv, parseCsvText } from "../src/_lib/csv.js";
 import { compileLinkFixes } from "../src/_lib/calendar.js";
 import { nameHits, shortenNames } from "../src/_lib/names.js";
 import { loadAllow, contactHits, titleRisk, slugRisk, summaryRisk, maskText } from "../src/_lib/contact-rules.js";
 import {
   adapters, watchStamp, filterRecords, mapType, cleanRecord, settleOffice, buildMirror, stableStringify, parseOptions,
   toPT, isPast, hostOf, aanocCards, aanocDetail, byStart, foldedDetails, flyerFromState, pageRisk, flyerRisk, hashKey, TYPES, RECORD_DROPPED,
+  manualRecord, isManual, manualHash, idNameRisk, MANUAL_FILE, MANUAL_COLUMNS,
 } from "../src/_lib/office-import.js";
 import { dedupeOffices, matchArea, areaItemsFromCalendar } from "../src/_lib/office-match.js";
 import { OFFICE_UA, OFFICE_ACCEPT } from "./lib/media-read.mjs";
@@ -78,9 +79,17 @@ const arg = (name) => {
 };
 const FLAG = (name) => argv.includes(name);
 const ONLY = new Set(arg("--office").split(",").map((s) => s.trim()).filter(Boolean));
+if (FLAG("--manual-only")) ONLY.add("(no office: --manual-only)");
 const FORCE = FLAG("--force");
 const DRY = FLAG("--dry-run");
 const CHECK = FLAG("--check");
+// --manual-only: no office's event listing is read; their events stay as the last run left them, and the events added
+// by hand (data/central-office-manual-events.csv) are made again, flyers not fingerprinted yet downloaded (the
+// deploy workflow runs this when the table changed on a day whose read is already done). --manual-changed: only tells whether the table changed since the mirror was
+// written (manual_changed=true|false in $GITHUB_OUTPUT) and stops.
+const MANUAL_ONLY = FLAG("--manual-only");
+const MANUAL_CHANGED = FLAG("--manual-changed");
+const MANUAL_FLYERS = 12; // flyers of hand-added events downloaded per run at most (new ones first)
 const NOW = toPT(arg("--now") || undefined);
 const TODAY = NOW.toISODate();
 // the day's number: which of the flyers waiting for a fingerprint get their turn today (round-robin)
@@ -102,6 +111,7 @@ const sources = readCsv("office-event-sources.csv").filter((r) => r.office && !r
 const officeRows = readCsv("central-offices.csv").filter((r) => r.key && !r.key.startsWith("#"));
 const officeByKey = Object.fromEntries(officeRows.map((r) => [r.key, r]));
 const officeHost = (k) => hostOf((officeByKey[k] || {}).website || "");
+const officeByHost = (h) => (officeRows.find((r) => r.key && hostOf(r.website || "") === h) || {}).key || "";
 const officeSort = Object.fromEntries(officeRows.map((r) => [r.key, Number(r.sort) || 999]));
 const typeKeys = new Set(readCsv("event-types.csv").map((r) => r.key).filter((k) => k && !k.startsWith("#")));
 const types = TYPES.filter((t) => typeKeys.has(t));
@@ -110,16 +120,38 @@ const linkFixes = compileLinkFixes(readCsv("link-fixes.csv"));
 const reviewRows = readCsv("office-flyer-review.csv").filter((r) => r.url && !String(r.url).startsWith("#"));
 const reviewed = new Map(reviewRows.map((r) => [`${r.url} ${r.sha256}`, r]));
 
-let prev = { v: 1, offices: {}, events: [] };
+// the events added by hand (README "Central-office events"): the table's text (its fingerprint goes into the mirror)
+let manualText = "";
+try {
+  manualText = fs.readFileSync(path.join(ROOT, "data", MANUAL_FILE), "utf8");
+} catch {
+  /* no table: no events added by hand */
+}
+// its rows with their line in the file (the header is line 1), notes (a first cell starting with "#") left out
+const manualRows = (() => {
+  if (!manualText) return [];
+  const { records } = parseCsvText(manualText, MANUAL_FILE);
+  if (!records.length) return [];
+  const cell = (v) => String(v ?? "").replace(/\r/g, "").trim();
+  const header = records[0].record.map(cell);
+  return records.slice(1)
+    .filter((r) => !cell(r.record[0]).startsWith("#"))
+    .map((r) => ({ line: r.line, header, row: Object.fromEntries(header.map((h, i) => [h, cell(r.record[i])])) }));
+})();
+
+let prev = { v: 1, offices: {}, events: [], manual: "" };
 let prevText = "";
 try {
   prevText = fs.readFileSync(OUT, "utf8");
   const j = JSON.parse(prevText);
-  if (j && typeof j === "object") prev = { offices: isMap(j.offices) ? j.offices : {}, events: Array.isArray(j.events) ? j.events : [] };
+  if (j && typeof j === "object") prev = { offices: isMap(j.offices) ? j.offices : {}, events: Array.isArray(j.events) ? j.events : [], manual: String(j.manual || "") };
 } catch {
   /* first run */
 }
 const prevById = new Map(prev.events.map((e) => [e.id, e]));
+// the offices' own events of the last run: the events added by hand are made again from the table on every run, so
+// they are never an office's earlier events (kept when its site fails, counted by the shrink guard, folded by state)
+const prevOwn = prev.events.filter((e) => !isManual(e));
 
 /* ------------------------------------------------------------------ HTTP: robots, one request at a time per site */
 class FetchError extends Error {
@@ -502,7 +534,7 @@ async function processOffice(row) {
   const options = parseOptions(row.options);
   const host = officeHost(key) || hostOf(row.feed);
   const prevState = isMap(prev.offices[key]) ? prev.offices[key] : {};
-  const prevRecords = prev.events.filter((e) => e.office === key);
+  const prevRecords = prevOwn.filter((e) => e.office === key);
   const known = knownRecords(prevState, prevRecords);
   const minDelay = Math.max(MIN_DELAY_S, Number(row.crawl_delay) || 0, Number(options.crawl_delay) || 0);
   const info = {
@@ -712,8 +744,14 @@ function check() {
   const HOW = { title: "title", title_es: "title", venue: "title", address: "title", city: "title", cost: "title", summary: "summary", src: "src" };
   (mirror.events || []).forEach((e, n) => {
     const hosts = [e.office, ...(e.also || [])].map(officeHost).filter(Boolean);
-    const label = e.id && !kindsOf("id", e.id, hosts).length ? e.id : `events[${n}]`;
+    // an event added by hand: its id is made from an editor's id or its title, so it is also read for a full name
+    const idName = isManual(e) && idNameRisk(e.id);
+    const label = e.id && !idName && !kindsOf("id", e.id, hosts).length ? e.id : `events[${n}]`;
     look(label, "id", e.id, hosts, "id");
+    if (idName) {
+      bad++;
+      console.log(`::error::${label} id: full name`);
+    }
     const fields = { title: e.title, title_es: e.title_es, venue: e.venue, address: e.address, city: e.city, zip: e.zip, cost: e.cost, summary: e.summary, src: e.src };
     (e.flyers || []).forEach((f, i) => {
       fields[`flyers[${i}].url`] = f.url;
@@ -735,6 +773,139 @@ function check() {
   }
   console.log(bad ? `[offices] ${bad} field(s) with personal details: data/central-office-events.json must not be committed` : `[offices] ${(mirror.events || []).length} events checked: no personal details`);
   return bad ? 1 : 0;
+}
+
+/* ------------------------------------------------------------------ events added by hand */
+
+/**
+ * The rows of data/central-office-manual-events.csv as records (not cleaned yet) and what is wrong with the others,
+ * named by their line in the file (the header is line 1) and office, never by their text. Past events are counted and
+ * left out (their rows can stay or go). → { rows, records, past, problems, held, imported, notes, noSummary }
+ */
+function manualRecords() {
+  const out = { rows: 0, records: [], past: 0, problems: [], held: [], imported: [], notes: [], noSummary: 0 };
+  const header = manualRows.length ? manualRows[0].header : [];
+  const missing = MANUAL_COLUMNS.filter((c) => !header.includes(c));
+  if (manualRows.length && missing.length) out.problems.push(`the table has no column ${missing.join(", ")}`);
+  const seen = new Set();
+  manualRows.forEach(({ line: at, row }) => {
+    const office = String(row.office || "").trim();
+    if (!Object.values(row).some((v) => String(v ?? "").trim())) return; // an empty line
+    out.rows++;
+    const line = `line ${at}`;
+    if (!officeByKey[office]) {
+      out.problems.push(`${line}: no such office`);
+      return;
+    }
+    const got = manualRecord(row, { lang: langOf(office), types, now: NOW.toISO() });
+    if (got.problem) {
+      out.problems.push(`${line} (${office}): ${got.problem}`);
+      return;
+    }
+    const rec = got.record;
+    if (got.hashed) out.notes.push(`${line} (${office}): its id is made from a hash (the id or the title reads as a full name or a detail)`);
+    if (seen.has(rec.id)) {
+      out.problems.push(`${line} (${office}): the same id as a row above`);
+      return;
+    }
+    seen.add(rec.id);
+    if (isPast(rec, TODAY)) {
+      out.past++;
+      return;
+    }
+    out.records.push(rec);
+  });
+  return out;
+}
+
+/**
+ * The SHA-256, size and type of the flyers of the events added by hand that stay (records: cleaned, not dropped as the
+ * office's own listing), so the flyer check can read them and the site show them. A flyer whose fingerprint the last
+ * run knew (the mirror's events, the offices' states) is carried over, unless the flyer check found other bytes at its
+ * address ("error: changed"); any other one is downloaded (robots.txt and the office's crawl delay honoured), at most
+ * MANUAL_FLYERS per run, the soonest events first. A flyer not read yet has no SHA-256 and stays hidden until a later
+ * run reads it. An office whose adapter is none is never asked for anything (README: the switch that stops every
+ * request to its website): its rows' flyers get no fingerprint, so they are neither checked nor shown.
+ */
+async function fingerprintManual(man, records) {
+  const known = new Map();
+  for (const e of prev.events) for (const f of e.flyers || []) if (f && f.url && f.sha256 && !known.has(f.url)) known.set(String(f.url), { sha256: String(f.sha256), w: Number(f.w) || 0, h: Number(f.h) || 0, mime: String(f.mime || "") });
+  for (const k of Object.keys(prev.offices).sort()) {
+    const fl = isMap(prev.offices[k]) && prev.offices[k].flyers;
+    if (isMap(fl)) for (const [url, v] of Object.entries(fl).sort(([a], [b]) => cmp(a, b))) if (!known.has(url)) { const x = flyerFromState(v); if (x.sha256) known.set(url, x); }
+  }
+  const rowOf = (office) => sources.find((r) => r.office === office) || {};
+  // the switch is its row's adapter = none in data/office-event-sources.csv (no row: no switch)
+  const silent = (office) => String(rowOf(office).adapter ?? "").trim().toLowerCase() === "none";
+  // …and so is its website, whichever row names a file there
+  const silentHosts = new Set(sources.filter((r) => silent(r.office)).map((r) => officeHost(r.office)).filter(Boolean));
+  const quietFlyer = (office, url) => silent(office) || silentHosts.has(hostOf(url));
+  const carry = (f, k) => {
+    f.sha256 = k.sha256;
+    [f.w, f.h] = [k.w, k.h];
+    if (FLYER_MIME.test(k.mime)) f.mime = k.mime;
+  };
+  const queue = new Map(); // url → office, in the order the flyers are needed
+  const quiet = new Set();
+  for (const rec of [...records].sort(byStart)) {
+    for (const f of rec.flyers) {
+      if (quietFlyer(rec.office, f.url)) {
+        f.sha256 = "";
+        quiet.add(silent(rec.office) ? rec.office : officeByHost(hostOf(f.url)) || rec.office);
+        continue;
+      }
+      const k = known.get(f.url);
+      const row = k && reviewed.get(`${f.url} ${k.sha256}`);
+      const changed = !!row && /^error:\s*changed\b/i.test(String(row.result || "").trim());
+      if (k && !changed) carry(f, k);
+      else if (!queue.has(f.url)) queue.set(f.url, rec.office);
+    }
+  }
+  for (const office of [...quiet].sort()) man.notes.push(`flyers not read: ${office}'s adapter is none`);
+  const turn = [...queue].slice(0, MANUAL_FLYERS);
+  if (queue.size > turn.length) man.notes.push(`${queue.size - turn.length} flyer(s) left for the next run`);
+  const delayOf = (office) => {
+    const row = rowOf(office);
+    return Math.max(MIN_DELAY_S, Number(row.crawl_delay) || 0, Number(parseOptions(row.options).crawl_delay) || 0);
+  };
+  const byHost = new Map();
+  for (const [url, office] of turn) {
+    let h = "";
+    try {
+      h = new URL(url).host;
+    } catch {
+      man.notes.push(`flyer not read (not a web address): ${office} ${hashKey(url)}`);
+      continue;
+    }
+    if (!byHost.has(h)) byHost.set(h, []);
+    byHost.get(h).push([url, office]);
+  }
+  const results = new Map();
+  await Promise.all(
+    [...byHost.values()].map(async (list) => {
+      for (const [url, office] of list) {
+        const got = await hashFlyer(url, delayOf(office)).catch((e) => ({ error: (e && e.kind) || "network" }));
+        results.set(url, got);
+        // named by its office and the hash of its address, never by its file name
+        if (got.error) man.notes.push(`flyer not read (${got.error}): ${office} ${hashKey(url)}`);
+      }
+    }),
+  );
+  for (const rec of records) {
+    for (const f of rec.flyers) {
+      if (quietFlyer(rec.office, f.url)) continue;
+      const got = results.get(f.url);
+      if (got && !got.error && got.sha256) {
+        f.sha256 = got.sha256;
+        if (FLYER_MIME.test(got.mime || "")) f.mime = got.mime;
+        if (got.w) [f.w, f.h] = [got.w, got.h];
+      } else if (!f.sha256 && known.has(f.url)) {
+        // waiting for its turn, or not read this time: what the last run knew is kept meanwhile (the flyer check's
+        // result for those bytes decides whether it is shown)
+        carry(f, known.get(f.url));
+      }
+    }
+  }
 }
 
 /* ------------------------------------------------------------------ the Area calendar (report preview only) */
@@ -769,6 +940,18 @@ async function areaPreview(events) {
 
 async function main() {
   if (CHECK) process.exit(check());
+  if (MANUAL_CHANGED) {
+    const changed = (manualText ? manualHash(manualText) : "") !== prev.manual;
+    log(`data/${MANUAL_FILE} ${changed ? "changed" : "has not changed"} since data/central-office-events.json was written`);
+    if (process.env.GITHUB_OUTPUT) {
+      try {
+        fs.appendFileSync(process.env.GITHUB_OUTPUT, `manual_changed=${changed}\n`);
+      } catch {
+        /* not on GitHub */
+      }
+    }
+    return;
+  }
   if (!sources.length) {
     log("data/office-event-sources.csv has no rows: nothing to do");
     return;
@@ -804,7 +987,7 @@ async function main() {
   for (const [k, st] of Object.entries(prev.offices)) {
     if (!officeByKey[k] || !sources.some((r) => r.office === k) || infos.some((i) => i.key === k)) continue;
     states[k] = st;
-    events.push(...prev.events.filter((e) => e.office === k && !isPast(e, TODAY)));
+    events.push(...prevOwn.filter((e) => e.office === k && !isPast(e, TODAY)));
   }
   for (const i of infos) {
     states[i.key] = i.state;
@@ -824,36 +1007,80 @@ async function main() {
     }
   });
   // an office that shares another's website and calendar (South OC): that office's events in its cities or with its
-  // name in the title
-  for (const i of infos.filter((x) => x.shared)) {
-    const from = i.shared.from;
-    const cities = String(i.shared.cities || "").split(",").map((c) => c.trim().toLowerCase()).filter(Boolean);
-    let re = null;
-    try {
-      re = i.shared.title ? new RegExp(i.shared.title, "i") : null;
-    } catch {
-      i.notes.push("the title= option is not a valid pattern");
+  // name in the title. Worked out from its row on every run (also for the events added by hand, below), whether or not
+  // the office was read
+  const sharedRows = sources.filter((r) => officeByKey[r.office] && String(r.adapter || "").trim().toLowerCase() === "shared");
+  const applyShared = (list) => {
+    for (const row of sharedRows) {
+      const i = infos.find((x) => x.key === row.office);
+      const shared = parseOptions(row.options);
+      const cities = String(shared.cities || "").split(",").map((c) => c.trim().toLowerCase()).filter(Boolean);
+      let re = null;
+      try {
+        re = shared.title ? new RegExp(shared.title, "i") : null;
+      } catch {
+        if (i && !i.notes.includes("the title= option is not a valid pattern")) i.notes.push("the title= option is not a valid pattern");
+      }
+      for (const e of list) {
+        if (e.office !== shared.from) continue;
+        const mine = cities.includes(String(e.city || "").toLowerCase()) || (re && re.test(`${e.title} ${e.title_es}`));
+        e.also = [...new Set([...(e.also || []).filter((k) => k !== row.office), ...(mine ? [row.office] : [])])].sort();
+      }
     }
-    for (const e of events) {
-      if (e.office !== from) continue;
-      const mine = cities.includes(String(e.city || "").toLowerCase()) || (re && re.test(`${e.title} ${e.title_es}`));
-      e.also = [...new Set([...(e.also || []).filter((k) => k !== i.key), ...(mine ? [i.key] : [])])].sort();
-    }
-  }
+  };
+  applyShared(events);
   const folded = [];
   events = dedupeOffices(events, { flyerOk, officeSort, log: folded });
   // an office that was not read this time (it failed, or --office left it out) still lists the events it shared
-  // with another office: its key stays in their `also`
+  // with another office: its key stays in their `also` (not a shared office's: worked out from its row above)
+  const sharedKeys = new Set(sharedRows.map((r) => r.office));
   const notRead = new Set([...Object.keys(states).filter((k) => !infos.some((i) => i.key === k)), ...infos.filter((i) => ["error", "suspect"].includes(i.state.status)).map((i) => i.key)]);
   for (const e of events) {
     const old = prevById.get(e.id);
-    for (const k of (old && old.also) || []) if (notRead.has(k) && k !== e.office && !e.also.includes(k)) e.also = [...e.also, k].sort();
+    for (const k of (old && old.also) || []) if (notRead.has(k) && !sharedKeys.has(k) && k !== e.office && !e.also.includes(k)) e.also = [...e.also, k].sort();
   }
+
+  // the events added by hand (data/central-office-manual-events.csv), made again from the whole table on every run and
+  // kept apart from the offices' own records, which they never change (so a run that reads no office, or one while an
+  // office fails, gives the same mirror as a full read): cleaned as an office's are; the same event in two rows (two
+  // offices) is one record, which takes the other rows' offices and flyers; a row whose event is on the site already
+  // from an office's own listing (any office: the cards kept above) is left out and reported, so it can be deleted;
+  // then the flyers of the rows that stay are fingerprinted (one that cleaning left out is never downloaded)
+  const man = manualRecords();
+  const cleaned = [];
+  for (const rec of man.records) {
+    try {
+      cleaned.push(cleanRecord(rec, { ...cleanCtx(rec.office), onSummaryDropped: () => man.noSummary++ }));
+    } catch (err) {
+      if (!err || err.code !== RECORD_DROPPED) throw err;
+      man.held.push(rec.id);
+    }
+  }
+  applyShared(cleaned);
+  const handFolded = [];
+  const byId = new Map(cleaned.map((e) => [e.id, e]));
+  let hand = dedupeOffices(cleaned, { officeSort, log: handFolded });
+  for (const f of handFolded) {
+    const gone = byId.get(f.dropped);
+    const kept = hand.find((e) => e.id === f.kept);
+    if (!gone || !kept) continue;
+    for (const x of gone.flyers) if (!kept.flyers.some((y) => y.url === x.url)) kept.flyers.push({ ...x, sizes: [...(x.sizes || [])] });
+  }
+  hand = hand.filter((h) => {
+    const twin = events.find((a) => dedupeOffices([{ ...h, office: a.office === h.office ? `${h.office} (by hand)` : h.office }, a], {}).length === 1);
+    if (twin) man.imported.push(`${h.id} = ${twin.id}`);
+    return !twin;
+  });
+  await fingerprintManual(man, hand);
+  events.push(...hand);
+  folded.push(...handFolded);
   // NOCCO: what the detail pages said about its events that are folded into another office's record (they are not
   // in the events, and their pages are read again only when their cards change)
   const keptIds = new Set(events.map((e) => e.id));
   for (const i of infos) if (i.adapter === "aanoc" && i.result.status === "ok" && i.state.status !== "suspect") i.state.details = foldedDetails(i.result.records, keptIds);
   const mirror = buildMirror({ offices: states, events, today: TODAY });
+  // the table's fingerprint: tells the deploy workflow (--manual-changed) whether the table was edited since
+  if (manualText) mirror.manual = manualHash(manualText);
 
   /* ---- write */
   const text = stableStringify(mirror);
@@ -899,6 +1126,29 @@ async function main() {
     }
     const was = (prev.offices[i.key] || {}).watchModified;
     if (st.watchModified && was && st.watchModified !== was) warn(`Central-office events: ${i.key}'s events page changed on ${st.watchModified.slice(0, 10)}: have a look.`);
+  }
+  // the events added by hand: one row in the report (row numbers and ids only, never a row's text)
+  {
+    const mine = mirror.events.filter(isManual);
+    const fl = mine.flatMap((e) => e.flyers);
+    rows.push({
+      office: "(by hand)", adapter: "manual", status: man.problems.length ? "check" : "ok", read: man.rows, kept: hand.length,
+      dropped: `0/0/${man.past}/0`,
+      area: mine.filter((e) => twins.has(e.id)).length,
+      new: mine.filter((e) => !prevIds.has(e.id)).length,
+      flyers: `${fl.filter((f) => f.sha256 && !reviewed.has(`${f.url} ${f.sha256}`)).length}/${fl.filter((f) => held.includes(f)).length}`,
+      "no-summary": man.noSummary,
+      unparsed: man.problems.length,
+      note: [
+        man.problems.length && `rows not used: ${man.problems.join("; ")}`,
+        man.held.length && `${man.held.length} held (personal details): ${man.held.join(", ")}`,
+        man.imported.length && `on the site already from an office's own listing (delete the row): ${man.imported.join(", ")}`,
+        ...man.notes,
+      ].filter(Boolean).join(" · "),
+    });
+    if (man.problems.length) warn(`Central-office events: ${man.problems.length} row(s) of data/${MANUAL_FILE} could not be used: ${man.problems.join("; ")}.`);
+    if (man.held.length) warn(`Central-office events: ${man.held.length} event(s) added by hand left out: their title has a personal detail (${man.held.join(", ")}).`);
+    if (man.imported.length) warn(`Central-office events: ${man.imported.length} event(s) added by hand are on the site already from an office's own listing; delete their rows in data/${MANUAL_FILE}: ${man.imported.join(", ")}.`);
   }
   if (held.length) warn(`Central-office events: ${held.length} flyer(s) held by the flyer check.`);
 

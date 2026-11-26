@@ -138,21 +138,33 @@ jobs:
           key: office-import-${{ steps.day.outputs.day }}
           lookup-only: true
 
+      - name: Were the central-office events added by hand changed?
+        # data/central-office-manual-events.csv: events typed in from an office's website that the import cannot read.
+        # The mirror remembers the table's fingerprint, so an edit is taken in at once (below, with --manual-only on a
+        # day whose read is already done: no office's event listing is read again; only flyers not fingerprinted yet
+        # are downloaded, and checked in the next step), not at the next day's read.
+        id: manual
+        continue-on-error: true
+        run: node scripts/office-events.mjs --manual-changed
+
       - name: Read the central offices' events (once a day; never blocks)
         # The event lists the central offices publish on their own websites (data/office-event-sources.csv says how
         # each one is read), politely: robots.txt and crawl delays honoured, at most a few requests per office, a
         # 6-minute budget. Personal phone numbers and e-mail addresses, Zoom details, sobriety dates and full names are
         # taken out before anything is written. An office that cannot be read keeps its last events; the health of
         # each office is in this run's summary. data/central-office-events.json changes only when the events do.
+        # The events added by hand (data/central-office-manual-events.csv) are made again on every read; when only
+        # the table changed and today's read is done, only they are (--manual-only).
         # See scripts/office-events.mjs and README "Central-office events".
         id: offices
-        if: inputs.offices != 'skip' && (steps.offices-done.outputs.cache-hit != 'true' || inputs.offices == 'force')
-        run: node scripts/office-events.mjs || echo "::warning::Could not read the central offices' events; the copy in the repository is used."
+        if: inputs.offices != 'skip' && (steps.offices-done.outputs.cache-hit != 'true' || inputs.offices == 'force' || steps.manual.outputs.manual_changed == 'true')
+        run: node scripts/office-events.mjs ${{ (steps.offices-done.outputs.cache-hit == 'true' && inputs.offices != 'force') && '--manual-only' || '' }} || echo "::warning::Could not read the central offices' events; the copy in the repository is used."
 
       - name: Check the central offices' new flyers (e-mail addresses and sobriety dates; never blocks)
         # A flyer from an office's website is shown only after this check passed for that very file
         # (data/office-flyer-review.csv). As for the Area's own flyers, phone numbers on flyers are not checked
-        # (owner's rule, Oct 22, 2026). After each day's read (once a day): the flyers not checked yet, those whose
+        # (owner's rule, Oct 22, 2026). After each day's read (once a day), and after a change of the hand-added table
+        # (data/central-office-manual-events.csv): the flyers not checked yet, those whose
         # check failed a week ago or more, and a few checked ones again (an office may replace a picture at the same
         # address). The reading tools are needed for any of them; with nothing due the check ends at once.
         if: steps.offices.outcome == 'success'

@@ -274,6 +274,7 @@ calendar.offices.status.shared,Shares its website and events with {office}.,Comp
 calendar.offices.status.online,"Online, worldwide: see its own calendar.","En línea, en todo el mundo: consulta su propio calendario.",
 calendar.offices.status.paused,Could not be read lately: see its events page.,No se ha podido leer últimamente: consulta su página de eventos.,Its website has not been readable for more than 3 days
 calendar.offices.status.off,Not read automatically: see its events page.,No se lee automáticamente: consulta su página de eventos.,import = no in data/office-event-sources.csv
+calendar.offices.status.by_hand,"Some of them are listed here, copied from its website by hand.","Algunos se muestran aquí, copiados a mano de su sitio web.",Office card: shown when it has events from data/central-office-manual-events.csv
 calendar.filters.source,Where from,De dónde,Calendar filter: the Area calendar or the central offices' websites
 calendar.filters.source_all,Everything,Todo,
 calendar.filters.source_area,Area calendar,Calendario del Área,

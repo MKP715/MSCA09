@@ -96,6 +96,10 @@
     <div class="office-card__events border-t border-ink-100 pt-4 text-sm">
       {%- set coIcon = "refresh-cw" if co.status == "auto" else ("images" if co.status == "pictures" else "info") %}
       <p class="flex items-start gap-2 text-ink-600">{% icon coIcon, "mt-0.5 size-4 shrink-0 text-[var(--a-600)]" %}<span>{{ ("calendar.offices.status." + co.status) | t(L, { office: ((shared.name_es if L.code == 'es' else shared.name_en) if shared else "") }) }}</span></p>
+      {#- events typed in from its website (data/central-office-manual-events.csv): count = all its events, own = the ones read by the import -#}
+      {%- if co.count > co.own %}
+      <p class="mt-1.5 flex items-start gap-2 text-ink-600">{% icon "pencil-line", "mt-0.5 size-4 shrink-0 text-[var(--a-600)]" %}<span>{{ "calendar.offices.status.by_hand" | t(L) }}</span></p>
+      {%- endif %}
       <div class="mt-3 flex flex-wrap gap-2">
         {%- if co.count %}
         <a href="?office={{ co.key }}#events" class="btn btn-white btn-sm" data-fw-office-link="{{ co.key }}" data-lastmod-skip>{% icon "calendar-days", "size-4 text-[var(--a-600)]" %}{{ ("calendar.offices.upcoming_one" | t(L)) if co.count == 1 else ("calendar.offices.upcoming_n" | t(L, { n: co.count })) }}</a>

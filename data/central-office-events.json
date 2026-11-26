@@ -75,12 +75,56 @@
    "zip": "90650"
   },
   {
-   "address": "27574 Commerce Center Dr # 139",
+   "address": "23401 El Toro",
    "allDay": false,
    "also": [
-    "oc-central",
     "south-oc"
    ],
+   "cats": [
+    "banquet",
+    "open-house",
+    "special-events",
+    "special-meeting-or-event"
+   ],
+   "city": "Lake Forest",
+   "cost": "",
+   "end": "2026-11-26T23:00:00-08:00",
+   "endDate": "",
+   "flags": [],
+   "flyers": [
+    {
+     "h": 1024,
+     "mime": "image/png",
+     "pdf": "",
+     "sha256": "71d4e0e4aa8b5aae0207760e01c5109155fae4b69468224a4ccc61090e32c6ed",
+     "sizes": [
+      [
+       200,
+       "https://www.oc-aa.org/wp-content/uploads/2026/11/Thanksgiving-2026-Flyer-Saddleback-Vally-Fellowship-Center-200x300.png"
+      ]
+     ],
+     "url": "https://www.oc-aa.org/wp-content/uploads/2026/11/Thanksgiving-2026-Flyer-Saddleback-Vally-Fellowship-Center.png",
+     "w": 683
+    }
+   ],
+   "format": "In person",
+   "id": "co-oc-central-70401",
+   "lang": "English",
+   "office": "oc-central",
+   "src": "https://www.oc-aa.org/event/thanksgiving-day-marathon-mtgs-potluck/",
+   "srcHash": "187a606936437a21e636b9a0615d544803fff790",
+   "start": "2026-11-26T06:00:00-08:00",
+   "summary": "",
+   "title": "Thanksgiving Day Marathon Mtgs & Potluck",
+   "title_es": "",
+   "type": "Social",
+   "venue": "Saddleback Valley Fellowship Center",
+   "zip": "92630"
+  },
+  {
+   "address": "27574 Commerce Center Dr # 139",
+   "allDay": false,
+   "also": [],
    "cats": [],
    "city": "Temecula",
    "cost": "",

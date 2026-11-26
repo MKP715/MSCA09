@@ -1,8 +1,10 @@
 // The central offices' own events, as every page sees them ({{ officeEvents.… }}).
 //
 // Source: data/central-office-events.json — the copy of the offices' event lists that scripts/office-events.mjs reads
-// from their websites once a day (deploy.yml) and the keep job commits. Nothing here is typed by hand; editors steer it
-// with three tables:
+// from their websites once a day (deploy.yml) and the keep job commits, plus the events an editor typed in from an
+// office's website that the import cannot read (data/central-office-manual-events.csv: the importer makes them records
+// of the same file, flagged "manual", cleaned and checked the same way). Editors steer it with these tables:
+//   data/central-office-manual-events.csv one row per event added by hand (README "Central-office events")
 //   data/office-event-sources.csv     one row per central office: how its website is read (adapter, feed, import on/off),
 //                                     its events page, and options (card=pictures|list: what its card says when it is
 //                                     not read automatically)
@@ -46,7 +48,7 @@ import { t } from "../_lib/i18n.js";
 import { AREA_TZ, slugify, timeRangeLabel, dateLabel, compileLinkFixes } from "../_lib/calendar.js";
 import { nameHits } from "../_lib/names.js";
 import { loadAllow, contactHits, titleRisk, summaryRisk } from "../_lib/contact-rules.js";
-import { cleanRecord, parseOptions as options } from "../_lib/office-import.js";
+import { cleanRecord, isManual, idNameRisk, parseOptions as options, MANUAL_FILE } from "../_lib/office-import.js";
 import { matchArea, areaItemsFromCalendar } from "../_lib/office-match.js";
 import calendar from "./calendar.js";
 import offices from "./offices.js";
@@ -121,7 +123,7 @@ let memo = null;
 
 export default async function () {
   const now = process.env.CALENDAR_NOW ? DateTime.fromISO(process.env.CALENDAR_NOW, { setZone: true }).setZone(AREA_TZ) : DateTime.now().setZone(AREA_TZ);
-  const inputs = [MIRROR, "office-event-sources.csv", "central-office-overrides.csv", "office-flyer-review.csv", "central-offices.csv", "calendar.ics"].map((f) => {
+  const inputs = [MIRROR, MANUAL_FILE, "office-event-sources.csv", "central-office-overrides.csv", "office-flyer-review.csv", "central-offices.csv", "calendar.ics"].map((f) => {
     try { return fs.statSync(path.join(DATA_DIR, f)).mtimeMs; } catch { return 0; }
   });
   const key = inputs.join("|") + "|" + Math.floor(now.toMillis() / (10 * 60 * 1000));
@@ -153,7 +155,7 @@ function build(now, cal, off) {
     return {
       key: o.key, name_en: o.name, name_es: o.name_es || o.name, short: String(src.short || "").trim() || o.name,
       color: o.color, region: o.region, website: o.website, website_es: o.website_es,
-      events_page: httpsUrl(src.events_page) || "", adapter, status: "", sharedWith: opts.from || "", count: 0,
+      events_page: httpsUrl(src.events_page) || "", adapter, status: "", sharedWith: opts.from || "", count: 0, own: 0,
       host: hostOf(o.website),
       row: o, on, failingDays, card: ["pictures", "list"].includes(opts.card) ? opts.card : "",
     };
@@ -164,7 +166,9 @@ function build(now, cal, off) {
   const statusOf = (o) => {
     if (o.row.online) return "online";
     if (o.adapter === "shared") return "shared";
-    if (IMPORT_ADAPTERS.has(o.adapter) && o.on && (o.count || !o.card)) return o.failingDays > PAUSED_DAYS ? "paused" : "auto";
+    // own = its events read from its website (not the ones added by hand): an office whose events are pictures keeps
+    // saying so although some of them are listed here by hand
+    if (IMPORT_ADAPTERS.has(o.adapter) && o.on && (o.own || !o.card)) return o.failingDays > PAUSED_DAYS ? "paused" : "auto";
     if (o.card) return o.card;
     if (o.adapter === "watch") return "list";
     return o.events_page ? "off" : "none";
@@ -218,6 +222,12 @@ function build(now, cal, off) {
   for (const raw of mirror.events) {
     if (!raw || typeof raw !== "object" || !/^co-[a-z0-9-]+$/.test(String(raw.id || "")) || seen.has(raw.id)) continue;
     seen.add(raw.id);
+    // an event added by hand whose id reads as a full name (the importer hashes those; a backstop): left out, and the
+    // log does not name it
+    if (isManual(raw) && idNameRisk(raw.id)) {
+      dropped.push("an event added by hand (its id)");
+      continue;
+    }
     const office = byKey[raw.office];
     if (!office) continue; // an office hidden in central-offices.csv: its events too
     const ov = overrides.get(raw.id) || [];
@@ -292,7 +302,13 @@ function build(now, cal, off) {
   if (twins.length) console.log(`[officeEvents] ${twins.length} central-office event(s) already on the Area calendar: ${twins.map((x) => `${x.id} = ${x.slug}${x.reason ? ` (${x.reason})` : ""}`).join("; ")}`);
 
   events.sort((a, b) => Date.parse(a.start) - Date.parse(b.start) || a.id.localeCompare(b.id));
-  for (const ev of events) for (const k of ev.offices) if (byKey[k]) byKey[k].count++;
+  for (const ev of events) {
+    for (const k of ev.offices) {
+      if (!byKey[k]) continue;
+      byKey[k].count++;
+      if (!ev.manual) byKey[k].own++;
+    }
+  }
   for (const o of officeRows) o.status = statusOf(o);
 
   /* ---- lists for the page and its filters */
@@ -418,6 +434,7 @@ function shape(rec, { office, offices, typeMap, reviewed, allow, now }) {
     flyer, pdf, hasFlyer: !!flyer,
     status: "confirmed", recurring: false, isEvent: true, isMeeting: false, districts: [], committees: [],
     flags: rec.flags || [],
+    manual: isManual(rec), // typed in from the office's website (data/central-office-manual-events.csv), not read by the import
   };
   ev.typeSlug = slugify(ev.type);
   ev.formatKey = FORMAT_KEY[format] || "";

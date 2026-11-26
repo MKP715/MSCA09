@@ -318,7 +318,23 @@ calendar`).
 `watch` (the office posts its events only as pictures or text: its card links to its events page, and the daily
 summary says when that page changed), `shared` (South OC: OC Intergroup's site) or `none`. `import` = `no` stops
 reading an office's events (for example if it asks us to); to stop every request to its website, also for a `watch`
-row, set `adapter` = `none`. Robots rules and crawl delays are honoured, with one read a day.
+row, set `adapter` = `none` (then the flyers of its rows in the hand-added table below are not downloaded or shown
+either). Robots rules and crawl delays are honoured, with one read a day.
+
+**Events the import cannot read: add them by hand** — `data/central-office-manual-events.csv`. Some offices post
+their events as pictures (Inland Empire, Coachella Hispana, Victor Valley), as a hand-typed list (the Desert), or with
+a date the import cannot read. Now and then someone looks through the offices' websites and types those events in,
+one row per event (the table's first lines explain every column). They then appear exactly like the imported ones —
+on the Central office events page, in the calendar's Central offices filter and strip — and **not** on the Area's
+Google Calendar. The flyer is not copied: its column takes the address of the picture on the office's own website,
+which the site links once the flyer check has passed for that file. Each row goes through the same anonymity cleaning
+and the same "Area calendar wins" rule; past rows disappear by themselves. The import reads the table every day, and
+straight away when the table changes (then no office's event listing is read again that day; only flyers not
+fingerprinted yet are downloaded, at most 12 a run, and checked). A row never changes an office's own cards: when an
+office's own listing (that office's or another's) already carries the row's event, the row is left out and the run's
+summary says so (`on the site already from an office's own listing`): delete that row. Two rows for one event (two
+offices) make one card with both offices and every flyer. A row with a mistake (an unknown office, a date that is not `yyyy-mm-dd`, a time that cannot be read)
+is named in the summary by its line number.
 
 **Anonymity.** Personal phone numbers and e-mail addresses, Zoom details, sobriety dates and full names are taken out
 of the offices' text before anything is saved, and the copy is committed only when `node scripts/office-events.mjs
@@ -354,7 +370,9 @@ set its `result` to `cleared` in `data/office-flyer-review.csv`.
 kept, left out (meetings, past, already on the Area calendar), flyers waiting, and a note when an office could not be
 read (its last events are kept) or its page changed. To read the offices again at once: **Actions** → *Build and
 publish the website* → **Run workflow** → *Central-office events* = `force`. Developers: `npm run offices -- --dry-run`
-(a read without saving), `npm run test:offices` (the readers on saved pages, no network).
+(a read without saving), `npm run offices -- --manual-only` (only the events added by hand: no office's event
+listing is read; flyers not fingerprinted yet are downloaded),
+`npm run test:offices` (the readers on saved pages, no network).
 
 ---
 

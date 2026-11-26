@@ -1056,6 +1056,126 @@ export function watchStamp(json) {
 
 export const adapters = { tribe, aanoc, tvco };
 
+/* ------------------------------------------------------------------ events added by hand */
+
+// data/central-office-manual-events.csv: events an editor found on an office's website that no adapter reads (an
+// office that posts its events as pictures, a card or paragraph whose date cannot be read, a flyer on a home page).
+// Each row becomes a record of the mirror like an imported one, cleaned by cleanRecord, its flyers fingerprinted and
+// checked, compared with the Area calendar by the site; it carries the flag "manual" (MANUAL_FLAG), so an office's own
+// events (settleOffice, its state's sources) never include it and the office's next read does not bring it back twice.
+export const MANUAL_FLAG = "manual";
+export const MANUAL_FILE = "central-office-manual-events.csv";
+export const isManual = (rec) => !!rec && Array.isArray(rec.flags) && rec.flags.includes(MANUAL_FLAG);
+/** Does an id (or a part of one) read as a full name when its words are written as a title ("ana-garcia-memorial" →
+ *  "Ana Garcia Memorial")? Used for the ids of the events added by hand (made from the editor's id or the title). */
+export const idNameRisk = (id) => nameHits(nameWords(String(id || ""))).length > 0;
+/** The table's columns, in order (checked and notes are for editors: when the row was last seen on the office's site,
+ *  and anything worth knowing; they never reach the mirror). */
+export const MANUAL_COLUMNS = ["office", "id", "title", "title_es", "date", "start_time", "end_date", "end_time", "venue", "address", "city", "zip", "format", "language", "type", "cost", "summary", "flyers", "src", "checked", "notes"];
+/** The table's fingerprint (its rows, whatever the line endings): the mirror remembers it, so the deploy workflow can
+ *  tell an edit of the table from a day without one (scripts/office-events.mjs --manual-changed). */
+export const manualHash = (text) => sha1(lf(text).replace(/\n+$/, ""));
+
+const FORMAT_WORDS = { "in person": "In person", "in-person": "In person", presencial: "In person", hybrid: "Hybrid", "híbrido": "Hybrid", hibrido: "Hybrid", virtual: "Virtual", online: "Virtual", "en línea": "Virtual", "en linea": "Virtual" };
+const LANG_WORDS = { english: "English", en: "English", spanish: "Spanish", es: "Spanish", "español": "Spanish", espanol: "Spanish", bilingual: "Bilingual", bilingüe: "Bilingual", bilingue: "Bilingual" };
+/** "19:00", "7:00 PM", "7pm", "7 p.m." → [hour, minute]; "" → null; anything else → undefined. */
+function manualTime(v) {
+  const s = String(v ?? "").trim().toLowerCase();
+  if (!s) return null;
+  if (/^(noon|mediod[ií]a)$/.test(s)) return [12, 0];
+  const m = /^(\d{1,2})(?:[:.](\d{2}))?\s*(?:([ap])\.?\s*m\.?)?$/.exec(s);
+  if (!m) return undefined;
+  let h = Number(m[1]);
+  const mi = Number(m[2] || 0);
+  if (mi > 59) return undefined;
+  if (m[3]) {
+    if (h < 1 || h > 12) return undefined;
+    h = hour24(h, m[3]);
+  } else if (h > 23) return undefined;
+  return [h, mi];
+}
+const validDay = (v) => /^\d{4}-\d{2}-\d{2}$/.test(String(v || "").trim()) && DateTime.fromISO(String(v).trim(), { zone: TZ }).isValid;
+
+/**
+ * One row of data/central-office-manual-events.csv → { record } (not cleaned yet: the importer cleans it with the
+ * office's context) or { problem } (what is wrong with the row, in words that never quote its text). row = the
+ * table's columns: office, id, title, title_es, date, start_time, end_date, end_time, venue, address, city, zip,
+ * format, language, type, cost, summary, flyers, src. ctx = { lang (the office's language when the row gives none),
+ * types (the event types in use: TYPES ∩ data/event-types.csv), now }.
+ *  - date (yyyy-mm-dd) is the first day; end_date the last one of a multi-day event; start_time / end_time as 19:00 or
+ *    7:00 PM. No start time: an all-day event. An end time before the start time: it ends the next day.
+ *  - id: the row's own short name (a-z, 0-9, -) — keep it when the title is corrected, so the event keeps its address
+ *    on the site; empty: made from the title and the date. The record's id is co-<office>-manual-<id>.
+ *  - flyers: the addresses of the flyer pictures (or PDFs) on the office's own website, separated by spaces, commas
+ *    or semicolons: the site links them where they are (they are fingerprinted and checked like imported ones).
+ */
+export function manualRecord(row, ctx = {}) {
+  const r = row || {};
+  const office = String(r.office || "").trim();
+  const title = one(r.title);
+  if (!office) return { problem: "no office" };
+  if (!title) return { problem: "no title" };
+  const date = String(r.date || "").trim();
+  if (!validDay(date)) return { problem: "date is not yyyy-mm-dd" };
+  const endDay = String(r.end_date || "").trim();
+  if (endDay && !validDay(endDay)) return { problem: "end_date is not yyyy-mm-dd" };
+  if (endDay && endDay < date) return { problem: "end_date is before date" };
+  const st = manualTime(r.start_time);
+  const et = manualTime(r.end_time);
+  if (st === undefined) return { problem: "start_time cannot be read (19:00 or 7:00 PM)" };
+  if (et === undefined) return { problem: "end_time cannot be read (19:00 or 7:00 PM)" };
+  if (!st && et) return { problem: "end_time without start_time" };
+  const last = endDay && endDay > date ? endDay : "";
+  let start, end = "", allDay = false, endDate = "";
+  const flags = [MANUAL_FLAG];
+  if (!st) {
+    allDay = true;
+    start = date;
+    endDate = last || date;
+  } else {
+    const s = at(date, st[0], st[1]);
+    start = isoOut(s);
+    if (et) {
+      let e = at(last || date, et[0], et[1]);
+      if (e <= s) e = e.plus({ days: 1 }); // 7 pm – 1 am: the next day's small hours
+      end = isoOut(e);
+      endDate = last || timedEndDate(s, e);
+    } else {
+      endDate = last;
+      flags.push("no-end-time");
+    }
+  }
+  const fmt = FORMAT_WORDS[String(r.format || "").trim().toLowerCase()] || "In person";
+  const lang = LANG_WORDS[String(r.language || "").trim().toLowerCase()] || (LANGS.includes(ctx.lang) ? ctx.lang : "English");
+  const types = Array.isArray(ctx.types) && ctx.types.length ? ctx.types : TYPES;
+  const typeIn = String(r.type || "").trim();
+  const flyerUrls = uniq(String(r.flyers || "").split(/[\s,;]+/).map((u) => httpsOf(u)).filter((u) => /^https:\/\/[^\s"'<>]+$/i.test(u)));
+  const src = httpsOf(r.src);
+  // the id is public (the mirror, the card's address, the import's log): an editor's id whose words read as a full name
+  // ("ana-garcia-memorial"), or a title with a full name or another detail when the row gives no id, is replaced by a
+  // hash (as Temecula's ids made from titles are); recordId then reads it for codes, phone numbers and sobriety dates
+  // read as recordId writes it too: every run of other signs ("ana/garcia", "ana–garcia", "ana'garcia") becomes "-"
+  const typed = String(r.id || "").trim();
+  const slugOf = (k) => fold(k).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  const nameInId = typed
+    ? idNameRisk(typed) || idNameRisk(slugOf(typed))
+    : nameHits(title).length > 0 || titleRisk(title, { now: ctx.now }).length > 0 || idNameRisk(slugOf(title));
+  const key = nameInId ? hashKey(typed || `${normTitle(title)} ${date}`) : typed || `${title}-${date}`;
+  const record = blankRecord({
+    id: recordId(office, `manual-${key}`, { now: ctx.now }),
+    office, title, title_es: one(r.title_es), lang, start, end, allDay, endDate,
+    venue: one(r.venue), address: one(r.address), city: one(r.city), zip: one(r.zip),
+    format: fmt, cost: one(r.cost), summary: lf(r.summary).trim(),
+    src: /^https:\/\//i.test(src) ? src : "",
+    flyers: flyerUrls.map((url) => flyer({ url })),
+    flags,
+  });
+  record.type = types.find((t) => t.toLowerCase() === typeIn.toLowerCase()) || mapType(record, types);
+  // what the row says (its source hash, as an imported record's says what its office's page said)
+  record.srcHash = sourceHash(Object.fromEntries(MANUAL_COLUMNS.filter((k) => !["office", "id", "checked", "notes"].includes(k)).map((k) => [k, one(r[k])])));
+  return nameInId ? { record, hashed: true } : { record };
+}
+
 /* ------------------------------------------------------------------ cleaning (anonymity) */
 
 /** Cut to `max` characters on a sentence (or else a word) boundary, ending with "…". */

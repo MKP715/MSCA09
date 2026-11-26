@@ -144,3 +144,44 @@ test("two events of one office never end up in one group, even when both look li
   assert.deepEqual(out.map((r) => r.id).sort(), ["co-haco-1", "co-oc-central-1"]);
   assert.deepEqual(out.find((r) => r.id === "co-oc-central-1").also, ["nocco"]);
 });
+
+test("one shared word and the same hour in two different cities are two events (Nov 26, 2026: Lake Forest and Temecula)", () => {
+  const blank = { also: [], title_es: "", allDay: false, endDate: "", flyers: [], src: "" };
+  const marathon = { ...blank, id: "co-oc-central-70401", office: "oc-central", title: "Thanksgiving Day Marathon Mtgs & Potluck", start: "2026-11-26T06:00:00-08:00", end: "2026-11-26T23:00:00-08:00", city: "Lake Forest" };
+  const alcathon = { ...blank, id: "co-temecula-thanksgiving-alcathon-20261126", office: "temecula", title: "Thanksgiving Alcathon", start: "2026-11-26T07:00:00-08:00", end: "2026-11-27T01:00:00-08:00", city: "Temecula" };
+  assert.equal(dedupeOffices([marathon, alcathon], {}).length, 2);
+  // the same pair in one city, or without a city on one side, is still one event (one word + the same hour)
+  assert.equal(dedupeOffices([marathon, { ...alcathon, city: "Lake Forest, CA" }], {}).length, 1);
+  assert.equal(dedupeOffices([marathon, { ...alcathon, city: "" }], {}).length, 1);
+  // two shared words, the same flyer or the office's own host still win over two city names
+  assert.equal(dedupeOffices([marathon, { ...alcathon, title: "Thanksgiving Marathon" }], {}).length, 1);
+  // and on the Area calendar side: an Area entry elsewhere with one shared word at the same hour is not this event
+  const areaAlcathon = item({ slug: "alcathon", title: "Thanksgiving Alcathon", start: "2026-11-26T07:00:00-08:00", end: "2026-11-27T01:00:00-08:00", city: "Temecula" });
+  assert.equal(matchArea(marathon, [areaAlcathon], ctx).twin, false);
+  assert.equal(matchArea(alcathon, [areaAlcathon], ctx).twin, true);
+});
+
+test("generic words (new, information) are not shared words: a New Year's Eve party is not an Alateen notice of the same evening", () => {
+  assert.deepEqual([...titleWords("New Alateen Meeting information")], ["alateen"]);
+  assert.deepEqual([...titleWords("Nueva información del grupo Nuevo Amanecer")], ["amanecer"]);
+  const blank = { also: [], title_es: "", allDay: false, endDate: "", flyers: [], src: "", city: "" };
+  const party = { ...blank, id: "co-asbco-manual-new-years-eve-party-2026", office: "asbco", title: "All South Bay Central Office New Year's Eve Party", start: "2026-12-31T18:00:00-08:00", end: "2026-12-31T22:00:00-08:00", city: "Redondo Beach" };
+  const notice = { ...blank, id: "co-sureste-riverside-1369", office: "sureste-riverside", title: "New Alateen Meeting information", start: "2026-12-31T17:30:00-08:00", end: "" };
+  assert.equal(dedupeOffices([party, notice], {}).length, 2);
+  // the same party listed by two offices still is one event
+  assert.equal(dedupeOffices([party, { ...party, id: "co-haco-9", office: "haco", title: "New Year's Eve Party", city: "" }], {}).length, 1);
+});
+
+test("the city clash reads one place written two ways as one place: a closing state or ZIP, a state alone, an online place", () => {
+  const blank = { also: [], title_es: "", allDay: false, endDate: "", flyers: [], src: "" };
+  const a = { ...blank, id: "co-oc-central-1", office: "oc-central", title: "Gratitude Marathon", start: "2026-11-26T06:00:00-08:00", end: "2026-11-26T23:00:00-08:00", city: "Lake Forest" };
+  const b = { ...blank, id: "co-nocco-1", office: "nocco", title: "Thanksgiving Marathon", start: "2026-11-26T06:30:00-08:00", end: "2026-11-26T22:00:00-08:00" };
+  for (const city of ["Lake Forest CA", "Lake Forest, CA", "LAKE FOREST CA 92630", "Lake Forest California", "NV", "92630", "Via Zoom", "Online", ""]) {
+    assert.equal(dedupeOffices([a, { ...b, city }], {}).length, 1, city);
+  }
+  for (const city of ["Temecula", "Foothill Ranch", "Temecula CA 92590"]) assert.equal(dedupeOffices([a, { ...b, city }], {}).length, 2, city);
+  // an out-of-state address without a ZIP leaves the state as the city (NOCCO's reader): PRAASA in Reno is still the Area's
+  const praasa = item({ slug: "praasa", title: "PRAASA 2027 – Pacific Region A.A. Service Assembly", start: "2027-03-05T00:00:00-08:00", allDay: true, date: "2027-03-05", endDate: "2027-03-07", city: "Reno" });
+  const office = { ...blank, id: "co-nocco-praasa-2027", office: "nocco", title: "PRAASA 2027", start: "2027-03-05", allDay: true, endDate: "2027-03-07", city: "NV" };
+  assert.equal(matchArea(office, [praasa], ctx).twin, true);
+});
