@@ -519,6 +519,33 @@
    "zip": "90262"
   },
   {
+   "address": "6652 Heil Ave",
+   "allDay": false,
+   "also": [],
+   "cats": [],
+   "city": "Huntington Beach",
+   "cost": "",
+   "end": "2026-12-01T21:00:00-08:00",
+   "endDate": "",
+   "flags": [
+    "manual"
+   ],
+   "flyers": [],
+   "format": "In person",
+   "id": "co-oc-central-manual-district-6-holiday-party-2026",
+   "lang": "English",
+   "office": "oc-central",
+   "src": "https://www.oc-aa.org/newsletter/",
+   "srcHash": "840c7dc4d86a59e15d04781256112ce6f129301b",
+   "start": "2026-12-01T18:00:00-08:00",
+   "summary": "District 6's holiday party and December district meeting. Mexican food and entertainment are provided; bring a favorite holiday sweet treat to share. Volunteers are welcome for setup and cleanup.",
+   "title": "District 6 Holiday Party & Meeting",
+   "title_es": "",
+   "type": "Social",
+   "venue": "Community United Methodist Church",
+   "zip": "92647"
+  },
+  {
    "address": "1355 North Harbor Drive",
    "allDay": true,
    "also": [
@@ -1076,6 +1103,156 @@
    "zip": ""
   },
   {
+   "address": "301 Avenue D",
+   "allDay": false,
+   "also": [],
+   "cats": [],
+   "city": "Redondo Beach",
+   "cost": "Donation $25 (25 and younger), $40 (26 and up)",
+   "end": "2026-12-31T22:00:00-08:00",
+   "endDate": "",
+   "flags": [
+    "manual"
+   ],
+   "flyers": [
+    {
+     "h": 725,
+     "mime": "image/jpeg",
+     "pdf": "",
+     "sha256": "b7874cd6e4077183766271a97859feb0d3f999be8a1339c6a0eec318d2908a4f",
+     "sizes": [],
+     "url": "https://asbco.org/wp-content/uploads/2026/11/New-Years-Eve-2026.jpg",
+     "w": 574
+    },
+    {
+     "h": 0,
+     "mime": "application/pdf",
+     "pdf": "",
+     "sha256": "56ede9c2a0f312f1049a729d7f8fcafd7aaebc6171749a9a7727ce19ec5f8c52",
+     "sizes": [],
+     "url": "https://asbco.org/wp-content/uploads/2026/11/2026-New-Years-Eve-Flyer.pdf",
+     "w": 0
+    }
+   ],
+   "format": "In person",
+   "id": "co-asbco-manual-new-years-eve-party-2026",
+   "lang": "English",
+   "office": "asbco",
+   "src": "https://asbco.org/",
+   "srcHash": "52b6e7a9802dcc9474d4bdb800717a475d16be6d",
+   "start": "2026-12-31T18:00:00-08:00",
+   "summary": "The central office's New Year's Eve party: dinner and dessert, DJ, karaoke, photo booth, raffle and a 9 PM balloon drop. Tickets at the door and at the central office in Torrance; proceeds support the central office.",
+   "title": "All South Bay Central Office New Year's Eve Party",
+   "title_es": "",
+   "type": "Social",
+   "venue": "St. Andrew's Presbyterian Church",
+   "zip": "90277"
+  },
+  {
+   "address": "27732 Encanto Dr.",
+   "allDay": false,
+   "also": [],
+   "cats": [],
+   "city": "Menifee",
+   "cost": "Bingo cards $5 each",
+   "end": "2027-01-09T16:00:00-08:00",
+   "endDate": "",
+   "flags": [
+    "manual"
+   ],
+   "flyers": [
+    {
+     "h": 1700,
+     "mime": "image/png",
+     "pdf": "",
+     "sha256": "63f5315d008d02dc0c88bb21c516f7ea8b0ce6c203fefc702f688ffc036fe962",
+     "sizes": [],
+     "url": "https://www.temeculacentraloffice.org/aa/wp-content/uploads/JAN_9_BINGO.png",
+     "w": 1344
+    }
+   ],
+   "format": "In person",
+   "id": "co-temecula-manual-bingo-2027-01-09",
+   "lang": "English",
+   "office": "temecula",
+   "src": "https://www.temeculacentraloffice.org/aa-events/",
+   "srcHash": "62e3b29294a9df27cec23a3ae23bda2a10ae2e43",
+   "start": "2027-01-09T14:00:00-08:00",
+   "summary": "TVCO Intergroup invites everyone to Bingo at Unity Hall, to help the Temecula Valley Central Office carry the message. Candy and ink blotters are for sale.",
+   "title": "Bingo at Unity Hall",
+   "title_es": "",
+   "type": "Social",
+   "venue": "Unity Hall",
+   "zip": ""
+  },
+  {
+   "address": "153 Franklin Street",
+   "allDay": true,
+   "also": [
+    "oiaa"
+   ],
+   "cats": [],
+   "city": "Buffalo, NY",
+   "cost": "",
+   "end": "",
+   "endDate": "2027-02-14",
+   "flags": [
+    "manual"
+   ],
+   "flyers": [],
+   "format": "Hybrid",
+   "id": "co-inland-empire-manual-iwc-2027",
+   "lang": "English",
+   "office": "inland-empire",
+   "src": "https://aainlandempire.org/special-events",
+   "srcHash": "e3f672b4fcb22a439ec7655531c831490ee50a3c",
+   "start": "2027-02-11",
+   "summary": "International conference where women in A.A. gather to share the language of the heart, in Buffalo and online.",
+   "title": "63rd International Women's Conference",
+   "title_es": "",
+   "type": "Convention",
+   "venue": "Buffalo Convention Center",
+   "zip": "14202"
+  },
+  {
+   "address": "2001 Point West Way",
+   "allDay": false,
+   "also": [],
+   "cats": [],
+   "city": "Sacramento",
+   "cost": "$40 pre-registration (until January 31, 2027), $45 at the door",
+   "end": "",
+   "endDate": "2027-02-21",
+   "flags": [
+    "manual",
+    "no-end-time"
+   ],
+   "flyers": [
+    {
+     "h": 1448,
+     "mime": "image/png",
+     "pdf": "",
+     "sha256": "509e959ba69aae85982786543e87705ae62ebb7069f3bcd0dbfa0d726b7a9d7e",
+     "sizes": [],
+     "url": "https://aainlandempire.org/wp-content/uploads/2026/11/SacSpringFling.png",
+     "w": 1086
+    }
+   ],
+   "format": "In person",
+   "id": "co-inland-empire-manual-sacramento-spring-fling-2027",
+   "lang": "English",
+   "office": "inland-empire",
+   "src": "https://aainlandempire.org/special-events",
+   "srcHash": "41513b176726b3fa8a0ce8e2eb02e791de751a79",
+   "start": "2027-02-19T12:00:00-08:00",
+   "summary": "A.A. conference with Al-Anon participation: speaker meetings, A.A. archives, banquet, Saturday-night dance, H&I panels and marathon meetings.",
+   "title": "49th Annual Sacramento Spring Fling Conference",
+   "title_es": "",
+   "type": "Convention",
+   "venue": "DoubleTree by Hilton",
+   "zip": "95815"
+  },
+  {
    "address": "8888 Los Coyotes Dr",
    "allDay": false,
    "also": [],
@@ -1207,6 +1384,117 @@
    "zip": ""
   },
   {
+   "address": "101 McInnis Pkwy",
+   "allDay": true,
+   "also": [],
+   "cats": [],
+   "city": "San Rafael",
+   "cost": "",
+   "end": "",
+   "endDate": "2027-05-30",
+   "flags": [
+    "manual"
+   ],
+   "flyers": [
+    {
+     "h": 1406,
+     "mime": "image/jpeg",
+     "pdf": "",
+     "sha256": "f5cde3d0306c882dfee98926bc20d789f7cedf82cdf8ae4da21a5f027a582ea9",
+     "sizes": [],
+     "url": "https://aaintcoachella.net/wp-content/uploads/2026/10/Screenshot_20261029_195827_My-Files.jpg",
+     "w": 1054
+    }
+   ],
+   "format": "In person",
+   "id": "co-coachella-hispana-manual-convencion-estatal-hispana-50",
+   "lang": "Spanish",
+   "office": "coachella-hispana",
+   "src": "https://aaintcoachella.net/boletin-de-convencion-estatal-50/",
+   "srcHash": "e00c604909072ad992427260954576273099965b",
+   "start": "2027-05-28",
+   "summary": "Statewide Hispanic A.A. convention, theme \"Juntos llegando a la era dorada\", hosted by the North Bay Hispanic area.",
+   "title": "50th California State Hispanic Convention of A.A.",
+   "title_es": "50.ª Convención Estatal Hispana de A.A. de California",
+   "type": "Convention",
+   "venue": "Embassy Suites by Hilton",
+   "zip": "94903"
+  },
+  {
+   "address": "4700 Emperor Blvd",
+   "allDay": true,
+   "also": [],
+   "cats": [],
+   "city": "Durham, NC",
+   "cost": "",
+   "end": "",
+   "endDate": "2027-08-22",
+   "flags": [
+    "manual"
+   ],
+   "flyers": [
+    {
+     "h": 1650,
+     "mime": "image/jpeg",
+     "pdf": "",
+     "sha256": "9c1536a258c62fe4459c62f9a6c93823c821e19c74416be1f1b28a8f6cd0f858",
+     "sizes": [],
+     "url": "https://aainlandempire.org/wp-content/uploads/2026/09/2027FlyerRDU_Page_1.jpg",
+     "w": 1275
+    }
+   ],
+   "format": "In person",
+   "id": "co-inland-empire-manual-southeast-woman-to-woman-2027",
+   "lang": "English",
+   "office": "inland-empire",
+   "src": "https://aainlandempire.org/special-events",
+   "srcHash": "5a76360eed6152525fa3782efd0bbc4c18d91f12",
+   "start": "2027-08-20",
+   "summary": "A conference for sober alcoholic women with Al-Anon participation (\"Secrets Women Don't Share\"). No children in the conference rooms.",
+   "title": "31st Annual Southeast Woman-to-Woman Conference",
+   "title_es": "",
+   "type": "Convention",
+   "venue": "Sheraton Imperial Hotel RDU at RTP",
+   "zip": "27703"
+  },
+  {
+   "address": "",
+   "allDay": true,
+   "also": [],
+   "cats": [],
+   "city": "Houston, TX",
+   "cost": "",
+   "end": "",
+   "endDate": "2027-09-05",
+   "flags": [
+    "manual"
+   ],
+   "flyers": [
+    {
+     "h": 1320,
+     "mime": "image/jpeg",
+     "pdf": "",
+     "sha256": "19140ea9f2044be122ffe119eeacbf2238ea218ebfc422ef7a3b9498e8a49192",
+     "sizes": [],
+     "url": "https://aasurdelabahia.org/wp-content/uploads/2026/10/Convencion-USA-Canada.jpg",
+     "w": 937
+    }
+   ],
+   "format": "In person",
+   "id": "co-sur-bahia-manual-convencion-hispana-usa-canada-54",
+   "lang": "Spanish",
+   "office": "sur-bahia",
+   "src": "https://aasurdelabahia.org/convencion-nacional/",
+   "srcHash": "f3953845efb8c4bda1c83218d6ae58e6128ab257",
+   "start": "2027-09-03",
+   "summary": "Theme \"A.A. es un regalo de Dios\"; host area Houston, Texas. The flyer is the first bulletin of the Southern California pro-convention committee.",
+   "title": "54th Hispanic A.A. Convention of the U.S. and Canada",
+   "title_es": "LIV Convención Hispana de A.A. de Estados Unidos y Canadá",
+   "type": "Convention",
+   "venue": "",
+   "zip": ""
+  },
+  {
    "address": "285 East Hospitality Lane",
    "allDay": true,
    "also": [],
@@ -1242,10 +1530,11 @@
    "zip": "92408"
   }
  ],
+ "manual": "171498dd82f21334ab0aec68be9e49dc1d4d72d7",
  "offices": {
   "asbco": {
    "adapter": "tribe",
-   "count": 0,
+   "count": 1,
    "errorKind": "",
    "failingSince": "",
    "flyers": {},
@@ -1258,7 +1547,7 @@
   },
   "coachella-hispana": {
    "adapter": "watch",
-   "count": 0,
+   "count": 1,
    "errorKind": "",
    "failingSince": "",
    "flyers": {},
@@ -1327,7 +1616,7 @@
   },
   "inland-empire": {
    "adapter": "tribe",
-   "count": 0,
+   "count": 3,
    "errorKind": "",
    "failingSince": "",
    "flyers": {},
@@ -1381,7 +1670,7 @@
   },
   "oc-central": {
    "adapter": "tribe",
-   "count": 5,
+   "count": 6,
    "errorKind": "",
    "failingSince": "",
    "flyers": {
@@ -1406,7 +1695,7 @@
   },
   "oiaa": {
    "adapter": "none",
-   "count": 0,
+   "count": 1,
    "errorKind": "",
    "failingSince": "",
    "flyers": {},
@@ -1458,7 +1747,7 @@
   },
   "sur-bahia": {
    "adapter": "tribe",
-   "count": 6,
+   "count": 7,
    "errorKind": "",
    "failingSince": "",
    "flyers": {
@@ -1520,7 +1809,7 @@
   },
   "temecula": {
    "adapter": "tvco",
-   "count": 3,
+   "count": 4,
    "errorKind": "",
    "failingSince": "",
    "flyers": {
