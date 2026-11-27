@@ -1,53 +1,6 @@
 {
  "events": [
   {
-   "address": "23401 El Toro",
-   "allDay": false,
-   "also": [
-    "south-oc"
-   ],
-   "cats": [
-    "banquet",
-    "open-house",
-    "special-events",
-    "special-meeting-or-event"
-   ],
-   "city": "Lake Forest",
-   "cost": "",
-   "end": "2026-11-26T23:00:00-08:00",
-   "endDate": "",
-   "flags": [],
-   "flyers": [
-    {
-     "h": 1024,
-     "mime": "image/png",
-     "pdf": "",
-     "sha256": "71d4e0e4aa8b5aae0207760e01c5109155fae4b69468224a4ccc61090e32c6ed",
-     "sizes": [
-      [
-       200,
-       "https://www.oc-aa.org/wp-content/uploads/2026/11/Thanksgiving-2026-Flyer-Saddleback-Vally-Fellowship-Center-200x300.png"
-      ]
-     ],
-     "url": "https://www.oc-aa.org/wp-content/uploads/2026/11/Thanksgiving-2026-Flyer-Saddleback-Vally-Fellowship-Center.png",
-     "w": 683
-    }
-   ],
-   "format": "In person",
-   "id": "co-oc-central-70401",
-   "lang": "English",
-   "office": "oc-central",
-   "src": "https://www.oc-aa.org/event/thanksgiving-day-marathon-mtgs-potluck/",
-   "srcHash": "187a606936437a21e636b9a0615d544803fff790",
-   "start": "2026-11-26T06:00:00-08:00",
-   "summary": "",
-   "title": "Thanksgiving Day Marathon Mtgs & Potluck",
-   "title_es": "",
-   "type": "Social",
-   "venue": "Saddleback Valley Fellowship Center",
-   "zip": "92630"
-  },
-  {
    "address": "27574 Commerce Center Dr # 139",
    "allDay": false,
    "also": [],
@@ -81,44 +34,6 @@
    "type": "Social",
    "venue": "Serenity Circle Hall",
    "zip": "92590"
-  },
-  {
-   "address": "",
-   "allDay": false,
-   "also": [],
-   "cats": [],
-   "city": "",
-   "cost": "",
-   "end": "2026-11-29T17:00:00-08:00",
-   "endDate": "2026-11-29",
-   "flags": [
-    "place-on-flyer",
-    "title-date-mismatch"
-   ],
-   "flyers": [
-    {
-     "h": 2560,
-     "mime": "image/jpeg",
-     "pdf": "",
-     "sha256": "",
-     "sizes": [],
-     "url": "https://oiaasriverside.org/wp-content/uploads/2026/08/28-CONGRESO-scaled.jpg",
-     "w": 1857
-    }
-   ],
-   "format": "In person",
-   "id": "co-sureste-riverside-1303",
-   "lang": "Spanish",
-   "office": "sureste-riverside",
-   "src": "https://oiaasriverside.org/event/xxviii-congreso-de-alcoholicos-anonimos-272829-de-noviembre-del-2026/",
-   "srcHash": "3290b40abf5b3da5b611900dd21302eb6a3c08db",
-   "start": "2026-11-26T08:00:00-08:00",
-   "summary": "",
-   "title": "XXVIII Congreso de Alcoholicos Anonimos",
-   "title_es": "",
-   "type": "Convention",
-   "venue": "",
-   "zip": ""
   },
   {
    "address": "13000 San Antonio Dr.",
@@ -1596,21 +1511,19 @@
   },
   "oc-central": {
    "adapter": "tribe",
-   "count": 6,
+   "count": 5,
    "errorKind": "",
    "failingSince": "",
    "flyers": {
     "https://www.oc-aa.org/wp-content/uploads/2026/09/ACYPAA54_Flyer.png": "4aa1477cba04cc9fddcbf1367f9eb8c00c8c8310764ebc0b930afb5b49d40a2c 1429 2000 image/png",
     "https://www.oc-aa.org/wp-content/uploads/2026/11/2026-11-28-msca09-service-committees-1.jpg": "7cb68204e1529b4b432261699b8a9dac20abcaac845f1d9006f5ecf16b52bfb9 1229 1844 image/jpeg",
     "https://www.oc-aa.org/wp-content/uploads/2026/11/International-Holiday-Potluck-District-7-2026.jpg": "b72326899add35679c798cb7abc189cf7c9badbfc794682df7dd3a8d96d176fa 320 480 image/jpeg",
-    "https://www.oc-aa.org/wp-content/uploads/2026/11/OCAA-Convention-2027.jpg": "bfbd0aefef481195f6b20869ea1aa81b3ad74418a2b42b5b93b71a14d0568121 1600 2067 image/jpeg",
-    "https://www.oc-aa.org/wp-content/uploads/2026/11/Thanksgiving-2026-Flyer-Saddleback-Vally-Fellowship-Center.png": "71d4e0e4aa8b5aae0207760e01c5109155fae4b69468224a4ccc61090e32c6ed 683 1024 image/png"
+    "https://www.oc-aa.org/wp-content/uploads/2026/11/OCAA-Convention-2027.jpg": "bfbd0aefef481195f6b20869ea1aa81b3ad74418a2b42b5b93b71a14d0568121 1600 2067 image/jpeg"
    },
    "lastChange": "2026-11-18",
    "pageModified": "",
    "sources": {
     "co-oc-central-70285": "2027-04-18 0aaacb4561f5e25961b2babc2708b6ab2d07fa47",
-    "co-oc-central-70401": "2026-11-26 187a606936437a21e636b9a0615d544803fff790",
     "co-oc-central-70407": "2026-11-28 6c8f0e6426e48bbccc7dd340abd8fbfe2f8511c5",
     "co-oc-central-70410": "2026-12-14 ac490178c5979494ce19739cbab3547b65619b40",
     "co-oc-central-70413": "2027-03-28 a6997d69a53c1956daafef67fc4172d9c8a39bd2"
@@ -1660,7 +1573,7 @@
   },
   "south-oc": {
    "adapter": "shared",
-   "count": 1,
+   "count": 0,
    "errorKind": "",
    "failingSince": "",
    "flyers": {},
@@ -1711,32 +1624,31 @@
   },
   "sureste-riverside": {
    "adapter": "tribe",
-   "count": 4,
-   "errorKind": "robots",
-   "failingSince": "2026-11-26",
+   "count": 3,
+   "errorKind": "",
+   "failingSince": "",
    "flyers": {
     "https://oiaasriverside.org/wp-content/uploads/2026/10/Sobriedad-y-Salvacion-Aniversario_Page_1.jpg": "b198d30ab97117233aabfc0e8055f0061121ee9e2fd02f5c2844bf3cae631b9a 2200 1700 image/jpeg",
     "https://oiaasriverside.org/wp-content/uploads/2026/10/Sobriedad-y-Salvacion-Aniversario_Page_2.jpg": "b3e2bc9f63db7bbeed76031fc9c21d2a9b908e1701418304990114bdde789b40 2200 1700 image/jpeg",
     "https://oiaasriverside.org/wp-content/uploads/2026/11/Perfecta-scaled.jpg": "024f435cf60826d152b966ebe80f033f8c61ebac6065263e2bc534d32dea43be 2004 2560 image/jpeg",
     "https://oiaasriverside.org/wp-content/uploads/2026/11/foro-scaled.jpg": "d83b4119db918ff29bd397d7be85893369e318f86314bae2402d7c85aac919a9 1877 2560 image/jpeg"
    },
-   "lastChange": "2026-11-25",
+   "lastChange": "2026-11-27",
    "pageModified": "",
    "sources": {
-    "co-sureste-riverside-1303": "2026-11-29 3290b40abf5b3da5b611900dd21302eb6a3c08db",
     "co-sureste-riverside-1340": "2026-12-26 7b3693f9baae6fbb2a70c27af0b70b1cc418d022",
     "co-sureste-riverside-1369": "2026-12-31 c6a9c1adbcfab98b02f0937c71affdea3cc66f19",
     "co-sureste-riverside-1379": "2026-12-06 e3ac65f5cb6b19be65c730be507ff41b406b3e8a"
    },
-   "status": "error",
+   "status": "ok",
    "unparsed": 0,
    "watchModified": ""
   },
   "temecula": {
    "adapter": "tvco",
    "count": 4,
-   "errorKind": "",
-   "failingSince": "",
+   "errorKind": "http-403",
+   "failingSince": "2026-11-27",
    "flyers": {
     "https://www.temeculacentraloffice.org/aa/wp-content/uploads/2026ChildrensHolidayParty.pdf": "2cede80c9ddac46e546c8b6be003ee08243373525ac4203bdfcbd55b205e39f4 0 0 application/pdf",
     "https://www.temeculacentraloffice.org/aa/wp-content/uploads/2026ThanksgivingAlcathon.pdf": "876f77e595f3a6fcbddf3925a61624f345c69cb94dbe65ca33feb2ae562f33c7 0 0 application/pdf",
@@ -1750,7 +1662,7 @@
     "co-temecula-children-s-holiday-party-20261219": "2026-12-19 a8148b749f43ca6d51f63fcdbfe53bc626842dfc",
     "co-temecula-thanksgiving-alcathon-20261126": "2026-11-27 49586ce11c439c741b0509e64516e0d388db488a"
    },
-   "status": "ok",
+   "status": "error",
    "unparsed": 5,
    "watchModified": ""
   },
