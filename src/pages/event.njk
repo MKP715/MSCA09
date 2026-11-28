@@ -41,6 +41,13 @@ eleventyComputed:
 {%- set flyer = flyers[0] if flyers.length else null -%}
 {%- set flyerLang = (('calendar.flyer_in.' + flyer.lang) | t(L)) if (flyer and (flyer.lang == "en" or flyer.lang == "es")) else "" -%}
 {%- set isPastOneOff = (not s.recurring) and s.ended -%}
+{#- marked for newcomers (s.newcomers) and listed on /newcomers/#join now (calendar.newcomers: not ended, cancelled or
+    out of dates): a chip that links there. It goes by itself when the entry leaves that page: after the event, or after
+    the series' last date in the calendar's window (ncUntil) -#}
+{%- set ncLists = calendar.newcomers if (calendar and calendar.newcomers) else {} -%}
+{%- set ncListed = s.newcomers and (((ncLists.meetings or []) | find("slug", s.slug)) or ((ncLists.events or []) | find("slug", s.slug))) -%}
+{%- set ncLastOcc = (calendar.occurrences | where("slug", s.slug) | last) if (ncListed and s.recurring) else null -%}
+{%- set ncUntil = (ncLastOcc.end if ncLastOcc else "") if s.recurring else s.end -%}
 {#- the breadcrumb trail between Home and this page: shown in the hero and given to search engines (breadcrumbLd) -#}
 {%- set crumbs = [{ label_key: "nav.calendar", url: "/calendar/" }, { label_key: "calendar.events.crumb", url: "/events/" }] -%}
 
@@ -68,6 +75,9 @@ eleventyComputed:
           {{ formatBadge({ format: s.format, lang: L }) }}
           {{ langBadge({ language: s.language, lang: L }) }}
           {% if s.recurring %}<span class="chip chip-white">{% icon "repeat", "size-3.5" %}{{ "calendar.repeats" | t(L) }}</span>{% endif %}
+          {%- if ncListed %}
+          <a href="{{ '/newcomers/' | lurl(L) }}#join" class="chip chip-accent hover:brightness-95" style="{{ 'sea' | accent }}" title="{{ 'calendar.newcomers_chip_title' | t(L) }}"{% if ncUntil %} data-hide-after="{{ ncUntil }}"{% endif %}>{% icon "heart-handshake", "size-3.5" %}{{ "calendar.newcomers_chip" | t(L) }}</a>
+          {%- endif %}
           {% if s.status == "cancelled" %}<span class="chip chip-accent" style="{{ 'red' | accent }}">{% icon "ban", "size-3.5" %}{{ "calendar.cancelled" | t(L) }}</span>{% endif %}
           {% if s.status == "postponed" %}<span class="chip chip-accent" style="{{ 'amber' | accent }}">{% icon "hourglass", "size-3.5" %}{{ "calendar.postponed" | t(L) }}</span>{% endif %}
         </div>

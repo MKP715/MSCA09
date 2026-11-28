@@ -199,13 +199,17 @@ the name of an entry that already has its page, add a row `calendar.title_en.<sl
 
 - **Type** must be one of the `key` values in [`data/event-types.csv`](data/event-types.csv), spelled exactly:
   `Area`, `Area Committee`, `Assembly`, `Conference`, `Foro`, `Servathon`, `Area Event`, `District`, `Committee`,
-  `H&I`, `Intergroup`, `Service School`, `Workshop`, `History`, `Convention`, `Forum`, `YPAA`,
+  `H&I`, `Intergroup`, `Recovery`, `Service School`, `Workshop`, `History`, `Convention`, `Forum`, `YPAA`,
   `Social`, `Event`. To create a new type, add a row to that file.
 - **Area events** are the types the site lists as the Area's own ("next Area meeting", Area meetings, the *Area* view
   of the calendar): `Area`, `Area Committee`, `Assembly`, `Foro`, `Servathon` and `Area Event`. Use `Foro` only for the
   Area's yearly Foro (on the Area's approved calendar); a district's or intergroup's local forum is an `Event` with
   `Host:`. Use `Area Event` for any other event on the Area's approved calendar, such as the yearly Grapevine & La Viña
   event — it is shown as "Area event" with its own title.
+- **Recovery** is for A.A. recovery meetings where newcomers are welcome, such as a Big Book or Plain Language Big Book
+  study — not for service meetings. A `Recovery` entry is also listed on the newcomers page unless it says
+  `Newcomers: no`, and it is left out of
+  service-only lists such as the home page's *This week in service* (see [Meetings for newcomers](#meetings-for-newcomers)).
 - **Format** is `In person`, `Hybrid` or `Virtual`.
 
 **Fields:** one per line, above the `--`. Leave out any field that doesn't apply.
@@ -214,6 +218,7 @@ the name of an entry that already has its page, add a row `calendar.title_en.<sl
 |---|---|
 | `Language:` | `English`, `Spanish` or `Bilingual`. Area meetings, assemblies and the other Area-wide types are interpreted, so the `default_language` column of `data/event-types.csv` shows them as Bilingual even without this line. |
 | `Título:` (or `Title-ES:`) | Spanish title, shown on the Spanish site (with accents, e.g. *Comité de Servicio de Área*) |
+| `Newcomers:` (or `Recién llegados:`) | `yes` lists the entry on the newcomers page (`/newcomers/`) as well as on the calendar; `no` keeps a `Recovery` entry off it. Any other word is reported by the calendar check and ignored. See [Meetings for newcomers](#meetings-for-newcomers). |
 | `Host:` | Host district(s): `D5`, or `D6 & D12`. The event then appears on those district pages. |
 | `Organizer:` (or `Organizador:`) | The organization that holds a one-time event when it is not one of the Area's own types or one district (`Host:`): an intergroup or central office, a convention or roundup committee, G.S.O.'s General Service Board, a YPAA committee, or `Area 09` for an Area workshop. **Never a person.** Type the name as listed in [`data/organizers.csv`](data/organizers.csv) (`Organizer: Central Intergroup Office of the Desert`, `Organizer: Area 09`). A host that is not in that file: its name, then its own website (`Organizer: 67th ICYPAA Host Committee https://www.icypaa.org/`), or add a row to the file. One line per host. The page shows it under "Hosts & committees", and search engines read it as the event's organizer. |
 | `Email:` | A **role** address (`…@msca09aa.org`), never a personal one |
@@ -289,6 +294,44 @@ Spanish copy of the page (the `ownUrl` filter); the `.ics` files and `events.jso
 any entry that breaks these rules in the Actions log (for example a Spanish event without a Spanish title,
 a location without a venue name, or a flyer on hold). To publish a calendar change straight away
 instead of waiting up to three hours, go to **Actions** → *Build and publish the website* → **Run workflow**.
+
+### Meetings for newcomers
+
+The newcomers page (`/newcomers/`, `/es/newcomers/`) lists the calendar's meetings and events that are marked for
+newcomers. They are still on the Events page (`/calendar/`) too. A repeating meeting is listed until its last date, a
+one-time event until it has taken place, and a cancelled entry is not listed. While nothing is marked, the page has no
+such section. To put a meeting there:
+
+- **A recovery meeting** (a Big Book or Plain Language Big Book study, for example): use Type `Recovery` on the first
+  line. A `Recovery` entry is listed without a `Newcomers:` line; to keep one off the page, add a line `Newcomers: no`.
+- **Any other entry:** add a line `Newcomers: yes` above the `--`.
+- **The words people read go in `Note:` and `Nota:` lines.** The text under the `--` is never shown for a repeating
+  meeting, so put the public description in those lines (what happens at the meeting, that no passcode is needed).
+- **A Zoom meeting with no passcode:** leave out the `Passcode:` line.
+- **A meeting the Area or one of its committees holds itself:** tell the webmaster first. The newcomers page, its FAQ,
+  the home page and `/llms.txt` say that Area 09 does not run meetings (`newcomers.area_body`, the FAQ answer
+  "Does Area 09 run meetings…", `home.new.lead`, `llms.note.meetings`), and those words have to change with it.
+
+For example, the Plain Language Big Book Study (Mondays, 7:00–8:00 PM, on Zoom, all of 2027):
+
+```
+MSCA09|Recovery|Virtual
+Language: English
+Título: Estudio del Libro Grande en lenguaje sencillo
+Newcomers: yes
+Topic: Literature
+ZoomID: 863 0672 2639
+IMG: https://drive.google.com/file/d/<flyer id>/view?usp=sharing
+Note: Reading the Plain Language Big Book, followed by discussion. No passcode needed.
+Nota: Lectura del Libro Grande en lenguaje sencillo, seguida de una conversación. No se necesita código de acceso.
+--
+Source: the meeting's flyer.
+```
+
+**Location** is the Zoom join link, `https://zoom.us/j/86306722639`. The entry starts on Monday, January 4, 2027,
+7:00–8:00 PM, with a *Custom* repeat: weekly on Monday, ending December 31, 2027 (the last meeting is December 27).
+With Type `Recovery` the `Newcomers: yes` line is not needed; on an entry of any other Type, it is the line that puts
+the meeting on the page.
 
 ---
 
@@ -765,7 +808,7 @@ npm run check        # anonymity, links, CSV and missing-text checks on _site/ (
 node scripts/check-site.mjs _site_preview   # the same checks on another output folder
 npm run test:site-search                    # the site search on _site/: key searches, and each hub page found by its name
 npm run check:calendar                      # calendar entries that need fixing in Google Calendar
-npm run test:calendar                       # how a Location line is read (city, state, ZIP code); no network
+npm run test:calendar                       # the calendar parser's tests (e.g. how a Location line is read); no network
 npm run check:media -- --dry-run            # read new flyers/PDFs (needs tesseract + poppler); changes nothing
 npm run drive:recordings                    # add new Zoom recordings to data/recordings.csv (Drive for Desktop + ffprobe)
 npm run social-card                         # redraw src/assets/img/social-card.jpg and social-card-es.jpg (Python + pillow)

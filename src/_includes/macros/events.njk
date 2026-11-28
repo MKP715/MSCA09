@@ -32,6 +32,12 @@
                                                    { n, total, language } / { title: altTitle, n, total }
     addToCalendar({ series, occ, lang, compact })  Google · .ics download · Outlook
     dateBadge({ iso, lang, color, size })          stacked month / day / weekday badge (size: "sm" | "md" | "lg")
+    newcomerCard({ s, lang, index })               one repeating meeting of calendar.newcomers.meetings on
+                                                   /newcomers/#join: title, repeat pattern, place (not for a Zoom
+                                                   meeting), format / language, the first sentence of its Note, its
+                                                   next date and a link to its event page. index = its place in the
+                                                   grid. The grid cell that holds it carries the data-hide-after of
+                                                   its last date, so the cell goes with it once the series is over
 
   Occ and Series objects come from src/_data/calendar.js (BUILD-SPEC §9.1). Everything
   time-sensitive carries data-hide-after / data-when so it updates itself in the browser, and data-lastmod-skip
@@ -387,6 +393,57 @@
   {%- endif %}
   <a href="{{ '/calendar/' | lurl(L) }}" class="btn btn-ghost btn-sm">{% icon "calendar-days", "size-4" %}{{ "calendar.open_calendar" | t(L) }}</a>
 </div>
+{% endmacro %}
+
+{#- ---------------------------------------------------------------- newcomerCard -#}
+{#- Calm on purpose (someone new may be reading): no flyer and no Zoom ID or passcode on the card — the event page's
+    meetingInfo panel has the joining details. The format and language chips: the language is named when it is not the
+    page's own (an English meeting on the Spanish page, a Spanish one on the English page) and always for a bilingual
+    one. An in-person or hybrid meeting names its place (venue, city), as the other meeting cards do. A Note shown in
+    English on the Spanish page is tagged so, as on the event page (meetingInfo). The next date is a data-limit="1"
+    list that moves on by itself as dates pass (data-hide-after), inside data-lastmod-skip so that never re-dates
+    /newcomers/ in the sitemap -#}
+{% macro newcomerCard(o) %}
+{%- set s = o.s -%}
+{%- if s -%}
+{%- set L = o.lang -%}
+{%- set i = o.index or 0 -%}
+{%- set ttl = s | calTitle(L) -%}
+{%- set ttlEn = L.code == "es" and not s.title_es and s.language != "Spanish" -%}
+{%- set g = (s.language or "") | lower -%}
+{%- set showLang = ("bil" in g) or (("span" in g) if L.code != "es" else not ("span" in g)) -%}
+{%- set nt = (s | calNotes(L))[0] -%}
+{%- set nexts = (s.upcomingDates or []) | where("status", "confirmed") | limit(4) -%}
+{%- set loc = s.location or {} -%}
+{%- set place = [loc.name, loc.city] | select | join(", ") -%}
+{%- set showPlace = not ("virtual" in ((s.format or "") | lower)) and (place or loc.tba) -%}
+<article class="reveal card flex h-full flex-col gap-4 p-6 2xl:p-7" style="{{ s.color | accent(i) }}; --reveal-delay:{{ (i % 3) * 80 }}ms">
+  <div class="flex items-start justify-between gap-3">
+    <span class="icon-tile-soft shrink-0">{% icon s.icon or "calendar", "size-5" %}</span>
+    <span class="flex flex-wrap justify-end gap-1.5">{{ formatBadge({ format: s.format, lang: L }) }}{% if showLang %} {{ langBadge({ language: s.language, lang: L }) }}{% endif %}</span>
+  </div>
+  <h3 class="font-display text-xl font-bold text-balance text-ink-950"{% if ttlEn %} lang="en"{% endif %}>{{ ttl }}</h3>
+  <p class="flex items-start gap-2 font-semibold text-ink-800"><span class="mt-0.5 shrink-0 text-[var(--a-600)]">{% icon "repeat", "size-4" %}</span><span>{{ s | calLoc("pattern", L) }} <span class="font-normal text-ink-500">· {{ "time.pacific" | t(L) }}</span></span></p>
+  {%- if showPlace %}
+  <p class="-mt-2 flex items-start gap-2 text-ink-700"><span class="mt-0.5 shrink-0 text-[var(--a-600)]">{% icon "map-pin", "size-4" %}</span><span>{{ place or ("calendar.place_tba" | t(L)) }}</span></p>
+  {%- endif %}
+  {%- if nt and nt.text %}
+  <p class="leading-relaxed text-ink-600">{% if nt.lang != L.code %}<span lang="{{ nt.lang }}">{{ nt.text | calLead }}</span> <span class="mi-notes__tag">{{ "calendar.note_in_english" | t(L) }}</span>{% else %}{{ nt.text | calLead }}{% endif %}</p>
+  {%- endif %}
+  {%- if nexts.length %}
+  <ul class="text-sm" data-limit="1" role="list" data-lastmod-skip>
+    {%- for n in nexts %}
+    <li class="flex flex-wrap items-center gap-x-2 gap-y-1 text-ink-700"{% if not loop.first %} hidden{% endif %} data-hide-after="{{ n.end }}" data-when="{{ n.start }}" data-until="{{ n.end }}">
+      <span class="inline-flex items-center gap-1.5 whitespace-nowrap">{% icon "arrow-right", "size-3.5 shrink-0 text-ink-500" %}{{ "calendar.info.next" | t(L) }}:</span>
+      <strong class="text-ink-900">{{ n.start | dt("date", L) }}</strong>
+      <span data-rel hidden class="rel-badge"></span>
+    </li>
+    {%- endfor %}
+  </ul>
+  {%- endif %}
+  <a href="{{ s.url | lurl(L) }}" class="btn btn-accent mt-auto self-start">{{ "newcomers.join_details" | t(L) }}{% icon "arrow-right", "size-4" %}</a>
+</article>
+{%- endif -%}
 {% endmacro %}
 
 {#- ---------------------------------------------------------------- addToCalendar -#}

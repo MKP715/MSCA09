@@ -12,10 +12,20 @@ scripts: ["/assets/js/content.js"]
 ---
 {%- from "macros/content.njk" import officeCard, faqList, resourceCard, quoteCard, pageNav, langTag with context -%}
 {%- from "macros/ui.njk" import shareButton, breadcrumbLd -%}
+{%- from "macros/events.njk" import newcomerCard, upcomingList -%}
 {%- set L = lang -%}
 {%- set es = { code: "es" } -%}
 {%- set R = resources.byKey or {} -%}
 {%- set cities = districts | cityIndex(L) -%}
+{#- the meetings and events on the Area calendar marked for newcomers (a "Newcomers: yes" line, or a type with
+    newcomers=yes in data/event-types.csv; src/_data/calendar.js). With none, the #join section and its chip are left
+    out altogether: no hidden "none scheduled" text. nc.until (the end of the last of their dates): the section and its
+    chip go by themselves after it, so a copy of the page built before then (or kept by the app) does not keep an empty
+    section -#}
+{%- set nc = (calendar.newcomers if calendar and calendar.newcomers else {}) -%}
+{%- set ncMeetings = nc.meetings or [] -%}
+{%- set ncEvents = nc.events or [] -%}
+{%- set hasJoin = ncMeetings.length > 0 or ncEvents.length > 0 -%}
 
 {#- ============================================================ HERO -#}
 <section class="relative isolate overflow-hidden" data-hero style="{{ 'sea' | accent }}">
@@ -78,15 +88,19 @@ scripts: ["/assets/js/content.js"]
       </div>
     </div>
     <div class="mt-10">
-      {{ pageNav({ lang: L, label: "content.on_this_page" | t(L), items: [
+      {#- the "join" chip (after "find") only when its section is on the page -#}
+      {%- set navTop = [
         { id: "call", label: "newcomers.nav_call" | t(L), icon: "phone", color: "coral" },
-        { id: "find", label: "newcomers.nav_find" | t(L), icon: "search", color: "ocean" },
+        { id: "find", label: "newcomers.nav_find" | t(L), icon: "search", color: "ocean" }
+      ] -%}
+      {%- set navJoin = [{ id: "join", label: "newcomers.nav_join" | t(L), icon: "calendar-heart", color: "sea", hideAfter: nc.until }] if hasJoin else [] -%}
+      {{ pageNav({ lang: L, label: "content.on_this_page" | t(L), items: navTop.concat(navJoin, [
         { id: "for-me", label: "newcomers.nav_for_me" | t(L), icon: "circle-help", color: "sage" },
         { id: "meeting", label: "newcomers.nav_meeting" | t(L), icon: "armchair", color: "blush" },
         { id: "espanol", label: "newcomers.nav_spanish" | t(L), icon: "languages", color: "copper" },
         { id: "family", label: "newcomers.nav_family" | t(L), icon: "heart-handshake", color: "lilac" },
         { id: "faq", label: "newcomers.nav_faq" | t(L), icon: "message-circle-question", color: "iris" }
-      ] }) }}
+      ]) }) }}
     </div>
   </div>
 </section>
@@ -246,6 +260,44 @@ scripts: ["/assets/js/content.js"]
     </ol>
   </div>
 </section>
+
+{#- ============================================================ ON THE AREA CALENDAR -#}
+{#- The few meetings (and one-time events) on the Area calendar marked for newcomers: calendar.newcomers. Most meetings
+    are not on it, and the lead says so; the cards link to the event pages, which have the joining details -#}
+{%- if hasJoin %}
+<section id="join" aria-labelledby="join-title" class="scroll-mt-28 bg-gradient-to-b from-white to-sea-50/40 py-14 lg:py-20"{% if nc.until %} data-hide-after="{{ nc.until }}"{% endif %}>
+  <div class="wrap">
+    <div class="mb-10 max-w-3xl">
+      <div class="mb-2 flex items-center justify-between gap-3">
+        <p class="eyebrow" style="{{ 'sea' | accent }}">{% icon "calendar-heart", "size-4" %}{{ "newcomers.join_eyebrow" | t(L) }}</p>
+        {{ shareButton({ lang: L, title: "newcomers.join_title" | t(L), hash: "join" }) }}
+      </div>
+      <h2 id="join-title" class="h-section text-balance">{{ "newcomers.join_title" | t(L) }}</h2>
+      <p class="lead mt-3 text-pretty">{{ ("newcomers.join_lead_one" if (ncMeetings.length + ncEvents.length) == 1 else "newcomers.join_lead") | t(L) }}</p>
+    </div>
+    {%- if ncMeetings.length %}
+    <ul class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3" role="list">
+      {%- for s in ncMeetings %}
+      {#- the card and its grid cell go by themselves after the series' last date in the calendar's window -#}
+      {%- set lastOcc = calendar.occurrences | where("slug", s.slug) | last %}
+      <li class="min-w-0"{% if lastOcc %} data-hide-after="{{ lastOcc.end }}"{% endif %}>{{ newcomerCard({ s: s, lang: L, index: loop.index0 }) }}</li>
+      {%- endfor %}
+    </ul>
+    {%- endif %}
+    {%- if ncEvents.length %}
+    <div class="{{ 'mt-12' if ncMeetings.length }} max-w-3xl">
+      <h3 class="mb-4 flex items-center gap-2.5 font-display text-xl font-bold text-ink-950" style="{{ 'sea' | accent }}"><span class="icon-tile-soft size-9">{% icon "calendar-days", "size-5" %}</span>{{ "newcomers.join_events" | t(L) }}</h3>
+      {{ upcomingList({ items: ncEvents, lang: L, variant: "compact", limit: 6, id: "join-events", emptyText: "newcomers.join_events_empty" | t(L) }) }}
+    </div>
+    {%- endif %}
+    <p class="mt-10 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-ink-600">
+      <span class="inline-flex items-center gap-2">{% icon "info", "size-4 shrink-0 text-ink-500" %}{{ "newcomers.join_more" | t(L) }}</span>
+      <a href="#call" class="inline-flex items-center gap-1.5 font-semibold text-coral-700 hover:underline">{% icon "phone", "size-4" %}{{ "newcomers.way1_title" | t(L) }}</a>
+      <a href="#find" class="inline-flex items-center gap-1.5 font-semibold text-ocean-700 hover:underline">{% icon "smartphone", "size-4" %}{{ "newcomers.way2_title" | t(L) }}</a>
+    </p>
+  </div>
+</section>
+{%- endif %}
 
 {#- ============================================================ IS A.A. FOR ME -#}
 <section id="for-me" aria-labelledby="for-me-title" class="scroll-mt-28 bg-ring-soft py-14 lg:py-20">

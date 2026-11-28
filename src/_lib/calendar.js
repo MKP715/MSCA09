@@ -45,6 +45,7 @@ export const DEFAULT_TYPES = {
   'Committee':      { group: 'meetings', pages: ['meetings'] },
   'H&I':            { group: 'meetings', pages: ['meetings'] },
   'Intergroup':     { group: 'meetings', pages: ['meetings'] },
+  'Recovery':       { group: 'recovery', pages: ['meetings'] },
   'Service School': { group: 'learning', pages: ['meetings', 'events'] },
   'Workshop':       { group: 'learning', pages: ['events'] },
   'History':        { group: 'learning', pages: ['events'] },
@@ -161,9 +162,11 @@ const FIELD_ALIASES = {
   nota: 'Nota', notas: 'Nota', notees: 'Nota', notaes: 'Nota',
   // "Registration: 8:00 AM" — when doors / registration open before the start time
   registration: 'Registration', registro: 'Registration', inscripcion: 'Registration', checkin: 'Registration',
+  // "Newcomers: yes" — also list the entry on /newcomers/ ("no" keeps one entry of a newcomers type off it)
+  newcomers: 'Newcomers', newcomer: 'Newcomers', recienllegados: 'Newcomers', recienllegado: 'Newcomers',
 };
 // Spellings that are as good as the canonical one (no "read as" warning)
-const QUIET_ALIASES = new Set(['nota', 'titulo', 'inscripcion', 'notes', 'organizador']);
+const QUIET_ALIASES = new Set(['nota', 'titulo', 'inscripcion', 'notes', 'organizador', 'recienllegados', 'recienllegado']);
 const CANONICAL_FIELDS = new Set(Object.values(FIELD_ALIASES));
 const REPEATABLE = new Set(['IMG', 'Link', 'Note', 'Nota', 'Email', 'Organizer']);
 
@@ -513,6 +516,16 @@ function parseLanguage(v, problems) {
     'english & spanish': 'Bilingual', 'english and spanish': 'Bilingual', 'english/spanish': 'Bilingual' };
   if (map[n]) { if (map[n] !== v.trim()) problems.push(P('W_LANGUAGE_SPELLING', 'warn', `Language "${v}" read as ${map[n]}`)); return map[n]; }
   problems.push(P('E_BAD_LANGUAGE', 'error', `Language "${v}" is not English, Spanish or Bilingual`));
+  return null;
+}
+// "Newcomers: yes" / "no" -> true / false; no line -> null (the entry's type decides, data/event-types.csv newcomers).
+// The same yes words as the CSV tables (src/_lib/csv.js yes(), not imported: this file reads no files).
+function parseNewcomers(v, problems) {
+  if (!v) return null;
+  const n = fold(v).trim().toLowerCase();
+  if (/^(y|yes|true|1|x|si)$/.test(n)) return true;
+  if (/^(n|no|false|0)$/.test(n)) return false;
+  problems.push(P('W_BAD_NEWCOMERS', 'warn', `Newcomers "${v}" is not yes or no (ignored: the type decides)`));
   return null;
 }
 function parseFormat(v, problems) {
@@ -1076,6 +1089,8 @@ function normaliseEvent(ve, ev, ctx) {
     covers, hosts, organizers, topics: topicList, cost: f1('Cost'), images, links,
     notes: (d.fields.Note || []).map(ownSiteLinks), notesEs: (d.fields.Nota || []).map(ownSiteLinks), extraFields: extra,
     registration: parseClock(f1('Registration'), problems),
+    // true / false from a "Newcomers:" line, null when there is none (src/_data/calendar.js falls back to the type)
+    newcomers: parseNewcomers(f1('Newcomers'), problems),
     held,
     body: bodyScan.publicText, bodyRaw: bodyAsTyped,
     descriptionWasHtml: d.isHtml,

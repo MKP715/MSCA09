@@ -183,14 +183,15 @@
 {% endmacro %}
 
 {#- In-page section navigation: chips on phones/tablets, sticky list on wide screens.
-    o: { items: [{ id, label, icon, color }], lang, label, variant ("rail"|"side") } -#}
+    o: { items: [{ id, label, icon, color, hideAfter }], lang, label, variant ("rail"|"side") }
+    hideAfter (optional): the moment the item's section goes by itself (data-hide-after); the item goes with it -#}
 {% macro pageNav(o) %}
 {%- if o.variant == "side" %}
 <nav aria-label="{{ o.label }}" class="page-nav-side" x-data="sectionNav" data-sections="{{ o.items | pluck('id') | join(',') }}">
   <p class="mb-3 px-3 text-xs font-bold tracking-[0.18em] text-ink-500 uppercase">{{ "content.on_this_page" | t(o.lang) }}</p>
   <ul class="space-y-0.5">
     {%- for it in o.items %}
-    <li style="{{ it.color | accent(loop.index0) }}">
+    <li style="{{ it.color | accent(loop.index0) }}"{% if it.hideAfter %} data-hide-after="{{ it.hideAfter }}"{% endif %}>
       <a href="#{{ it.id }}" class="page-nav-link" :class="active === '{{ it.id }}' && 'is-active'" :aria-current="active === '{{ it.id }}' ? 'true' : null">
         <span class="page-nav-dot">{% icon it.icon or "circle", "size-4" %}</span><span>{{ it.label }}</span>
       </a>
@@ -201,7 +202,7 @@
 {%- else %}
 <nav aria-label="{{ o.label }}" class="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:-mx-6 sm:px-6">
   {%- for it in o.items %}
-  <a href="#{{ it.id }}" class="chip-link" style="{{ it.color | accent(loop.index0) }}">{% icon it.icon or "circle", "size-4" %}{{ it.label }}</a>
+  <a href="#{{ it.id }}" class="chip-link" style="{{ it.color | accent(loop.index0) }}"{% if it.hideAfter %} data-hide-after="{{ it.hideAfter }}"{% endif %}>{% icon it.icon or "circle", "size-4" %}{{ it.label }}</a>
   {%- endfor %}
 </nav>
 {%- endif %}

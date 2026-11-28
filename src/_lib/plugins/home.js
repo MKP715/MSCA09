@@ -164,13 +164,14 @@ export default function (eleventyConfig) {
     });
   });
 
-  /** How many meetings (types marked is_meeting) happen in the build's calendar month. */
+  /** How many service meetings (types marked is_meeting, but not the recovery-meeting types marked newcomers in
+   *  data/event-types.csv) happen in the build's calendar month: "Service meetings in {month}" (home.stats.meetings). */
   eleventyConfig.addFilter("homeMonthCount", (occurrences, typeMap, fromIso) => {
     const from = toDateTime(fromIso) || DateTime.now().setZone(TZ);
     const ym = from.toFormat("yyyy-LL");
     const isMeeting = (o) => {
       const t = typeMap && typeMap[o.type];
-      return t ? !!t.is_meeting : !!o.recurring;
+      return t ? !!t.is_meeting && !t.newcomers : !!o.recurring;
     };
     return (occurrences || []).filter((o) => {
       const d = o && (o.date || (toDateTime(o.start) || { toISODate: () => "" }).toISODate());

@@ -14,12 +14,21 @@
 //     Nota: Inscripción desde las 8:00 a. m.
 //     --
 //     free text
+// A recovery meeting that newcomers are welcome at (listed on /newcomers/ as well) has the Recovery type, whose
+// newcomers column in data/event-types.csv is yes; an entry of any type can say so itself with a "Newcomers:" line:
+//     MSCA09|Recovery|Virtual
+//     Language: English
+//     Título: Estudio del Libro Grande en lenguaje sencillo
+//     Newcomers: yes
+//     ZoomID: 863 0672 2639
+//     --
 // (full guide: README "Adding something to the calendar"). Problems are grouped by severity:
 //   ANONYMITY  personal e-mail addresses — the site removes them, but fix them at the source
 //   ERROR      the entry cannot be read properly (first line, type, format, language, repeat rule)
 //   WARN       something people need is missing or looks wrong (no place, no Zoom, misspelled city,
-//              a flyer on hold, a bare street address, a Spanish event without a Spanish title, a deleted
-//              date of a repeating entry that no longer removes anything because the series' time changed…)
+//              a flyer on hold, a bare street address, a Spanish event without a Spanish title, a Newcomers:
+//              line that is neither yes nor no, a deleted date of a repeating entry that no longer removes
+//              anything because the series' time changed…)
 //   INFO       cosmetic (shown only with --all)
 // After the list comes "Flyers and documents on hold": every file in data/flyer-holds.csv that the calendar
 // still uses, with the entry, so the maintainer can ask the host for a copy with role contacts only; then

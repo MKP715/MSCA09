@@ -2301,6 +2301,33 @@ SUMMARY:Delegate Report Back to Area 09
 TRANSP:OPAQUE
 END:VEVENT
 BEGIN:VEVENT
+DTSTART;TZID=America/Los_Angeles:20270104T190000
+DTEND;TZID=America/Los_Angeles:20270104T200000
+RRULE:FREQ=WEEKLY;UNTIL=20280101T075959Z;BYDAY=MO
+UID:8e60kpve12vbnr5jjgm4ll3e48@google.com
+CLASS:PUBLIC
+CREATED:20261128T103255Z
+DESCRIPTION:MSCA09|Recovery|Virtual\nLanguage: English\nTítulo: Estudio del
+  Libro Grande en lenguaje sencillo\nNewcomers: yes\nTopic: Literature\nZoom
+ ID: 863 0672 2639\nIMG: https://drive.google.com/file/d/1nz3YcKAYicc_Mt6lIk
+ _k1DCQpv9l3FZ8/view?usp=sharing\nNote: Reading the Plain Language Big Book\
+ , followed by discussion. Curious about this new tool? Might it help carry 
+ the A.A. message to more alcoholics? No passcode needed.\nNota: Lectura del
+  Libro Grande en lenguaje sencillo\, seguida de una conversación. ¿Tienes c
+ uriosidad por esta nueva herramienta? ¿Podría ayudar a llevar el mensaje de
+  A.A. a más alcohólicos? La reunión es en inglés y no necesita código de ac
+ ceso.\n--\nPlain Language Big Book Study\nMondays\, 7:00 to 8:00 PM (Pacifi
+ c)\, on Zoom. Reading the PLBB followed by discussion.\nSource: the meeting
+ 's flyer (added November 28\, 2026\; the Area's copy is docs/meetings/plain
+ -language-big-book-study-2027.png).
+LAST-MODIFIED:20261128T103255Z
+LOCATION:https://zoom.us/j/86306722639
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Plain Language Big Book Study
+TRANSP:OPAQUE
+END:VEVENT
+BEGIN:VEVENT
 DTSTART:20240920T010000Z
 DTEND:20240920T031500Z
 UID:8ldn9nmk9ti1a77n2l1jb0460g@google.com

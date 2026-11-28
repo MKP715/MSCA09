@@ -14,8 +14,9 @@
       "10 de octubre") matches the days an entry covers. It looks at every date in the calendar, not only the
       ones on screen: the agenda lists every coming match, and month / week / list offer the matches on other dates
     - filter + view live in the address bar (shareable; Back works) and are remembered in this
-      browser (Alpine persist) — but only once the visitor changes something: a shared link's
-      filters are not saved as the visitor's own. The typed search is never remembered (it stays in the address
+      browser (Alpine persist): a plain visit saves them as they are, but a shared link's filters are not saved as
+      the visitor's own until they change something. Categories are remembered by the ones turned off, so a category
+      new to the calendar shows for a returning visitor too. The typed search is never remembered (it stays in the address
       only), so a later visit does not open on an old search. The view is remembered only once the visitor picks one; until
       then it follows the screen: the month grid from 1024px, the agenda on phones and tablets (where month titles
       would be cut off)
@@ -44,6 +45,12 @@
   const AREA_TYPES = ["Area", "Area Committee", "Assembly", "Foro", "Servathon", "Area Event", "Conference"];
   const LEARNING_TYPES = ["Service School", "Workshop", "History"];
   const STORE_KEY = "msca-calendar-v1";
+  // the calendar's types when saves began on this site's address (msca09aa.org, Oct 27 2026). A save from before f.off
+  // (the types turned off, Nov 2026) lists only the types that were on, and every visit saves: a type missing from it
+  // was turned off only if it is one of these, which every such save could know. Any other (Area Event, Nov 10;
+  // Recovery) may simply be newer than the save, so it comes on (typesOff). Fixed: never add to it
+  const OLD_TYPES = ["Area", "Area Committee", "Assembly", "Conference", "Foro", "Servathon", "District", "Committee", "H&I",
+    "Intergroup", "Service School", "Workshop", "History", "Convention", "Forum", "YPAA", "Social", "Event", "Other"];
   // the calendar's own words in the address (readUrl / urlParams)
   const URL_KEYS = ["view", "date", "type", "src", "office", "format", "lang", "district", "committee", "topic", "day", "time", "flyer", "zoom", "q"];
   const SRCS = ["area", "co"]; // where an entry comes from: the Area's Google Calendar, a central office's website
@@ -99,8 +106,23 @@
     const t = setTimeout(resolve, 60);
     requestAnimationFrame(() => { clearTimeout(t); resolve(); });
   });
+  // this browser can remember the calendar. What it holds must be JSON ($persist would throw while the page starts):
+  // anything else is dropped, and the calendar opens on its defaults
   function storageOk() {
-    try { localStorage.setItem("__msca", "1"); localStorage.removeItem("__msca"); return true; } catch (e) { return false; }
+    try {
+      localStorage.setItem("__msca", "1");
+      localStorage.removeItem("__msca");
+      const v = localStorage.getItem(STORE_KEY);
+      if (v != null) try { JSON.parse(v); } catch (e) { localStorage.removeItem(STORE_KEY); }
+      return true;
+    } catch (e) { return false; }
+  }
+  // the type keys saved filters turned off: f.off, or for a save from before it, the OLD_TYPES missing from f.types
+  // (the types that were on). A type in neither list is new since the save, so it is shown
+  function typesOff(x) {
+    if (Array.isArray(x.off)) return x.off;
+    if (Array.isArray(x.types)) return OLD_TYPES.filter((k) => !x.types.includes(k));
+    return [];
   }
 
   /* ---------------------------------------------------------------- the component */
@@ -319,12 +341,14 @@
           });
         },
 
-        // filters remembered in this browser; the typed search is not restored (an old search would silently empty the calendar)
+        // filters remembered in this browser; the typed search is not restored (an old search would silently empty the calendar).
+        // Every type is on except those the visitor turned off, so a type new to the calendar since then is shown
         cleanFilters(x) {
           const keys = TYPES.map((t) => t.key);
           const out = blank();
           if (x && typeof x === "object") {
-            if (Array.isArray(x.types)) out.types = x.types.filter((k) => keys.includes(k));
+            const off = typesOff(x);
+            out.types = keys.filter((k) => !off.includes(k));
             out.src = SRCS.includes(x.src) ? x.src : "";
             out.office = this.knownOffice(x.office);
             for (const k of ["formats", "langs", "dows", "tods"]) if (Array.isArray(x[k])) out[k] = x[k].slice();
@@ -419,7 +443,13 @@
           // a shared link's filters are not the visitor's own: remember only after they change something
           if (fromUrl) return;
           // the typed search is not remembered: it lives in the address only (?q=), so reload and shared links keep it
-          try { this.saved = Object.assign(viewPicked ? { view: this.view } : {}, { f: Object.assign(JSON.parse(JSON.stringify(this.f)), { q: "" }) }); } catch (e) {}
+          // the types turned off are saved too (off): a type added to the calendar later is in neither list and comes on.
+          // types (those on) stays, for an older copy of this script (a page left open, or the app's cached copy)
+          try {
+            const f = Object.assign(JSON.parse(JSON.stringify(this.f)), { q: "" });
+            f.off = TYPES.map((t) => t.key).filter((k) => !f.types.includes(k));
+            this.saved = Object.assign(viewPicked ? { view: this.view } : {}, { f });
+          } catch (e) {}
         },
         shareUrl() { return location.origin + location.pathname + "?" + this.urlParams().toString(); },
         // the Area events' flyers come before the calendar. A link with the calendar's words in the address (a committee

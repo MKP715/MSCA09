@@ -5,7 +5,8 @@
 // Google Calendar, never here.
 //
 // Tables that steer it (all optional except event-types.csv):
-//   data/event-types.csv   one row per calendar Type (label, colour, icon, meeting/event)
+//   data/event-types.csv   one row per calendar Type (label, colour, icon, meeting/event,
+//                          newcomers: every entry of the type is also listed on /newcomers/)
 //   data/districts.csv     slug + number  → which district an entry belongs to
 //   data/committees.csv    slug + calendar_match (";"-separated e-mails / title words,
 //                          optionally "type:History" or "topic:Literature")
@@ -14,6 +15,12 @@
 // occurrences, upcoming, upcomingMeetings, upcomingEvents, areaMeetings, nextAreaMeeting,
 // byDistrict, byCommittee, pages, stats — plus a few extras documented inline (flyerWall: the cards of
 // /calendar/flyers/, see flyerWall() below).
+//
+// Newcomers: an entry's "Newcomers: yes" / "no" line, or else its type's newcomers column, gives s.newcomers on the
+// series and o.newcomers on its dates; types carry .newcomers too. calendar.newcomers = { meetings, events } is what
+// /newcomers/ lists: the live repeating series so flagged (by weekday and time) and the flagged one-time dates still to
+// come, with until = the end of the last of their dates. Types with newcomers=yes are recovery meetings, not service
+// ones: upcomingMeetings (the home page's "This week in service") leaves the series of such a type out.
 import fs from "node:fs";
 import path from "node:path";
 import { DateTime } from "luxon";
@@ -85,9 +92,12 @@ function loadTypes() {
       description_es: r.description_es || r.description_en || "",
       // "Bilingual" for Area business: used when an entry has no Language: line or says English
       default_language: normLanguage(r.default_language),
+      // yes: every entry of this type is also listed on /newcomers/ (a recovery meeting, not a service one);
+      // one entry can say otherwise with a "Newcomers:" line
+      newcomers: yes(r.newcomers),
     }));
   if (!types.some((x) => x.key === "Other"))
-    types.push({ key: "Other", slug: "other", label_en: "Other", label_es: "Otro", group: "events", group_en: "Events", group_es: "Eventos", color: "slate", icon: "calendar", is_meeting: true, is_event: true, sort: 999, description_en: "", description_es: "", default_language: "" });
+    types.push({ key: "Other", slug: "other", label_en: "Other", label_es: "Otro", group: "events", group_en: "Events", group_es: "Eventos", color: "slate", icon: "calendar", is_meeting: true, is_event: true, sort: 999, description_en: "", description_es: "", default_language: "", newcomers: false });
   types.sort((a, b) => a.sort - b.sort);
   return types;
 }
@@ -407,6 +417,7 @@ function build(icsText) {
     mirrorUrl: "/calendar.ics", mirrorUrlEs: "/calendar-es.ics", jsonUrl: "/assets/data/events.json",
     districts: [], committees: [], topics: [], cities: [], archive: [], directory: [], furtherAhead: [], ok: false,
     flyerWall: { events: [], meetings: [], months: [], types: [], districts: [], dates: 0 },
+    newcomers: { meetings: [], events: [], until: "" },
   };
   if (!icsText || !icsText.startsWith("BEGIN:VCALENDAR")) {
     console.warn("[calendar] data/calendar.ics is missing or empty — the calendar pages will be empty");
@@ -500,6 +511,8 @@ function build(icsText) {
       type: typ.key, typeLabel_en: typ.label_en, typeLabel_es: typ.label_es, color: typ.color, icon: typ.icon, group: typ.group,
       format: e.format || "", language: withDefaultLanguage(typ, e.language), languageAsWritten: e.language || "",
       recurring, isMeeting, isEvent, status: e.status || "confirmed",
+      // listed on /newcomers/ too: the entry's "Newcomers: yes / no" line, or else its type's newcomers column
+      newcomers: typeof e.newcomers === "boolean" ? e.newcomers : !!typ.newcomers,
       rule_en: rule ? rule.en : "", rule_es: rule ? rule.es : "",
       pattern_en: when.en, pattern_es: when.es,
       dateLabel_en: recurring ? rule.en : dateRangeLabel(e.time.startDate, e.time.endDate, "en"),
@@ -623,7 +636,7 @@ function build(icsText) {
       hasZoom: !!(o.hasZoom || (s.online && (s.online.zoomId || s.online.joinUrl))),
       hasFlyer: !!flyerId,
       recurring: !!o.recurring, status: o.status || "confirmed",
-      isMeeting: s.isMeeting, isEvent: s.isEvent,
+      isMeeting: s.isMeeting, isEvent: s.isEvent, newcomers: s.newcomers,
       pattern_en: s.recurring ? s.rule_en : "", pattern_es: s.recurring ? s.rule_es : "",
     };
   };
@@ -778,6 +791,19 @@ function build(icsText) {
     .flatMap((s) => expandOccurrences(cal.events.filter((e) => e.uid === s.uid), s.firstDate, DateTime.fromISO(s.lastDate).plus({ days: 1 }).toISODate()))
     .map(toOccurrence);
   const wall = flyerWall([...upcoming, ...aheadDates], { bySlug, ownFlyers, typeMap, districtList });
+  // what /newcomers/ lists (s.newcomers: a "Newcomers:" line, or the type's newcomers column): the live repeating series
+  // with a date still to come (s.next: its next date that is not cancelled), and the one-time dates still to come.
+  // The series go by weekday (Sunday first, as the calendar's day filter) and time of day, then title: an order that
+  // stays put as the weeks pass (by next date it would flip each time one of them met, and the page's sitemap date with
+  // it: scripts/sitemap-dates.mjs reads the cards in order). until: the end of the last of all their dates in the
+  // calendar's window, when the page's section goes by itself (data-hide-after)
+  const weekSlot = (s) => { const d = la(s.start); return (d.weekday % 7) * 1440 + d.hour * 60 + d.minute; };
+  const ncMeetings = series
+    .filter((s) => s.recurring && !s.ended && s.status !== "cancelled" && s.newcomers && s.next)
+    .sort((a, b) => weekSlot(a) - weekSlot(b) || a.title.localeCompare(b.title));
+  const ncEvents = upcoming.filter((o) => o.newcomers && !o.recurring && o.status !== "cancelled");
+  const ncLast = [...ncMeetings.flatMap((s) => occBySlug[s.slug] || []), ...ncEvents].reduce((a, o) => (!a || o._e > a._e ? o : a), null);
+  const newcomers = { meetings: ncMeetings, events: ncEvents, until: ncLast ? ncLast.end : "" };
   for (const o of occurrences) { delete o._s; delete o._e; }
   // single dates of a repeating entry that were moved, retitled or cancelled (for the .ics files)
   const instancesBySlug = {};
@@ -792,7 +818,9 @@ function build(icsText) {
     series, bySlug,
     occurrences,
     upcoming,
-    upcomingMeetings: upcoming.filter((o) => o.isMeeting),
+    // service meetings (the home page's "This week in service"): a series whose type has newcomers=yes is a recovery
+    // meeting (the series' type, as for o.isMeeting and o.newcomers: not that of one date retyped in Google Calendar)
+    upcomingMeetings: upcoming.filter((o) => o.isMeeting && !(typeMap[(byUid[o.uid] || o).type] || {}).newcomers),
     upcomingEvents: upcoming.filter((o) => o.isEvent),
     upcomingWithCancelled: upcomingAll,
     areaMeetings,
@@ -805,6 +833,7 @@ function build(icsText) {
     stats,
     districts: districtList, committees: committeeList, topics, cities,
     archive, directory, furtherAhead,
+    newcomers,
     instancesBySlug,
     heldFiles: holds.size,
     staleNoteRows,

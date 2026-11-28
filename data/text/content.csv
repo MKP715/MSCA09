@@ -36,6 +36,7 @@ newcomers.self_assessment,Take the self-assessment,Hacer la autoevaluación,
 newcomers.first_meeting,Your first meeting,Tu primera reunión,
 newcomers.nav_call,Call now,Llamar ahora,
 newcomers.nav_find,Find a meeting,Encontrar una reunión,
+newcomers.nav_join,On our calendar,En nuestro calendario,"Link to the section of meetings on the Area calendar marked for newcomers (newcomers.join_*); shown only when there are some"
 newcomers.nav_for_me,Is A.A. for me?,¿A.A. es para mí?,
 newcomers.nav_meeting,At a meeting,En una reunión,
 newcomers.nav_spanish,En español,En español,
@@ -93,7 +94,7 @@ newcomers.more_offices,Show {n} more offices,Mostrar {n} oficinas más,"Button u
 newcomers.offices_featured,"First, a few main offices around the Area. Type your city to find the closest one, or show them all.","Primero, algunas oficinas de habla hispana en distintas zonas del Área. Escribe tu ciudad para encontrar la más cercana, o muéstralas todas.","Shown above the office cards on phones and tablets (the Spanish page leads with the Spanish-speaking offices)"
 newcomers.find_eyebrow,Find a meeting today,Encuentra una reunión hoy,
 newcomers.find_title,Four ways to find a meeting,Cuatro formas de encontrar una reunión,
-newcomers.find_lead,Area 09 does not keep a meeting list of its own. The local A.A. offices do — and they share it with the free Meeting Guide app.,"El Área 09 no tiene su propia lista de reuniones. Las oficinas locales de A.A. sí, y la comparten con la aplicación gratuita Meeting Guide.",
+newcomers.find_lead,Area 09 does not keep a full meeting list. The local A.A. offices do — and they share it with the free Meeting Guide app.,"El Área 09 no tiene una lista completa de reuniones. Las oficinas locales de A.A. sí, y la comparten con la aplicación gratuita Meeting Guide.",
 newcomers.way1_title,Call a local office,Llama a una oficina local,
 newcomers.way1_body,Talk to a person who can tell you where and when the next meeting near you is.,Habla con una persona que te puede decir dónde y cuándo es la próxima reunión cerca de ti.,
 newcomers.way1_cta,See the phone numbers,Ver los teléfonos,
@@ -107,6 +108,14 @@ newcomers.way3_cta,Open the finder,Abrir el buscador,
 newcomers.way4_title,Meet online,Reunirse en línea,
 newcomers.way4_body,"The Online Intergroup of A.A. lists online meetings around the world, around the clock, in many languages.","El Intergrupo en Línea de A.A. tiene reuniones en línea en todo el mundo, a toda hora y en muchos idiomas.",
 newcomers.way4_cta,Find an online meeting,Buscar una reunión en línea,
+newcomers.join_eyebrow,On the Area calendar,En el calendario del Área,"The section after the four ways: the meetings and events on the Area calendar marked for newcomers (a ""Newcomers: yes"" line in the Google Calendar entry, or a type with newcomers=yes in data/event-types.csv). Shown only when there are some"
+newcomers.join_title,Meetings that welcome newcomers,Reuniones que dan la bienvenida a los recién llegados,
+newcomers.join_lead,"Most A.A. meetings are not on the Area calendar — the local offices and the Meeting Guide app above list them. These few are, and newcomers are welcome.","La mayoría de las reuniones de A.A. no están en el calendario del Área: las encontrarás en las listas de las oficinas locales y en la aplicación Meeting Guide, más arriba. Estas pocas sí lo están, y los recién llegados son bienvenidos.",
+newcomers.join_lead_one,"Most A.A. meetings are not on the Area calendar — the local offices and the Meeting Guide app above list them. This one is, and newcomers are welcome.","La mayoría de las reuniones de A.A. no están en el calendario del Área: las encontrarás en las listas de las oficinas locales y en la aplicación Meeting Guide, más arriba. Esta sí lo está, y los recién llegados son bienvenidos.",The same when only one meeting is listed
+newcomers.join_details,Details and how to join,Detalles y cómo unirte,"Button on each meeting card: opens the meeting's event page (dates, time, Zoom details)"
+newcomers.join_events,Upcoming events,Próximos eventos,Small heading over the one-time events marked for newcomers (under the meeting cards)
+newcomers.join_events_empty,No events for newcomers are on the calendar right now.,Por ahora no hay eventos para recién llegados en el calendario.,Shown only once every listed event has passed (until the next build)
+newcomers.join_more,Looking for a meeting near you or at another time?,¿Buscas una reunión cerca de ti o a otra hora?,"Line under the cards, followed by links to the offices (newcomers.way1_title) and the Meeting Guide app (newcomers.way2_title)"
 newcomers.forme_eyebrow,Is A.A. for me?,¿A.A. es para mí?,
 newcomers.forme_title,What A.A. is — in its own words,"Qué es A.A., en sus propias palabras",
 newcomers.whatis_quote,Alcoholics Anonymous is a fellowship of people who come together to solve their drinking problem. It doesn't cost anything to attend A.A. meetings. There are no age or education requirements to participate. Membership is open to anyone who wants to do something about their drinking problem.,Alcohólicos Anónimos es una comunidad de personas que se reúnen para resolver su problema con la bebida. Asistir a reuniones de A.A. no cuesta nada. No hay ningún requisito de edad o nivel de educación para participar. Cualquiera que quiera hacer algo para resolver su problema con la bebida puede hacerse miembro.,aa.org/what-is-aa (EN/ES)

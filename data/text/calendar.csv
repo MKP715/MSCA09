@@ -140,6 +140,8 @@ calendar.link.document,Document,Documento,"Name for a link the calendar calls 'C
 calendar.cancelled,Cancelled,Cancelada,
 calendar.postponed,Postponed,Pospuesta,
 calendar.repeats,Repeats,Se repite,
+calendar.newcomers_chip,Newcomers welcome,Bienvenidos los recién llegados,"Chip at the top of an event page marked for newcomers (a ""Newcomers: yes"" line, or a type with newcomers=yes); links to the newcomers page, which lists it"
+calendar.newcomers_chip_title,Also listed on the page for newcomers,También aparece en la página para recién llegados,The chip's tooltip
 calendar.place_tba,Place to be announced,Lugar por anunciar,
 calendar.flyer_alt,Flyer: {title},Volante: {title},Image description for screen readers
 calendar.flyer_open,Open flyer {n} full size,Ver el volante {n} en tamaño completo,
@@ -198,7 +200,7 @@ calendar.subscribe.copy,Copy,Copiar,Copies the calendar's address
 calendar.subscribe.address,the calendar's web address (.ics),la dirección web del calendario (.ics),"Spoken name of the Copy button: ""Copy the calendar's web address (.ics)"" (ui.copy_x)"
 calendar.subscribe.short,Subscribe to the whole Area calendar,Suscríbete a todo el calendario del Área,
 calendar.help.title,Looking for an A.A. meeting?,¿Buscas una reunión de A.A.?,
-calendar.help.body,"This calendar lists service meetings and events. To find a recovery meeting near you today, use Meeting Guide or call a local central office.","Este calendario muestra reuniones y eventos de servicio. Para encontrar hoy mismo una reunión de recuperación cerca de ti, usa Meeting Guide o llama a una oficina central local.",
+calendar.help.body,"This calendar lists mostly service meetings and events. To find a recovery meeting near you today, use Meeting Guide or call a local central office.","Este calendario muestra sobre todo reuniones y eventos de servicio. Para encontrar hoy mismo una reunión de recuperación cerca de ti, usa Meeting Guide o llama a una oficina central local.",
 calendar.help.newcomers,New to A.A.?,¿Eres nuevo en A.A.?,
 calendar.featured.eyebrow,Save the date,Reserva la fecha,
 calendar.featured.title,Coming up: Area events & gatherings,Próximamente: eventos y encuentros,
@@ -292,12 +294,12 @@ calendar.flyers.empty_body,"Try another month or type, or clear the filters to s
 calendar.flyers.none,No upcoming event has a flyer right now. The Events page lists every meeting and event.,Por ahora ningún evento próximo tiene volante. La página de Eventos muestra todas las reuniones y eventos.,/calendar/flyers/ when the calendar has no upcoming flyer at all
 calendar.flyers.events_lead,"Assemblies, workshops, conventions and fellowship, month by month.","Asambleas, talleres, convenciones y compañerismo, mes a mes.",Under the Upcoming events heading of /calendar/flyers/
 calendar.flyers.meetings_title,Regular meetings with flyers,Reuniones periódicas con volante,Second section of /calendar/flyers/
-calendar.flyers.meetings_lead,"Committees, service schools, districts and H&I that meet on a regular schedule. Each card shows the next date.","Comités, escuelas de servicio, distritos y H&I que se reúnen con horario fijo. Cada tarjeta muestra la próxima fecha.",
+calendar.flyers.meetings_lead,"Meetings held on a regular schedule: committees, districts, service schools, H&I and more. Each card shows the next date.","Reuniones con horario fijo: comités, distritos, escuelas de servicio, H&I y más. Cada tarjeta muestra la próxima fecha.",
 calendar.flyers.zoom,See the flyer full size: {title},Ver el volante en tamaño completo: {title},"For screen readers: the flyer picture of a card on /calendar/flyers/, which opens it full size"
 calendar.flyers.zoom_n,See the {n} flyers full size: {title},Ver los {n} volantes en tamaño completo: {title},The same for an event with several flyers (pages or languages)
 calendar.browse.title,More ways to browse,Más formas de explorar,
 calendar.browse.meetings,Every regular meeting,Todas las reuniones periódicas,
-calendar.browse.meetings_body,"{n} district, committee, H&I and intergroup meetings, with times, places and Zoom links.","{n} reuniones de distritos, comités, H&I e intergrupos, con horarios, lugares y enlaces de Zoom.",
+calendar.browse.meetings_body,"{n} regular meetings (districts, committees, H&I, intergroups and more), with times, places and Zoom links.","{n} reuniones periódicas (distritos, comités, H&I, intergrupos y más), con horarios, lugares y enlaces de Zoom.",
 calendar.browse.archive,Past events,Eventos pasados,
 calendar.browse.archive_body,"{n} past assemblies, workshops and events, with their flyers and documents.","{n} asambleas, talleres y eventos pasados, con sus volantes y documentos.",
 calendar.browse.google,Open in Google Calendar,Abrir en Google Calendar,
@@ -309,7 +311,7 @@ calendar.events.crumb,Happenings,Actividades,Breadcrumb
 calendar.events.title,Happenings,Actividades,Page title of /events/
 calendar.events.meta_title,Happenings: A.A. service meetings & events,Actividades: reuniones de servicio y eventos,"Search-result and link-preview title of /events/ (the page heading stays calendar.events.title); "" · A.A. Area 09"" (Spanish "" · Área 09 de A.A."") is added after it while the whole title stays within 60 characters"
 calendar.events.description,"Every regular service meeting in Area 09 — districts, committees, H&I and intergroups — plus upcoming events and an archive of past events with their flyers.","Todas las reuniones periódicas de servicio del Área 09 — distritos, comités, H&I e intergrupos — además de los próximos eventos y un archivo de eventos pasados con sus volantes.",
-calendar.events.eyebrow,Service meetings & events,Reuniones de servicio y eventos,
+calendar.events.eyebrow,Meetings & events,Reuniones y eventos,
 calendar.events.lead,"The regular meetings, what's coming up, and everything that has already happened — in one directory.","Las reuniones periódicas, lo que viene y todo lo que ya pasó — en un solo directorio.",
 calendar.events.jump,Jump to,Ir a,
 calendar.events.meetings,Regular meetings,Reuniones periódicas,
@@ -370,6 +372,7 @@ calendar.meta.type.district,A.A. district business meeting,reunión de negocios 
 calendar.meta.type.committee,A.A. service committee meeting,reunión de comité de servicio de A.A.,"Event page description: what an entry of calendar type ""Committee"" is, after its title in brackets (""District 5 (…): …""). Empty = the type's label"
 calendar.meta.type.h-and-i,A.A. Hospitals & Institutions meeting,reunión de Hospitales e Instituciones de A.A.,"Event page description: what an entry of calendar type ""H&I"" is, after its title in brackets (""District 5 (…): …""). Empty = the type's label"
 calendar.meta.type.intergroup,A.A. intergroup meeting,reunión de intergrupo de A.A.,"Event page description: what an entry of calendar type ""Intergroup"" is, after its title in brackets (""District 5 (…): …""). Empty = the type's label"
+calendar.meta.type.recovery,A.A. recovery meeting,reunión de recuperación de A.A.,"Event page description: what an entry of calendar type ""Recovery"" is, after its title in brackets (""District 5 (…): …""). Empty = the type's label"
 calendar.meta.type.service-school,A.A. service school,escuela de servicio de A.A.,"Event page description: what an entry of calendar type ""Service School"" is, after its title in brackets (""District 5 (…): …""). Empty = the type's label"
 calendar.meta.type.workshop,A.A. workshop,taller de A.A.,"Event page description: what an entry of calendar type ""Workshop"" is, after its title in brackets (""District 5 (…): …""). Empty = the type's label"
 calendar.meta.type.history,A.A. history & archives event,evento de historia y archivos de A.A.,"Event page description: what an entry of calendar type ""History"" is, after its title in brackets (""District 5 (…): …""). Empty = the type's label"

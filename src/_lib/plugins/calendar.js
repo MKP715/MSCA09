@@ -4,7 +4,8 @@
 //    no text under "--" for meetings, no held flyers).
 //  - filters: calGoogle / calOutlook (add-to-calendar links), calIcs (iCalendar text),
 //             calTitle / calTypeLabel / calLoc (English or Spanish field of an entry),
-//             calNotes (the Note / Nota lines for a language), calJsonLd (schema.org Event),
+//             calNotes (the Note / Nota lines for a language), calLead (the first sentence of a note),
+//             calJsonLd (schema.org Event),
 //             calMetaDescription (an event page's description for search engines),
 //             calConfig (settings for the /calendar/ page script), calUid (unique ids), calHost (hostname)
 import { readCsv } from "../csv.js";
@@ -45,6 +46,21 @@ function leadSentence(text) {
   }
   return "";
 }
+// The opening of a Note line for a card (cardLead): its sentences up to the first end at 20 characters or more, so a
+// short "Open meeting." is not given alone, nor the whole note after it; web addresses left out. A text with no such
+// end is cut at a word before CARD_LEAD_MAX characters.
+const CARD_LEAD_MAX = 160;
+function cardLead(text) {
+  const line = (String(text || "").split("\n").find((l) => l.trim()) || "").replace(/https?:\/\/\S+/g, "").replace(/\s+/g, " ").trim();
+  for (const m of line.matchAll(/[.!?](?=\s|$)/g)) {
+    if (m.index < 19 || (m[0] === "." && NOT_A_SENTENCE_END.test(line.slice(0, m.index)))) continue;
+    if (m.index < CARD_LEAD_MAX) return line.slice(0, m.index + 1);
+    break;
+  }
+  if (line.length <= CARD_LEAD_MAX) return line;
+  const cut = line.lastIndexOf(" ", CARD_LEAD_MAX - 1);
+  return `${line.slice(0, cut > CARD_LEAD_MAX / 2 ? cut : CARD_LEAD_MAX - 1).replace(/[\s,;:.–—-]+$/, "")}…`;
+}
 const plainWords = (x) => String(x || "").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
 const mostlyCapitals = (x) => (x.match(/\p{Lu}/gu) || []).length > (x.match(/\p{L}/gu) || []).length / 2;
 const lowerFirst = (x) => (x ? x.charAt(0).toLowerCase() + x.slice(1) : "");
@@ -74,6 +90,9 @@ export default function (eleventyConfig) {
     if (ov.length) return ov.map((text) => ({ text, lang: "es" }));
     return en.map((text) => ({ text, lang: "en" }));
   });
+  // The opening sentence of a Note line, to keep a card short (the newcomers page's meeting cards; the event page shows
+  // the whole note): cardLead above, so "A.A." or "p.m." does not end it, and web addresses are left out.
+  eleventyConfig.addFilter("calLead", (text) => cardLead(text));
 
   // schema.org Event (JSON-LD) for the coming date of a one-time event (none once it has ended). Google's event results
   // only show public events held at a real place, on a page about that one event:
